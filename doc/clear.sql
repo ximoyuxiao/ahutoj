@@ -1,0 +1,9 @@
+drop TABLE Submit;
+drop table ConPro;
+drop table Contest;
+drop table ListUser;
+drop table ListProblem;
+drop table Problem;
+drop table Permission;
+drop table User;
+drop database ahutoj;
