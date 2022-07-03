@@ -1,6 +1,7 @@
 package main
 
 import (
+	mysqldao "ahutoj/web/dao/mysqlDao"
 	"ahutoj/web/routers"
 	"ahutoj/web/utils"
 	"fmt"
@@ -25,9 +26,14 @@ func initAPP(ConfigPath string) error {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
-	//初始化MySQL数据库
+	//初始化日志服务
 
-	//初始化
+	//初始化MySQL数据库
+	err = mysqldao.InitMysql()
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
 
 	//初始化JWT略
 

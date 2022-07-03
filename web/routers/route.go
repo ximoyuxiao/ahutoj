@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"ahutoj/web/service"
 	"ahutoj/web/utils"
 	"net/http"
 
@@ -43,7 +44,7 @@ func regeisterRouters(router *gin.Engine) {
 		authRouter := apiRouter.Group("/Auth")
 		{
 			//相当于接口 /api/Auth/login
-			authRouter.POST("/login/")
+			authRouter.POST("/login/", service.LoginSerivce)
 			authRouter.POST("/regeister/")
 			authRouter.GET("/logout/")
 		}
