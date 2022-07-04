@@ -11,6 +11,8 @@ var config = new(AppConfig)
 type AppConfig struct {
 	Port         string `mapstructure:"port"`
 	Mode         string `mapstructure:"mode"`
+	Sign         string `mapstructure:"sign"`
+	Version      string `mapstructure:"version"`
 	*MySQLConfig `mapstructure:"mysql"`
 	*RedisConfig `mapstructure:"redis"`
 	*LogConfig   `mapstructure:"log"`
