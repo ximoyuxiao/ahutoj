@@ -6,6 +6,6 @@ import (
 
 func InitRedis() error {
 	logger := utils.GetLogInstance()
-	logger.Info("Redis cnn't Init")
+	logger.Info("Redis cann't Init")
 	return nil
 }
