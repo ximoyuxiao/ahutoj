@@ -8,7 +8,7 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-var mySecret []byte
+var sign []byte
 var ExpTime time.Duration
 
 // MyClaims 自定义声明结构体并内嵌jwt.StandardClaims
@@ -22,7 +22,7 @@ type MyClaims struct {
 
 func InitJwt() {
 	config := utils.GetInstance()
-	mySecret = []byte(config.Sign)
+	sign = []byte(config.Sign)
 	ExpTime = 24 * time.Hour
 }
 
@@ -32,27 +32,26 @@ func GetToken(userID string) (string, error) {
 		userID,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(ExpTime).Unix(), // 过期时间
-			Issuer:    "tiktok",                       // 签发人
+			Issuer:    "ahutoj",                       // 签发人
 		},
 	}
 	// 使用指定的签名方法创建签名对象
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, c)
 	// 使用指定的secret签名并获得完整的编码后的字符串token
-	return token.SignedString(mySecret)
+	return token.SignedString(sign)
 }
 
 // ParseToken 解析JWT
 func ParseToken(tokenString string) (*MyClaims, error) {
-	// 解析token
-	var mc = new(MyClaims)
-	token, err := jwt.ParseWithClaims(tokenString, mc, func(token *jwt.Token) (i interface{}, err error) {
-		return mySecret, nil
+	var myclaims = new(MyClaims)
+	token, err := jwt.ParseWithClaims(tokenString, myclaims, func(token *jwt.Token) (i interface{}, err error) {
+		return sign, nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	if token.Valid { // 校验token
-		return mc, nil
+	if token.Valid {
+		return myclaims, nil
 	}
 	return nil, errors.New("invalid token")
 }

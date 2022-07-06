@@ -33,8 +33,9 @@ type RedisConfig struct {
 	PoolSize int16  `mapstructure:"pool_size"`
 }
 type LogConfig struct {
-	LogPath string `mapstructure:"logPath"`
-	MaxSize int32  `mapstructure:"max_size"`
+	FileName string `mapstructure:"filename"`
+	MaxSize  int32  `mapstructure:"max_size"`
+	Level    string `mapstructure:"level"`
 }
 
 func ConfigInit(configPath string) error {
