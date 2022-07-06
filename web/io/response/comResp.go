@@ -1,18 +1,19 @@
 package response
 
 import (
+	"ahutoj/web/io/constanct"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Response struct {
-	StatusCode int    `json:"code"`
-	StatusMsg  string `json:"msg"`
+	StatusCode constanct.ResCode `json:"code"`
+	StatusMsg  string            `json:"msg"`
 }
 
 // ResponseError 响应错误
-func ResponseError(c *gin.Context, code int) {
+func ResponseError(c *gin.Context, code constanct.ResCode) {
 	c.JSON(http.StatusOK, Response{
 		StatusCode: code,
 		StatusMsg:  "error",

@@ -17,6 +17,7 @@ func LogInit() {
 		fmt.Printf("log level(%s) error, err =%s\n", (config.LogConfig.Level), err.Error())
 	}
 	logger.SetLevel(level)
+	logger.SetOutput(os.Stdout)
 	if config.LogConfig.FileName != "console" {
 		writer, err := os.OpenFile(config.LogConfig.FileName, os.O_WRONLY|os.O_CREATE, 0755)
 		if err != nil {

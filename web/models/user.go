@@ -5,7 +5,6 @@ import (
 	mysqldao "ahutoj/web/dao/mysqlDao"
 	"ahutoj/web/utils"
 	"context"
-	"fmt"
 )
 
 func IsUserExistByUid(ctx context.Context, user *dao.User) bool {
@@ -24,7 +23,5 @@ func EqualPassWord(ctx context.Context, user *dao.User, password string) bool {
 	if err != nil {
 		return false
 	}
-	fmt.Println(md5Password)
-	fmt.Println(user.Pass)
 	return md5Password == user.Pass
 }
