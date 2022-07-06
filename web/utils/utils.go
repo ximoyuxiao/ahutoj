@@ -5,6 +5,8 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+
+	"github.com/sanity-io/litter"
 )
 
 func MD5EnCode(userID, password string) (string, error) {
@@ -23,4 +25,8 @@ func MD5EnCode(userID, password string) (string, error) {
 	code := fmt.Sprintf("%s&%d&%s", userID, t, password)
 	io.WriteString(Md5, code)
 	return hex.EncodeToString(Md5.Sum(nil)), nil
+}
+
+func Sdump(value ...interface{}) string {
+	return litter.Sdump(value...)
 }

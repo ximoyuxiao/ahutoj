@@ -1,4 +1,4 @@
 *.yaml
 *.log
 log
-temp
+tmp
