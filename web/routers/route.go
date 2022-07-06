@@ -36,7 +36,6 @@ func InitServer() {
 
 func regeisterRouters(router *gin.Engine) {
 	router.GET("/ping", PingTest)
-
 	// 相当于接口 /api/ 这组路径
 	apiRouter := router.Group("/api")
 	{
