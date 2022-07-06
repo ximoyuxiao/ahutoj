@@ -22,8 +22,3 @@ func ResponseError(c *gin.Context, code int) {
 func ResponseOK(c *gin.Context, resp interface{}) {
 	c.JSON(http.StatusOK, resp)
 }
-
-type UserResp struct {
-	Response
-	Token string `json:"token"`
-}

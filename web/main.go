@@ -2,6 +2,7 @@ package main
 
 import (
 	mysqldao "ahutoj/web/dao/mysqlDao"
+	"ahutoj/web/middlewares"
 	"ahutoj/web/routers"
 	"ahutoj/web/utils"
 	"fmt"
@@ -36,6 +37,6 @@ func initAPP(ConfigPath string) error {
 	}
 
 	//初始化JWT略
-
+	middlewares.InitJwt()
 	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"ahutoj/web/dao"
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
+	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
 	"fmt"
 
@@ -34,11 +35,18 @@ func CheckLogin(req *request.LoginReq, c *gin.Context) (interface{}, error) {
 			StatusMsg:  "密码错误",
 		}, nil
 	}
+	token, err := middlewares.GetToken(user.Uid)
+	if err != nil {
+		return response.Response{
+			StatusCode: 205,
+			StatusMsg:  "Token创建失败",
+		}, nil
+	}
 	return response.UserResp{
 		Response: response.Response{
 			StatusCode: 200,
 			StatusMsg:  "登录成功",
 		},
-		Token: "abcdefg",
+		Token: token,
 	}, nil
 }

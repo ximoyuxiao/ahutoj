@@ -1,4 +1,4 @@
-package jwt
+package middlewares
 
 import (
 	"ahutoj/web/utils"
@@ -16,17 +16,17 @@ var ExpTime time.Duration
 // 我们这里需要额外记录一个username字段，所以要自定义结构体
 // 如果想要保存更多信息，都可以添加到这个结构体中
 type MyClaims struct {
-	UserID int64 `json:"user_id"`
+	UserID string `json:"user_id"`
 	jwt.StandardClaims
 }
 
-func init() {
+func InitJwt() {
 	config := utils.GetInstance()
 	mySecret = []byte(config.Sign)
 	ExpTime = 24 * time.Hour
 }
 
-func GetToken(userID int64) (string, error) {
+func GetToken(userID string) (string, error) {
 	// 创建一个我们自己的声明的数据
 	c := MyClaims{
 		userID,
