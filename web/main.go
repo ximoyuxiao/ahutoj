@@ -27,7 +27,7 @@ func initAPP(ConfigPath string) error {
 		os.Exit(1)
 	}
 	//初始化日志服务
-
+	utils.LogInit()
 	//初始化MySQL数据库
 	err = mysqldao.InitMysql()
 	if err != nil {
