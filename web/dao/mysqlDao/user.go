@@ -17,3 +17,10 @@ func SelectUserCountByUid(ctx context.Context, uid string) (count int64, err err
 	err = db.Table("User").Where("uid=?", uid).Count(&count).Error
 	return count, err
 }
+
+func InserUserTable(ctx context.Context, user dao.User) error {
+	db := GetDB(ctx)
+	//insert into User values(,,,,,)
+	err := db.Table("User").Create(&user).Error
+	return err
+}

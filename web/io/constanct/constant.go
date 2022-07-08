@@ -11,6 +11,7 @@ const (
 	PassWordErrorCode   ResCode = 1004
 	TokenBuildErrorCode ResCode = 1005
 	TokenInvaildCode    ResCode = 1006
+	UIDExistCOde        ResCode = 1007
 	MySQLErrorCode      ResCode = 2001
 	RedisErrorCode      ResCode = 2002
 	ServerBusyCode      ResCode = 5001
@@ -27,6 +28,7 @@ var codeMsgMap = map[ResCode]string{
 	MySQLErrorCode:      "数据库错误",
 	RedisErrorCode:      "缓存数据库错误",
 	ServerBusyCode:      "服务器繁忙",
+	UIDExistCOde:        "该用户已存在",
 }
 
 func (c ResCode) Msg() string {

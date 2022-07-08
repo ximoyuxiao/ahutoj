@@ -23,3 +23,10 @@ func ResponseError(c *gin.Context, code constanct.ResCode) {
 func ResponseOK(c *gin.Context, resp interface{}) {
 	c.JSON(http.StatusOK, resp)
 }
+
+func CreateResponse(code constanct.ResCode) Response {
+	return Response{
+		StatusCode: code,
+		StatusMsg:  code.Msg(),
+	}
+}

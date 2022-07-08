@@ -40,12 +40,17 @@ func regeisterRouters(router *gin.Engine) {
 	apiRouter := router.Group("/api")
 	{
 		//相当于接口/api/Auth/ 的这组路径
-		authRouter := apiRouter.Group("/Auth")
+		authRouter := apiRouter.Group("/auth")
 		{
 			//相当于接口 /api/Auth/login
 			authRouter.POST("/login/", service.LoginSerivce)
-			authRouter.POST("/regeister/")
+			authRouter.POST("/register/", service.RegisterService)
 			authRouter.GET("/logout/")
+		}
+		problemRouter := apiRouter.Group("/problem")
+		{
+			//->  /api/problem/problems
+			problemRouter.GET("/problems/")
 		}
 	}
 }
