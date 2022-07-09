@@ -2,3 +2,5 @@
 *.log
 log
 tmp
+.vscode
+.idea

@@ -15,7 +15,7 @@ import (
 func LoginSerivce(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := new(request.LoginReq)
-	if err := ctx.ShouldBindWith(req, binding.Form); err != nil {
+	if err := ctx.ShouldBindWith(req, binding.JSON); err != nil {
 		// 请求参数有误，直接返回响应
 		logger.Errorf("call ShouldBindWith failed, err =%s", err.Error())
 		response.ResponseError(ctx, 201)
@@ -34,7 +34,7 @@ func RegisterService(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := new(request.User)
 	//1、 获取参数
-	err := ctx.ShouldBindWith(req, binding.Form)
+	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
 		// 请求参数有误，直接返回响应
 		logger.Errorf("call ShouldBindWith failed, err =%s", err.Error())

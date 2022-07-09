@@ -14,7 +14,7 @@ import (
 
 func CheckLogin(req *request.LoginReq, c *gin.Context) (interface{}, error) {
 	user := dao.User{
-		Uid: req.Username,
+		Uid: req.Uid,
 	}
 	if ok := models.IsUserExistByUid(c, &user); !ok {
 		return response.Response{
@@ -28,7 +28,7 @@ func CheckLogin(req *request.LoginReq, c *gin.Context) (interface{}, error) {
 			StatusMsg:  constanct.MySQLErrorCode.Msg(),
 		}, err
 	}
-	ok := models.EqualPassWord(c, &user, req.Password)
+	ok := models.EqualPassWord(c, &user, req.Pass)
 	if !ok {
 		return response.Response{
 			StatusCode: constanct.PassWordErrorCode,
