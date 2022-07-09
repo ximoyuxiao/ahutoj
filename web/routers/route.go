@@ -63,8 +63,13 @@ func regeisterRouters(router *gin.Engine) {
 		}
 		problemRouter := apiRouter.Group("/problem")
 		{
-			//->  /api/problem/problems
-			problemRouter.GET("/problems/")
+			//->  /api/problem/problems'
+			problemRouter.POST("/add/", service.AddService)       //添加题目
+			problemRouter.POST("/edit/", service.EditService)     //编辑题目
+			problemRouter.POST("/delete/", service.DeleteService) //删除题目
+
+			problemRouter.GET("/getlist/", service.GetListService) //获取题目列表
+			problemRouter.GET("/get/", service.GetService)         //获取题目
 		}
 	}
 }
