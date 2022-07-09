@@ -1,22 +1,29 @@
 package middlewares
 
 import (
+	mysqldao "ahutoj/web/dao/mysqlDao"
+	"ahutoj/web/io/constanct"
+	"ahutoj/web/io/response"
 	"ahutoj/web/utils"
 	"errors"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 )
 
 var sign []byte
 var ExpTime time.Duration
 
-// MyClaims 自定义声明结构体并内嵌jwt.StandardClaims
-// jwt包自带的jwt.StandardClaims只包含了官方字段
-// 我们这里需要额外记录一个username字段，所以要自定义结构体
-// 如果想要保存更多信息，都可以添加到这个结构体中
+type Permmision struct {
+	Administrator   bool `json:"administrator"`
+	Problem_edit    bool `json:"problem_edit"`
+	Source_browser  bool `json:"source_browser"`
+	Contest_creator bool `json:"contest_creator"`
+}
 type MyClaims struct {
-	UserID string `json:"user_id"`
+	UserID string `json:"uid"`
+	Permmision
 	jwt.StandardClaims
 }
 
@@ -26,10 +33,20 @@ func InitJwt() {
 	ExpTime = 24 * time.Hour
 }
 
-func GetToken(userID string) (string, error) {
+func GetToken(ctx *gin.Context, userID string) (string, error) {
 	// 创建一个我们自己的声明的数据
+	permission, err := mysqldao.SelectPermissionByUid(ctx, userID)
+	if err != nil {
+		return "", err
+	}
 	c := MyClaims{
 		userID,
+		Permmision{
+			Administrator:   permission.Administrator == "Y",
+			Problem_edit:    permission.Problem_edit == "Y",
+			Source_browser:  permission.Source_browser == "Y",
+			Contest_creator: permission.Contest_creator == "Y",
+		},
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(ExpTime).Unix(), // 过期时间
 			Issuer:    "ahutoj",                       // 签发人
@@ -54,4 +71,23 @@ func ParseToken(tokenString string) (*MyClaims, error) {
 		return myclaims, nil
 	}
 	return nil, errors.New("invalid token")
+}
+
+//验证token
+func JwtVerify(c *gin.Context) {
+	//过滤是否验证token
+	logger := utils.GetLogInstance()
+	token := c.GetHeader("Token")
+	if token == "" {
+		logger.Errorf("token is empty")
+		response.ResponseError(c, constanct.TokenInvaildCode)
+	}
+	//验证token，并存储在请求中
+	claims, err := ParseToken(token)
+	if err != nil {
+		logger.Errorf("token parse error, token=%s, err =%s", token, err.Error())
+		response.ResponseError(c, constanct.TokenInvaildCode)
+	}
+	c.Set("user", claims)
+	c.Next()
 }

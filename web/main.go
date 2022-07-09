@@ -16,9 +16,7 @@ func main() {
 		ConfigPath = os.Args[1]
 	}
 	initAPP(ConfigPath)
-
-	routers.InitServer()
-
+	fmt.Println("error server down!")
 }
 
 func initAPP(ConfigPath string) error {
@@ -30,6 +28,7 @@ func initAPP(ConfigPath string) error {
 	}
 	//初始化日志服务
 	utils.LogInit()
+
 	//初始化MySQL数据库
 	err = mysqldao.InitMysql()
 	logger := utils.GetLogInstance()
@@ -44,7 +43,9 @@ func initAPP(ConfigPath string) error {
 		logger.Errorf("init redis error redisConf=%+v, err=%s", utils.Sdump(utils.GetInstance().RedisConfig), err.Error())
 		os.Exit(1)
 	}
-	//初始化JWT略
+	//初始化JWT
 	middlewares.InitJwt()
+
+	routers.InitServer()
 	return nil
 }

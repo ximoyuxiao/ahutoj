@@ -48,6 +48,19 @@ func regeisterRouters(router *gin.Engine) {
 			authRouter.POST("/register/", service.RegisterService)
 			authRouter.GET("/logout/")
 		}
+
+		userRouter := apiRouter.Group("/user").Use(middlewares.JwtVerify)
+		{
+			userRouter.GET("/info/")
+			userRouter.POST("/edit/")
+			userRouter.POST("/edit/pass/")
+			userRouter.GET("/VjudgeBind/")
+		}
+
+		adminRouter := apiRouter.Group("/admin").Use(middlewares.JwtVerify)
+		{
+			adminRouter.PUT("permission/edit")
+		}
 		problemRouter := apiRouter.Group("/problem")
 		{
 			//->  /api/problem/problems

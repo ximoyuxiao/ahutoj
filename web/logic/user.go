@@ -35,7 +35,7 @@ func CheckLogin(req *request.LoginReq, c *gin.Context) (interface{}, error) {
 			StatusMsg:  constanct.PassWordErrorCode.Msg(),
 		}, nil
 	}
-	token, err := middlewares.GetToken(user.Uid)
+	token, err := middlewares.GetToken(c, user.Uid)
 	if err != nil {
 		return response.Response{
 			StatusCode: constanct.TokenBuildErrorCode,

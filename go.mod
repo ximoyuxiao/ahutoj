@@ -6,6 +6,8 @@ require (
 	github.com/gin-contrib/pprof v1.3.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/sanity-io/litter v1.5.5
+	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.12.0
 	gorm.io/driver/mysql v1.3.4
 	gorm.io/gorm v1.23.7
@@ -31,8 +33,6 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.1 // indirect
-	github.com/sanity-io/litter v1.5.5 // indirect
-	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/spf13/afero v1.8.2 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
