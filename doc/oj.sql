@@ -1,10 +1,4 @@
-#1.创建表空间
-create database ahutoj;
-#2.创建用户
-CREATE USER 'AHUTOnlinejudge'@'localhost' IDENTIFIED BY '2019ahut';
-#3.授予用户表空间的权限
-grant all privileges on ahutoj.* to 'AHUTOnlinejudge'@'localhost';
-#4.创建表
+
 use ahutoj
 create table User(
     uid varchar(20)   primary key,
@@ -42,7 +36,7 @@ create table List(
     lid int primary key AUTO_INCREMENT,
     uid varchar(20),
     title Text,
-    stime datetime,
+    stime long,
     constraint fk_lst_uid FOREIGN KEY (uid)
     references User(uid) ON UPDATE CASCADE ON DELETE CASCADE
 )DEFAULT CHARSET=utf8mb4;
@@ -80,10 +74,10 @@ create table Contest(
     uid varchar(20),
     title Text,
     description Text,
-    begin_time datetime,
-    end_time datetime,	
-    ctype varchar(10) check (ctype in('ACM','OI')),
-    ispublic varchar(10) check (ispublic in('private','public')),
+    begin_time long,
+    end_time long,	
+    ctype int,
+    ispublic int,
     pass varchar(128),
     constraint fk_ct_uid FOREIGN KEY (uid)
     references User(uid) ON UPDATE CASCADE ON DELETE CASCADE
@@ -117,7 +111,7 @@ CREATE table Submit(
     result varchar(10),
     usetime int,
     memory int,
-    submitTime datetime,
+    submitTime long,
     constraint fk_st_pids FOREIGN KEY (pid)
     references Problem(pid) ON UPDATE CASCADE ON DELETE CASCADE,
 
@@ -130,7 +124,7 @@ insert into User values('admin','墨羽','21de184f26d37d33d5581d923ae52c17','AHU
 #此处对于密码199094212              
 insert into Permission values('admin','Y','Y','Y','Y');
 insert into Problem values(null,'A+B问题','输入一个数字A和一个数字B要求输出A和B的和','分别输入两个整数A和B','输出A和B的和','1 2','3','1','128','');
-insert into Contest values(null,'admin','测试比赛1','用于测试','2021-12-15 16:32:22','2021-12-16 16:32:22','ACM','public',null);
-insert into Contest values(null,'admin','测试比赛2','用于测试','2021-12-15 16:32:22','2021-12-16 20:32:22','ACM','public',null);
-insert into Contest values(null,'admin','测试比赛3','用于测试','2021-12-15 16:32:22','2021-12-16 22:32:22','ACM','public',null);
-insert into List values(null,'admin','测试','2021-12-15 16:32:22');
+insert into Contest values(null,'admin','测试比赛1','用于测试',1639559000000,1639599000000,1,1,null);
+insert into Contest values(null,'admin','测试比赛2','用于测试',1639559000000,1639599000000,1,1,null);
+insert into Contest values(null,'admin','测试比赛3','用于测试',1639559000000,1639599000000,1,1,null);
+insert into List values(null,'admin','测试',1639599000000);

@@ -7,8 +7,8 @@
 接口的请求参数:
 ```json
 {
-    username: string
-    password: string
+    uid: string
+    pass: string
 }
 ```
 接口的返回值

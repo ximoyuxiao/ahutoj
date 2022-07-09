@@ -2,6 +2,8 @@ config = config.yaml
 Path  = ./web
 Exec  = ./web/main.go
 tagert = ./tmp/bin/main
+all:init run
+
 init:
 	go mod tidy
 
@@ -12,4 +14,4 @@ build:${Exec}
 	go build -o ${tagert} ${Exec}
 
 clean:
-	rm -rf build
+	rm -rf ${tagert}
