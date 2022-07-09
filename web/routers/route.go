@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"ahutoj/web/middlewares"
 	"ahutoj/web/service"
 	"ahutoj/web/utils"
 	"net/http"
@@ -20,7 +21,7 @@ func InitServer() {
 	}
 
 	router := gin.Default()
-
+	router.Use(middlewares.Cors())
 	regeisterRouters(router)
 
 	// 注册 pprof 监控 仅仅在 开发阶段可看

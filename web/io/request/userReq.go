@@ -1,8 +1,8 @@
 package request
 
 type User struct {
-	Uid     string `form:"uid"`
-	Uname   string `form:"uname"`
+	Uid     string `form:"uid" binding:"required"`
+	Uname   string `form:"uname" binding:"required"`
 	Pass    string `form:"pass"`
 	School  string `form:"school"`
 	Classes string `form:"classes"`

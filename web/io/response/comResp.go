@@ -16,7 +16,7 @@ type Response struct {
 func ResponseError(c *gin.Context, code constanct.ResCode) {
 	c.JSON(http.StatusOK, Response{
 		StatusCode: code,
-		StatusMsg:  "error",
+		StatusMsg:  code.Msg(),
 	})
 }
 
