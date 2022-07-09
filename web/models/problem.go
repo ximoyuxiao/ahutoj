@@ -9,7 +9,7 @@ import (
 
 //判断题目是否存在
 func IsProblemExistByPid(ctx context.Context, problem *dao.Problem) bool {
-	count, err := mysqldao.SelectProblemCountByPid(ctx, problem.Pid)
+	count, err := mysqldao.SelectProblemCountByPid(ctx, *problem.Pid)
 	if err != nil {
 		return false
 	}

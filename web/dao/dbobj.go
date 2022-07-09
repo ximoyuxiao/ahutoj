@@ -21,7 +21,7 @@ type Permission struct {
 }
 
 type Problem struct {
-	Pid           int    `db:"pid"`
+	Pid           *int   `db:"pid"`
 	Title         string `db:"title"`
 	Description   string `db:"description"`
 	Input         string `db:"input"`
