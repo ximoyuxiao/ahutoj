@@ -32,9 +32,9 @@ func EqualPassWord(ctx context.Context, user *dao.User, password string) bool {
 
 func CreateUser(ctx context.Context, user *dao.User) error {
 	logger := utils.GetLogInstance()
-	err := mysqldao.InserUserTable(ctx, *user)
+	err := mysqldao.InsertUserTable(ctx, *user)
 	if err != nil {
-		logger.Error("call InserUserTable failed,user= %+v, err=%s", utils.Sdump(user), err.Error())
+		logger.Error("call InsertUserTable failed,user= %+v, err=%s", utils.Sdump(user), err.Error())
 	}
 	return err
 }
