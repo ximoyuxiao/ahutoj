@@ -1,4 +1,10 @@
-
+#1.创建表空间
+create database ahutoj;
+#2.创建用户
+CREATE USER 'AHUTOnlinejudge'@'localhost' IDENTIFIED BY '2019ahut';
+#3.授予用户表空间的权限
+grant all privileges on ahutoj.* to 'AHUTOnlinejudge'@'localhost';
+#4.创建表
 use ahutoj
 create table User(
     uid varchar(20)   primary key,
