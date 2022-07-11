@@ -5,9 +5,10 @@ typora-root-url: img
 # AHUT在线判题系统
 
 ### 在本机中跑起这个项目
+1、执行install.sh (其会自动下载Mysql、redis)，自动执行sql脚本建立数据库表）（开发中。。。）
+2、配置config.yaml文件（具体可以参考config.yaml.bak）
+3、执行make run 既可以跑起来项目
 
-#### 2、修改项目信息
-#### 3、添加数据库文件
 ### 项目结构图
     .
     ├── doc   项目文档
