@@ -53,6 +53,6 @@ func ConfigInit(configPath string) error {
 
 }
 
-func GetInstance() *AppConfig {
+func GetConfInstance() *AppConfig {
 	return config
 }

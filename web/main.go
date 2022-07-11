@@ -33,14 +33,14 @@ func initAPP(ConfigPath string) error {
 	err = mysqldao.InitMysql()
 	logger := utils.GetLogInstance()
 	if err != nil {
-		logger.Errorf("init mysql error mysqlConf:%+v, err=%s", utils.Sdump(utils.GetInstance().MySQLConfig), err.Error())
+		logger.Errorf("init mysql error mysqlConf:%+v, err=%s", utils.Sdump(utils.GetConfInstance().MySQLConfig), err.Error())
 		os.Exit(1)
 	}
 
 	//初始化Redis数据库
 	err = redisdao.InitRedis()
 	if err != nil {
-		logger.Errorf("init redis error redisConf=%+v, err=%s", utils.Sdump(utils.GetInstance().RedisConfig), err.Error())
+		logger.Errorf("init redis error redisConf=%+v, err=%s", utils.Sdump(utils.GetConfInstance().RedisConfig), err.Error())
 		os.Exit(1)
 	}
 	//初始化JWT

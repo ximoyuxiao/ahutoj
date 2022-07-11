@@ -28,7 +28,7 @@ type MyClaims struct {
 }
 
 func InitJwt() {
-	config := utils.GetInstance()
+	config := utils.GetConfInstance()
 	sign = []byte(config.Sign)
 	ExpTime = 24 * time.Hour
 }
