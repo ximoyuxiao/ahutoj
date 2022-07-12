@@ -59,7 +59,7 @@ func regeisterRouters(router *gin.Engine) {
 
 		adminRouter := apiRouter.Group("/admin").Use(middlewares.JwtVerify)
 		{
-			adminRouter.PUT("permission/edit")
+			adminRouter.PUT("/permission/edit/")
 		}
 		problemRouter := apiRouter.Group("/problem")
 		{

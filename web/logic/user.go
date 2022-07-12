@@ -2,6 +2,7 @@ package logic
 
 import (
 	"ahutoj/web/dao"
+	mysqldao "ahutoj/web/dao/mysqlDao"
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
@@ -42,12 +43,23 @@ func CheckLogin(req *request.LoginReq, c *gin.Context) (interface{}, error) {
 			StatusMsg:  constanct.TokenBuildErrorCode.Msg(),
 		}, nil
 	}
-	return response.UserResp{
+	permission, err := mysqldao.SelectPermissionByUid(c, user.Uid)
+	if err != nil {
+		return nil, err
+	}
+	return response.LoginResp{
 		Response: response.Response{
 			StatusCode: constanct.SuccessCode,
 			StatusMsg:  constanct.SuccessCode.Msg(),
 		},
 		Token: token,
+		Uname: user.Uname,
+		Permission: response.Permission{
+			Administrator:   permission.Administrator == "Y",
+			Problem_edit:    permission.Problem_edit == "Y",
+			Source_browser:  permission.Source_browser == "Y",
+			Contest_creator: permission.Contest_creator == "Y",
+		},
 	}, nil
 }
 func DoResiger(c *gin.Context, req *request.User) (interface{}, error) {

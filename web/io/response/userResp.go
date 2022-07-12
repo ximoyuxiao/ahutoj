@@ -1,6 +1,8 @@
 package response
 
-type UserResp struct {
+type LoginResp struct {
 	Response
 	Token string `json:"token"`
+	Uname string `json:"name"`
+	Permission
 }
