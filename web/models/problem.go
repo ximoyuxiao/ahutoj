@@ -15,11 +15,23 @@ func IsProblemExistByPid(ctx context.Context, problem *dao.Problem) bool {
 	}
 	return count > 0
 }
+
+//创建题目
 func CreateProblem(ctx context.Context, problem *dao.Problem) error {
 	logger := utils.GetLogInstance()
 	err := mysqldao.InsertProblemTable(ctx, *problem)
 	if err != nil {
 		logger.Errorf("call InsertProblemTable failed,problem= %+v, err=%s", utils.Sdump(problem), err.Error())
+	}
+	return err
+}
+
+//编辑题目
+func EditProblem(ctx context.Context, problem *dao.Problem) error {
+	logger := utils.GetLogInstance()
+	err := mysqldao.EditProblemTable(ctx, *problem)
+	if err != nil {
+		logger.Errorf("call EditProblemTable failed,problem= %+v, err=%s", utils.Sdump(problem), err.Error())
 	}
 	return err
 }
