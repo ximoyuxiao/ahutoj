@@ -6,7 +6,6 @@ import (
 	"ahutoj/web/io/response"
 	"ahutoj/web/logic"
 	"ahutoj/web/utils"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -18,15 +17,14 @@ func LoginSerivce(ctx *gin.Context) {
 	if err := ctx.ShouldBindWith(req, binding.JSON); err != nil {
 		// 请求参数有误，直接返回响应
 		logger.Errorf("call ShouldBindWith failed, err =%s", err.Error())
-		response.ResponseError(ctx, 201)
+		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
 	resp, err := logic.CheckLogin(req, ctx)
 	if err != nil {
 		logger.Errorf("call CheckLogin failed,req=%+v,err=%s", utils.Sdump(req), err.Error())
-		response.ResponseError(ctx, 202)
+		response.ResponseError(ctx, resp.(response.Response).StatusCode)
 	}
-	logger.Debugf("loginResp=%+v", resp)
 	response.ResponseOK(ctx, resp)
 }
 
@@ -36,18 +34,33 @@ func RegisterService(ctx *gin.Context) {
 	//1、 获取参数
 	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
-		// 请求参数有误，直接返回响应
 		logger.Errorf("call ShouldBindWith failed, err =%s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
-	fmt.Printf("req:%+v\n", req)
+	logger.Infof("req:%+v\n", req)
+
 	//2、 处理业务逻辑
 	resp, err := logic.DoResiger(ctx, req)
 	if err != nil {
 		logger.Errorf("call DoResiger failed,req=%+v,err=%s", *req, err.Error())
 		response.ResponseError(ctx, constanct.ServerBusyCode)
 	}
+
 	//3、 构建响应值，将处理结果返回
+	response.ResponseOK(ctx, resp)
+}
+
+func UserInfoService(ctx *gin.Context) {
+	logger := utils.GetLogInstance()
+	req := ctx.Query("uid")
+	logger.Infof("req:%+v", req)
+
+	resp, err := logic.GetUserInfo(ctx, &req)
+	if err != nil {
+		logger.Errorf("call GetUserInfo failed,req=%+v,err=%s", req, err.Error())
+		response.ResponseError(ctx, constanct.ServerBusyCode)
+	}
+
 	response.ResponseOK(ctx, resp)
 }

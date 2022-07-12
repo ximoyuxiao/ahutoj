@@ -5,6 +5,8 @@ type ResCode int32
 
 const (
 	SuccessCode         ResCode = 0
+	UIDEmpty            ResCode = 101
+	PassEmpty           ResCode = 102
 	InvalidParamCode    ResCode = 1001
 	UIDNotExistCode     ResCode = 1002
 	NotLoginCode        ResCode = 1003
@@ -20,6 +22,8 @@ const (
 
 var codeMsgMap = map[ResCode]string{
 	SuccessCode:         "success",
+	UIDEmpty:            "账号为空",
+	PassEmpty:           "密码为空",
 	InvalidParamCode:    "请求参数错误",
 	UIDNotExistCode:     "账号不存在",
 	NotLoginCode:        "账号未登录",

@@ -14,38 +14,33 @@ import (
 )
 
 func CheckLogin(req *request.LoginReq, c *gin.Context) (interface{}, error) {
+	logger := utils.GetLogInstance()
 	user := dao.User{
 		Uid: req.Uid,
 	}
+	if req.Uid == "" {
+		return response.CreateResponse(constanct.UIDEmpty), nil
+	}
+	if req.Pass == "" {
+		return response.CreateResponse(constanct.PassEmpty), nil
+	}
 	if ok := models.IsUserExistByUid(c, &user); !ok {
-		return response.Response{
-			StatusCode: constanct.UIDNotExistCode,
-			StatusMsg:  constanct.UIDNotExistCode.Msg(),
-		}, nil
+		return response.CreateResponse(constanct.UIDNotExistCode), nil
 	}
 	if err := models.FindUserByUid(c, &user); err != nil {
-		return response.Response{
-			StatusCode: constanct.MySQLErrorCode,
-			StatusMsg:  constanct.MySQLErrorCode.Msg(),
-		}, err
+		return response.CreateResponse(constanct.MySQLErrorCode), err
 	}
-	ok := models.EqualPassWord(c, &user, req.Pass)
-	if !ok {
-		return response.Response{
-			StatusCode: constanct.PassWordErrorCode,
-			StatusMsg:  constanct.PassWordErrorCode.Msg(),
-		}, nil
+	if ok := models.EqualPassWord(c, &user, req.Pass); !ok {
+		return response.CreateResponse(constanct.PassWordErrorCode), nil
 	}
 	token, err := middlewares.GetToken(c, user.Uid)
 	if err != nil {
-		return response.Response{
-			StatusCode: constanct.TokenBuildErrorCode,
-			StatusMsg:  constanct.TokenBuildErrorCode.Msg(),
-		}, nil
+		logger.Errorf("call GetToken failed, err=%s", err.Error())
+		return response.CreateResponse(constanct.TokenBuildErrorCode), nil
 	}
 	permission, err := mysqldao.SelectPermissionByUid(c, user.Uid)
 	if err != nil {
-		return nil, err
+		return response.CreateResponse(constanct.MySQLErrorCode), err
 	}
 	return response.LoginResp{
 		Response: response.Response{
@@ -63,7 +58,7 @@ func CheckLogin(req *request.LoginReq, c *gin.Context) (interface{}, error) {
 	}, nil
 }
 func DoResiger(c *gin.Context, req *request.User) (interface{}, error) {
-	// 1、查看用户账号是否存在
+	logger := utils.GetLogInstance()
 	user := dao.User{
 		Uid:     req.Uid,
 		Uname:   req.Uname,
@@ -75,6 +70,9 @@ func DoResiger(c *gin.Context, req *request.User) (interface{}, error) {
 		Vjpwd:   req.Vjpwd,
 		Email:   req.Email,
 	}
+	//检测用户合法性
+
+	//查看用户账号是否存在
 	exist := models.IsUserExistByUid(c, &user)
 	if exist {
 		return response.CreateResponse(constanct.UIDExistCOde), nil
@@ -84,10 +82,20 @@ func DoResiger(c *gin.Context, req *request.User) (interface{}, error) {
 	// 3、创建用户
 	err := models.CreateUser(c, &user)
 	if err != nil {
-		//日志报错
-		utils.GetLogInstance().Errorf("call CreateUser failed,err=%s", err.Error())
+		logger.Errorf("call CreateUser failed,err=%s", err.Error())
 		return response.CreateResponse(constanct.MySQLErrorCode), err
 	}
 	// 4、返回注册成功的信息给用户
 	return response.CreateResponse(constanct.SuccessCode), nil
+}
+func GetUserInfo(c *gin.Context, req *string) (interface{}, error) {
+	user := dao.User{
+		Uid: *req,
+	}
+	exist := models.IsUserExistByUid(c, &user)
+	if !exist {
+		return response.CreateResponse(constanct.UIDNotExistCode), nil
+	}
+	models.FindUserByUid(c, &user)
+	return response.CreateUserResp(&user), nil
 }

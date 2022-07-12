@@ -77,16 +77,19 @@ func ParseToken(tokenString string) (*MyClaims, error) {
 func JwtVerify(c *gin.Context) {
 	//过滤是否验证token
 	logger := utils.GetLogInstance()
-	token := c.GetHeader("Token")
+	token := c.GetHeader("Authorization")
 	if token == "" {
 		logger.Errorf("token is empty")
 		response.ResponseError(c, constanct.TokenInvaildCode)
+		c.Abort()
+		return
 	}
 	//验证token，并存储在请求中
 	claims, err := ParseToken(token)
 	if err != nil {
 		logger.Errorf("token parse error, token=%s, err =%s", token, err.Error())
 		response.ResponseError(c, constanct.TokenInvaildCode)
+		c.Abort()
 	}
 	c.Set("user", claims)
 	c.Next()

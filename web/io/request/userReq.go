@@ -11,3 +11,6 @@ type User struct {
 	Vjpwd   string `json:"vjpwd"`
 	Email   string `json:"email"`
 }
+type UserInfoReq struct {
+	Uid string `json:"uid" binding:"required"`
+}

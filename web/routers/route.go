@@ -36,7 +36,7 @@ func InitServer() {
 }
 
 func regeisterRouters(router *gin.Engine) {
-	router.GET("/ping", PingTest)
+	router.GET("/ping", PingTest) //测试网络连通性
 	// 相当于接口 /api/ 这组路径
 	apiRouter := router.Group("/api")
 	{
@@ -51,7 +51,7 @@ func regeisterRouters(router *gin.Engine) {
 
 		userRouter := apiRouter.Group("/user").Use(middlewares.JwtVerify)
 		{
-			userRouter.GET("/info/")
+			userRouter.GET("/info/", service.UserInfoService)
 			userRouter.POST("/edit/")
 			userRouter.POST("/edit/pass/")
 			userRouter.GET("/VjudgeBind/")
