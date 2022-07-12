@@ -49,7 +49,7 @@ func EditService(ctx *gin.Context) {
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
-	fmt.Printf("req:%+v\n", req)
+	logger.Info("req:%+v\n", req)
 	resp, err := logic.EditProblem(req, ctx)
 	if err != nil {
 		logger.Errorf("call DoResiger failed,req=%+v,err=%s", *req, err.Error())

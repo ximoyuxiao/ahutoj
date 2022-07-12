@@ -23,6 +23,6 @@ func InsertProblemTable(ctx context.Context, problem dao.Problem) error {
 }
 func EditProblemTable(ctx context.Context, problem dao.Problem) error {
 	db := GetDB(ctx)
-	err := db.Table("Problem").Updates(&problem).Error //这里不确定用法对不对
+	err := db.Table("Problem").Where("Pid=?", problem.Pid).Updates(&problem).Error //这里不确定用法对不对
 	return err
 }
