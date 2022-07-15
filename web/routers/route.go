@@ -46,21 +46,26 @@ func regeisterRouters(router *gin.Engine) {
 			//相当于接口 /api/Auth/login
 			authRouter.POST("/login/", service.LoginSerivce)
 			authRouter.POST("/register/", service.RegisterService)
-			authRouter.GET("/logout/")
+			authRouter.POST("/logout/")
 		}
 
 		userRouter := apiRouter.Group("/user").Use(middlewares.JwtVerify)
 		{
-			userRouter.GET("/info/", service.UserInfoService)
+			userRouter.GET("/info", service.UserInfoService)
 			userRouter.POST("/edit/")
 			userRouter.POST("/edit/pass/")
-			userRouter.GET("/VjudgeBind/")
+			userRouter.GET("/vjudgeBind")
 		}
 
 		adminRouter := apiRouter.Group("/admin").Use(middlewares.JwtVerify)
 		{
-			adminRouter.PUT("/permission/edit/")
+			adminRouter.POST("/permission/edit/")
+			adminRouter.POST("/permission/delete/")
+			adminRouter.POST("/permission/add/")
+			adminRouter.GET("/permission/list/")
+			adminRouter.GET("/permission/:id")
 		}
+
 		problemRouter := apiRouter.Group("/problem")
 		{
 			//->  /api/problem/problems'
@@ -68,8 +73,33 @@ func regeisterRouters(router *gin.Engine) {
 			problemRouter.POST("/edit/", service.EditService)     //编辑题目
 			problemRouter.POST("/delete/", service.DeleteService) //删除题目
 
-			problemRouter.GET("/getlist/", service.GetListService) //获取题目列表
-			problemRouter.GET("/get/", service.GetService)         //获取题目
+			problemRouter.GET("/list", service.GetListService) //获取题目列表
+
+			// param 可以获取id
+			problemRouter.GET("/:id", service.GetService) //获取题目
+		}
+
+		trainingRouter := apiRouter.Group("/training")
+		{
+			trainingRouter.POST("/add/")
+			trainingRouter.POST("/edit/")
+
+			trainingRouter.POST("/delete/")
+
+			trainingRouter.GET("/list")
+			trainingRouter.GET("/:id")
+			trainingRouter.GET("/:id/rank")
+		}
+
+		contestRouter := apiRouter.Group("/contest")
+		{
+			contestRouter.POST("/add/")
+			contestRouter.POST("/edit/")
+			contestRouter.POST("/delete/")
+
+			contestRouter.GET("/list")
+			contestRouter.GET("/:id")
+			contestRouter.GET("/:id/rank")
 		}
 	}
 }
