@@ -101,6 +101,13 @@ func regeisterRouters(router *gin.Engine) {
 			contestRouter.GET("/:id")
 			contestRouter.GET("/:id/rank")
 		}
+
+		fileRouter := apiRouter.Group("/file")
+		{
+			fileRouter.PUT("/add/")
+			fileRouter.DELETE("/delete/")
+			fileRouter.POST("/unzip/")
+		}
 	}
 }
 
