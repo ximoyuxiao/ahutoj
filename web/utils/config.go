@@ -13,6 +13,7 @@ type AppConfig struct {
 	Mode         string `mapstructure:"mode"`
 	Sign         string `mapstructure:"sign"`
 	Version      string `mapstructure:"version"`
+	DataPath     string `mapstructure:"dataPath"`
 	*MySQLConfig `mapstructure:"mysql"`
 	*RedisConfig `mapstructure:"redis"`
 	*LogConfig   `mapstructure:"log"`

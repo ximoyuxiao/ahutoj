@@ -104,9 +104,9 @@ func regeisterRouters(router *gin.Engine) {
 
 		fileRouter := apiRouter.Group("/file")
 		{
-			fileRouter.PUT("/add/", service.UpFile)
-			fileRouter.DELETE("/delete/", service.RemoveFile)
-			fileRouter.POST("/unzip/", service.UnzipFile)
+			fileRouter.PUT("/add/:pid", service.UpFile)
+			fileRouter.DELETE("/delete/:pid", service.RemoveFile)
+			fileRouter.POST("/unzip/:pid", service.UnzipFile)
 		}
 	}
 }
