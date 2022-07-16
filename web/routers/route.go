@@ -44,17 +44,17 @@ func regeisterRouters(router *gin.Engine) {
 		authRouter := apiRouter.Group("/auth")
 		{
 			//相当于接口 /api/Auth/login
-			authRouter.POST("/login/", service.LoginSerivce)
-			authRouter.POST("/register/", service.RegisterService)
-			authRouter.POST("/logout/")
+			authRouter.POST("/login/", service.Login)
+			authRouter.POST("/register/", service.Register)
+			authRouter.POST("/logout/", service.Logout)
 		}
 
 		userRouter := apiRouter.Group("/user").Use(middlewares.JwtVerify)
 		{
-			userRouter.GET("/info", service.UserInfoService)
-			userRouter.POST("/edit/")
-			userRouter.POST("/edit/pass/")
-			userRouter.GET("/vjudgeBind")
+			userRouter.GET("/info", service.UserInfo)
+			userRouter.POST("/edit/", service.EditUserInfo)
+			userRouter.POST("/edit/pass/", service.EditUserPass)
+			userRouter.GET("/vjudgeBind", service.VjudgeBind)
 		}
 
 		adminRouter := apiRouter.Group("/admin").Use(middlewares.JwtVerify)
@@ -104,9 +104,9 @@ func regeisterRouters(router *gin.Engine) {
 
 		fileRouter := apiRouter.Group("/file")
 		{
-			fileRouter.PUT("/add/")
-			fileRouter.DELETE("/delete/")
-			fileRouter.POST("/unzip/")
+			fileRouter.PUT("/add/", service.UpFile)
+			fileRouter.DELETE("/delete/", service.RemoveFile)
+			fileRouter.POST("/unzip/", service.UnzipFile)
 		}
 	}
 }
