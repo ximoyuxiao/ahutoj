@@ -99,3 +99,15 @@ func GetUserInfo(c *gin.Context, req *string) (interface{}, error) {
 	models.FindUserByUid(c, &user)
 	return response.CreateUserResp(&user), nil
 }
+
+func UpdateUserInfo(ctx *gin.Context, req request.UserEditReq) (interface{}, error) {
+	return response.CreateResponse(constanct.UIDNotExistCode), nil
+}
+
+func UpdateUserPass(ctx *gin.Context, req request.UserEditPassReq) (interface{}, error) {
+	return response.CreateResponse(constanct.UIDNotExistCode), nil
+}
+
+func UpdateUserVjudge(ctx *gin.Context, req request.UserEditVjudgeReq) (interface{}, error) {
+	return response.CreateResponse(constanct.UIDNotExistCode), nil
+}

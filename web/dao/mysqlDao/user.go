@@ -24,3 +24,9 @@ func InsertUserTable(ctx context.Context, user dao.User) error {
 	err := db.Table("User").Create(&user).Error
 	return err
 }
+
+func UpdateUserByUid(ctx context.Context, user dao.User) error {
+	db := GetDB(ctx)
+	err := db.Table("user").Where("uid=?", user.Uid).Updates(&user).Error
+	return err
+}
