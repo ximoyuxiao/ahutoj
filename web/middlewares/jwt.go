@@ -12,8 +12,12 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-var sign []byte
-var ExpTime time.Duration
+var (
+	sign    []byte
+	ExpTime time.Duration
+)
+
+const JwtTokenCtxKey = "user"
 
 type Permmision struct {
 	Administrator   bool `json:"administrator"`
@@ -21,6 +25,7 @@ type Permmision struct {
 	Source_browser  bool `json:"source_browser"`
 	Contest_creator bool `json:"contest_creator"`
 }
+
 type MyClaims struct {
 	UserID string `json:"uid"`
 	Permmision
@@ -73,9 +78,19 @@ func ParseToken(tokenString string) (*MyClaims, error) {
 	return nil, errors.New("invalid token")
 }
 
-//验证token
+// GetUid 从上下文对象中取出 uid
+func GetUid(ctx *gin.Context) string {
+	a, _ := ctx.Get(JwtTokenCtxKey)
+	myClaims, ok := a.(*MyClaims)
+	if !ok {
+		return ""
+	}
+	return myClaims.UserID
+}
+
+// 验证token
 func JwtVerify(c *gin.Context) {
-	//过滤是否验证token
+	// 过滤是否验证token
 	logger := utils.GetLogInstance()
 	token := c.GetHeader("Authorization")
 	if token == "" {
@@ -84,13 +99,14 @@ func JwtVerify(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	//验证token，并存储在请求中
+	// 验证token，并存储在请求中
 	claims, err := ParseToken(token)
 	if err != nil {
-		logger.Errorf("token parse error, token=%s, err =%s", token, err.Error())
+		logger.Errorf("token parse error, token=%s, err = %s", token, err.Error())
 		response.ResponseError(c, constanct.TokenInvalidCode)
 		c.Abort()
 	}
-	c.Set("user", claims)
+
+	c.Set(JwtTokenCtxKey, claims)
 	c.Next()
 }

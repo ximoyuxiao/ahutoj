@@ -16,7 +16,7 @@ func Login(ctx *gin.Context) {
 	req := new(request.LoginReq)
 	if err := ctx.ShouldBindWith(req, binding.JSON); err != nil {
 		// 请求参数有误，直接返回响应
-		logger.Errorf("call ShouldBindWith failed, err =%s", err.Error())
+		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
@@ -34,7 +34,7 @@ func Register(ctx *gin.Context) {
 	// 1、 获取参数
 	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
-		logger.Errorf("call ShouldBindWith failed, err =%s", err.Error())
+		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}

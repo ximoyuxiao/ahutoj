@@ -27,8 +27,8 @@ type UserEditReq struct {
 }
 
 type UserEditPassReq struct {
-	Fpwd string `json:"fpwd"`
-	Spwd string `json:"spwd"`
+	Pwd    string `json:"pwd" binding:"required"`
+	OldPwd string `json:"old_pwd" binding:"required"`
 }
 
 type UserEditVjudgeReq struct {
@@ -36,18 +36,9 @@ type UserEditVjudgeReq struct {
 	Vjpwd string `json:"vjpwd"`
 }
 
-type UserEditReq struct {
-	Uid     string `json:"uid" binding:"required"`
-	Uname   string `json:"uname"`
-	School  string `json:"school"`
-	Classes string `json:"classes"`
-	Major   string `json:"major"`
-	Email   string `json:"email"`
-}
-
-func (u UserEditReq) ToUser() *dao.User {
+func (u UserEditReq) ToUser(uid string) *dao.User {
 	return &dao.User{
-		Uid:     u.Uid,
+		Uid:     uid,
 		Uname:   u.Uname,
 		School:  u.School,
 		Classes: u.Classes,
@@ -56,29 +47,9 @@ func (u UserEditReq) ToUser() *dao.User {
 	}
 }
 
-type UserEditPassReq struct {
-	Uid     string `json:"uid" binding:"required"`
-	Pass    string `json:"pass" binding:"required"`
-	OldPass string `json:"old_pass" binding:"required"`
-}
-
-// func (u UserEditPassReq) ToUser() *dao.User {
-// 	return &dao.User{
-// 		Uid:  u.Uid,
-// 		Pass: u.Pass,
-// 	}
-// }
-
-// UserVjudgeBindReq 需要 vj 入参限定
-type UserVjudgeBindReq struct {
-	Uid   string `json:"uid" binding:"required"`
-	Vjid  string `json:"vjid"`
-	Vjpwd string `json:"vjpwd"`
-}
-
-func (u UserVjudgeBindReq) ToUser() *dao.User {
+func (u UserEditVjudgeReq) ToUser(uid string) *dao.User {
 	return &dao.User{
-		Uid:   u.Uid,
+		Uid:   uid,
 		Vjid:  u.Vjid,
 		Vjpwd: u.Vjpwd,
 	}

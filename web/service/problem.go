@@ -17,8 +17,8 @@ func AddService(ctx *gin.Context) {
 	req := new(request.Problem)
 	err := ctx.ShouldBindWith(req, binding.Form)
 	if err != nil {
-		//请求参数有误 直接返回响应
-		logger.Errorf("call ShouldBindWith failed, err =%s", err.Error())
+		// 请求参数有误 直接返回响应
+		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}

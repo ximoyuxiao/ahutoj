@@ -29,21 +29,21 @@ func InitServer() {
 		pprof.Register(router)
 	}
 
-	//404
+	// 404
 	router.NoRoute(NotFindRegister)
 
 	router.Run(conf.Port)
 }
 
 func regeisterRouters(router *gin.Engine) {
-	router.GET("/ping", PingTest) //测试网络连通性
+	router.GET("/ping", PingTest) // 测试网络连通性
 	// 相当于接口 /api/ 这组路径
 	apiRouter := router.Group("/api")
 	{
-		//相当于接口/api/Auth/ 的这组路径
+		// 相当于接口/api/Auth/ 的这组路径
 		authRouter := apiRouter.Group("/auth")
 		{
-			//相当于接口 /api/Auth/login
+			// 相当于接口 /api/Auth/login
 			authRouter.POST("/login/", service.Login)
 			authRouter.POST("/register/", service.Register)
 			authRouter.POST("/logout/", service.Logout)
@@ -54,7 +54,7 @@ func regeisterRouters(router *gin.Engine) {
 			userRouter.GET("/info", service.UserInfo)
 			userRouter.POST("/edit/", service.EditUserInfo)
 			userRouter.POST("/edit/pass/", service.EditUserPass)
-			userRouter.GET("/vjudgeBind", service.VjudgeBind)
+			userRouter.POST("/vjudgeBind", service.VjudgeBind)
 		}
 
 		adminRouter := apiRouter.Group("/admin").Use(middlewares.JwtVerify)
@@ -68,15 +68,15 @@ func regeisterRouters(router *gin.Engine) {
 
 		problemRouter := apiRouter.Group("/problem")
 		{
-			//->  /api/problem/problems'
-			problemRouter.POST("/add/", service.AddService)       //添加题目
-			problemRouter.POST("/edit/", service.EditService)     //编辑题目
-			problemRouter.POST("/delete/", service.DeleteService) //删除题目
+			// ->  /api/problem/problems'
+			problemRouter.POST("/add/", service.AddService)       // 添加题目
+			problemRouter.POST("/edit/", service.EditService)     // 编辑题目
+			problemRouter.POST("/delete/", service.DeleteService) // 删除题目
 
-			problemRouter.GET("/list", service.GetListService) //获取题目列表
+			problemRouter.GET("/list", service.GetListService) // 获取题目列表
 
 			// param 可以获取id
-			problemRouter.GET("/:id", service.GetService) //获取题目
+			problemRouter.GET("/:id", service.GetService) // 获取题目
 		}
 
 		trainingRouter := apiRouter.Group("/training")
