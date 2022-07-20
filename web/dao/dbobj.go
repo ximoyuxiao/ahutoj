@@ -12,6 +12,10 @@ type User struct {
 	Email   string `db:"email"`
 }
 
+func (u User) TableName() string {
+	return "User"
+}
+
 type Permission struct {
 	Uid             string `db:"uid"`
 	Administrator   string `db:"administrator"`

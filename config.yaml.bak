@@ -1,5 +1,6 @@
 port: ":4212"
 mode: "debug"
+dataPath: "./Data/"
 mysql:
     driver: "mysql"
     host: "127.0.0.1"
@@ -13,6 +14,7 @@ redis:
     port: 6379
     db: 0
     pool_size: 100
+    password: ""
 
 log:
     level: "info"

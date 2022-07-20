@@ -5,12 +5,14 @@ type ResCode int32
 
 const (
 	SuccessCode         ResCode = 0
+	UIDEmpty            ResCode = 101
+	PassEmpty           ResCode = 102
 	InvalidParamCode    ResCode = 1001
 	UIDNotExistCode     ResCode = 1002
 	NotLoginCode        ResCode = 1003
 	PassWordErrorCode   ResCode = 1004
 	TokenBuildErrorCode ResCode = 1005
-	TokenInvaildCode    ResCode = 1006
+	TokenInvalidCode    ResCode = 1006
 	UIDExistCOde        ResCode = 1007
 	PIDExistCode        ResCode = 1008
 	MySQLErrorCode      ResCode = 2001
@@ -20,11 +22,13 @@ const (
 
 var codeMsgMap = map[ResCode]string{
 	SuccessCode:         "success",
+	UIDEmpty:            "账号为空",
+	PassEmpty:           "密码为空",
 	InvalidParamCode:    "请求参数错误",
 	UIDNotExistCode:     "账号不存在",
 	NotLoginCode:        "账号未登录",
 	TokenBuildErrorCode: "Token创建失败",
-	TokenInvaildCode:    "无效的Token",
+	TokenInvalidCode:    "无效的Token",
 	PassWordErrorCode:   "密码错误",
 	MySQLErrorCode:      "数据库错误",
 	RedisErrorCode:      "缓存数据库错误",

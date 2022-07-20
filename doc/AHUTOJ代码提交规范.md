@@ -14,7 +14,7 @@ git clone https://gitee.com/practice-platform_a2571717957/ahut-onlinjudge-a.git
 
 新分支的命名方式：学号/原分支名/修改内容
 
-如我要在master分治创建一个login接口，我的做法应该是
+如我要在master分支创建一个login接口，我的做法应该是
 
 ```sh
 git checkout master # 切换会原来的master分治

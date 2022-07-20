@@ -11,7 +11,7 @@ import (
 )
 
 func InitServer() {
-	conf := utils.GetInstance()
+	conf := utils.GetConfInstance()
 
 	switch conf.Mode {
 	case gin.DebugMode:
@@ -29,47 +29,84 @@ func InitServer() {
 		pprof.Register(router)
 	}
 
-	//404
+	// 404
 	router.NoRoute(NotFindRegister)
 
 	router.Run(conf.Port)
 }
 
 func regeisterRouters(router *gin.Engine) {
-	router.GET("/ping", PingTest)
+	router.GET("/ping", PingTest) // 测试网络连通性
 	// 相当于接口 /api/ 这组路径
 	apiRouter := router.Group("/api")
 	{
-		//相当于接口/api/Auth/ 的这组路径
+		// 相当于接口/api/Auth/ 的这组路径
 		authRouter := apiRouter.Group("/auth")
 		{
-			//相当于接口 /api/Auth/login
-			authRouter.POST("/login/", service.LoginSerivce)
-			authRouter.POST("/register/", service.RegisterService)
-			authRouter.GET("/logout/")
+			// 相当于接口 /api/Auth/login
+			authRouter.POST("/login/", service.Login)
+			authRouter.POST("/register/", service.Register)
+			authRouter.POST("/logout/", service.Logout)
 		}
 
 		userRouter := apiRouter.Group("/user").Use(middlewares.JwtVerify)
 		{
-			userRouter.GET("/info/")
-			userRouter.POST("/edit/")
-			userRouter.POST("/edit/pass/")
-			userRouter.GET("/VjudgeBind/")
+			userRouter.GET("/info", service.UserInfo)
+			userRouter.POST("/edit/", service.EditUserInfo)
+			userRouter.POST("/edit/pass/", service.EditUserPass)
+			userRouter.POST("/vjudgeBind", service.VjudgeBind)
 		}
 
 		adminRouter := apiRouter.Group("/admin").Use(middlewares.JwtVerify)
 		{
-			adminRouter.PUT("permission/edit")
+			adminRouter.POST("/permission/edit/")
+			adminRouter.POST("/permission/delete/")
+			adminRouter.POST("/permission/add/")
+			adminRouter.GET("/permission/list/")
+			adminRouter.GET("/permission/:id")
 		}
+
 		problemRouter := apiRouter.Group("/problem")
 		{
-			//->  /api/problem/problems'
-			problemRouter.POST("/add/", service.AddService)       //添加题目
-			problemRouter.POST("/edit/", service.EditService)     //编辑题目
-			problemRouter.POST("/delete/", service.DeleteService) //删除题目
+			// ->  /api/problem/problems'
+			problemRouter.POST("/add/", service.AddService)       // 添加题目
+			problemRouter.POST("/edit/", service.EditService)     // 编辑题目
+			problemRouter.POST("/delete/", service.DeleteService) // 删除题目
 
-			problemRouter.GET("/getlist/", service.GetListService) //获取题目列表
-			problemRouter.GET("/get/", service.GetService)         //获取题目
+			problemRouter.GET("/list", service.GetListService) // 获取题目列表
+
+			// param 可以获取id
+			problemRouter.GET("/:id", service.GetService) // 获取题目
+		}
+
+		trainingRouter := apiRouter.Group("/training")
+		{
+			trainingRouter.POST("/add/")
+			trainingRouter.POST("/edit/")
+
+			trainingRouter.POST("/delete/")
+
+			trainingRouter.GET("/list")
+			trainingRouter.GET("/:id")
+			trainingRouter.GET("/:id/rank")
+		}
+
+		contestRouter := apiRouter.Group("/contest")
+		{
+			contestRouter.POST("/add/")
+			contestRouter.POST("/edit/")
+			contestRouter.POST("/delete/")
+
+			contestRouter.GET("/list")
+			contestRouter.GET("/:id")
+			contestRouter.GET("/:id/rank")
+		}
+
+		fileRouter := apiRouter.Group("/file")
+		{
+			fileRouter.PUT("/add/:pid", service.UpFile)
+			fileRouter.DELETE("/delete/:pid", service.RemoveFile)
+			fileRouter.POST("/unzip/:pid", service.UnzipFile)
 		}
 	}
 }

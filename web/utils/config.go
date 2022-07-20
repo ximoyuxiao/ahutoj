@@ -13,6 +13,7 @@ type AppConfig struct {
 	Mode         string `mapstructure:"mode"`
 	Sign         string `mapstructure:"sign"`
 	Version      string `mapstructure:"version"`
+	DataPath     string `mapstructure:"dataPath"`
 	*MySQLConfig `mapstructure:"mysql"`
 	*RedisConfig `mapstructure:"redis"`
 	*LogConfig   `mapstructure:"log"`
@@ -21,14 +22,14 @@ type AppConfig struct {
 type MySQLConfig struct {
 	Driver   string `mapstructure:"driver"`
 	Host     string `mapstructure:"host"`
-	Port     int16  `mapstructure:"port"`
+	Port     uint16 `mapstructure:"port"`
 	UserName string `mapstructure:"username"`
 	Dbname   string `mapstructure:"dbname"`
 	Password string `password:"password"`
 }
 type RedisConfig struct {
 	Host     string `mapstructure:"host"`
-	Port     int16  `mapstructure:"port"`
+	Port     uint16 `mapstructure:"port"`
 	Db       int16  `mapstructure:"db"`
 	PoolSize int16  `mapstructure:"pool_size"`
 }
@@ -49,10 +50,11 @@ func ConfigInit(configPath string) error {
 		fmt.Printf("call Unmarshal Failed, err=%s\n", err.Error())
 		return err
 	}
+	fmt.Println(config)
 	return nil
 
 }
 
-func GetInstance() *AppConfig {
+func GetConfInstance() *AppConfig {
 	return config
 }

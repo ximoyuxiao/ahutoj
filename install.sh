@@ -5,10 +5,11 @@ sudo apt update
 for pkg in net-tools make flex g++ clang libmysqlclient-dev libmysql++-dev nginx mysql-server pkg-config redis
 do
     echo "正在为您安装$pkg..."
-	while ! apt-get install -y $pkg 
-	do
+	if ! apt-get install -y $pkg
+    then
 		echo "Network fail, retry... you might want to change another apt source for install"
-	done
+        exit 1
+	fi
 done
 
 # 安装go环境
@@ -22,6 +23,7 @@ if [ $? -eq 1 ]
         go env -w GO111MODULE="on"
         go env -w GOPROXY="https://goproxy.cn,direct"
         go env -w GOSUMDB=off
+        # 这一块  没办法自动获取  后面要改
         export GOPATH=`go env GOPATH`
         export PATH=$PATH:/usr/bin/go:${GOPATH}:${GOPATH}/bin
     else
