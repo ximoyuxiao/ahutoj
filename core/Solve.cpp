@@ -9,7 +9,7 @@ Solve::Solve(int problemID,int solutionID,const char *source,int limitTime,int l
     this->solutionID = solutionID;
     this->source = source;
     this->limitTime = limitTime;
-    this->limitMemory = limitMemory;
+    this->limitMemory = limitMeory;
     this->lang = lang;
     this->res = JUDGE;
     judgeID = 0;        //JudgeID

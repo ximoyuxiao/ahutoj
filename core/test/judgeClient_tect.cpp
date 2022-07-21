@@ -76,7 +76,7 @@ static void judgeClient_TLE(){
     status = JUDGE;
     juc.judge();
     if(solve->Sres() != TLE){
-        printf("Failed res=%s",runningres[solve->Sres()]);
+        printf("Failed res=%s\n",runningres[solve->Sres()]);
         return ;
     }
     puts("pass");
@@ -90,7 +90,7 @@ static void judgeClient_MLE(){
     judgeClient juc(solve);
     status = JUDGE;
     juc.judge();
-    if(solve->Sres() != WA){
+    if(solve->Sres() != MLE){
         printf("Failed res=%s\n",runningres[solve->Sres()]);
         return ;
     }
@@ -99,8 +99,8 @@ static void judgeClient_MLE(){
 }
 static void judgeClient_test()
 {
-    judgeClient_TLE();
     judgeClient_AC();
+    judgeClient_TLE();
     judgeClient_MLE();
     judgeClient_PE();
     judgeClient_RE();

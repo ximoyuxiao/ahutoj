@@ -25,9 +25,7 @@ static pid_t pid ;
 static sighandler_t oldAlarmHandle;
 static sighandler_t oldHupHandle;
 static SubRes status = JUDGE;
-static void Alam_Handle(int s){
-    if(!kill(pid,SIGKILL))
-        status  = TLE;  
+static void setfreeTimer(){
     struct itimerval time;
     time.it_interval.tv_usec =0;
     time.it_interval.tv_sec = 0;
@@ -35,6 +33,9 @@ static void Alam_Handle(int s){
     time.it_value.tv_usec = 0;
     setitimer(ITIMER_REAL,&time,NULL);
     signal(SIGALRM,oldAlarmHandle);
+}
+static void Alam_Handle(int s){
+    exit(TLE);
 }
 static void kiil_handle(int s)
 {
@@ -51,6 +52,11 @@ static void upsig_handle(int s)
         wait(NULL);
     signal(SIGHUP,oldHupHandle);
     
+}
+
+static void egv_handle(int s)
+{
+    exit(MLE);
 }
 bool judgeClient::checkSource(){
     return true;
@@ -140,7 +146,7 @@ long long judgeClient::getFileSize(const char * filepath)
 
 bool judgeClient::running(SubRes &result,const char * runFile,const char *resFile)
 {
-
+    ILOG("limit:%d",this->solve->LimitMemory());
     pid = fork();
     if(pid < 0)
     {
@@ -149,22 +155,19 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
     }
     if(pid)
     {
-        oldAlarmHandle =  signal(SIGALRM,Alam_Handle);
-        // oldMemHandle = signal(SIGCHLD,Alam_Handle);
-        itimerval time;
-        time.it_interval.tv_usec =0;
-        time.it_interval.tv_sec = 0;
-        time.it_value.tv_sec = this->solve->LimitTime();
-        time.it_value.tv_usec = 1000;
-        setitimer(ITIMER_REAL,&time,NULL);
-        // setrlimit()
         int ret = 0;
         wait(&ret);
-        if(ret != 0)
-            result =RE;
-        if(status != JUDGE)
-            result = status;
-        // prlimit();
+        if(WIFSIGNALED(ret)){
+            int sig = WTERMSIG(ret);
+            DLOG("error signal:%d",sig);
+            if(sig == SIGALRM){
+                result = TLE;
+            }else if(sig == SIGSEGV){
+                result = MLE;
+            }else{
+                result = RE;
+            }
+        }
     }
     else
     {
@@ -174,7 +177,19 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
         int wfd = open(resFile,O_RDWR|O_CREAT,0777);
         dup2(rfd,STDIN_FILENO);
         dup2(wfd,STDOUT_FILENO);
-        signal(SIGKILL,kiil_handle);
+        // rlimit limit;
+        // memset(&limit,0,sizeof(limit));
+        // limit.rlim_cur = 0;
+        // limit.rlim_max = 1024 * this->solve->LimitMemory();
+        // setrlimit(RLIMIT_AS,&limit);
+        itimerval time;
+        time.it_interval.tv_usec =0;
+        time.it_interval.tv_sec = 0;
+        time.it_value.tv_sec = this->solve->LimitTime();
+        time.it_value.tv_usec = 1000;
+        setitimer(ITIMER_REAL,&time,NULL);
+        signal(SIGALRM,Alam_Handle);
+        signal(SIGSEGV,egv_handle);
         char path[128]={0};
         sprintf(path,"%s/main",dir);
         int ret = 0;
@@ -296,8 +311,7 @@ bool judgeClient::judge()
     {
         switch (this->Jstat)
         {
-            case J_CHECK:
-            {
+            case J_CHECK:{
                 ILOG("J_CHECK");
                 if(checkSource()){
                     Jstat = J_GETFILE;
@@ -309,15 +323,15 @@ bool judgeClient::judge()
                 }
                 break;
             }
-            case J_GETFILE:
-            {
+            
+            case J_GETFILE:{
                 ILOG("J_GETFILE");
                 getFiles();
                 Jstat = J_COMPILE;
                 break;
             }
-            case J_COMPILE:
-            {
+            
+            case J_COMPILE:{
                 ILOG("J_COMPILE");
                 if(compile()){
                     Jstat = J_RUNNING;
@@ -328,14 +342,13 @@ bool judgeClient::judge()
                 }
                 break;
             }
-            case J_RUNNING:
-            {
+            
+            case J_RUNNING:{
                 ILOG("J_RUNNING");
                 SubRes res  = AC;
                 char resoutfile[128];
                 sprintf(resoutfile,"%s/ans",dir);
-                for(int i = 0;i<inputFiles.size();i++)
-                {
+                for(int i = 0;i<inputFiles.size();i++){
                     DLOG("runnning:%s",inputFiles[i].c_str());
                     running(res,inputFiles[i].c_str(),resoutfile);
                     DLOG("runned:%s",outputFiles[i].c_str());
@@ -346,25 +359,24 @@ bool judgeClient::judge()
                         break;
                     
                 }
-                if(res != AC)
-                {
+                if(res != AC){
                     Jstat = J_FAILED;
                     solve->Sres(res);
                 }
-                else
-                {
+                else{
                     Jstat = J_SUCESS;
                 }
                 break;
             }
+           
             case J_CE:{
                 //处理CE事件。。。
                 DLOG("%d:CE",solve->Sid());
                 Jstat = J_FAILED;
                 break;
             }
-            case J_SUCESS:
-            {
+            
+            case J_SUCESS:{
                 DLOG("%d:AC",solve->Sid());
                 solve->Sres(AC);
                 char del[1024] = "";
@@ -372,14 +384,15 @@ bool judgeClient::judge()
                 system(del);
                 return true;
             }
-            case J_FAILED:
-            {
+            
+            case J_FAILED:{
                 DLOG("%d:%s",solve->Sid(),runningres[solve->Sres()]);
                 char del[1024] = "";
                 sprintf(del,"rm -rf %s",dir);
                 system(del);
                 return false;
             }
+            
             default:
                 char del[1024] = "";
                 sprintf(del,"rm -rf %s",dir);
@@ -393,32 +406,3 @@ judgeClient::judgeClient(Solve *solve){
     Jstat = J_CHECK;
     this->solve = solve;
 }
-// static void judgeClient_test()
-// {
-//     Solve *solve;
-//     solve = new Solve(1,1,"#include<iostream>\nusing namespace std;\nint main(){\n\tfor(int i=0;;i++){int a =0;}\n\texit(0);\n}",1,128,CPP11);
-//     judgeClient juc(*solve);
-//     status = JUDGE;
-//     juc.judge();
-//     return ;
-// }
-// int main(int argc, char const *argv[])
-// {
-//     mlog::init("./log");
-//     judgeClient_test();
-//     mlog::destory();
-//     // ShmemQueue<Solve> squeue(IPC_PATH);
-//     // squeue.get_queue();
-//     // while(true)
-//     // {
-//     //     //这边应该用信号量那一套、
-//     //     while(!solve)
-//     //     {
-//     //         solve = squeue.pop();
-//     //     }
-//     //     judgeClient juc(*solve);
-//     //     juc.judge();
-//     //     solve = nullptr;
-//     // }
-//     return 0;
-// }
