@@ -13,9 +13,9 @@ static void judgeClient_AC(){
     Solve* solve = nullptr;
     solve = solve = new Solve(1,1,"#include<iostream>\nusing namespace std;\nint main(){\n\tcout<<\"hello world\";\n\texit(0);\n}",1,128,CPP11);
     judgeClient juc(solve);
-    status = JUDGE;
+    status = OJ_JUDGE;
     juc.judge();
-    if(solve->Sres() != AC){
+    if(solve->Sres() != OJ_AC){
         printf("Failed res=%s\n",runningres[solve->Sres()]);
         return ;
     }
@@ -28,9 +28,9 @@ static void judgeClient_PE(){
     Solve* solve = nullptr;
     solve = solve = new Solve(1,1,"#include<iostream>\nusing namespace std;\nint main(){\n\tcout<<\"hello world\"<<endl;\n\texit(0);\n}",1,128,CPP11);
     judgeClient juc(solve);
-    status = JUDGE;
+    status = OJ_JUDGE;
     juc.judge();
-    if(solve->Sres() != PE){
+    if(solve->Sres() != OJ_PE){
         printf("Failed res=%s\n",runningres[solve->Sres()]);
         return ;
     }
@@ -43,9 +43,9 @@ static void judgeClient_RE(){
     Solve* solve = nullptr;
     solve = solve = new Solve(1,1,"#include<iostream>\nusing namespace std;\nint main(){\n\tint a=1,b=0;\n\tcout<<a/b;\n\texit(0);\n}",1,128,CPP11);
     judgeClient juc(solve);
-    status = JUDGE;
+    status = OJ_JUDGE;
     juc.judge();
-    if(solve->Sres() != RE){
+    if(solve->Sres() != OJ_RE){
         printf("Failed res=%s\n",runningres[solve->Sres()]);
         return ;
     }
@@ -58,9 +58,9 @@ static void judgeClient_WA(){
     Solve* solve = nullptr;
     solve = solve = new Solve(1,1,"#include<iostream>\nusing namespace std;\nint main(){\n\tcout<<\"world\";\n\texit(0);\n}",1,128,CPP11);
     judgeClient juc(solve);
-    status = JUDGE;
+    status = OJ_JUDGE;
     juc.judge();
-    if(solve->Sres() != WA){
+    if(solve->Sres() != OJ_WA){
         printf("Failed res=%s\n",runningres[solve->Sres()]);
         return ;
     }
@@ -73,9 +73,9 @@ static void judgeClient_TLE(){
     Solve *solve;
     solve = new Solve(1,1,"#include<iostream>\nusing namespace std;\nint main(){\n\tfor(int i=0;;i++){int a =0;}\n\texit(0);\n}",1,128,CPP11);
     judgeClient juc(solve);
-    status = JUDGE;
+    status = OJ_JUDGE;
     juc.judge();
-    if(solve->Sres() != TLE){
+    if(solve->Sres() != OJ_TLE){
         printf("Failed res=%s\n",runningres[solve->Sres()]);
         return ;
     }
@@ -88,9 +88,9 @@ static void judgeClient_MLE(){
     Solve* solve = nullptr;
     solve = solve = new Solve(1,1,"#include<iostream>\n#include<cstdlib>\nusing namespace std;\nint main(){\n\tmalloc(256*1024*1024);\n\texit(0);\n}",1,128,CPP11);
     judgeClient juc(solve);
-    status = JUDGE;
+    status = OJ_JUDGE;
     juc.judge();
-    if(solve->Sres() != MLE){
+    if(solve->Sres() != OJ_MLE){
         printf("Failed res=%s\n",runningres[solve->Sres()]);
         return ;
     }
