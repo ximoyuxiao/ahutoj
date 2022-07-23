@@ -1,8 +1,8 @@
+.vscode
 *.yaml
 *.log
 log
 tmp
-.vscode
 .idea
 *.out
 *.o

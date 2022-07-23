@@ -1,6 +1,6 @@
 #ifndef REDIS_H__
 #define REDUS_H__
-// #include<redis/hiredis/hiredis.h>
+#include<hiredis/hiredis.h>
 #include<string>
 using std::string;
 class Redis

@@ -11,7 +11,7 @@ Solve::Solve(int problemID,int solutionID,const char *source,int limitTime,int l
     this->limitTime = limitTime;
     this->limitMemory = limitMeory;
     this->lang = lang;
-    this->res = JUDGE;
+    this->res = OJ_JUDGE;
     judgeID = 0;        //JudgeID
     usetime = 0;        //运行时间
     usememory = 0;      //运行内存

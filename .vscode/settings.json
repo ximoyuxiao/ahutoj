@@ -2,6 +2,7 @@
     "makefile.extensionOutputFolder": "./.vscode",
     "files.associations": {
         "*.html": "html",
-        "vector": "cpp"
+        "vector": "cpp",
+        "string": "cpp"
     }
 }

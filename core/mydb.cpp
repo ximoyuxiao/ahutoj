@@ -1,5 +1,6 @@
 #include"mydb.h"
 mysqlDB* mysqlDB::mydb = nullptr;
+
 void mysqlDB::initConn(const char* host,const char* user,const char* pass,const char* db,int port){
     mydb = new mysqlDB(host,user,pass,db,port);
     return ;
@@ -12,6 +13,7 @@ mysqlDB::mysqlDB(){
     db = nullptr;
     port = 0;
 }
+
 mysqlDB::mysqlDB(const char* host,const char* user,const char* pass,const char* db,int port = 3306)
 :host(host),user(user),pass(pass),db(db),port(port)
 {
@@ -23,6 +25,7 @@ mysqlDB* mysqlDB::getInstance(){
         return new mysqlDB();
     return mydb;
 }
+
 int mysqlDB::getDatabase(MYSQL* mysql)
 {
     mysql_init(mysql);
@@ -33,6 +36,7 @@ int mysqlDB::getDatabase(MYSQL* mysql)
     }
     return mysql_errno(mysql);
 }
+
 void mysqlDB::CloseDatabase(MYSQL* mysql,MYSQL_RES* res)
 {
     if(res != NULL)
