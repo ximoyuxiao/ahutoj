@@ -15,7 +15,7 @@ public:
     SolutionDb();
     ~SolutionDb();
     bool initDB(readConfig* rcf);
-    vector<Solve*> getSolveWhithRedis();
+    vector<Solve*> getSolve();
     bool commitSolveToDb(Solve* solve);
     void ReleaseSolve(Solve* solve);
 };

@@ -25,25 +25,21 @@ bool SolutionDb::initDB(readConfig* rcf)
     return true;
 }
 
-vector<Solve*> SolutionDb::getSolveWhithRedis(){
-
+vector<Solve*> SolutionDb::getSolve(){
+    char sql[256] = "";
+    sprintf(sql,"select sid,pid,uid,cid,source,lang from Submit where result='Judgeing'");
 }
 bool SolutionDb::commitSolveToDb(Solve* solve){
     // insert into Submit values (null,#{pid},#{uid},#{cid},#{judgeid},#{source},#{lang},'Judgeing',0,0,#{submitTime})
     char sql[256] ="";
-    sprintf(sql,"insert into Submit values(null,%d,%d,%d,%d,%d,%s,%s,%d,%d,%ld)",
-    solve->Pid(),
-    solve->Uid(),
-    solve->Cid(),
-    solve->getjudgeID(),
-    solve->Lang(),
-    solve->Source(),
-    runningres[solve->Sres()],
-    solve->getUsetime(),
-    solve->getuseMemory(),
-    solve->SubmitTime()
+    sprintf(sql,"update Submit judgeid=%d,result=%s,usetime=%d,memory=%d where sid=%d",
+        solve->getjudgeID(),
+        runningres[solve->Sres()],
+        solve->getUsetime(),
+        solve->getuseMemory(),
+        solve->Cid()
     );
-    ILOG("insert mysql:%s",sql);
+    ILOG("update mysql:%s",sql);
     auto db = mysqlDB::getInstance();
     MYSQL mysql;
     db->getDatabase(&mysql);

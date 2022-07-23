@@ -95,7 +95,7 @@ int main(int argc, char **argv)
         /*这一块后期优化就考虑采用redis*/
         while(true)
         {
-            vector<Solve*> solution = solutionDB.getSolveWhithRedis();
+            vector<Solve*> solution = solutionDB.getSolve();
             while(!solution.empty())
             {
                 Solve* last = solution.back();

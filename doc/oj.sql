@@ -17,6 +17,7 @@ create table User(
     vjpwd  varchar(128),
     email varchar(20)
 )DEFAULT CHARSET=utf8mb4;
+
 create table Permission(
     uid varchar(20),
     administrator varchar(2) check (administrator   in ('N','Y')),
@@ -38,6 +39,7 @@ create table Problem(
     hit 	Text
 )DEFAULT CHARSET=utf8mb4;
 ALTER TABLE Problem AUTO_INCREMENT = 1000;
+
 create table List(
     lid int primary key AUTO_INCREMENT,
     uid varchar(20),
@@ -51,6 +53,7 @@ ALTER TABLE List AUTO_INCREMENT = 1000;
 create table ListProblem(
     lid int,
     pid int,
+    ptitle Text,
     constraint pk_lpt primary key(lid,pid),
    
     constraint fk_lpt_pid FOREIGN KEY (pid)
@@ -93,6 +96,7 @@ ALTER TABLE Contest AUTO_INCREMENT = 1000;
 create table ConPro(
     cid int,
     pid int,
+    ptitle Text,
     submit_num int,
     ac_num int,
     constraint pk_CPT primary key(cid,pid),
@@ -113,8 +117,8 @@ CREATE table Submit(
     cid int,
     judgeid int	,
     source Text,
-    lang varchar(10) check ( lang in('C++11','JAVA','Python3','C99')),
-    result varchar(10),
+    lang int,
+    result varchar(30),
     usetime int,
     memory int,
     submitTime long,
