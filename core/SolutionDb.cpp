@@ -39,10 +39,14 @@ vector<Solve*> SolutionDb::getSolve(){
     MYSQL_RES *res = mysql_store_result(&mysql);
     if(res == NULL)
     {
+        db->CloseDatabase(&mysql,nullptr);
         return ret;
     }
     int rows = mysql_num_rows(res);
-    if(!rows) return ret;
+    if(!rows){
+        db->CloseDatabase(&mysql,res);
+        return ret;
+    }    
     MYSQL_ROW row;
     while((row = mysql_fetch_row(res)))
     {
@@ -57,8 +61,7 @@ vector<Solve*> SolutionDb::getSolve(){
        ret.push_back(solve);
        commitSolveToDb(solve);
     }
-    mysql_free_result(res);
-    mysql_close(&mysql);
+    db->CloseDatabase(&mysql,res);
     return ret;
 }
 

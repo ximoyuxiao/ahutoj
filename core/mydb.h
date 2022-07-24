@@ -3,9 +3,21 @@
 #include<mysql/mysql.h>
 #include<string>
 using std::string;
+#define MAX_CONN 5
+enum mysql_status_t{
+    SQL_UNINIT,
+    SQL_FREE,
+    SQL_BUSY,
+    SQL_DESTORY,
+};
+struct mysql_item{
+    MYSQL mysql;
+    mysql_status_t status;
+};
 class mysqlDB{
 private:
     static mysqlDB* mydb;
+    mysql_item mysqls[MAX_CONN];
     string host;
     string user;
     string pass;

@@ -1,6 +1,6 @@
 #ifndef __RESULT_H__
 #define __RESULT_H__
-#define DEV_DEBUG 1
+#define DEV_DEBUG 0
 typedef enum{
     OJ_AC = 1,
     OJ_WA,

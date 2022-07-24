@@ -17,12 +17,12 @@ mysqlDB::mysqlDB(){
 mysqlDB::mysqlDB(const char* host,const char* user,const char* pass,const char* db,int port)
 :host(host),user(user),pass(pass),db(db),port(port)
 {
-    
+    for(int i = 0;i<MAX_CONN;i++){
+        mysqls[i].status = SQL_UNINIT;
+    }
 }
 
 mysqlDB* mysqlDB::getInstance(){
-    if(mydb == nullptr)
-        return new mysqlDB();
     return mydb;
 }
 

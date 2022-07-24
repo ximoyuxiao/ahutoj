@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin/binding"
 )
 
-func AddService(ctx *gin.Context) {
+func AddProblem(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := new(request.Problem)
 	err := ctx.ShouldBindWith(req, binding.JSON)
@@ -31,15 +31,15 @@ func AddService(ctx *gin.Context) {
 	response.ResponseOK(ctx, resp)
 }
 
-func GetListService(ctx *gin.Context) {
+func GetListProblem(ctx *gin.Context) {
 
 }
 
-func GetService(ctx *gin.Context) {
+func GetProblem(ctx *gin.Context) {
 
 }
 
-func EditService(ctx *gin.Context) {
+func EditProblem(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := new(request.Problem)
 	err := ctx.ShouldBindWith(req, binding.JSON)
@@ -58,6 +58,6 @@ func EditService(ctx *gin.Context) {
 	response.ResponseOK(ctx, resp)
 }
 
-func DeleteService(ctx *gin.Context) {
+func DeleteProblem(ctx *gin.Context) {
 
 }
