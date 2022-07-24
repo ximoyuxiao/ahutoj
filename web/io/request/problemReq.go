@@ -1,14 +1,14 @@
 package request
 
 type Problem struct {
-	Pid           int    `form:"pid"`
-	Title         string `form:"title"`
-	Description   string `form:"description"`
-	Input         string `form:"input"`
-	Output        string `form:"output"`
-	Sample_input  string `form:"sample_input"`
-	Sample_output string `form:"sample_output"`
-	Hit           string `form:"hit"`
-	LimitTime     int    `form:"limitTime"`
-	LimitMemory   int    `form:"limitMemory"`
+	Pid           int    `json:"pid"`
+	Title         string `json:"title"`
+	Description   string `json:"description"`
+	Input         string `json:"input"`
+	Output        string `json:"output"`
+	Sample_input  string `json:"sample_input"`
+	Sample_output string `json:"sample_output"`
+	Hit           string `json:"hit"`
+	LimitTime     int    `json:"limitTime"`
+	LimitMemory   int    `json:"limitMemory"`
 }

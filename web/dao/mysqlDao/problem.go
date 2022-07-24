@@ -21,3 +21,8 @@ func InsertProblemTable(ctx context.Context, problem dao.Problem) error {
 	err := db.Table("Problem").Create(&problem).Error
 	return err
 }
+func EditProblemTable(ctx context.Context, problem dao.Problem) error {
+	db := GetDB(ctx)
+	err := db.Table("Problem").Where("Pid=?", problem.Pid).Updates(&problem).Error //这里不确定用法对不对
+	return err
+}
