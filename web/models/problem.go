@@ -9,7 +9,7 @@ import (
 
 //判断题目是否存在
 func IsProblemExistByPid(ctx context.Context, problem *dao.Problem) bool {
-	count, err := mysqldao.SelectProblemCountByPid(ctx, *problem.Pid)
+	count, err := mysqldao.SelectProblemCountByPid(ctx, problem.Pid)
 	if err != nil {
 		return false
 	}
@@ -34,4 +34,25 @@ func EditProblem(ctx context.Context, problem *dao.Problem) error {
 		logger.Errorf("call EditProblemTable failed,problem= %+v, err=%s", utils.Sdump(problem), err.Error())
 	}
 	return err
+}
+
+func DeleteProblem(ctx context.Context, pid int64) error {
+	logger := utils.GetLogInstance()
+	err := mysqldao.DeleteProblem(ctx, pid)
+	if err != nil {
+		logger.Errorf("call DeleteProblem failed,problem= %d, err=%s", pid, err.Error())
+	}
+	return err
+}
+
+// 前期的话 先用 mysql 后期针对活跃数据会引入redis
+func GetProblemByPID(ctx context.Context, pid int64) (dao.Problem, error) {
+	logger := utils.GetLogInstance()
+	problem := dao.Problem{}
+	err := mysqldao.SelectProblemByPid(ctx, &problem)
+	if err != nil {
+		logger.Errorf("call SelectProblemByPid failed,pid=%d,err=%s", pid, err.Error())
+		return problem, err
+	}
+	return problem, err
 }

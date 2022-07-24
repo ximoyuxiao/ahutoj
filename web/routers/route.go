@@ -68,11 +68,11 @@ func regeisterRouters(router *gin.Engine) {
 
 		problemRouter := apiRouter.Group("/problem")
 		{
-			// ->  /api/problem/problems'
+			// ->  /api/problems/add/'
 			problemRouter.POST("/add/", service.AddProblem)       // 添加题目
 			problemRouter.POST("/edit/", service.EditProblem)     // 编辑题目
 			problemRouter.POST("/delete/", service.DeleteProblem) // 删除题目
-			problemRouter.GET("/list", service.GetListProblem)    // 获取题目列表
+			problemRouter.GET("/list", service.GetProblemList)    // 获取题目列表
 			// param 可以获取id
 			problemRouter.GET("/:id", service.GetProblem) // 获取题目
 		}
@@ -102,8 +102,11 @@ func regeisterRouters(router *gin.Engine) {
 
 		fileRouter := apiRouter.Group("/file")
 		{
+			// 上传文件
 			fileRouter.PUT("/add/:pid", service.UpFile)
+			// 删除文件
 			fileRouter.DELETE("/delete/:pid", service.RemoveFile)
+			// 解压文件
 			fileRouter.POST("/unzip/:pid", service.UnzipFile)
 		}
 	}

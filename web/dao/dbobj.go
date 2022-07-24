@@ -25,16 +25,16 @@ type Permission struct {
 }
 
 type Problem struct {
-	Pid           *int   `db:"pid"`
-	Title         string `db:"title"`
-	Description   string `db:"description"`
-	Input         string `db:"input"`
-	Output        string `db:"output"`
-	Sample_input  string `db:"sample_input"`
-	Sample_output string `db:"sample_output"`
-	Hit           string `db:"hit"`
-	LimitTime     int    `db:"limitTime"`
-	LimitMemory   int    `db:"limitMemory"`
+	Pid           int    `db:"pid" json:"Pid"`
+	Title         string `db:"title" json:"title"`
+	Description   string `db:"description" json:"description"`
+	Input         string `db:"input" json:"input"`
+	Output        string `db:"output" json:"output"`
+	Sample_input  string `db:"sample_input" json:"sample_input"`
+	Sample_output string `db:"sample_output" json:"sample_output"`
+	Hit           string `db:"hit" json:"hit"`
+	LimitTime     int    `db:"limitTime" json:"limitTime"`
+	LimitMemory   int    `db:"limitMemory" json:"limitMemory"`
 }
 
 type List struct {
