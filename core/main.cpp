@@ -25,7 +25,7 @@ using std::cin;
 using std::endl;
 using namespace my;
 SolutionDb solutionDB;
-static int init_daemon();
+
 class soulution_run:public worker
 {
 private:
@@ -35,6 +35,7 @@ public:
     soulution_run(Solve* solve){
         this->jc =new judgeClient(solve);
         this->solve = solve;
+        this->solve->setjudgeID(this->solve->Sid());
     };
     virtual void run(){
         jc->judge();
@@ -51,21 +52,22 @@ public:
     };
 };
 
-
-static bool init_db(readConfig *rcf,Redis* redis);
+static int init_daemon();
+static bool init_db(readConfig *rcf,MyRedis* redis);
 static bool init_Solve_pool(readConfig *rcf,threadpool **tp);/*此处实际上是创建一个解决*/
 int main(int argc, char **argv)
 {
     /*挂起守护进程*/
-   init_daemon();
+    if(!DEV_DEBUG)
+        init_daemon();
    
     /*读配置项目*/
     readConfig *rcf = new readConfig(CONF);
     threadpool *pool = nullptr; 
-    Redis redis;
+    MyRedis redis;
     if(rcf->config_init())
     {
-        mlog* log = mlog::init(LOGPATH);
+        mlog::init(LOGPATH);
         /*初始化数据库*/
         if(!init_db(rcf,&redis))
         {
@@ -74,7 +76,7 @@ int main(int argc, char **argv)
             delete rcf;
             exit(-2);
         }
-
+        
         if(!solutionDB.initDB(rcf))
         {
             ELOG("solution db init error");
@@ -82,7 +84,7 @@ int main(int argc, char **argv)
             delete rcf;
             exit(-2);
         }
-
+        
         /*初始化线程池*/
         if(!init_Solve_pool(rcf,&pool))
         {
@@ -91,6 +93,7 @@ int main(int argc, char **argv)
             mlog::destory();
             exit(-3);
         }
+        
         /*判题线程*/
         /*这一块后期优化就考虑采用redis*/
         while(true)
@@ -144,7 +147,7 @@ int init_daemon(void)
     return 0;
 }
 
-bool init_DB(readConfig *rcf,Redis *redis)
+bool init_db(readConfig *rcf,MyRedis *redis)
 {
     char host[128],user[128],pwd[128],dbase[128];
     int port;
@@ -153,10 +156,9 @@ bool init_DB(readConfig *rcf,Redis *redis)
     rcf->getCOnfigString(pwd,"MYSQL","password");
     rcf->getCOnfigString(dbase,"MYSQL","db");
     port = rcf->getCOnfigInt("MYSQL","port");
-    char msg[1024];
-    ILOG(msg,"%s %s %s %s %d\n",host,user,pwd,dbase,port);
+    ILOG("%s %s %s %s %d\n",host,user,pwd,dbase,port);
     mysqlDB::initConn(host,user,pwd,dbase,port);
-    return false;
+    return true;
 }
 
 bool init_Solve_pool(readConfig *rcf,threadpool **tp)

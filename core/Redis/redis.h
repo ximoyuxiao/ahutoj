@@ -1,14 +1,14 @@
 #ifndef REDIS_H__
-#define REDUS_H__
+#define REDIS_H__
 #include<hiredis/hiredis.h>
 #include<string>
 using std::string;
-class Redis
+class MyRedis
 {
 public:
  
-    Redis();
-    ~Redis();
+    MyRedis();
+    ~MyRedis();
     bool connect(std::string host = "127.0.0.1", int port=6379);
     //字符串
     std::string getString(std::string key);

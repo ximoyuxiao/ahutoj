@@ -9,7 +9,7 @@ using std::vector;
 class SolutionDb
 {
 private:
-    Redis* redis;
+    MyRedis* redis;
     mysqlDB* mydb;
 public:
     SolutionDb();

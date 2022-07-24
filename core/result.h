@@ -1,5 +1,6 @@
 #ifndef __RESULT_H__
 #define __RESULT_H__
+#define DEV_DEBUG 1
 typedef enum{
     OJ_AC = 1,
     OJ_WA,
@@ -12,7 +13,7 @@ typedef enum{
     OJ_JUDGE
 }SubRes;
 static const char *runningres[] = {"","Accept","Wrong Answer","Time Limit Error","Mermory Limit Error",
-                                "Runtime Error","Presentation Error","Output Len Error","Compile Error"};
+                                "Runtime Error","Presentation Error","Output Len Error","Compile Error","Judgeing"};
 typedef enum{
     C = 1,
     CPP,

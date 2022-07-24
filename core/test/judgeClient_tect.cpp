@@ -7,6 +7,7 @@ using namespace my;
 int allPass = 0;
 int all = 0;
 SubRes status;
+
 static void judgeClient_AC(){
     all++;
     printf("Test AC:");
@@ -22,6 +23,7 @@ static void judgeClient_AC(){
     puts("pass");
     allPass++;
 }
+
 static void judgeClient_PE(){
     all++;
     printf("Test PE:");
@@ -37,6 +39,7 @@ static void judgeClient_PE(){
     puts("pass");
     allPass++;
 }
+
 static void judgeClient_RE(){
     all++;
     printf("Test RE:");
@@ -52,6 +55,7 @@ static void judgeClient_RE(){
     puts("pass");
     allPass++;
 }
+
 static void judgeClient_WA(){
      all++;
     printf("Test WA:");
@@ -67,6 +71,7 @@ static void judgeClient_WA(){
     puts("pass");
     allPass++;
 }
+
 static void judgeClient_TLE(){
     all++;
     printf("Test TLE:");
@@ -82,6 +87,7 @@ static void judgeClient_TLE(){
     puts("pass");
     allPass++;
 }
+
 static void judgeClient_MLE(){
      all++;
     printf("Test MLE:");
@@ -97,6 +103,7 @@ static void judgeClient_MLE(){
     puts("pass");
     allPass++;
 }
+
 static void judgeClient_test()
 {
     judgeClient_AC();
@@ -107,10 +114,12 @@ static void judgeClient_test()
     judgeClient_WA();
     printf("you all test:%d,you pass:%d\nyou pass rate:%.2lf%%\n",all,allPass,1.0*allPass/all*100);
 }
+
 int main()
 {
     mlog::init("./log");
     judgeClient_test();
     mlog::destory();
+    printf("exit!\n");
     return 0;
 }

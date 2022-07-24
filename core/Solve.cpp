@@ -40,7 +40,7 @@ bool Solve::operator<(const Solve& b) const
 }
 Solve& Solve::operator=(const Solve &solve)
 {
-     this->problemID  = solve.problemID;
+    this->problemID  = solve.problemID;
     this->solutionID = solve.solutionID;
     this->limitTime = solve.limitTime;
     this->limitMemory = solve.limitMemory;
@@ -51,6 +51,7 @@ Solve& Solve::operator=(const Solve &solve)
     this->usetime = solve.usetime;
     this->ceinfo = solve.ceinfo;
     this->res  =  res;
+    return *this;
 }
 void Solve::getargs(char* args[8])
 {

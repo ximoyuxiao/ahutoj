@@ -4,7 +4,7 @@ using namespace std;
 
 int main()
 {
-    Redis rdb;
+    MyRedis rdb;
     rdb.connect();
     rdb.setString("moyu","include<iostream>\nusing namespace std;\nint main()\n{\n    cout<<\"hello world\"<<endl;\n    return 0;\n}\n");
     cout<<rdb.getString("moyu")<<endl;

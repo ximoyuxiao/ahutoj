@@ -128,6 +128,12 @@ CREATE table Submit(
     constraint fk_st_uids FOREIGN KEY (uid)
     references User(uid) ON UPDATE CASCADE ON DELETE CASCADE
 )DEFAULT CHARSET=utf8mb4;
+
+create table CEINFO(
+    sid int,
+    info Text,
+)DEFAULT CHARSET=utf8mb4;
+
 ALTER TABLE Submit AUTO_INCREMENT = 1000;
 #5.添加数据
 insert into User values('admin','墨羽','21de184f26d37d33d5581d923ae52c17','AHUT','软191','软件工程',null,null,'a2571717957@163.com');

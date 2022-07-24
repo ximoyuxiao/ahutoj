@@ -14,7 +14,7 @@ mysqlDB::mysqlDB(){
     port = 0;
 }
 
-mysqlDB::mysqlDB(const char* host,const char* user,const char* pass,const char* db,int port = 3306)
+mysqlDB::mysqlDB(const char* host,const char* user,const char* pass,const char* db,int port)
 :host(host),user(user),pass(pass),db(db),port(port)
 {
     

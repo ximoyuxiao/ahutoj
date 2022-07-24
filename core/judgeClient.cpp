@@ -1,3 +1,4 @@
+
 #include<iostream>
 
 #include<cstdlib>
@@ -30,18 +31,15 @@
 #define REG_ARG0 rdi
 #define REG_ARG1 rsi
 #endif
-using namespace std;
-using namespace my;
 
+using namespace my;
 static pid_t pid ;
-static sighandler_t oldAlarmHandle;
-static sighandler_t oldHupHandle;
 static SubRes status = OJ_JUDGE;
 static double cpu_compensation = 1.0;
 const int call_array_size = CALL_ARRAY_SIZE;
 unsigned int call_id = 0;
 int call_counter[call_array_size] = {0};
-static char LANG_NAME[BUFFER_SIZE];
+
 static void init_syscalls_limits(lanuage lang){
     memset(call_counter, 0, sizeof(call_counter));
     switch (lang)
@@ -77,6 +75,7 @@ static void setfreeTimer(){
 }
 
 bool judgeClient::checkSource(){
+
     return true;
 }
 
@@ -368,9 +367,13 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
             break;
         case PYTHON3:    // python暂时还未完全  支持
 			execle("/usr/bin/python3", "/usr/bin/python3", "main.py",NULL,envp);
+        default:
+            ELOG("暂未支持该语言:%d",lang);
+            break;
         }
         exit(-1);
     }
+    return true;
 }
 
 bool judgeClient::getFiles()
@@ -415,8 +418,9 @@ bool judgeClient::judgePE(FILE*source,FILE *res)
     bool tail = true;
     while(tail)
     {
-        while(sourcech = fgetc(source))
+        while(true)
         {
+            sourcech = fgetc(source);
             if(sourcech == '\n' || sourcech ==' ')  continue;
             if(sourcech == -1)
             {
@@ -425,8 +429,9 @@ bool judgeClient::judgePE(FILE*source,FILE *res)
             }
             break;
         }
-        while(resch= fgetc(res))
+        while(true)
         {
+            resch= fgetc(res);
             if(resch == '\n' || resch ==' ')  continue;
             if(resch == -1)
             {
@@ -477,7 +482,7 @@ Solve* judgeClient::GetSolve(){
     return this->solve;
 }
 
-Solve* judgeClient::SetSolve(Solve* solve){
+void judgeClient::SetSolve(Solve* solve){
     this->solve = solve;
 }
 
@@ -501,8 +506,7 @@ bool judgeClient::judge()
                     Jstat = J_FAILED;
                 }
                 break;
-            }
-            
+            }          
             case J_GETFILE:{
                 ILOG("J_GETFILE");
                 getFiles();
@@ -528,7 +532,7 @@ bool judgeClient::judge()
                 char resoutfile[128];
                 sprintf(resoutfile,"%s/ans",dir);
                 init_syscalls_limits(this->solve->Lang());
-                for(int i = 0;i<inputFiles.size();i++){
+                for(std::size_t i = 0;i<inputFiles.size();i++){
                     DLOG("runnning:%s",inputFiles[i].c_str());
                     running(res,inputFiles[i].c_str(),resoutfile);
                     DLOG("runned:%s",outputFiles[i].c_str());

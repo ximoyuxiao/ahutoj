@@ -34,7 +34,7 @@ private:
 public:
     bool judge();
     Solve* GetSolve();
-    Solve* SetSolve(Solve* solve);
+    void SetSolve(Solve* solve);
     judgeClient(Solve *solve);
 };
 
