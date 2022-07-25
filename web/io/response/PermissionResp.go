@@ -6,3 +6,8 @@ type Permission struct {
 	Source_browser  bool `json:"source_browser"`
 	Contest_creator bool `json:"contest_creator"`
 }
+
+type PermissionResp struct {
+	Response
+	Permission
+}
