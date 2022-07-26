@@ -59,53 +59,54 @@ func regeisterRouters(router *gin.Engine) {
 
 		adminRouter := apiRouter.Group("/admin").Use(middlewares.JwtVerify)
 		{
-			adminRouter.POST("/permission/edit/")
-			adminRouter.POST("/permission/delete/")
-			adminRouter.POST("/permission/add/")
-			adminRouter.GET("/permission/list/")
-			adminRouter.GET("/permission/:id")
+			adminRouter.POST("/permission/edit/", service.EditPermission)
+			adminRouter.POST("/permission/delete/", service.DeletePermission)
+			adminRouter.POST("/permission/add/", service.AddPermission)
+			adminRouter.GET("/permission/list/", service.GetListPermission)
+			adminRouter.GET("/permission/:id", service.GetPermission)
 		}
 
 		problemRouter := apiRouter.Group("/problem")
 		{
-			// ->  /api/problem/problems'
-			problemRouter.POST("/add/", service.AddService)       // 添加题目
-			problemRouter.POST("/edit/", service.EditService)     // 编辑题目
-			problemRouter.POST("/delete/", service.DeleteService) // 删除题目
-
-			problemRouter.GET("/list", service.GetListService) // 获取题目列表
-
+			// ->  /api/problems/add/'
+			problemRouter.POST("/add/", service.AddProblem)       // 添加题目
+			problemRouter.POST("/edit/", service.EditProblem)     // 编辑题目
+			problemRouter.POST("/delete/", service.DeleteProblem) // 删除题目
+			problemRouter.GET("/list", service.GetProblemList)    // 获取题目列表
 			// param 可以获取id
-			problemRouter.GET("/:id", service.GetService) // 获取题目
+			problemRouter.GET("/:id", service.GetProblem) // 获取题目
 		}
 
 		trainingRouter := apiRouter.Group("/training")
 		{
-			trainingRouter.POST("/add/")
-			trainingRouter.POST("/edit/")
+			trainingRouter.POST("/add/", service.AddTraining)
+			trainingRouter.POST("/edit/", service.EditTraining)
 
-			trainingRouter.POST("/delete/")
+			trainingRouter.POST("/delete/", service.DeleteTraining)
 
-			trainingRouter.GET("/list")
-			trainingRouter.GET("/:id")
-			trainingRouter.GET("/:id/rank")
+			trainingRouter.GET("/list", service.GetListTraining)
+			trainingRouter.GET("/:id", service.GetTraining)
+			trainingRouter.GET("/:id/rank", service.GetRankTraining)
 		}
 
 		contestRouter := apiRouter.Group("/contest")
 		{
-			contestRouter.POST("/add/")
-			contestRouter.POST("/edit/")
-			contestRouter.POST("/delete/")
+			contestRouter.POST("/add/", service.AddContest)
+			contestRouter.POST("/edit/", service.EditContest)
+			contestRouter.POST("/delete/", service.DeleteContest)
 
-			contestRouter.GET("/list")
-			contestRouter.GET("/:id")
-			contestRouter.GET("/:id/rank")
+			contestRouter.GET("/list", service.GetListContest)
+			contestRouter.GET("/:id", service.GetContest)
+			contestRouter.GET("/:id/rank", service.GteRankContest)
 		}
 
 		fileRouter := apiRouter.Group("/file")
 		{
+			// 上传文件
 			fileRouter.PUT("/add/:pid", service.UpFile)
+			// 删除文件
 			fileRouter.DELETE("/delete/:pid", service.RemoveFile)
+			// 解压文件
 			fileRouter.POST("/unzip/:pid", service.UnzipFile)
 		}
 	}

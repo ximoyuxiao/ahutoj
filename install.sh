@@ -2,7 +2,7 @@
 sed -i 's/tencentyun/aliyun/g' /etc/apt/sources.list
 sudo apt update
 # 安装一系列工具
-for pkg in net-tools make flex g++ clang libmysqlclient-dev libmysql++-dev nginx mysql-server pkg-config redis
+for pkg in net-tools make flex g++ clang libmysqlclient-dev libmysql++-dev nginx mysql-server pkg-config redis libhiredis-dev
 do
     echo "正在为您安装$pkg..."
 	if ! apt-get install -y $pkg

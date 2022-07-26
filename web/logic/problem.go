@@ -2,6 +2,7 @@ package logic
 
 import (
 	"ahutoj/web/dao"
+	mysqldao "ahutoj/web/dao/mysqlDao"
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
@@ -32,4 +33,72 @@ func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
 	}
 	//成功返回
 	return response.CreateResponse(constanct.SuccessCode), nil
+}
+func EditProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
+	problem := dao.Problem{
+		Title:         req.Title,
+		Description:   req.Description,
+		Input:         req.Input,
+		Output:        req.Output,
+		Sample_input:  req.Sample_input,
+		Sample_output: req.Sample_output,
+		Hit:           req.Hit,
+		LimitTime:     req.LimitTime,
+		LimitMemory:   req.LimitMemory,
+	}
+	err := models.EditProblem(c, &problem)
+	if err != nil {
+		//日志报错
+		utils.GetLogInstance().Errorf("call EditProblem failed,err=%s", err.Error())
+		return response.CreateResponse(constanct.MySQLErrorCode), err
+	}
+	return response.CreateResponse(constanct.SuccessCode), nil
+}
+
+func DeleteProblem(ctx *gin.Context, req *request.DeleteProblemReq) (interface{}, error) {
+	logger := utils.GetLogInstance()
+	for _, pid := range req.Pids {
+		err := models.DeleteProblem(ctx, pid)
+		if err != nil {
+			logger.Errorf("call DeleteProblem failed,err=%s", err.Error())
+			return nil, err
+		}
+	}
+	return response.CreateResponse(constanct.SuccessCode), nil
+}
+
+func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{}, error) {
+	var ret response.ProblemListResp
+	var size int64 = 20
+	if req.Limit > 20 {
+		size = req.Limit
+	}
+	var offset int64 = 0
+	if req.Page > 0 {
+		offset = size * req.Page
+	}
+	problems, err := mysqldao.SelectProblemByLists(ctx, offset, size)
+	if err != nil {
+		return nil, err
+	}
+	ret.Data = make([]response.ProblemItemResp, 0, len(problems))
+	for _, problem := range problems {
+		ret.Data = append(ret.Data, response.ProblemItemResp{
+			Pid:   problem.Pid,
+			Title: problem.Title,
+		})
+	}
+	return ret, nil
+}
+
+func GetProblemInfo(ctx *gin.Context, pid int64) (interface{}, error) {
+	problem, err := models.GetProblemByPID(ctx, pid)
+	if err != nil {
+		return nil, err
+	}
+	return response.ProblemInfoResp{
+		Response:    response.CreateResponse(constanct.SuccessCode),
+		ProblemResp: response.ProblemResp(problem),
+	}, nil
+
 }
