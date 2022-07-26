@@ -49,6 +49,7 @@ func DeleteProblem(ctx context.Context, pid int64) error {
 func GetProblemByPID(ctx context.Context, pid int64) (dao.Problem, error) {
 	logger := utils.GetLogInstance()
 	problem := dao.Problem{}
+	problem.Pid = int(pid)
 	err := mysqldao.SelectProblemByPid(ctx, &problem)
 	if err != nil {
 		logger.Errorf("call SelectProblemByPid failed,pid=%d,err=%s", pid, err.Error())

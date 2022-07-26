@@ -48,7 +48,7 @@ func GetProblemList(ctx *gin.Context) {
 
 func GetProblem(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
-	pidString := ctx.Param("pid")
+	pidString := ctx.Param("id")
 	pid, err := strconv.ParseInt(pidString, 10, 64)
 	if err != nil {
 		logger.Errorf("call ParseInt failed, err = %s", err.Error())
