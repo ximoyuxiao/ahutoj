@@ -24,6 +24,10 @@ type Permission struct {
 	Contest_creator string `db:"contest_creator"`
 }
 
+func (p Permission) TableName() string {
+	return "Permission"
+}
+
 type Problem struct {
 	Pid           int    `db:"pid" json:"Pid"`
 	Title         string `db:"title" json:"title"`

@@ -17,7 +17,4 @@ type DeleteProblemReq struct {
 	Pids []int64 `json:"pids"`
 }
 
-type ProblemListReq struct {
-	Page  int64 `query:"page"`
-	Limit int64 `query:"limit"`
-}
+type ProblemListReq GetListReq
