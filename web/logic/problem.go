@@ -81,6 +81,7 @@ func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{},
 	if err != nil {
 		return nil, err
 	}
+	ret.Count = len(problems)
 	ret.Data = make([]response.ProblemItemResp, 0, len(problems))
 	for _, problem := range problems {
 		ret.Data = append(ret.Data, response.ProblemItemResp{

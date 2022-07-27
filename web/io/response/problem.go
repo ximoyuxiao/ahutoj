@@ -9,7 +9,8 @@ type ProblemItemResp struct {
 
 type ProblemListResp struct {
 	Response
-	Data []ProblemItemResp `json:"Data"`
+	Count int               `json:"count"`
+	Data  []ProblemItemResp `json:"data"`
 }
 
 type ProblemResp dao.Problem
