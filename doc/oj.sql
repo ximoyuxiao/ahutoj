@@ -34,8 +34,8 @@ create table Problem(
     output	 Text,	
     sample_input	 Text,	
     sample_output	 Text,
-    limitTime	     int,	
-    limitMemory	     int,
+    limit_time	     int,	
+    limit_memory	 int,
     hit 	Text
 )DEFAULT CHARSET=utf8mb4;
 ALTER TABLE Problem AUTO_INCREMENT = 1000;
@@ -131,7 +131,7 @@ CREATE table Submit(
 
 create table CEINFO(
     sid int,
-    info Text,
+    info Text
 )DEFAULT CHARSET=utf8mb4;
 
 ALTER TABLE Submit AUTO_INCREMENT = 1000;

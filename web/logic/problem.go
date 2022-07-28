@@ -81,6 +81,7 @@ func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{},
 	if err != nil {
 		return nil, err
 	}
+	ret.Response = response.CreateResponse(constanct.SuccessCode)
 	ret.Count, _ = models.GetProblemCount(ctx)
 	ret.Data = make([]response.ProblemItemResp, 0, len(problems))
 	for _, problem := range problems {
@@ -93,10 +94,7 @@ func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{},
 }
 
 func GetProblemInfo(ctx *gin.Context, pid int64) (interface{}, error) {
-	probelm := dao.Problem{
-		Pid: int(pid),
-	}
-	if !models.IsProblemExistByPid(ctx, &probelm) {
+	if !models.IsProblemExistByPid(ctx, &dao.Problem{Pid: int(pid)}) {
 		return response.CreateResponse(constanct.PIDNotExistCode), nil
 	}
 	problem, err := models.GetProblemByPID(ctx, pid)

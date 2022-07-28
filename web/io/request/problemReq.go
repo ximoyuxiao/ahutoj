@@ -8,9 +8,9 @@ type Problem struct {
 	Output        string `json:"output"`
 	Sample_input  string `json:"sample_input"`
 	Sample_output string `json:"sample_output"`
+	LimitTime     int64  `json:"limitTime"`
+	LimitMemory   int64  `json:"limitMemory"`
 	Hit           string `json:"hit"`
-	LimitTime     int    `json:"limitTime"`
-	LimitMemory   int    `json:"limitMemory"`
 }
 
 type DeleteProblemReq struct {
