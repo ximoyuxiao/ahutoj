@@ -11,7 +11,6 @@ func SelectPermissionByUid(ctx context.Context, uid string) (dao.Permission, err
 	err := db.Table(permission.TableName()).Where("uid=?", uid).Find(&permission).Error
 	return permission, err
 }
-
 func SelectPermissionList(ctx context.Context, offset, size int64) ([]dao.Permission, error) {
 	db := GetDB(ctx)
 	ret := make([]dao.Permission, 0)

@@ -34,8 +34,8 @@ create table Problem(
     output	 Text,	
     sample_input	 Text,	
     sample_output	 Text,
-    limtTime	     int,	
-    limithitMemory	     int,
+    limitTime	     int,	
+    limitMemory	     int,
     hit 	Text
 )DEFAULT CHARSET=utf8mb4;
 ALTER TABLE Problem AUTO_INCREMENT = 1000;

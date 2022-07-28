@@ -17,6 +17,12 @@ func SelectProblemCountByPid(ctx context.Context, pid int) (count int64, err err
 	return count, err
 }
 
+func SelectProblemCount(ctx context.Context) (count int64, err error) {
+	db := GetDB(ctx)
+	err = db.Table("Problem").Count(&count).Error
+	return count, err
+}
+
 func SelectProblemByLists(ctx context.Context, offset, size int64) ([]dao.Problem, error) {
 	db := GetDB(ctx)
 	ret := make([]dao.Problem, 0, size)

@@ -9,7 +9,7 @@ type ProblemItemResp struct {
 
 type ProblemListResp struct {
 	Response
-	Count int               `json:"count"`
+	Count int64             `json:"count"`
 	Data  []ProblemItemResp `json:"data"`
 }
 

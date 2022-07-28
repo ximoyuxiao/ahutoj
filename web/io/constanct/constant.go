@@ -15,6 +15,7 @@ const (
 	TokenInvalidCode    ResCode = 1006
 	UIDExistCOde        ResCode = 1007
 	PIDExistCode        ResCode = 1008
+	PIDNotExistCode     ResCode = 1009
 	MySQLErrorCode      ResCode = 2001
 	RedisErrorCode      ResCode = 2002
 	ServerBusyCode      ResCode = 5001
@@ -35,6 +36,7 @@ var codeMsgMap = map[ResCode]string{
 	ServerBusyCode:      "服务器繁忙",
 	UIDExistCOde:        "该用户已存在",
 	PIDExistCode:        "该题目已存在",
+	PIDNotExistCode:     "题目不存在",
 }
 
 func (c ResCode) Msg() string {
