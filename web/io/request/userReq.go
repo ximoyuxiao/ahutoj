@@ -1,8 +1,6 @@
 package request
 
-import (
-	"ahutoj/web/dao"
-)
+import "ahutoj/web/dao"
 
 type User struct {
 	Uid     string `json:"uid" binding:"required"`

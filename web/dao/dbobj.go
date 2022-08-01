@@ -24,6 +24,10 @@ type Permission struct {
 	Contest_creator string `db:"contest_creator"`
 }
 
+func (p Permission) TableName() string {
+	return "Permission"
+}
+
 type Problem struct {
 	Pid           int    `db:"pid" json:"Pid"`
 	Title         string `db:"title" json:"title"`
@@ -32,9 +36,9 @@ type Problem struct {
 	Output        string `db:"output" json:"output"`
 	Sample_input  string `db:"sample_input" json:"sample_input"`
 	Sample_output string `db:"sample_output" json:"sample_output"`
+	LimitTime     int64  `gorm:"column:limitTime" json:"limitTime"`
+	LimitMemory   int64  `gorm:"column:limitMemory" json:"limitMemory"`
 	Hit           string `db:"hit" json:"hit"`
-	LimitTime     int    `db:"limitTime" json:"limitTime"`
-	LimitMemory   int    `db:"limitMemory" json:"limitMemory"`
 }
 
 type List struct {

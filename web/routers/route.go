@@ -100,6 +100,14 @@ func regeisterRouters(router *gin.Engine) {
 			contestRouter.GET("/:id/rank", service.GteRankContest)
 		}
 
+		SubmitRouter := apiRouter.Group("/submit").Use(middlewares.JwtVerify)
+		{
+			SubmitRouter.POST("/commit/")
+			SubmitRouter.POST("/rejudge/")
+			SubmitRouter.GET("/status")
+			SubmitRouter.GET("/:id")
+		}
+
 		fileRouter := apiRouter.Group("/file")
 		{
 			// 上传文件

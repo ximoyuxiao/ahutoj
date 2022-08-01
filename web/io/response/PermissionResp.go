@@ -11,3 +11,9 @@ type PermissionResp struct {
 	Response
 	Permission
 }
+
+type PermissionListResp struct {
+	Response
+	Conut int          `json:"count"`
+	Data  []Permission `json:"data"`
+}
