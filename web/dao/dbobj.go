@@ -42,7 +42,7 @@ type Problem struct {
 }
 
 type List struct {
-	Lid   int    `db:"lid"`
+	Lid   int64  `db:"lid"`
 	Uid   string `db:"uid"`
 	Title string `db:"title"`
 	Stime int64  `db:"stime"`
