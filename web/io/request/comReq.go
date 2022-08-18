@@ -6,6 +6,6 @@ type LoginReq struct {
 }
 
 type GetListReq struct {
-	Page  int64 `query:"page"`
-	Limit int64 `query:"limit"`
+	Page  int `query:"page"`
+	Limit int `query:"limit"`
 }

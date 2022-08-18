@@ -13,6 +13,13 @@ type Response struct {
 }
 
 // ResponseError 响应错误
+func ResponseServerError(c *gin.Context, code constanct.ResCode) {
+	c.JSON(http.StatusBadGateway, Response{
+		StatusCode: code,
+		StatusMsg:  code.Msg(),
+	})
+}
+
 func ResponseError(c *gin.Context, code constanct.ResCode) {
 	c.JSON(http.StatusOK, Response{
 		StatusCode: code,

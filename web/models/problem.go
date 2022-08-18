@@ -5,6 +5,7 @@ import (
 	mysqldao "ahutoj/web/dao/mysqlDao"
 	"ahutoj/web/utils"
 	"context"
+	"strconv"
 )
 
 //判断题目是否存在
@@ -60,4 +61,23 @@ func GetProblemByPID(ctx context.Context, pid int64) (dao.Problem, error) {
 
 func GetProblemCount(ctx context.Context) (int64, error) {
 	return mysqldao.SelectProblemCount(ctx)
+}
+
+func GetProblems(ctx context.Context, pids []string) ([]dao.Problem, error) {
+	problems := make([]dao.Problem, 0, len(pids))
+	logger := utils.GetLogInstance()
+	for idx, pidstr := range pids {
+		pid, err := strconv.ParseInt(pidstr, 10, 64)
+		if err != nil {
+			logger.Errorf("call ParseInt failed,err=%s", err.Error())
+			return nil, err
+		}
+		problem, err := GetProblemByPID(ctx, pid)
+		if err != nil {
+			logger.Errorf("call GetProblemByPID failed,err=%s", err.Error())
+			return nil, err
+		}
+		problems[idx] = problem
+	}
+	return problems, nil
 }

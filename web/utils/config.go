@@ -32,6 +32,7 @@ type RedisConfig struct {
 	Port     uint16 `mapstructure:"port"`
 	Db       int16  `mapstructure:"db"`
 	PoolSize int16  `mapstructure:"pool_size"`
+	Password string `mapstructure:"password"`
 }
 type LogConfig struct {
 	FileName string `mapstructure:"filename"`
