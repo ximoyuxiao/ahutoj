@@ -38,7 +38,7 @@ func DeletePermission(ctx *gin.Context, uid string) error {
 	return mysqldao.DeletePermission(ctx, &uid)
 }
 
-func GetPermissionList(ctx *gin.Context, offset, size int64) ([]dao.Permission, error) {
+func GetPermissionList(ctx *gin.Context, offset, size int) ([]dao.Permission, error) {
 	return mysqldao.SelectPermissionList(ctx, offset, size)
 
 }

@@ -3,6 +3,7 @@ module ahutoj
 go 1.18
 
 require (
+	github.com/bwmarrin/snowflake v0.3.0
 	github.com/gin-contrib/pprof v1.3.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible

@@ -69,11 +69,11 @@ func DeleteProblem(ctx *gin.Context, req *request.DeleteProblemReq) (interface{}
 
 func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{}, error) {
 	var ret response.ProblemListResp
-	var size int64 = 20
+	var size int = 20
 	if req.Limit > 20 {
 		size = req.Limit
 	}
-	var offset int64 = 0
+	var offset int = 0
 	if req.Page > 0 {
 		offset = size * req.Page
 	}

@@ -61,7 +61,7 @@ type ListUser struct {
 }
 
 type Contest struct {
-	Cid         int    `db:"cid"`
+	Cid         int64  `db:"cid"`
 	Uid         string `db:"uid"`
 	Title       string `db:"title"`
 	Description string `db:"description"`
@@ -72,11 +72,20 @@ type Contest struct {
 	Pass        string `db:"pass"`
 }
 
+func (p Contest) TableName() string {
+	return "Contest"
+}
+
 type ConPro struct {
-	Cid        int `db:"cid"`
-	Pid        int `db:"pid"`
-	Submit_num int `db:"submit_num"`
-	Ac_num     int `db:"ac_num"`
+	Cid        int64  `db:"cid"`
+	Pid        int    `db:"pid"`
+	Ptitle     string `db:"title"`
+	Submit_num int    `db:"submit_num"`
+	Ac_num     int    `db:"ac_num"`
+}
+
+func (p ConPro) TableName() string {
+	return "Conpro"
 }
 
 type Submit struct {

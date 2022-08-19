@@ -1,6 +1,6 @@
 package request
 
-type EditContestReso struct {
+type EditContestReq struct {
 	Cid         int64  `json:"cid"`
 	Uid         string `json:"uid"`
 	Title       string `json:"title"`
@@ -10,9 +10,10 @@ type EditContestReso struct {
 	Ctype       string `json:"ctype"`
 	Ispublic    string `json:"ispublic"`
 	Pass        string `json:"pass"`
+	Pids        string `json:"pids"`
 }
 
-type AddContestResp struct {
+type AddContestReq struct {
 	Uid         string `json:"uid"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -21,10 +22,15 @@ type AddContestResp struct {
 	Ctype       string `json:"ctype"`
 	Ispublic    string `json:"ispublic"`
 	Pass        string `json:"pass"`
+	Pids        string `json:"pids"`
 }
 
 type ContestListReq GetListReq
 
 type DeleteContestReq struct {
-	Cid []int64 `json:"Cids"`
+	Cid int64 `json:"Cids"`
+}
+
+type GetContestReq struct {
+	Cid int64 `param:"cis"`
 }

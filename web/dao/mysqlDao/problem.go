@@ -23,10 +23,10 @@ func SelectProblemCount(ctx context.Context) (count int64, err error) {
 	return count, err
 }
 
-func SelectProblemByLists(ctx context.Context, offset, size int64) ([]dao.Problem, error) {
+func SelectProblemByLists(ctx context.Context, offset, size int) ([]dao.Problem, error) {
 	db := GetDB(ctx)
 	ret := make([]dao.Problem, 0, size)
-	err := db.Table("Problem").Offset(int(offset)).Limit(int(size)).Find(&ret).Error
+	err := db.Table("Problem").Offset(offset).Limit(size).Find(&ret).Error
 	return ret, err
 }
 func InsertProblemTable(ctx context.Context, problem dao.Problem) error {
