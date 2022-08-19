@@ -5,6 +5,7 @@ import (
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
+	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
 	"strings"
@@ -15,7 +16,7 @@ import (
 func AddContest(ctx *gin.Context, req *request.AddContestReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	contest := dao.Contest{
-		Cid:         utils.GenSnowflakeID(),
+		Cid:         middlewares.GenSnowflakeID(),
 		Uid:         req.Uid,
 		Title:       req.Title,
 		Description: req.Description,
