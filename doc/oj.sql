@@ -84,8 +84,9 @@ create table Contest(
     title Text,
     description Text,
     begin_time long,
-    end_time long,	
-    ctype int,
+    end_time long,
+    # 0 acm 1 oi	
+    ctype int,  
     ispublic int,
     pass varchar(128),
     constraint fk_ct_uid FOREIGN KEY (uid)

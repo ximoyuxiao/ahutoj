@@ -7,7 +7,7 @@ type EditContestReq struct {
 	Description string `json:"description"`
 	Begin_time  int64  `json:"begin_time"`
 	End_time    int64  `json:"end_time"`
-	Ctype       string `json:"ctype"`
+	Ctype       int    `json:"ctype"`
 	Ispublic    string `json:"ispublic"`
 	Pass        string `json:"pass"`
 	Pids        string `json:"pids"`
@@ -19,7 +19,7 @@ type AddContestReq struct {
 	Description string `json:"description"`
 	Begin_time  int64  `json:"begin_time"`
 	End_time    int64  `json:"end_time"`
-	Ctype       string `json:"ctype"`
+	Ctype       int    `json:"ctype"`
 	Ispublic    string `json:"ispublic"`
 	Pass        string `json:"pass"`
 	Pids        string `json:"pids"`

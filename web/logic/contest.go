@@ -8,6 +8,7 @@ import (
 	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
+	"sort"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -157,8 +158,85 @@ func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, erro
 		ProblemData: respData,
 	}, nil
 }
+func initRankItem(rank *response.RankItem, Uname, Userid string) {
+	rank.Mark = 0
+	rank.Penalty = 0
+	rank.Rank = 1
+	rank.Uname = Uname
+	rank.UserID = Userid
+}
 
 //这个待后期优化
+/*rank uid,uname,solve 罚时 A，B，C，D，E，F，G...*/
 func GteRankContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, error) {
-	return nil, nil
+	logger := utils.GetLogInstance()
+	contest, err := models.GetContestFromDB(ctx, req.Cid)
+	if err != nil {
+		logger.Errorf("call GetContestFromDB Failed, cid=%d, err=%s", req.Cid, err.Error())
+		return nil, err
+	}
+	problems, err := models.GetConProblemFromDB(ctx, req.Cid) //获得竞赛的题目
+	if err != nil {
+		logger.Errorf("call GetConProblemFromDB Failed, cid=%d, err=%s", req.Cid, err.Error())
+		return nil, err
+	}
+	problemMap := make(map[int]dao.ConPro, 0)
+	problemIdxMap := make(map[int]int, 0)
+	for idx, problem := range problems {
+		temp := problem
+		problemMap[problem.Pid] = temp
+		problemIdxMap[problem.Pid] = idx
+	}
+	submits, err := models.GetSubmitByCidFromDB(ctx, req.Cid) //获取使用这个竞赛的所有提交
+	if err != nil {
+		logger.Errorf("call GetContestFromDB Failed, cid=%d, err=%s", req.Cid, err.Error())
+		return nil, err
+	}
+	userMap := make(map[string]int, 0)
+	ranks := make(response.RankItems, 0)
+	idx := 0
+	for _, submit := range submits {
+		rid, ok := userMap[submit.Uid]
+		if !ok {
+			rid = idx
+			idx += 1
+			userMap[submit.Uid] = rid
+			user := dao.User{Uid: submit.Uid}
+			models.FindUserByUid(ctx, &user)
+			ranks = append(ranks, response.RankItem{})
+			initRankItem(&ranks[rid], user.Uname, submit.Uid)
+		}
+		rank := &ranks[rid]
+		if submit.Result == "Accept" {
+			if rank.Problems[problemIdxMap[submit.Pid]].Status == 2 {
+				continue
+			} else {
+				rank.Problems[problemIdxMap[submit.Pid]].Status = 2
+				rank.Problems[problemIdxMap[submit.Pid]].Pid = submit.Pid
+				rank.Problems[problemIdxMap[submit.Pid]].Time = submit.SubmitTime - contest.Begin_time
+				rank.Penalty += submit.SubmitTime - contest.Begin_time
+				rank.Solve += 1
+			}
+		} else {
+			if rank.Problems[problemIdxMap[submit.Pid]].Status == 0 {
+				rank.Problems[problemIdxMap[submit.Pid]].Status = 1
+				rank.Problems[problemIdxMap[submit.Pid]].Pid = submit.Pid
+				rank.Problems[problemIdxMap[submit.Pid]].Time = submit.SubmitTime - contest.Begin_time
+			}
+			if submit.Result != "Compile Error" {
+				// 15分钟罚时
+				rank.Penalty += 1000 * 15 * 60
+			}
+		}
+		rank.Problems[problemIdxMap[submit.Pid]].Submit_num += 1
+	}
+	sort.Sort(ranks)
+	for idx, _ := range ranks {
+		ranks[idx].Rank = int64(idx + 1)
+	}
+	return response.ConntestRankResp{
+		Response: response.CreateResponse(constanct.SuccessCode),
+		Size:     ranks.Len(),
+		Data:     ranks,
+	}, nil
 }

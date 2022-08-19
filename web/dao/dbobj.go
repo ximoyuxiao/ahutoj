@@ -67,7 +67,7 @@ type Contest struct {
 	Description string `db:"description"`
 	Begin_time  int64  `db:"begin_time"`
 	End_time    int64  `db:"end_time"`
-	Ctype       string `db:"ctype"`
+	Ctype       int    `db:"ctype"`
 	Ispublic    string `db:"ispublic"`
 	Pass        string `db:"pass"`
 }
@@ -100,4 +100,8 @@ type Submit struct {
 	Usetime    int    `db:"usetime"`
 	Memory     int    `db:"memory"`
 	SubmitTime int64  `db:"submittime"`
+}
+
+func (p Submit) TableName() string {
+	return "Submit"
 }
