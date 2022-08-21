@@ -35,5 +35,29 @@ func CreateListProblem(ctx *gin.Context, listproblem *dao.ListProblem) error {
 		logger.Errorf("call InsertListProblemTable failed,listproblem= %+v,err=%s", utils.Sdump(listproblem), err.Error())
 	}
 	return err
+}
 
+func EditList(ctx *gin.Context, list *dao.List) error {
+	logger := utils.GetLogInstance()
+	err := mysqldao.UpdateTraning(ctx, *list)
+	if err != nil {
+		logger.Errorf("call EditListTable failed,list= %+v,err=%s", utils.Sdump(list), err.Error())
+	}
+	return err
+}
+func EditListProblem(ctx *gin.Context, listproblem *dao.ListProblem) error {
+	logger := utils.GetLogInstance()
+	err := mysqldao.UpdateListProblem(ctx, *listproblem)
+	if err != nil {
+		logger.Errorf("call EditListProblemTable failed,listproblem= %+v,err=%s", utils.Sdump(listproblem), err.Error())
+	}
+	return err
+}
+func DeleteTraining(ctx *gin.Context, list *dao.List) error {
+	logger := utils.GetLogInstance()
+	err := mysqldao.DeleteTraning(ctx, list.Lid)
+	if err != nil {
+		logger.Errorf("call DeleteListTable failed,listproblem= %+v,err=%s", utils.Sdump(list), err.Error())
+	}
+	return err
 }

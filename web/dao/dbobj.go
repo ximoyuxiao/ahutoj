@@ -49,15 +49,15 @@ type List struct {
 }
 
 type ListProblem struct {
-	Lid int `db:"lid"`
-	Pid int `db:"pid"`
+	Lid int64 `db:"lid"`
+	Pid int   `db:"pid"`
 }
 
 type ListUser struct {
-	Lid        int `db:"lid"`
-	Uid        int `db:"uid"`
-	Submit_num int `db:"submit_num"`
-	Ac_num     int `db:"ac_num"`
+	Lid        int64 `db:"lid"`
+	Uid        int   `db:"uid"`
+	Submit_num int   `db:"submit_num"`
+	Ac_num     int   `db:"ac_num"`
 }
 
 type Contest struct {

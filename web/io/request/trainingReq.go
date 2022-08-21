@@ -8,6 +8,14 @@ type List struct {
 }
 
 type ListProblem struct {
-	Lid int `json:"lid"`
-	Pid int `json:"pid"`
+	Lid int64 `json:"lid"`
+	Pid int   `json:"pid"`
+}
+
+type ListAll struct {
+	Lid   int64  `json:"lid"`
+	Uid   string `json:"uid"`
+	Pid   int    `json:"pid"`
+	Title string `json:"title"`
+	Stime int64  `json:"stime"`
 }

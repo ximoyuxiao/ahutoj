@@ -49,3 +49,7 @@ func InsertListProblem(ctx context.Context, training dao.ListProblem) error {
 	db := GetDB(ctx)
 	return db.Table("ListProblem").Create(&training).Error
 }
+func UpdateListProblem(ctx context.Context, training dao.ListProblem) error {
+	db := GetDB(ctx)
+	return db.Table("ListProblem").Where("lid=?", training.Lid).Updates(training).Error
+}
