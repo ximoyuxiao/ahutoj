@@ -8,7 +8,7 @@ init:
 	go mod tidy
 
 run:${Exec}
-	air -c air.conf
+	air
 
 build:${Exec}
 	go build -o ${tagert} ${Exec}

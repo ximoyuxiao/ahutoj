@@ -50,3 +50,4 @@ cp ./config.yaml.bak ./config.yaml
 make build
 echo "username:$USER"
 echo "password:$PASSWORD"
+
