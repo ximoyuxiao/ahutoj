@@ -40,3 +40,12 @@ func SaveTraning(ctx context.Context, traning dao.List) error {
 	db := GetDB(ctx)
 	return db.Table("List").Where("lid=?", traning.Lid).Save(traning).Error
 }
+func SelectListCountByLid(ctx context.Context, lid int64) (count int64, err error) {
+	db := GetDB(ctx)
+	err = db.Table("List").Where("lid=?", lid).Count(&count).Error
+	return count, err
+}
+func InsertListProblem(ctx context.Context, training dao.ListProblem) error {
+	db := GetDB(ctx)
+	return db.Table("ListProblem").Create(&training).Error
+}
