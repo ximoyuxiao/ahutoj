@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AddTraining(req *request.List, req2 *request.ListProblem, c *gin.Context) (interface{}, error) {
+func AddTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 
 	list := dao.List{
 		Lid:   req.Lid,
@@ -20,8 +20,8 @@ func AddTraining(req *request.List, req2 *request.ListProblem, c *gin.Context) (
 		Stime: req.Stime,
 	}
 	listproblem := dao.ListProblem{
-		Lid: req2.Lid,
-		Pid: req2.Pid,
+		Lid: req.Lid,
+		Pid: req.Pid,
 	}
 	//添加题单
 	err := models.CreateList(c, &list)
@@ -36,6 +36,49 @@ func AddTraining(req *request.List, req2 *request.ListProblem, c *gin.Context) (
 		//日志报错
 		utils.GetLogInstance().Errorf("call CreateListProblem failed,err=%s", err2.Error())
 		return response.CreateResponse(constanct.MySQLErrorCode), err2
+	}
+	return response.CreateResponse(constanct.SuccessCode), nil
+}
+func EditTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
+	list := dao.List{
+		Lid:   req.Lid,
+		Uid:   req.Uid,
+		Title: req.Title,
+		Stime: req.Stime,
+	}
+	listproblem := dao.ListProblem{
+		Lid: req.Lid,
+		Pid: req.Pid,
+	}
+	//编辑题单
+	err := models.EditList(c, &list)
+	if err != nil {
+		//日志报错
+		utils.GetLogInstance().Errorf("call EditList failed,err=%s", err.Error())
+		return response.CreateResponse(constanct.MySQLErrorCode), err
+	}
+	//编辑提单题目
+	err2 := models.EditListProblem(c, &listproblem)
+	if err2 != nil {
+		//日志报错
+		utils.GetLogInstance().Errorf("call EditListProblem failed,err=%s", err2.Error())
+		return response.CreateResponse(constanct.MySQLErrorCode), err2
+	}
+	return response.CreateResponse(constanct.SuccessCode), nil
+}
+func DeleteTraining(req *request.List, c *gin.Context) (interface{}, error) {
+	list := dao.List{
+		Lid:   req.Lid,
+		Uid:   req.Uid,
+		Title: req.Title,
+		Stime: req.Stime,
+	}
+	//删除题单
+	err := models.DeleteTraining(c, &list)
+	if err != nil {
+		//日志报错
+		utils.GetLogInstance().Errorf("call DeleteList failed,err=%s", err.Error())
+		return response.CreateResponse(constanct.MySQLErrorCode), err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
