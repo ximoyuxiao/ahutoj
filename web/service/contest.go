@@ -66,7 +66,7 @@ func DeleteContest(ctx *gin.Context) {
 func GetListContest(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := new(request.ContestListReq)
-	if err := ctx.ShouldBindBodyWith(req, binding.JSON); err != nil {
+	if err := ctx.ShouldBindWith(req, binding.Query); err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return

@@ -35,7 +35,7 @@ type MyClaims struct {
 func InitJwt() {
 	config := utils.GetConfInstance()
 	sign = []byte(config.Sign)
-	ExpTime = 24 * time.Hour
+	ExpTime = 3 * 24 * time.Hour
 }
 
 func GetToken(ctx *gin.Context, userID string) (string, error) {

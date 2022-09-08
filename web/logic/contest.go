@@ -102,7 +102,7 @@ func GetListContest(ctx *gin.Context, req *request.ContestListReq) (interface{},
 		logger.Errorf("call GetContestListFromDb failed,err=%s", err.Error())
 		return nil, err
 	}
-	respData := make([]response.ContestListItem, 0, len(ContestList))
+	respData := make([]response.ContestListItem, len(ContestList))
 	for i, contest := range ContestList {
 		respData[i] = response.ContestListItem{
 			Cid:        contest.Cid,
@@ -231,7 +231,7 @@ func GteRankContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, 
 		rank.Problems[problemIdxMap[submit.Pid]].Submit_num += 1
 	}
 	sort.Sort(ranks)
-	for idx, _ := range ranks {
+	for idx := range ranks {
 		ranks[idx].Rank = int64(idx + 1)
 	}
 	return response.ConntestRankResp{

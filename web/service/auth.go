@@ -5,6 +5,7 @@ import (
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
 	"ahutoj/web/logic"
+	"ahutoj/web/middlewares"
 	"ahutoj/web/utils"
 
 	"github.com/gin-gonic/gin"
@@ -47,7 +48,7 @@ func Register(ctx *gin.Context) {
 		response.ResponseError(ctx, constanct.ServerBusyCode)
 		return
 	}
-
+	middlewares.GetToken(ctx, req.Uid)
 	// 3、 构建响应值，将处理结果返回
 	response.ResponseOK(ctx, resp)
 }

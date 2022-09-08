@@ -10,6 +10,7 @@ import (
 	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
+
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +20,9 @@ func UserInfo(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := ctx.Query("uid")
 	logger.Infof("req:%+v", req)
-
+	if req == "" {
+		req = middlewares.GetUid(ctx)
+	}
 	resp, err := logic.GetUserInfo(ctx, &req)
 	if err != nil {
 		logger.Errorf("call GetUserInfo failed,req=%+v,err=%s", req, err.Error())
