@@ -21,7 +21,7 @@ func ResponseServerError(c *gin.Context, code constanct.ResCode) {
 }
 
 func ResponseError(c *gin.Context, code constanct.ResCode) {
-	c.JSON(http.StatusOK, Response{
+	c.JSON(code.HttpCode(), Response{
 		StatusCode: code,
 		StatusMsg:  code.Msg(),
 	})

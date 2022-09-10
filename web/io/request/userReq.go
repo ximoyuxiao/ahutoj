@@ -44,6 +44,7 @@ func (u UserEditReq) ToUser(uid string) *dao.User {
 		Classes: u.Classes,
 		Major:   u.Major,
 		Email:   u.Email,
+		Adept:   u.Adept,
 	}
 }
 

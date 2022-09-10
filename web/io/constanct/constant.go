@@ -1,5 +1,7 @@
 package constanct
 
+import "net/http"
+
 // ResCode int32
 type ResCode int32
 
@@ -7,6 +9,7 @@ const (
 	SuccessCode         ResCode = 0
 	UIDEmpty            ResCode = 101
 	PassEmpty           ResCode = 102
+	VerifyErrorCode     ResCode = 501
 	InvalidParamCode    ResCode = 1001
 	UIDNotExistCode     ResCode = 1002
 	NotLoginCode        ResCode = 1003
@@ -37,6 +40,25 @@ var codeMsgMap = map[ResCode]string{
 	UIDExistCOde:        "该用户已存在",
 	PIDExistCode:        "该题目已存在",
 	PIDNotExistCode:     "题目不存在",
+	VerifyErrorCode:     "用户权限不足",
+}
+var HttpCodeMap = map[ResCode]int{
+	SuccessCode:         http.StatusOK,
+	UIDEmpty:            http.StatusOK,
+	PassEmpty:           http.StatusOK,
+	InvalidParamCode:    http.StatusBadRequest,
+	UIDNotExistCode:     http.StatusOK,
+	NotLoginCode:        http.StatusOK,
+	TokenBuildErrorCode: http.StatusUnauthorized,
+	TokenInvalidCode:    http.StatusUnauthorized,
+	PassWordErrorCode:   http.StatusOK,
+	MySQLErrorCode:      http.StatusInternalServerError,
+	RedisErrorCode:      http.StatusInternalServerError,
+	ServerBusyCode:      http.StatusInternalServerError,
+	UIDExistCOde:        http.StatusOK,
+	PIDExistCode:        http.StatusOK,
+	PIDNotExistCode:     http.StatusOK,
+	VerifyErrorCode:     http.StatusForbidden,
 }
 
 func (c ResCode) Msg() string {
@@ -45,4 +67,12 @@ func (c ResCode) Msg() string {
 		msg = codeMsgMap[ServerBusyCode]
 	}
 	return msg
+}
+
+func (c ResCode) HttpCode() int {
+	HttpCode, ok := HttpCodeMap[c]
+	if !ok {
+		HttpCode = http.StatusOK
+	}
+	return HttpCode
 }

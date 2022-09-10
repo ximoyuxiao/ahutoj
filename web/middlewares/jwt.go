@@ -157,6 +157,7 @@ func JwtVerify(c *gin.Context) {
 		c.Next()
 		return
 	}
+	response.ResponseError(c, constanct.VerifyErrorCode)
 	logger.Infof("the Url(%s) need Verify", url)
 	c.Abort()
 }
