@@ -5,6 +5,7 @@ import "ahutoj/web/dao"
 type ProblemItemResp struct {
 	Pid   int    `json:"pid"`
 	Title string `json:"title"`
+	Label string `json:"Label"`
 }
 
 type ProblemListResp struct {

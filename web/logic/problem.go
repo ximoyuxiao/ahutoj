@@ -90,6 +90,7 @@ func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{},
 		ret.Data = append(ret.Data, response.ProblemItemResp{
 			Pid:   problem.Pid,
 			Title: problem.Title,
+			Label: problem.Label,
 		})
 	}
 	return ret, nil
