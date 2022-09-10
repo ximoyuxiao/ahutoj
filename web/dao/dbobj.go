@@ -7,6 +7,7 @@ type User struct {
 	School  string `db:"school"`
 	Classes string `db:"classes"`
 	Major   string `db:"major"`
+	Adept   string `db:"adept"`
 	Vjid    string `db:"vjid"`
 	Vjpwd   string `db:"vjpwd"`
 	Email   string `db:"email"`

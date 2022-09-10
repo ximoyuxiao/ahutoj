@@ -13,6 +13,7 @@ create table User(
     school varchar(128),
     classes  varchar(30),
     major  varchar(30),
+    adept  varchar(128),
     vjid   varchar(20),
     vjpwd  varchar(128),
     email varchar(20)

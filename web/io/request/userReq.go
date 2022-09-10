@@ -22,6 +22,7 @@ type UserEditReq struct {
 	Classes string `json:"classes"`
 	Major   string `json:"major"`
 	Email   string `json:"email"`
+	Adept   string `json:"adept"`
 }
 
 type UserEditPassReq struct {

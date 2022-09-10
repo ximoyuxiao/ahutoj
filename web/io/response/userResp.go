@@ -19,6 +19,7 @@ type UserResp struct {
 	School  string `json:"school"`
 	Classes string `json:"classes"`
 	Major   string `json:"major"`
+	Adept   string `json:"adept"`
 	Vjid    string `json:"vjid"`
 	Email   string `json:"email"`
 }
