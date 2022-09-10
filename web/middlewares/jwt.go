@@ -4,6 +4,7 @@ import (
 	mysqldao "ahutoj/web/dao/mysqlDao"
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/response"
+	"ahutoj/web/models"
 	"ahutoj/web/utils"
 	"errors"
 	"time"
@@ -12,10 +13,46 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
+type VerfiyLevel uint8
+
 var (
 	sign    []byte
 	ExpTime time.Duration
 )
+
+const (
+	UNLOGIN         VerfiyLevel = 0
+	CommomUser      VerfiyLevel = 1
+	Problem_edit    VerfiyLevel = 2
+	Source_browser  VerfiyLevel = 3
+	Contest_creator VerfiyLevel = 4
+	Administrator   VerfiyLevel = 0xff
+)
+
+var verifyMap = map[string]VerfiyLevel{
+	"/api/logout/":                  CommomUser,
+	"/api/user/edit/":               CommomUser,
+	"/api/user/edit/pass/":          CommomUser,
+	"/api/user/vjudgeBind":          CommomUser,
+	"/api/admin/permission/edit/":   Administrator,
+	"/api/admin/permission/delete/": Administrator,
+	"/api/admin/permission/add/":    Administrator,
+	"/api/admin/permission/list/":   Administrator,
+	"/api/problem/add/":             Problem_edit,
+	"/api/problem/edit/":            Problem_edit,
+	"/api/problem/delete/":          Problem_edit,
+	"/api/contest/add/ ":            Contest_creator,
+	"/api/contest/edit/":            Contest_creator,
+	"/api/contest/delete/":          Contest_creator,
+	"/api/file/add/:pid":            Problem_edit,
+	"/api/file/delete/:pid":         Problem_edit,
+	"/api/file/unzip/:pid":          Problem_edit,
+	"/api/submit/rejudge/":          Administrator,
+	"/api/submit/commit/":           CommomUser,
+	"/api/training/add/":            Administrator,
+	"/api/training/edit/":           Administrator,
+	"/api/training/delete/":         Administrator,
+}
 
 const JwtTokenCtxKey = "user"
 
@@ -90,7 +127,15 @@ func GetUid(ctx *gin.Context) string {
 
 // 验证token
 func JwtVerify(c *gin.Context) {
-	// 过滤是否验证token
+	// 获得当前的url
+	url := c.FullPath()
+	// 判断该url需要的权限等级，如果为不需要登录则不需要token信息
+	if GetVerifyUrl(url) <= UNLOGIN {
+		c.Next()
+		return
+	}
+
+	/*至少需要UNLOGIN等级才需要通过Token鉴权*/
 	logger := utils.GetLogInstance()
 	token := c.GetHeader("Authorization")
 	if token == "" {
@@ -106,7 +151,52 @@ func JwtVerify(c *gin.Context) {
 		response.ResponseError(c, constanct.TokenInvalidCode)
 		c.Abort()
 	}
+	/*判断是否拥有访问权限*/
+	if HasUrlVerify(c, url, claims) {
+		c.Set(JwtTokenCtxKey, claims)
+		c.Next()
+		return
+	}
+	logger.Infof("the Url(%s) need Verify", url)
+	c.Abort()
+}
 
-	c.Set(JwtTokenCtxKey, claims)
-	c.Next()
+func HasUrlVerify(ctx *gin.Context, url string, claims *MyClaims) bool {
+	/*此处需要大于普通用户的权限*/
+	if GetVerifyUrl(url) > CommomUser {
+		permission, err := models.GetPermission(ctx, claims.UserID)
+		/*此处说明用户没有权限*/
+		if err != nil {
+			return false
+		}
+		switch GetVerifyUrl(url) {
+		case Problem_edit:
+			{
+				return permission.Administrator == "Y" || permission.Problem_edit == "Y"
+			}
+		case Source_browser:
+			{
+				return permission.Administrator == "Y" || permission.Source_browser == "Y"
+			}
+		case Contest_creator:
+			{
+				return permission.Administrator == "Y" || permission.Contest_creator == "Y"
+			}
+		case Administrator:
+			{
+				return permission.Administrator == "Y"
+			}
+		default:
+			return true
+		}
+	}
+	return true
+}
+
+func GetVerifyUrl(url string) VerfiyLevel {
+	level, ok := verifyMap[url]
+	if !ok {
+		return UNLOGIN
+	}
+	return level
 }

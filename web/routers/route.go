@@ -41,7 +41,7 @@ func regeisterRouters(router *gin.Engine) {
 	apiRouter := router.Group("/api")
 	{
 		// 相当于接口/api/Auth/ 的这组路径
-		authRouter := apiRouter.Group("/auth")
+		authRouter := apiRouter.Group("/auth").Use(middlewares.JwtVerify)
 		{
 			// 相当于接口 /api/Auth/login
 			authRouter.POST("/login/", service.Login)
@@ -66,7 +66,7 @@ func regeisterRouters(router *gin.Engine) {
 			adminRouter.GET("/permission/:id", service.GetPermission)
 		}
 
-		problemRouter := apiRouter.Group("/problem")
+		problemRouter := apiRouter.Group("/problem").Use(middlewares.JwtVerify)
 		{
 			// ->  /api/problems/add/'
 			problemRouter.POST("/add/", service.AddProblem)       // 添加题目
@@ -77,7 +77,7 @@ func regeisterRouters(router *gin.Engine) {
 			problemRouter.GET("/:id", service.GetProblem) // 获取题目
 		}
 
-		trainingRouter := apiRouter.Group("/training")
+		trainingRouter := apiRouter.Group("/training").Use(middlewares.JwtVerify)
 		{
 			trainingRouter.POST("/add/", service.AddTraining)
 			trainingRouter.POST("/edit/", service.EditTraining)
@@ -88,7 +88,7 @@ func regeisterRouters(router *gin.Engine) {
 			trainingRouter.GET("/:id/rank", service.GetRankTraining)
 		}
 
-		contestRouter := apiRouter.Group("/contest")
+		contestRouter := apiRouter.Group("/contest").Use(middlewares.JwtVerify)
 		{
 			contestRouter.POST("/add/", service.AddContest)
 			contestRouter.POST("/edit/", service.EditContest)
@@ -101,13 +101,13 @@ func regeisterRouters(router *gin.Engine) {
 
 		SubmitRouter := apiRouter.Group("/submit").Use(middlewares.JwtVerify)
 		{
-			SubmitRouter.POST("/commit/")
-			SubmitRouter.POST("/rejudge/")
-			SubmitRouter.GET("/status")
-			SubmitRouter.GET("/:id")
+			SubmitRouter.POST("/commit/", service.AddCommit)
+			SubmitRouter.POST("/rejudge/", service.RejudgeCommit)
+			SubmitRouter.GET("/status", service.StatusList)
+			SubmitRouter.GET("/:id", service.GetCommit)
 		}
 
-		fileRouter := apiRouter.Group("/file")
+		fileRouter := apiRouter.Group("/file").Use(middlewares.JwtVerify)
 		{
 			// 上传文件
 			fileRouter.PUT("/add/:pid", service.UpFile)
