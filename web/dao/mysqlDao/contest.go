@@ -38,3 +38,11 @@ func UpdateContest(ctx context.Context, contest dao.Contest) error {
 	err := db.Table(contest.TableName()).Updates(&contest).Error
 	return err
 }
+
+func SelectContestCount(ctx context.Context) (int64, error) {
+	db := GetDB(ctx)
+	contest := dao.Contest{}
+	count := int64(0)
+	err := db.Table(contest.TableName()).Count(&count).Error
+	return count, err
+}

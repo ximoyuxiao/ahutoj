@@ -114,9 +114,10 @@ func GetListContest(ctx *gin.Context, req *request.ContestListReq) (interface{},
 			Ispublic:   contest.Ispublic,
 		}
 	}
+	counts, _ := models.GetContestCountFromDB(ctx)
 	return response.ContestListResp{
 		Response: response.CreateResponse(constanct.SuccessCode),
-		Size:     int64(len(ContestList)),
+		Size:     counts,
 		Data:     respData,
 	}, nil
 }

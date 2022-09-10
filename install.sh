@@ -48,6 +48,10 @@ mysql -h localhost -u$USER -p$PASSWORD < ./doc/oj.sql
 # echo "insert into ahutoj.Perrmission values('admin','administrator','true','N');"|mysql -h localhost -u$USER -p$PASSWORD 
 cp ./config.yaml.bak ./config.yaml
 make build
+cd core
+make all
+cd ..
+./judged
+./tmp/bin/main
 echo "username:$USER"
 echo "password:$PASSWORD"
-

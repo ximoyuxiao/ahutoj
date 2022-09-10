@@ -25,3 +25,7 @@ func GetContestListFromDb(ctx context.Context, offset, pagesize int) ([]dao.Cont
 func GetContestFromDB(ctx context.Context, cid int64) (dao.Contest, error) {
 	return mysqldao.SelectContestByCid(ctx, cid)
 }
+
+func GetContestCountFromDB(ctx context.Context) (int64, error) {
+	return mysqldao.SelectContestCount(ctx)
+}
