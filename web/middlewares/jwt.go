@@ -129,11 +129,6 @@ func GetUid(ctx *gin.Context) string {
 func JwtVerify(c *gin.Context) {
 	// 获得当前的url
 	url := c.FullPath()
-	// 判断该url需要的权限等级，如果为不需要登录则不需要token信息
-	if GetVerifyUrl(url) <= UNLOGIN {
-		c.Next()
-		return
-	}
 
 	/*至少需要UNLOGIN等级才需要通过Token鉴权*/
 	logger := utils.GetLogInstance()

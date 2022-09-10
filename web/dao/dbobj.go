@@ -1,16 +1,16 @@
 package dao
 
 type User struct {
-	Uid     string `db:"uid"`
-	Uname   string `db:"uname"`
-	Pass    string `db:"pass"`
-	School  string `db:"school"`
-	Classes string `db:"classes"`
-	Major   string `db:"major"`
+	Uid     string `gorm:"column:uid"`
+	Uname   string `gorm:"column:uname"`
+	Pass    string `gorm:"column:pass"`
+	School  string `gorm:"column:school"`
+	Classes string `gorm:"column:classes"`
+	Major   string `gorm:"column:major"`
 	Adept   string `gorm:"column:adept"`
-	Vjid    string `db:"vjid"`
-	Vjpwd   string `db:"vjpwd"`
-	Email   string `db:"email"`
+	Vjid    string `gorm:"column:vjid"`
+	Vjpwd   string `gorm:"column:vjpwd"`
+	Email   string `gorm:"column:email"`
 }
 
 func (u User) TableName() string {
@@ -18,11 +18,11 @@ func (u User) TableName() string {
 }
 
 type Permission struct {
-	Uid             string `db:"uid"`
-	Administrator   string `db:"administrator"`
-	Problem_edit    string `db:"problem_edit"`
-	Source_browser  string `db:"source_browser"`
-	Contest_creator string `db:"contest_creator"`
+	Uid             string `gorm:"column:uid"`
+	Administrator   string `gorm:"column:administrator"`
+	Problem_edit    string `gorm:"column:problem_edit"`
+	Source_browser  string `gorm:"column:source_browser"`
+	Contest_creator string `gorm:"column:contest_creator"`
 }
 
 func (p Permission) TableName() string {
@@ -30,48 +30,48 @@ func (p Permission) TableName() string {
 }
 
 type Problem struct {
-	Pid           int    `db:"pid" json:"Pid"`
-	Title         string `db:"title" json:"title"`
-	Description   string `db:"description" json:"description"`
-	Input         string `db:"input" json:"input"`
-	Output        string `db:"output" json:"output"`
-	Sample_input  string `db:"sample_input" json:"sample_input"`
-	Sample_output string `db:"sample_output" json:"sample_output"`
+	Pid           int    `gorm:"column:pid" json:"Pid"`
+	Title         string `gorm:"column:title" json:"title"`
+	Description   string `gorm:"column:description" json:"description"`
+	Input         string `gorm:"column:input" json:"input"`
+	Output        string `gorm:"column:output" json:"output"`
+	Sample_input  string `gorm:"column:sample_input" json:"sample_input"`
+	Sample_output string `gorm:"column:sample_output" json:"sample_output"`
 	LimitTime     int64  `gorm:"column:limitTime" json:"limitTime"`
 	LimitMemory   int64  `gorm:"column:limitMemory" json:"limitMemory"`
-	Hit           string `db:"hit" json:"hit"`
-	Label         string `db:"label" json:"label"`
+	Hit           string `gorm:"column:hit" json:"hit"`
+	Label         string `gorm:"column:label" json:"label"`
 }
 
 type List struct {
-	Lid   int64  `db:"lid"`
-	Uid   string `db:"uid"`
-	Title string `db:"title"`
-	Stime int64  `db:"stime"`
+	Lid   int64  `gorm:"column:lid"`
+	Uid   string `gorm:"column:uid"`
+	Title string `gorm:"column:title"`
+	Stime int64  `gorm:"column:stime"`
 }
 
 type ListProblem struct {
-	Lid int64 `db:"lid"`
-	Pid int   `db:"pid"`
+	Lid int64 `gorm:"column:lid"`
+	Pid int   `gorm:"column:pid"`
 }
 
 type ListUser struct {
-	Lid        int64 `db:"lid"`
-	Uid        int   `db:"uid"`
-	Submit_num int   `db:"submit_num"`
-	Ac_num     int   `db:"ac_num"`
+	Lid        int64 `gorm:"column:lid"`
+	Uid        int   `gorm:"column:uid"`
+	Submit_num int   `gorm:"column:submit_num"`
+	Ac_num     int   `gorm:"column:ac_num"`
 }
 
 type Contest struct {
-	Cid         int64  `db:"cid"`
-	Uid         string `db:"uid"`
-	Title       string `db:"title"`
-	Description string `db:"description"`
-	Begin_time  int64  `db:"begin_time"`
-	End_time    int64  `db:"end_time"`
-	Ctype       int    `db:"ctype"`
-	Ispublic    string `db:"ispublic"`
-	Pass        string `db:"pass"`
+	Cid         int64  `gorm:"column:cid"`
+	Uid         string `gorm:"column:uid"`
+	Title       string `gorm:"column:title"`
+	Description string `gorm:"column:description"`
+	Begin_time  int64  `gorm:"column:begin_time"`
+	End_time    int64  `gorm:"column:end_time"`
+	Ctype       int    `gorm:"column:ctype"`
+	Ispublic    string `gorm:"column:ispublic"`
+	Pass        string `gorm:"column:pass"`
 }
 
 func (p Contest) TableName() string {
@@ -79,11 +79,11 @@ func (p Contest) TableName() string {
 }
 
 type ConPro struct {
-	Cid        int64  `db:"cid"`
-	Pid        int    `db:"pid"`
-	Ptitle     string `db:"title"`
-	Submit_num int    `db:"submit_num"`
-	Ac_num     int    `db:"ac_num"`
+	Cid        int64  `gorm:"column:cid"`
+	Pid        int    `gorm:"column:pid"`
+	Ptitle     string `gorm:"column:title"`
+	Submit_num int    `gorm:"column:submit_num"`
+	Ac_num     int    `gorm:"column:ac_num"`
 }
 
 func (p ConPro) TableName() string {
@@ -91,17 +91,17 @@ func (p ConPro) TableName() string {
 }
 
 type Submit struct {
-	Sid        int    `db:"sid"`
-	Pid        int    `db:"pid"`
-	Uid        string `db:"uid"`
-	Cid        int    `db:"cid"`
-	Judgeid    int    `db:"judgeid"`
-	Source     string `db:"source"`
-	Lang       string `db:"lang"`
-	Result     string `db:"result"`
-	Usetime    int    `db:"usetime"`
-	Memory     int    `db:"memory"`
-	SubmitTime int64  `db:"submittime"`
+	Sid        int    `gorm:"column:sid"`
+	Pid        int    `gorm:"column:pid"`
+	Uid        string `gorm:"column:uid"`
+	Cid        int    `gorm:"column:cid"`
+	Judgeid    int    `gorm:"column:judgeid"`
+	Source     string `gorm:"column:source"`
+	Lang       string `gorm:"column:lang"`
+	Result     string `gorm:"column:result"`
+	Usetime    int    `gorm:"column:usetime"`
+	Memory     int    `gorm:"column:memory"`
+	SubmitTime int64  `gorm:"column:submittime"`
 }
 
 func (p Submit) TableName() string {
