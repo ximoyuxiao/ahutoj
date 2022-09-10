@@ -14,6 +14,6 @@ func InsertConProblem(ctx context.Context, conPro dao.ConPro) error {
 func SelectConProblemByCid(ctx context.Context, cid int64) ([]dao.ConPro, error) {
 	db := GetDB(ctx)
 	ret := make([]dao.ConPro, 0)
-	err := db.Table(dao.ConPro{}.TableName()).Create(&ret).Error
+	err := db.Table(dao.ConPro{}.TableName()).Where("cid=?", cid).Find(&ret).Error
 	return ret, err
 }

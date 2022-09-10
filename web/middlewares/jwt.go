@@ -134,6 +134,10 @@ func JwtVerify(c *gin.Context) {
 	logger := utils.GetLogInstance()
 	token := c.GetHeader("Authorization")
 	if token == "" {
+		if verifyMap[url] == UNLOGIN {
+			c.Next()
+			return
+		}
 		logger.Errorf("token is empty")
 		response.ResponseError(c, constanct.TokenInvalidCode)
 		c.Abort()

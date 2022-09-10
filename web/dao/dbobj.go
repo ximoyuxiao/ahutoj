@@ -87,7 +87,7 @@ type ConPro struct {
 }
 
 func (p ConPro) TableName() string {
-	return "Conpro"
+	return "ConPro"
 }
 
 type Submit struct {

@@ -83,7 +83,7 @@ func GetListContest(ctx *gin.Context) {
 func GetContest(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := new(request.GetContestReq)
-	cidStr := ctx.Param("cid")
+	cidStr := ctx.Param("id")
 	if cidStr == "" {
 		logger.Errorf("call Param failed, err")
 		response.ResponseError(ctx, constanct.InvalidParamCode)
