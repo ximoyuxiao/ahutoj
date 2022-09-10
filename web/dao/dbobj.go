@@ -40,6 +40,7 @@ type Problem struct {
 	LimitTime     int64  `gorm:"column:limitTime" json:"limitTime"`
 	LimitMemory   int64  `gorm:"column:limitMemory" json:"limitMemory"`
 	Hit           string `db:"hit" json:"hit"`
+	Label         string `db:"label" json:"label"`
 }
 
 type List struct {

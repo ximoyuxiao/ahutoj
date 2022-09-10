@@ -21,6 +21,7 @@ func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
 		Sample_input:  req.Sample_input,
 		Sample_output: req.Sample_output,
 		Hit:           req.Hit,
+		Label:         req.Label,
 		LimitTime:     req.LimitTime,
 		LimitMemory:   req.LimitMemory,
 	}
@@ -43,6 +44,7 @@ func EditProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
 		Sample_input:  req.Sample_input,
 		Sample_output: req.Sample_output,
 		Hit:           req.Hit,
+		Label:         req.Label,
 		LimitTime:     req.LimitTime,
 		LimitMemory:   req.LimitMemory,
 	}

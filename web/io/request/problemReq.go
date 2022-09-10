@@ -11,6 +11,7 @@ type Problem struct {
 	LimitTime     int64  `json:"limitTime"`
 	LimitMemory   int64  `json:"limitMemory"`
 	Hit           string `json:"hit"`
+	Label         string `json:"Label"`
 }
 
 type DeleteProblemReq struct {

@@ -38,6 +38,7 @@ create table Problem(
     limit_time	     int,	
     limit_memory	 int,
     hit 	Text
+    Label            Text,
 )DEFAULT CHARSET=utf8mb4;
 ALTER TABLE Problem AUTO_INCREMENT = 1000;
 
