@@ -71,14 +71,7 @@ func DeleteProblem(ctx *gin.Context, req *request.DeleteProblemReq) (interface{}
 
 func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{}, error) {
 	var ret response.ProblemListResp
-	var size int = 20
-	if req.Limit > 20 {
-		size = req.Limit
-	}
-	var offset int = 0
-	if req.Page > 0 {
-		offset = size * req.Page
-	}
+	offset, size := utils.GetPageInfo(req.Page, req.Limit)
 	problems, err := mysqldao.SelectProblemByLists(ctx, offset, size)
 	if err != nil {
 		return nil, err

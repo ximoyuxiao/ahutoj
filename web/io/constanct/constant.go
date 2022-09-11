@@ -6,6 +6,19 @@ import "net/http"
 type ResCode int32
 
 const (
+	DefaultLimit  int = 20
+	DefaultOffset int = 0
+)
+
+func GetDefaultLimit() int {
+	return DefaultLimit
+}
+
+func GetDefaultOffset() int {
+	return DefaultOffset
+}
+
+const (
 	SuccessCode         ResCode = 0
 	UIDEmpty            ResCode = 101
 	PassEmpty           ResCode = 102
@@ -22,6 +35,7 @@ const (
 	MySQLErrorCode      ResCode = 2001
 	RedisErrorCode      ResCode = 2002
 	ServerBusyCode      ResCode = 5001
+	Notimplemented      ResCode = 9999
 )
 
 var codeMsgMap = map[ResCode]string{
@@ -41,6 +55,7 @@ var codeMsgMap = map[ResCode]string{
 	PIDExistCode:        "该题目已存在",
 	PIDNotExistCode:     "题目不存在",
 	VerifyErrorCode:     "用户权限不足",
+	Notimplemented:      "接口未实现",
 }
 var HttpCodeMap = map[ResCode]int{
 	SuccessCode:         http.StatusOK,

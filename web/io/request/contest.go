@@ -32,5 +32,10 @@ type DeleteContestReq struct {
 }
 
 type GetContestReq struct {
-	Cid int64 `param:"cis"`
+	Cid int64 `param:"cid"`
+}
+
+type GetContestRankReq struct {
+	ContestListReq
+	GetContestReq
 }

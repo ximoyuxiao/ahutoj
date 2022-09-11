@@ -8,7 +8,7 @@ go 1.18.3
 
 ubuntu18.06
 ### 在本机中跑起这个项目
-1、执行install.sh (其会自动下载Mysql、redis)，自动执行sql脚本建立数据库表）（开发中。。。）
+1、执行install.sh (其会自动下载Mysql、redis)，自动执行sql脚本建立数据库表）
 
 2、配置config.yaml文件（具体可以参考config.yaml.bak）
 
@@ -168,7 +168,7 @@ ___
 | 提交编号                 | sid        | int         | primary_key  AUTO_INCREMENT        |
 | 题目编号                 | pid        | int         | references problemList(pid)        |
 | 学号                     | uid        | varchar(20) | references UserTable(uid)          |
-| 竞赛编号[null表示非竞赛] | cid        | int         | references competeTable(cid)       |
+| 竞赛编号[-1表示非竞赛]    | cid        | int         | references competeTable(cid)       |
 | 判题机编号               | judgeid    | int         |                                    |
 | 代码                     | source     | TEXT        |                                    |
 | 语言                     | lang       | varchar(10) | in('C++11','JAVA','Python3','C99') |

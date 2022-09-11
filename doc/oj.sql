@@ -145,3 +145,4 @@ insert into Contest values(null,'admin','测试比赛1','用于测试',163955900
 insert into Contest values(null,'admin','测试比赛2','用于测试',1639559000000,1639599000000,1,1,null);
 insert into Contest values(null,'admin','测试比赛3','用于测试',1639559000000,1639599000000,1,1,null);
 insert into List values(null,'admin','测试',1639599000000);
+insert into ConPro values(1000,1000,'A+B问题',0,0);

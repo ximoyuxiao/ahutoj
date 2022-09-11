@@ -127,11 +127,10 @@ func GetUid(ctx *gin.Context) string {
 
 // 验证token
 func JwtVerify(c *gin.Context) {
+	logger := utils.GetLogInstance()
 	// 获得当前的url
 	url := c.FullPath()
-
 	/*至少需要UNLOGIN等级才需要通过Token鉴权*/
-	logger := utils.GetLogInstance()
 	token := c.GetHeader("Authorization")
 	if token == "" {
 		if verifyMap[url] == UNLOGIN {

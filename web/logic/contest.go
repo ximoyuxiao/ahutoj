@@ -169,7 +169,7 @@ func initRankItem(rank *response.RankItem, Uname, Userid string) {
 
 //这个待后期优化
 /*rank uid,uname,solve 罚时 A，B，C，D，E，F，G...*/
-func GteRankContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, error) {
+func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	contest, err := models.GetContestFromDB(ctx, req.Cid)
 	if err != nil {
@@ -188,7 +188,7 @@ func GteRankContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, 
 		problemMap[problem.Pid] = temp
 		problemIdxMap[problem.Pid] = idx
 	}
-	submits, err := models.GetSubmitByCidFromDB(ctx, req.Cid) //获取使用这个竞赛的所有提交
+	submits, err := models.GetSubmitByCidFromDB(ctx, int(req.Cid), req.Page, req.Limit) //获取使用这个竞赛的所有提交
 	if err != nil {
 		logger.Errorf("call GetContestFromDB Failed, cid=%d, err=%s", req.Cid, err.Error())
 		return nil, err

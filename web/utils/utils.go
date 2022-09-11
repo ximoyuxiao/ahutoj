@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"ahutoj/web/io/constanct"
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
@@ -29,4 +30,16 @@ func MD5EnCode(userID, password string) (string, error) {
 
 func Sdump(value ...interface{}) string {
 	return litter.Sdump(value...)
+}
+
+func GetPageInfo(page, limit int) (int, int) {
+	retSize := constanct.GetDefaultLimit()
+	if limit > retSize {
+		retSize = limit
+	}
+	offset := constanct.GetDefaultOffset()
+	if page > offset {
+		offset = retSize * page
+	}
+	return offset, retSize
 }

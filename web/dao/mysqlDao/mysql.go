@@ -22,7 +22,7 @@ func InitMysql() error {
 		"%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
 		cfg.UserName, cfg.Password, cfg.Host, cfg.Port, cfg.Dbname,
 	)
-	globalDB, err = gorm.Open(mysql.Open(dsn))
+	globalDB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		return err
 	}

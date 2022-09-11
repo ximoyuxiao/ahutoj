@@ -10,7 +10,6 @@ import (
 var logger = logrus.New()
 
 func LogInit() {
-
 	config := GetConfInstance()
 	level, err := logrus.ParseLevel(config.LogConfig.Level)
 	if err != nil {
@@ -25,7 +24,9 @@ func LogInit() {
 		}
 		logger.SetOutput(writer)
 	}
+	logger.SetReportCaller(true)
 }
+
 func GetLogInstance() *logrus.Logger {
 	return logger
 }

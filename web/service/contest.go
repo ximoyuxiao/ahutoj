@@ -109,7 +109,7 @@ func GetContest(ctx *gin.Context) {
 
 func GteRankContest(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
-	req := new(request.GetContestReq)
+	req := new(request.GetContestRankReq)
 	cidStr := ctx.Param("cid")
 	if cidStr == "" {
 		logger.Errorf("call Param failed, err")
@@ -121,6 +121,12 @@ func GteRankContest(ctx *gin.Context) {
 	req.Cid, err = strconv.ParseInt(cidStr, 10, 64)
 	if err != nil {
 		logger.Errorf("call GetContest fialed,err=%s", err.Error())
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
+	}
+
+	if err = ctx.ShouldBindWith(&req, binding.Query); err != nil {
+		logger.Errorf("call Param failed, err")
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
