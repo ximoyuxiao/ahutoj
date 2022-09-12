@@ -4,6 +4,7 @@ import (
 	mysqldao "ahutoj/web/dao/mysqlDao"
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/response"
+	"ahutoj/web/mapping"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
 	"errors"
@@ -20,47 +21,49 @@ var (
 	ExpTime time.Duration
 )
 
+//map所需要的的权限 第x为为1表示  如果用户权限为第X位则具备权限
 const (
-	UNLOGIN         VerfiyLevel = 0
-	CommomUser      VerfiyLevel = 1
-	Problem_edit    VerfiyLevel = 2
-	Source_browser  VerfiyLevel = 3
-	Contest_creator VerfiyLevel = 4
-	Administrator   VerfiyLevel = 0xff
+	UNLOGIN       VerfiyLevel = 0xff // 1111 1111
+	CommomUser    VerfiyLevel = 0xfe // 1111 1110
+	Administrator VerfiyLevel = 0xfc // 1111 1100
+	ProblemAdmin  VerfiyLevel = 0x88 // 1000 1000
+	ContestAdmin  VerfiyLevel = 0x90 // 1001 0000
+	SourceBorwser VerfiyLevel = 0xa0 // 1010 0000
+	ListAdmin     VerfiyLevel = 0xc0 // 1100 0000
+	SuperAdmin    VerfiyLevel = 0x80 // 1000 0000
 )
 
+//需要的权限等级
 var verifyMap = map[string]VerfiyLevel{
 	"/api/logout/":                  CommomUser,
 	"/api/user/edit/":               CommomUser,
 	"/api/user/edit/pass/":          CommomUser,
 	"/api/user/vjudgeBind":          CommomUser,
-	"/api/admin/permission/edit/":   Administrator,
-	"/api/admin/permission/delete/": Administrator,
-	"/api/admin/permission/add/":    Administrator,
-	"/api/admin/permission/list/":   Administrator,
-	"/api/problem/add/":             Problem_edit,
-	"/api/problem/edit/":            Problem_edit,
-	"/api/problem/delete/":          Problem_edit,
-	"/api/contest/add/ ":            Contest_creator,
-	"/api/contest/edit/":            Contest_creator,
-	"/api/contest/delete/":          Contest_creator,
-	"/api/file/add/:pid":            Problem_edit,
-	"/api/file/delete/:pid":         Problem_edit,
-	"/api/file/unzip/:pid":          Problem_edit,
-	"/api/submit/rejudge/":          Administrator,
-	"/api/submit/commit/":           CommomUser,
-	"/api/training/add/":            Administrator,
-	"/api/training/edit/":           Administrator,
-	"/api/training/delete/":         Administrator,
+	"/api/admin/permission/edit/":   SuperAdmin,
+	"/api/admin/permission/delete/": SuperAdmin,
+	"/api/admin/permission/add/":    SuperAdmin,
+	"/api/admin/permission/list/":   SuperAdmin,
+	"/api/admin/permission/:id":     SuperAdmin,
+	"/api/problem/add/":             ProblemAdmin,
+	"/api/problem/edit/":            ProblemAdmin,
+	"/api/problem/delete/":          ProblemAdmin,
+	"/api/contest/add/ ":            ContestAdmin,
+	"/api/contest/edit/":            ContestAdmin,
+	"/api/contest/delete/":          ContestAdmin,
+	"/api/file/add/:pid":            ProblemAdmin,
+	"/api/file/delete/:pid":         ProblemAdmin,
+	"/api/file/unzip/:pid":          ProblemAdmin,
+	"/api/submit/rejudge/":          SuperAdmin,
+	"/api/submit/commit/":           SuperAdmin,
+	"/api/training/add/":            ListAdmin,
+	"/api/training/edit/":           ListAdmin,
+	"/api/training/delete/":         ListAdmin,
 }
 
 const JwtTokenCtxKey = "user"
 
 type Permmision struct {
-	Administrator   bool `json:"administrator"`
-	Problem_edit    bool `json:"problem_edit"`
-	Source_browser  bool `json:"source_browser"`
-	Contest_creator bool `json:"contest_creator"`
+	PermissionMap int `json:"permission_map"`
 }
 
 type MyClaims struct {
@@ -84,16 +87,14 @@ func GetToken(ctx *gin.Context, userID string) (string, error) {
 	c := MyClaims{
 		userID,
 		Permmision{
-			Administrator:   permission.Administrator == "Y",
-			Problem_edit:    permission.Problem_edit == "Y",
-			Source_browser:  permission.Source_browser == "Y",
-			Contest_creator: permission.Contest_creator == "Y",
+			PermissionMap: mapping.PermissionToBitMap(permission),
 		},
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(ExpTime).Unix(), // 过期时间
 			Issuer:    "ahutoj",                       // 签发人
 		},
 	}
+
 	// 使用指定的签名方法创建签名对象
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, c)
 	// 使用指定的secret签名并获得完整的编码后的字符串token
@@ -130,10 +131,10 @@ func JwtVerify(c *gin.Context) {
 	logger := utils.GetLogInstance()
 	// 获得当前的url
 	url := c.FullPath()
-	/*至少需要UNLOGIN等级才需要通过Token鉴权*/
+
 	token := c.GetHeader("Authorization")
 	if token == "" {
-		if verifyMap[url] == UNLOGIN {
+		if GetVerifyUrl(url) == UNLOGIN {
 			c.Next()
 			return
 		}
@@ -162,34 +163,16 @@ func JwtVerify(c *gin.Context) {
 
 func HasUrlVerify(ctx *gin.Context, url string, claims *MyClaims) bool {
 	/*此处需要大于普通用户的权限*/
-	if GetVerifyUrl(url) > CommomUser {
+	UserPermission := mapping.UNLOGINBit
+	NeedPermission := GetVerifyUrl(url)
+	if claims != nil {
+		mapping.AddPermissionBit(&UserPermission, mapping.CommomUserBit)
 		permission, err := models.GetPermission(ctx, claims.UserID)
-		/*此处说明用户没有权限*/
-		if err != nil {
-			return false
-		}
-		switch GetVerifyUrl(url) {
-		case Problem_edit:
-			{
-				return permission.Administrator == "Y" || permission.Problem_edit == "Y"
-			}
-		case Source_browser:
-			{
-				return permission.Administrator == "Y" || permission.Source_browser == "Y"
-			}
-		case Contest_creator:
-			{
-				return permission.Administrator == "Y" || permission.Contest_creator == "Y"
-			}
-		case Administrator:
-			{
-				return permission.Administrator == "Y"
-			}
-		default:
-			return true
+		if err == nil {
+			mapping.AddPermissionBit(&UserPermission, mapping.PermissionBit(mapping.PermissionToBitMap(permission)))
 		}
 	}
-	return true
+	return (NeedPermission & VerfiyLevel(UserPermission)) != 0
 }
 
 func GetVerifyUrl(url string) VerfiyLevel {

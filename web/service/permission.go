@@ -37,6 +37,8 @@ func DeletePermission(ctx *gin.Context) {
 	resp, err := logic.DeletePermission(ctx, req)
 	if err != nil {
 		logger.Errorf("call DeletePermission failed,req=%+v, err=%s", *req, err.Error())
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
 	}
 	response.ResponseOK(ctx, resp)
 }

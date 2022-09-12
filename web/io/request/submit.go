@@ -2,8 +2,8 @@ package request
 
 type AddSubmitReq struct {
 	Pid        int    `json:"pid"`
-	Uid        int    `json:"uid"`
-	Cid        *int   `json:"cid"`
+	Uid        string `json:"uid"`
+	Cid        int    `json:"cid"`
 	Source     string `json:"source"`
 	Lang       int    `json:"Lang"`
 	SubmitTime int64  `json:"submitTime"`

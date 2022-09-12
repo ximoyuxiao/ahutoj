@@ -5,6 +5,7 @@ import (
 	mysqldao "ahutoj/web/dao/mysqlDao"
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
+	"ahutoj/web/mapping"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +26,6 @@ func GetPermission(ctx *gin.Context, uid string) (dao.Permission, error) {
 	}
 	return permission, err
 }
-
 func AddPermission(ctx *gin.Context, permission *dao.Permission) error {
 	return mysqldao.InsertPermission(ctx, permission)
 }
@@ -64,19 +64,17 @@ func PermisionReqToDao(req request.PermissionReq) dao.Permission {
 	}
 
 	if req.Source_browser {
-		Permission.Problem_edit = "Y"
+		Permission.Source_browser = "Y"
 	} else {
-		Permission.Problem_edit = "N"
+		Permission.Source_browser = "N"
 	}
 	return Permission
 }
 
 func PermissionDaoToResp(permission dao.Permission) response.Permission {
 	return response.Permission{
-		Administrator:   permission.Administrator == "Y",
-		Problem_edit:    permission.Problem_edit == "Y",
-		Source_browser:  permission.Source_browser == "Y",
-		Contest_creator: permission.Contest_creator == "Y",
+		Uid:           permission.Uid,
+		PermissionMap: mapping.PermissionToBitMap(permission),
 	}
 }
 

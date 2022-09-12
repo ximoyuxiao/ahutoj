@@ -22,6 +22,7 @@ const (
 	SuccessCode         ResCode = 0
 	UIDEmpty            ResCode = 101
 	PassEmpty           ResCode = 102
+	PageNotFound        ResCode = 404
 	VerifyErrorCode     ResCode = 501
 	InvalidParamCode    ResCode = 1001
 	UIDNotExistCode     ResCode = 1002
@@ -40,6 +41,7 @@ const (
 
 var codeMsgMap = map[ResCode]string{
 	SuccessCode:         "success",
+	PageNotFound:        "页面未找到",
 	UIDEmpty:            "账号为空",
 	PassEmpty:           "密码为空",
 	InvalidParamCode:    "请求参数错误",
@@ -61,6 +63,7 @@ var HttpCodeMap = map[ResCode]int{
 	SuccessCode:         http.StatusOK,
 	UIDEmpty:            http.StatusOK,
 	PassEmpty:           http.StatusOK,
+	PageNotFound:        http.StatusNotFound,
 	InvalidParamCode:    http.StatusBadRequest,
 	UIDNotExistCode:     http.StatusOK,
 	NotLoginCode:        http.StatusOK,

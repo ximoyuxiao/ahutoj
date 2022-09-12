@@ -5,7 +5,7 @@ type GetSubmitResp struct {
 	Sid        int    `json:"sid"`
 	Pid        int    `json:"pid"`
 	Source     string `json:"Source"`
-	Lang       string `json:"lang"`
+	Lang       int    `json:"lang"`
 	Result     string `json:"result"`
 	UseTime    int    `json:"useTime"`
 	UseMemory  int    `json:"useMemory"`
@@ -14,7 +14,7 @@ type GetSubmitResp struct {
 type SubmitLIstItem struct {
 	Sid        int    `json:"sid"`
 	Pid        int    `json:"pid"`
-	Lang       string `json:"lang"`
+	Lang       int    `json:"lang"`
 	Result     string `json:"result"`
 	UseTime    int    `json:"useTime"`
 	UseMemory  int    `json:"useMemory"`

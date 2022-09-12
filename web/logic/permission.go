@@ -13,7 +13,7 @@ import (
 func GetPermission(ctx *gin.Context, uid string) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	permission, err := models.GetPermission(ctx, uid)
-
+	permission.Uid = uid
 	if err != nil {
 		logger.Errorf("call GetPermission failed , uid=%d, err=%s", uid, err.Error())
 		return nil, err

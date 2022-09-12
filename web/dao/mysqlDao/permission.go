@@ -26,7 +26,7 @@ func InsertPermission(ctx context.Context, permission *dao.Permission) error {
 
 func DeletePermission(ctx context.Context, uid *string) error {
 	db := GetDB(ctx)
-	err := db.Table(dao.Permission{}.TableName()).Delete(uid).Error
+	err := db.Table(dao.Permission{}.TableName()).Where("uid=?", *uid).Delete(uid).Error
 	return err
 }
 

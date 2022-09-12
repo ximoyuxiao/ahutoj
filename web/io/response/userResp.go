@@ -12,6 +12,8 @@ type LoginResp struct {
 	Permission
 }
 
+type RegisterResp LoginResp
+
 type UserResp struct {
 	Response
 	Uid     string `json:"uid"`

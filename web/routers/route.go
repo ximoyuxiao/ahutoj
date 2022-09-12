@@ -1,6 +1,8 @@
 package routers
 
 import (
+	"ahutoj/web/io/constanct"
+	"ahutoj/web/io/response"
 	"ahutoj/web/middlewares"
 	"ahutoj/web/service"
 	"ahutoj/web/utils"
@@ -120,9 +122,7 @@ func regeisterRouters(router *gin.Engine) {
 }
 
 func NotFindRegister(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, gin.H{
-		"msg": "404",
-	})
+	response.ResponseError(ctx, constanct.PageNotFound)
 }
 
 func PingTest(ctx *gin.Context) {

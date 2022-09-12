@@ -13,7 +13,14 @@ import (
 )
 
 func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error) {
-	submit := dao.Submit{}
+	submit := dao.Submit{
+		Pid:        req.Pid,
+		Cid:        req.Cid,
+		Uid:        req.Uid,
+		Source:     req.Source,
+		Lang:       req.Lang,
+		SubmitTime: req.SubmitTime,
+	}
 	err := models.CreateSubmit(ctx, submit)
 	if err != nil {
 		return nil, err

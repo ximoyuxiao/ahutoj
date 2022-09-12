@@ -6,6 +6,7 @@ import (
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
+	"ahutoj/web/mapping"
 	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
@@ -50,10 +51,7 @@ func CheckLogin(req *request.LoginReq, c *gin.Context) (interface{}, error) {
 		Token: token,
 		Uname: user.Uname,
 		Permission: response.Permission{
-			Administrator:   permission.Administrator == "Y",
-			Problem_edit:    permission.Problem_edit == "Y",
-			Source_browser:  permission.Source_browser == "Y",
-			Contest_creator: permission.Contest_creator == "Y",
+			PermissionMap: mapping.PermissionToBitMap(permission),
 		},
 	}, nil
 }
@@ -86,8 +84,27 @@ func DoResiger(c *gin.Context, req *request.User) (interface{}, error) {
 		logger.Errorf("call CreateUser failed,err=%s", err.Error())
 		return response.CreateResponse(constanct.MySQLErrorCode), err
 	}
+	token, err := middlewares.GetToken(c, req.Uid)
+	if err != nil {
+		logger.Errorf("call GetToken failed, err=%s", err.Error())
+		return response.CreateResponse(constanct.TokenBuildErrorCode), nil
+	}
+	permission, err := mysqldao.SelectPermissionByUid(c, user.Uid)
+	if err != nil {
+		return response.CreateResponse(constanct.MySQLErrorCode), err
+	}
 	// 4、返回注册成功的信息给用户
-	return response.CreateResponse(constanct.SuccessCode), nil
+	return response.RegisterResp{
+		Response: response.Response{
+			StatusCode: constanct.SuccessCode,
+			StatusMsg:  constanct.SuccessCode.Msg(),
+		},
+		Token: token,
+		Uname: user.Uname,
+		Permission: response.Permission{
+			PermissionMap: mapping.PermissionToBitMap(permission),
+		},
+	}, nil
 }
 func GetUserInfo(c *gin.Context, req *string) (interface{}, error) {
 	user := dao.User{

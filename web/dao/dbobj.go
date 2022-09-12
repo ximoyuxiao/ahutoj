@@ -97,7 +97,7 @@ type Submit struct {
 	Cid        int    `gorm:"column:cid"`
 	Judgeid    int    `gorm:"column:judgeid"`
 	Source     string `gorm:"column:source"`
-	Lang       string `gorm:"column:lang"`
+	Lang       int    `gorm:"column:lang"`
 	Result     string `gorm:"column:result"`
 	Usetime    int    `gorm:"column:usetime"`
 	Memory     int    `gorm:"column:memory"`
