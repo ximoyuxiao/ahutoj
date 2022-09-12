@@ -37,6 +37,7 @@ func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
 }
 func EditProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
 	problem := dao.Problem{
+		Pid:           req.Pid,
 		Title:         req.Title,
 		Description:   req.Description,
 		Input:         req.Input,
