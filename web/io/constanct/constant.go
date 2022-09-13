@@ -36,6 +36,7 @@ const (
 	MySQLErrorCode      ResCode = 2001
 	RedisErrorCode      ResCode = 2002
 	ServerBusyCode      ResCode = 5001
+	FILEUNSUPPORT       ResCode = 6001
 	Notimplemented      ResCode = 9999
 )
 
@@ -58,6 +59,7 @@ var codeMsgMap = map[ResCode]string{
 	PIDNotExistCode:     "题目不存在",
 	VerifyErrorCode:     "用户权限不足",
 	Notimplemented:      "接口未实现",
+	FILEUNSUPPORT:       "不支持的文件类型",
 }
 var HttpCodeMap = map[ResCode]int{
 	SuccessCode:         http.StatusOK,
@@ -77,6 +79,7 @@ var HttpCodeMap = map[ResCode]int{
 	PIDExistCode:        http.StatusOK,
 	PIDNotExistCode:     http.StatusOK,
 	VerifyErrorCode:     http.StatusForbidden,
+	FILEUNSUPPORT:       http.StatusOK,
 }
 
 func (c ResCode) Msg() string {

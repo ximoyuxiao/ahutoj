@@ -5,6 +5,7 @@ import (
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
 	"ahutoj/web/utils"
+	"strconv"
 
 	"ahutoj/web/logic"
 
@@ -15,7 +16,7 @@ import (
 func AddCommit(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := new(request.AddSubmitReq)
-	if err := ctx.ShouldBindWith(req, binding.Query); err != nil {
+	if err := ctx.ShouldBindWith(req, binding.JSON); err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
@@ -33,7 +34,7 @@ func AddCommit(ctx *gin.Context) {
 func RejudgeCommit(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := new(request.RejudgeSubmitReq)
-	if err := ctx.ShouldBindWith(req, binding.Query); err != nil {
+	if err := ctx.ShouldBindWith(req, binding.JSON); err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
@@ -68,8 +69,11 @@ func StatusList(ctx *gin.Context) {
 
 func GetCommit(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
+	var err error
 	req := new(request.GetSubmitReq)
-	if err := ctx.ShouldBindWith(req, binding.Query); err != nil {
+	cidStr := ctx.Param("id")
+	req.Sid, err = strconv.ParseInt(cidStr, 10, 64)
+	if err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return

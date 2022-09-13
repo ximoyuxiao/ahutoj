@@ -33,9 +33,16 @@ func InserContest(ctx context.Context, contest dao.Contest) error {
 	return err
 }
 
+func SelectContestByUid(ctx context.Context, uid string) (int64, error) {
+	db := GetDB(ctx)
+	ret := dao.Contest{}
+	err := db.Where("uid=?", uid).Last(&ret).Error
+	return ret.Cid, err
+}
+
 func UpdateContest(ctx context.Context, contest dao.Contest) error {
 	db := GetDB(ctx)
-	err := db.Table(contest.TableName()).Updates(&contest).Error
+	err := db.Table(contest.TableName()).Where("cid=?", contest.Cid).Updates(&contest).Error
 	return err
 }
 

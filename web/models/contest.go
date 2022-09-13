@@ -9,7 +9,9 @@ import (
 func AddContestToDb(ctx context.Context, contest dao.Contest) error {
 	return mysqldao.InserContest(ctx, contest)
 }
-
+func GetCurrentCID(ctx context.Context, contest dao.Contest) (int64, error) {
+	return mysqldao.SelectContestByUid(ctx, contest.Uid)
+}
 func SaveContestDB(ctx context.Context, contest dao.Contest) error {
 	return mysqldao.UpdateContest(ctx, contest)
 }

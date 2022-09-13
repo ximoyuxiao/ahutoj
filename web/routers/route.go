@@ -112,11 +112,13 @@ func regeisterRouters(router *gin.Engine) {
 		fileRouter := apiRouter.Group("/file").Use(middlewares.JwtVerify)
 		{
 			// 上传文件
-			fileRouter.PUT("/add/:pid", service.UpFile)
+			fileRouter.POST("/:pid", service.UpFile)
 			// 删除文件
-			fileRouter.DELETE("/delete/:pid", service.RemoveFile)
+			fileRouter.DELETE("/:pid", service.RemoveFile)
 			// 解压文件
 			fileRouter.POST("/unzip/:pid", service.UnzipFile)
+			//
+			fileRouter.POST("/problem", service.UpProblemFile)
 		}
 	}
 }
@@ -127,6 +129,7 @@ func NotFindRegister(ctx *gin.Context) {
 
 func PingTest(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
+		"code":    200,
 		"messgae": "pong",
 	})
 }

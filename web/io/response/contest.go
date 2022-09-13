@@ -7,7 +7,7 @@ type ContestListItem struct {
 	Begin_time int64  `json:"begin_time"`
 	End_time   int64  `json:"end_time"`
 	Ctype      int    `json:"ctype"`
-	Ispublic   string `json:"ispublic"`
+	Ispublic   int    `json:"ispublic"`
 }
 type ConProItem struct {
 	Pid        int    `json:"pid"`
@@ -24,8 +24,7 @@ type GetContestResp struct {
 	Begin_time  int64        `json:"begin_time"`
 	End_time    int64        `json:"end_time"`
 	Ctype       int          `json:"ctype"`
-	Ispublic    string       `json:"ispublic"`
-	Pass        string       `json:"pass"`
+	Ispublic    int          `json:"ispublic"`
 	Size        int64        `json:"size"`
 	ProblemData []ConProItem `json:"Data"`
 }

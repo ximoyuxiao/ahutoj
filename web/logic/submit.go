@@ -19,6 +19,7 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 		Uid:        req.Uid,
 		Source:     req.Source,
 		Lang:       req.Lang,
+		Result:     constanct.OJ_JUDGE,
 		SubmitTime: req.SubmitTime,
 	}
 	err := models.CreateSubmit(ctx, submit)
@@ -86,7 +87,7 @@ func GetSubmits(ctx *gin.Context, req *request.SubmitListReq) (interface{}, erro
 			SubmitTime: temp.SubmitTime,
 		}
 	}
-	return response.CreateResponse(constanct.Notimplemented), nil
+	return resp, nil
 }
 
 func GetSubmit(ctx *gin.Context, req *request.GetSubmitReq) (interface{}, error) {
@@ -97,7 +98,7 @@ func GetSubmit(ctx *gin.Context, req *request.GetSubmitReq) (interface{}, error)
 		return response.CreateResponse(constanct.MySQLErrorCode), err
 	}
 	return response.GetSubmitResp{
-		Response:   response.CreateResponse(constanct.Notimplemented),
+		Response:   response.CreateResponse(constanct.SuccessCode),
 		Sid:        submit.Sid,
 		Pid:        submit.Pid,
 		Source:     submit.Source,

@@ -64,7 +64,7 @@ func GetProblemCount(ctx context.Context) (int64, error) {
 }
 
 func GetProblems(ctx context.Context, pids []string) ([]dao.Problem, error) {
-	problems := make([]dao.Problem, 0, len(pids))
+	problems := make([]dao.Problem, len(pids))
 	logger := utils.GetLogInstance()
 	for idx, pidstr := range pids {
 		pid, err := strconv.ParseInt(pidstr, 10, 64)

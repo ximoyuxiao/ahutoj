@@ -1,12 +1,14 @@
 package request
 
+import "ahutoj/web/io/constanct"
+
 type AddSubmitReq struct {
-	Pid        int    `json:"pid"`
-	Uid        string `json:"uid"`
-	Cid        int    `json:"cid"`
-	Source     string `json:"source"`
-	Lang       int    `json:"Lang"`
-	SubmitTime int64  `json:"submitTime"`
+	Pid        int            `json:"pid"`
+	Uid        string         `json:"uid"`
+	Cid        int            `json:"cid"`
+	Source     string         `json:"source"`
+	Lang       constanct.LANG `json:"lang"`
+	SubmitTime int64          `json:"submitTime"`
 }
 
 type RejudgeSubmitReq struct {
@@ -17,14 +19,14 @@ type RejudgeSubmitReq struct {
 }
 
 type GetSubmitReq struct {
-	Sid int `param:"sid"`
+	Sid int64 `param:"sid"`
 }
 
 type SubmitListReq struct {
 	Pid *int    `query:"Pid"`
 	Uid *string `query:"Uid"`
 	Cid *int    `query:"Cid"`
-	*GetListReq
+	GetListReq
 }
 
 type GetCodeReq struct {

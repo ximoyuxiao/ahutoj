@@ -1,5 +1,7 @@
 package dao
 
+import "ahutoj/web/io/constanct"
+
 type User struct {
 	Uid     string `gorm:"column:uid"`
 	Uname   string `gorm:"column:uname"`
@@ -30,15 +32,15 @@ func (p Permission) TableName() string {
 }
 
 type Problem struct {
-	Pid           int    `gorm:"column:pid" json:"Pid"`
+	Pid           int    `gorm:"column:pid" json:"pid"`
 	Title         string `gorm:"column:title" json:"title"`
 	Description   string `gorm:"column:description" json:"description"`
 	Input         string `gorm:"column:input" json:"input"`
 	Output        string `gorm:"column:output" json:"output"`
 	Sample_input  string `gorm:"column:sample_input" json:"sample_input"`
 	Sample_output string `gorm:"column:sample_output" json:"sample_output"`
-	LimitTime     int64  `gorm:"column:limitTime" json:"limitTime"`
-	LimitMemory   int64  `gorm:"column:limitMemory" json:"limitMemory"`
+	LimitTime     int64  `gorm:"column:limit_time" json:"limitTime"`
+	LimitMemory   int64  `gorm:"column:limit_memory" json:"limitMemory"`
 	Hit           string `gorm:"column:hit" json:"hit"`
 	Label         string `gorm:"column:label" json:"label"`
 }
@@ -70,7 +72,7 @@ type Contest struct {
 	Begin_time  int64  `gorm:"column:begin_time"`
 	End_time    int64  `gorm:"column:end_time"`
 	Ctype       int    `gorm:"column:ctype"`
-	Ispublic    string `gorm:"column:ispublic"`
+	Ispublic    int    `gorm:"column:ispublic"`
 	Pass        string `gorm:"column:pass"`
 }
 
@@ -81,7 +83,7 @@ func (p Contest) TableName() string {
 type ConPro struct {
 	Cid        int64  `gorm:"column:cid"`
 	Pid        int    `gorm:"column:pid"`
-	Ptitle     string `gorm:"column:title"`
+	Ptitle     string `gorm:"column:ptitle"`
 	Submit_num int    `gorm:"column:submit_num"`
 	Ac_num     int    `gorm:"column:ac_num"`
 }
@@ -91,17 +93,17 @@ func (p ConPro) TableName() string {
 }
 
 type Submit struct {
-	Sid        int    `gorm:"column:sid"`
-	Pid        int    `gorm:"column:pid"`
-	Uid        string `gorm:"column:uid"`
-	Cid        int    `gorm:"column:cid"`
-	Judgeid    int    `gorm:"column:judgeid"`
-	Source     string `gorm:"column:source"`
-	Lang       int    `gorm:"column:lang"`
-	Result     string `gorm:"column:result"`
-	Usetime    int    `gorm:"column:usetime"`
-	Memory     int    `gorm:"column:memory"`
-	SubmitTime int64  `gorm:"column:submittime"`
+	Sid        int                `gorm:"column:sid"`
+	Pid        int                `gorm:"column:pid"`
+	Uid        string             `gorm:"column:uid"`
+	Cid        int                `gorm:"column:cid"`
+	Judgeid    int                `gorm:"column:judgeid"`
+	Source     string             `gorm:"column:source"`
+	Lang       constanct.LANG     `gorm:"column:lang"`
+	Result     constanct.OJResult `gorm:"column:result"`
+	Usetime    int                `gorm:"column:usetime"`
+	Memory     int                `gorm:"column:memory"`
+	SubmitTime int64              `gorm:"column:submittime"`
 }
 
 func (p Submit) TableName() string {

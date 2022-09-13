@@ -6,6 +6,7 @@ import (
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
+	"ahutoj/web/mapping"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
 
@@ -13,18 +14,7 @@ import (
 )
 
 func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
-	problem := dao.Problem{
-		Title:         req.Title,
-		Description:   req.Description,
-		Input:         req.Input,
-		Output:        req.Output,
-		Sample_input:  req.Sample_input,
-		Sample_output: req.Sample_output,
-		Hit:           req.Hit,
-		Label:         req.Label,
-		LimitTime:     req.LimitTime,
-		LimitMemory:   req.LimitMemory,
-	}
+	problem := mapping.ProblemReqToDao(*req)
 	//题目不存在 添加题目
 	err := models.CreateProblem(c, &problem)
 	if err != nil {
@@ -35,19 +25,10 @@ func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
 	//成功返回
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
-func EditProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
-	problem := dao.Problem{
-		Pid:           req.Pid,
-		Title:         req.Title,
-		Description:   req.Description,
-		Input:         req.Input,
-		Output:        req.Output,
-		Sample_input:  req.Sample_input,
-		Sample_output: req.Sample_output,
-		Hit:           req.Hit,
-		Label:         req.Label,
-		LimitTime:     req.LimitTime,
-		LimitMemory:   req.LimitMemory,
+func EditProblem(req *request.EditProblemReq, c *gin.Context) (interface{}, error) {
+	problem := mapping.ProblemReqToDao(request.Problem(*req))
+	if req.Pid == 0 {
+		return response.CreateResponse(constanct.InvalidParamCode), nil
 	}
 	err := models.EditProblem(c, &problem)
 	if err != nil {

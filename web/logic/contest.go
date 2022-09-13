@@ -9,7 +9,6 @@ import (
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
 	"sort"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,8 +16,7 @@ import (
 func AddContest(ctx *gin.Context, req *request.AddContestReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	contest := dao.Contest{
-		Cid:         middlewares.GenSnowflakeID(),
-		Uid:         req.Uid,
+		Uid:         middlewares.GetUid(ctx),
 		Title:       req.Title,
 		Description: req.Description,
 		Begin_time:  req.Begin_time,
@@ -32,25 +30,16 @@ func AddContest(ctx *gin.Context, req *request.AddContestReq) (interface{}, erro
 		logger.Errorf("call AddContestToDb failed, err=%s", err.Error())
 		return nil, err
 	}
-	pids := strings.Split(req.Pids, ",")
-	problems, err := models.GetProblems(ctx, pids)
+
+	contest.Cid, err = models.GetCurrentCID(ctx, contest)
 	if err != nil {
-		logger.Errorf("call GetProblems failed,err=%s", err.Error())
+		logger.Errorf("call GetCurrentCID failed, err=%s", err.Error())
 		return nil, err
 	}
-	for _, problem := range problems {
-		conPro := dao.ConPro{
-			Cid:        contest.Cid,
-			Pid:        problem.Pid,
-			Ptitle:     problem.Title,
-			Submit_num: 0,
-			Ac_num:     0,
-		}
-		err := models.AddConProblemToDb(ctx, conPro)
-		if err != nil {
-			logger.Errorf("call AddProblemToDb failed, err=%s", err.Error())
-			return nil, err
-		}
+	err = models.AddConproblems(ctx, req.Pids, contest.Cid)
+	if err != nil {
+		logger.Errorf("call AddConproblems failed, err=%s", err.Error())
+		return nil, err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
@@ -69,9 +58,13 @@ func EditContest(ctx *gin.Context, req *request.EditContestReq) (interface{}, er
 		Pass:        req.Pass,
 	}
 	err := models.SaveContestDB(ctx, contest)
-
 	if err != nil {
 		logger.Errorf("call SaveContestDB failed, err=%s", err.Error())
+		return nil, err
+	}
+	err = models.AddConproblems(ctx, req.Pids, contest.Cid)
+	if err != nil {
+		logger.Errorf("call AddConproblems failed, err=%s", err.Error())
 		return nil, err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
@@ -129,6 +122,9 @@ func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, erro
 		logger.Errorf("call GetContestFromDB failed, cid=%s, err=%s", req.Cid, err.Error())
 		return nil, err
 	}
+	if contest.Ispublic != 1 && req.Pass != &contest.Pass {
+		return response.CreateResponse(constanct.InvalidParamCode), nil
+	}
 	conPros, err := models.GetConProblemFromDB(ctx, req.Cid)
 	if err != nil {
 		logger.Errorf("call GetConProblemFromDB failed, cid=%s, err=%s", req.Cid, err.Error())
@@ -154,7 +150,6 @@ func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, erro
 		End_time:    contest.End_time,
 		Ctype:       contest.Ctype,
 		Ispublic:    contest.Ispublic,
-		Pass:        contest.Pass,
 		Size:        int64(len(conPros)),
 		ProblemData: respData,
 	}, nil
