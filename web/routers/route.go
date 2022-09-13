@@ -7,6 +7,7 @@ import (
 	"ahutoj/web/service"
 	"ahutoj/web/utils"
 	"net/http"
+	"time"
 
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
@@ -42,6 +43,7 @@ func regeisterRouters(router *gin.Engine) {
 	// 相当于接口 /api/ 这组路径
 	apiRouter := router.Group("/api")
 	{
+		apiRouter.GET("/now", serverTime)
 		// 相当于接口/api/Auth/ 的这组路径
 		authRouter := apiRouter.Group("/auth").Use(middlewares.JwtVerify)
 		{
@@ -131,5 +133,13 @@ func PingTest(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"code":    200,
 		"messgae": "pong",
+	})
+}
+
+func serverTime(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, gin.H{
+		"code":    200,
+		"messgae": "success",
+		"time":    time.Now().Unix(),
 	})
 }
