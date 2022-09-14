@@ -24,7 +24,7 @@ func PermissionToBitMap(permission dao.Permission) int {
 		AddPermissionBit(&ans, SuperAdminBit)
 	}
 	if permission.Contest_creator == "Y" {
-		AddPermissionBit(&ans, AdministratorBit)
+		AddPermissionBit(&ans, ContestAdminBit)
 	}
 	if permission.Problem_edit == "Y" {
 		AddPermissionBit(&ans, ProblemAdminBit)
