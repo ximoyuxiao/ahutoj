@@ -122,7 +122,8 @@ func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, erro
 		logger.Errorf("call GetContestFromDB failed, cid=%s, err=%s", req.Cid, err.Error())
 		return nil, err
 	}
-	if contest.Ispublic != 1 && req.Pass != &contest.Pass {
+	if contest.Ispublic != 1 && req.Pass != nil && *req.Pass != contest.Pass {
+		logger.Errorf("contest pass word error req=%+v", utils.Sdump(req))
 		return response.CreateResponse(constanct.InvalidParamCode), nil
 	}
 	conPros, err := models.GetConProblemFromDB(ctx, req.Cid)

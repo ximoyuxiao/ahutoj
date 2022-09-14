@@ -83,21 +83,26 @@ func GetListContest(ctx *gin.Context) {
 func GetContest(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := new(request.GetContestReq)
+	var err error
+	err = ctx.ShouldBindWith(req, binding.Query)
+	if err != nil {
+		logger.Errorf("call ShouldBindWith failed, err=%s", err.Error())
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+	}
 	cidStr := ctx.Param("id")
 	if cidStr == "" {
-		logger.Errorf("call Param failed, err")
+		logger.Errorf("call Param failed, err=%s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
 
-	var err error
 	req.Cid, err = strconv.ParseInt(cidStr, 10, 64)
 	if err != nil {
 		logger.Errorf("call GetContest fialed,err=%s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
-
+	logger.Infof("req:%+v", utils.Sdump(req))
 	resp, err := logic.GetContest(ctx, req)
 	if err != nil {
 		logger.Errorf("call GetContest failed, err = %s", err.Error())
