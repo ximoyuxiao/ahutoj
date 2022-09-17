@@ -5,15 +5,15 @@ import (
 	"context"
 )
 
-func SelectProblemByPid(ctx context.Context, problem *dao.Problem) error {
+func SelectProblemByPID(ctx context.Context, problem *dao.Problem) error {
 	db := GetDB(ctx)
-	err := db.Table("Problem").Where("pid=?", problem.Pid).Find(problem).Error
+	err := db.Table("Problem").Where("PID=?", problem.PID).Find(problem).Error
 	return err
 }
 
-func SelectProblemCountByPid(ctx context.Context, pid int) (count int64, err error) {
+func SelectProblemCountByPID(ctx context.Context, PID int) (count int64, err error) {
 	db := GetDB(ctx)
-	err = db.Table("Problem").Where("pid=?", pid).Count(&count).Error
+	err = db.Table("Problem").Where("PID=?", PID).Count(&count).Error
 	return count, err
 }
 
@@ -36,12 +36,12 @@ func InsertProblemTable(ctx context.Context, problem dao.Problem) error {
 }
 func EditProblemTable(ctx context.Context, problem dao.Problem) error {
 	db := GetDB(ctx)
-	err := db.Table("Problem").Where("pid=?", problem.Pid).Updates(&problem).Error //这里不确定用法对不对
+	err := db.Table("Problem").Where("PID=?", problem.PID).Updates(&problem).Error //这里不确定用法对不对
 	return err
 }
 
-func DeleteProblem(ctx context.Context, pid int64) error {
+func DeleteProblem(ctx context.Context, PID int64) error {
 	db := GetDB(ctx)
-	err := db.Table("Problem").Where("pid=?", pid).Delete(pid).Error
+	err := db.Table("Problem").Where("PID=?", PID).Delete(PID).Error
 	return err
 }

@@ -3,42 +3,42 @@ package request
 import "ahutoj/web/dao"
 
 type User struct {
-	Uid     string `json:"uid" binding:"required"`
-	Uname   string `json:"uname" binding:"required"`
-	Pass    string `json:"pass"`
-	School  string `json:"school"`
-	Classes string `json:"classes"`
-	Major   string `json:"major"`
-	Adept   string `json:"adept"`
-	Vjid    string `json:"vjid"`
-	Vjpwd   string `json:"vjpwd"`
-	Email   string `json:"email"`
+	UID     string `json:"UID" binding:"required"`
+	Uname   string `json:"UserName" binding:"required"`
+	Pass    string `json:"Pass"`
+	School  string `json:"School"`
+	Classes string `json:"Classes"`
+	Major   string `json:"Major"`
+	Adept   string `json:"Adept"`
+	Vjid    string `json:"Vjid"`
+	Vjpwd   string `json:"Vjpwd"`
+	Email   string `json:"Email"`
 }
 type UserInfoReq struct {
-	Uid string `json:"uid" binding:"required"`
+	UID string `json:"uid" binding:"required"`
 }
 type UserEditReq struct {
-	Uname   string `json:"uname"`
-	School  string `json:"school"`
-	Classes string `json:"classes"`
-	Major   string `json:"major"`
-	Email   string `json:"email"`
-	Adept   string `json:"adept"`
+	Uname   string `json:"Uname"`
+	School  string `json:"School"`
+	Classes string `json:"Classes"`
+	Major   string `json:"Major"`
+	Email   string `json:"Email"`
+	Adept   string `json:"Adept"`
 }
 
 type UserEditPassReq struct {
-	Pwd    string `json:"pwd" binding:"required"`
-	OldPwd string `json:"old_pwd" binding:"required"`
+	Pwd    string `json:"Pwd" binding:"required"`
+	OldPwd string `json:"OldPwd" binding:"required"`
 }
 
 type UserEditVjudgeReq struct {
-	Vjid  string `json:"vjid"`
-	Vjpwd string `json:"vjpwd"`
+	Vjid  string `json:"Vjid"`
+	Vjpwd string `json:"Vjpwd"`
 }
 
 func (u UserEditReq) ToUser(uid string) *dao.User {
 	return &dao.User{
-		Uid:     uid,
+		UID:     uid,
 		Uname:   u.Uname,
 		School:  u.School,
 		Classes: u.Classes,
@@ -48,9 +48,9 @@ func (u UserEditReq) ToUser(uid string) *dao.User {
 	}
 }
 
-func (u UserEditVjudgeReq) ToUser(uid string) *dao.User {
+func (u UserEditVjudgeReq) ToUser(UID string) *dao.User {
 	return &dao.User{
-		Uid:   uid,
+		UID:   UID,
 		Vjid:  u.Vjid,
 		Vjpwd: u.Vjpwd,
 	}

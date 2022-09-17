@@ -17,29 +17,29 @@ import (
 func CheckLogin(req *request.LoginReq, c *gin.Context) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	user := dao.User{
-		Uid: req.Uid,
+		UID: req.UID,
 	}
-	if req.Uid == "" {
+	if req.UID == "" {
 		return response.CreateResponse(constanct.UIDEmpty), nil
 	}
 	if req.Pass == "" {
 		return response.CreateResponse(constanct.PassEmpty), nil
 	}
-	if ok := models.IsUserExistByUid(c, &user); !ok {
+	if ok := models.IsUserExistByUID(c, &user); !ok {
 		return response.CreateResponse(constanct.UIDNotExistCode), nil
 	}
-	if err := models.FindUserByUid(c, &user); err != nil {
+	if err := models.FindUserByUID(c, &user); err != nil {
 		return response.CreateResponse(constanct.MySQLErrorCode), err
 	}
 	if ok := models.EqualPassWord(c, &user, req.Pass); !ok {
 		return response.CreateResponse(constanct.PassWordErrorCode), nil
 	}
-	token, err := middlewares.GetToken(c, user.Uid)
+	token, err := middlewares.GetToken(c, user.UID)
 	if err != nil {
 		logger.Errorf("call GetToken failed, err=%s", err.Error())
 		return response.CreateResponse(constanct.TokenBuildErrorCode), nil
 	}
-	permission, err := mysqldao.SelectPermissionByUid(c, user.Uid)
+	permission, err := mysqldao.SelectPermissionByUID(c, user.UID)
 	if err != nil {
 		return response.CreateResponse(constanct.MySQLErrorCode), err
 	}
@@ -58,7 +58,7 @@ func CheckLogin(req *request.LoginReq, c *gin.Context) (interface{}, error) {
 func DoResiger(c *gin.Context, req *request.User) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	user := dao.User{
-		Uid:     req.Uid,
+		UID:     req.UID,
 		Uname:   req.Uname,
 		Pass:    req.Pass,
 		School:  req.School,
@@ -72,24 +72,24 @@ func DoResiger(c *gin.Context, req *request.User) (interface{}, error) {
 	//检测用户合法性
 
 	//查看用户账号是否存在
-	exist := models.IsUserExistByUid(c, &user)
+	exist := models.IsUserExistByUID(c, &user)
 	if exist {
 		return response.CreateResponse(constanct.UIDExistCOde), nil
 	}
 	// 2、密码加密处理（MD5)
-	user.Pass, _ = utils.MD5EnCode(req.Uid, req.Pass)
+	user.Pass, _ = utils.MD5EnCode(req.UID, req.Pass)
 	// 3、创建用户
 	err := models.CreateUser(c, &user)
 	if err != nil {
 		logger.Errorf("call CreateUser failed,err=%s", err.Error())
 		return response.CreateResponse(constanct.MySQLErrorCode), err
 	}
-	token, err := middlewares.GetToken(c, req.Uid)
+	token, err := middlewares.GetToken(c, req.UID)
 	if err != nil {
 		logger.Errorf("call GetToken failed, err=%s", err.Error())
 		return response.CreateResponse(constanct.TokenBuildErrorCode), nil
 	}
-	permission, err := mysqldao.SelectPermissionByUid(c, user.Uid)
+	permission, err := mysqldao.SelectPermissionByUID(c, user.UID)
 	if err != nil {
 		return response.CreateResponse(constanct.MySQLErrorCode), err
 	}
@@ -108,13 +108,13 @@ func DoResiger(c *gin.Context, req *request.User) (interface{}, error) {
 }
 func GetUserInfo(c *gin.Context, req *string) (interface{}, error) {
 	user := dao.User{
-		Uid: *req,
+		UID: *req,
 	}
-	exist := models.IsUserExistByUid(c, &user)
+	exist := models.IsUserExistByUID(c, &user)
 	if !exist {
 		return response.CreateResponse(constanct.UIDNotExistCode), nil
 	}
-	models.FindUserByUid(c, &user)
+	models.FindUserByUID(c, &user)
 	return response.CreateUserResp(&user), nil
 }
 

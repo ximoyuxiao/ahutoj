@@ -8,8 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func IsListExistByLid(ctx *gin.Context, list *dao.List) bool {
-	count, err := mysqldao.SelectListCountByLid(ctx, list.Lid)
+func IsListExistByLID(ctx *gin.Context, list *dao.List) bool {
+	count, err := mysqldao.SelectListCountByLID(ctx, list.LID)
 	if err != nil {
 		return false
 	}
@@ -18,7 +18,7 @@ func IsListExistByLid(ctx *gin.Context, list *dao.List) bool {
 
 func CreateList(ctx *gin.Context, list *dao.List) error {
 	logger := utils.GetLogInstance()
-	if IsListExistByLid(ctx, list) {
+	if IsListExistByLID(ctx, list) {
 		return nil
 	}
 	err := mysqldao.InsertTraning(ctx, *list)
@@ -55,7 +55,7 @@ func EditListProblem(ctx *gin.Context, listproblem *dao.ListProblem) error {
 }
 func DeleteTraining(ctx *gin.Context, list *dao.List) error {
 	logger := utils.GetLogInstance()
-	err := mysqldao.DeleteTraning(ctx, list.Lid)
+	err := mysqldao.DeleteTraning(ctx, list.LID)
 	if err != nil {
 		logger.Errorf("call DeleteListTable failed,listproblem= %+v,err=%s", utils.Sdump(list), err.Error())
 	}

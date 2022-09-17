@@ -3,6 +3,7 @@ drop table ConPro;
 drop table Contest;
 drop table ListUser;
 drop table ListProblem;
+drop table List;
 drop table Problem;
 drop table Permission;
 drop table User;

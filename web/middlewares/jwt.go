@@ -80,7 +80,7 @@ func InitJwt() {
 
 func GetToken(ctx *gin.Context, userID string) (string, error) {
 	// 创建一个我们自己的声明的数据
-	permission, err := mysqldao.SelectPermissionByUid(ctx, userID)
+	permission, err := mysqldao.SelectPermissionByUID(ctx, userID)
 	if err != nil {
 		return "", err
 	}
@@ -149,6 +149,7 @@ func JwtVerify(c *gin.Context) {
 		logger.Errorf("token parse error, token=%s, err = %s", token, err.Error())
 		response.ResponseError(c, constanct.TokenInvalidCode)
 		c.Abort()
+		return
 	}
 	/*判断是否拥有访问权限*/
 	if HasUrlVerify(c, url, claims) {

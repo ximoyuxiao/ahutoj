@@ -89,14 +89,14 @@ func GetContest(ctx *gin.Context) {
 		logger.Errorf("call ShouldBindWith failed, err=%s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 	}
-	cidStr := ctx.Param("id")
-	if cidStr == "" {
+	CIDStr := ctx.Param("id")
+	if CIDStr == "" {
 		logger.Errorf("call Param failed, err=%s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
 
-	req.Cid, err = strconv.ParseInt(cidStr, 10, 64)
+	req.CID, err = strconv.ParseInt(CIDStr, 10, 64)
 	if err != nil {
 		logger.Errorf("call GetContest fialed,err=%s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
@@ -115,15 +115,15 @@ func GetContest(ctx *gin.Context) {
 func GteRankContest(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := new(request.GetContestRankReq)
-	cidStr := ctx.Param("id")
-	if cidStr == "" {
+	CIDStr := ctx.Param("id")
+	if CIDStr == "" {
 		logger.Errorf("call Param failed, err")
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
 
 	var err error
-	req.Cid, err = strconv.ParseInt(cidStr, 10, 64)
+	req.CID, err = strconv.ParseInt(CIDStr, 10, 64)
 	if err != nil {
 		logger.Errorf("call GetContest fialed,err=%s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)

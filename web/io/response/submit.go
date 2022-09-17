@@ -4,27 +4,27 @@ import "ahutoj/web/io/constanct"
 
 type GetSubmitResp struct {
 	Response
-	Sid        int                `json:"sid"`
-	Pid        int                `json:"pid"`
+	SID        int                `json:"SID"`
+	PID        int                `json:"PID"`
 	Source     string             `json:"Source"`
-	Lang       constanct.LANG     `json:"lang"`
-	Result     constanct.OJResult `json:"result"`
-	UseTime    int                `json:"useTime"`
-	UseMemory  int                `json:"useMemory"`
-	SubmitTime int64              `json:"submitTime"`
+	Lang       constanct.LANG     `json:"Lang"`
+	Result     constanct.OJResult `json:"Result"`
+	UseTime    int                `json:"UseTime"`
+	UseMemory  int                `json:"UseMemory"`
+	SubmitTime int64              `json:"SubmitTime"`
 }
 type SubmitLIstItem struct {
-	Sid        int                `json:"sid"`
-	Pid        int                `json:"pid"`
-	Lang       constanct.LANG     `json:"lang"`
-	Result     constanct.OJResult `json:"result"`
-	UseTime    int                `json:"useTime"`
-	UseMemory  int                `json:"useMemory"`
-	SubmitTime int64              `json:"submitTime"`
+	SID        int                `json:"SID"`
+	PID        int                `json:"PID"`
+	Lang       constanct.LANG     `json:"Lang"`
+	Result     constanct.OJResult `json:"Result"`
+	UseTime    int                `json:"UseTime"`
+	UseMemory  int                `json:"UseMemory"`
+	SubmitTime int64              `json:"SubmitTime"`
 }
 type SubmitListResp struct {
 	Response
-	Count    int64            `json:"count"`
-	LastTime int64            `json:"lastTime"`
+	Count    int64            `json:"Count"`
+	LastTime int64            `json:"LastTime"`
 	Data     []SubmitLIstItem `json:"Data"`
 }

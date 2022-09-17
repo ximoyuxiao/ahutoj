@@ -45,7 +45,7 @@ func regeisterRouters(router *gin.Engine) {
 	{
 		apiRouter.GET("/now", serverTime)
 		// 相当于接口/api/Auth/ 的这组路径
-		authRouter := apiRouter.Group("/auth").Use(middlewares.JwtVerify)
+		authRouter := apiRouter.Group("/auth")
 		{
 			// 相当于接口 /api/Auth/login
 			authRouter.POST("/login/", service.Login)

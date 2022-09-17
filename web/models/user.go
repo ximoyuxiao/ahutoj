@@ -7,23 +7,23 @@ import (
 	"context"
 )
 
-//通过uid判断用户是否存在
-func IsUserExistByUid(ctx context.Context, user *dao.User) bool {
-	count, err := mysqldao.SelectUserCountByUid(ctx, user.Uid)
+//通过UID判断用户是否存在
+func IsUserExistByUID(ctx context.Context, user *dao.User) bool {
+	count, err := mysqldao.SelectUserCountByUID(ctx, user.UID)
 	if err != nil {
 		return false
 	}
 	return count > 0
 }
 
-//通过uid获得用户信息
-func FindUserByUid(ctx context.Context, user *dao.User) error {
-	return mysqldao.SelectUserByUid(ctx, user)
+//通过UID获得用户信息
+func FindUserByUID(ctx context.Context, user *dao.User) error {
+	return mysqldao.SelectUserByUID(ctx, user)
 }
 
 //判断用户密码是否相同
 func EqualPassWord(ctx context.Context, user *dao.User, password string) bool {
-	md5Password, err := utils.MD5EnCode(user.Uid, password)
+	md5Password, err := utils.MD5EnCode(user.UID, password)
 	if err != nil {
 		return false
 	}

@@ -2,6 +2,7 @@ package mysqldao
 
 import (
 	"ahutoj/web/dao"
+	"ahutoj/web/io/constanct"
 	"context"
 )
 
@@ -11,9 +12,9 @@ func SelectSubmitList(ctx context.Context, submit dao.Submit, offset, limit int)
 	return ans, err
 }
 
-func SelectSubmitBySid(ctx context.Context, sid int64) (ans dao.Submit, err error) {
+func SelectSubmitBySID(ctx context.Context, SID int64) (ans dao.Submit, err error) {
 	db := GetDB(ctx)
-	err = db.Table(dao.Submit{}.TableName()).Where("sid=?", sid).Find(&ans).Error
+	err = db.Table(dao.Submit{}.TableName()).Where("SID=?", SID).Find(&ans).Error
 	return ans, err
 }
 
@@ -26,7 +27,7 @@ func InsertSubmit(ctx context.Context, submit dao.Submit) (err error) {
 func RejudgeSubmit(ctx context.Context, submit dao.Submit) (err error) {
 	db := GetDB(ctx)
 	temp := dao.Submit{
-		Result: "rejudge",
+		Result: constanct.OJ_REJUDGE,
 	}
 	err = db.Table(temp.TableName()).Where(&submit).Updates(&temp).Error
 	return err

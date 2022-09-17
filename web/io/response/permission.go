@@ -1,8 +1,8 @@
 package response
 
 type Permission struct {
-	Uid           string `json:"uid"`
-	PermissionMap int    `json:"permission_map"`
+	UID           string `json:"UID"`
+	PermissionMap int    `json:"PermissionMap"`
 }
 
 type PermissionResp struct {
@@ -12,6 +12,6 @@ type PermissionResp struct {
 
 type PermissionListResp struct {
 	Response
-	Conut int          `json:"count"`
-	Data  []Permission `json:"data"`
+	Conut int          `json:"Count"`
+	Data  []Permission `json:"Data"`
 }

@@ -44,7 +44,7 @@ func EditUserInfo(ctx *gin.Context) {
 	usr := req.ToUser(middlewares.GetUid(ctx))
 
 	// call db
-	if !models.IsUserExistByUid(ctx, usr) {
+	if !models.IsUserExistByUID(ctx, usr) {
 		response.ResponseError(ctx, constanct.UIDNotExistCode)
 		return
 	}
@@ -56,7 +56,7 @@ func EditUserInfo(ctx *gin.Context) {
 		usr.Vjpwd = ""
 	}
 
-	err = mysqldao.UpdateUserByUid(ctx, usr)
+	err = mysqldao.UpdateUserByUID(ctx, usr)
 	if err != nil {
 		logger.Errorf("update user info failed, err = %s", err.Error())
 		response.ResponseError(ctx, constanct.MySQLErrorCode)
@@ -78,9 +78,9 @@ func EditUserPass(ctx *gin.Context) {
 
 	// call db
 	usr := &dao.User{
-		Uid: middlewares.GetUid(ctx),
+		UID: middlewares.GetUid(ctx),
 	}
-	err = mysqldao.SelectUserByUid(ctx, usr)
+	err = mysqldao.SelectUserByUID(ctx, usr)
 	if err != nil {
 		logger.Errorf("query user failed, err = %s", err.Error())
 		response.ResponseError(ctx, constanct.MySQLErrorCode)
@@ -93,9 +93,9 @@ func EditUserPass(ctx *gin.Context) {
 		return
 	}
 
-	usr.Pass, _ = utils.MD5EnCode(usr.Uid, req.Pwd)
+	usr.Pass, _ = utils.MD5EnCode(usr.UID, req.Pwd)
 
-	err = mysqldao.UpdateUserByUid(ctx, usr)
+	err = mysqldao.UpdateUserByUID(ctx, usr)
 	if err != nil {
 		logger.Errorf("update user passwd failed, err = %s", err.Error())
 		response.ResponseError(ctx, constanct.MySQLErrorCode)
@@ -118,7 +118,7 @@ func VjudgeBind(ctx *gin.Context) {
 	// usr.Vjpwd, _ = utils.MD5EnCode(req.Vjid, req.Vjpwd)
 
 	// call db
-	err = mysqldao.UpdateUserByUid(ctx, usr)
+	err = mysqldao.UpdateUserByUID(ctx, usr)
 	if err != nil {
 		logger.Errorf("update mysql error =%s", err.Error())
 		response.ResponseError(ctx, constanct.MySQLErrorCode)

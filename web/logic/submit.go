@@ -14,9 +14,9 @@ import (
 
 func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error) {
 	submit := dao.Submit{
-		Pid:        req.Pid,
-		Cid:        req.Cid,
-		Uid:        req.Uid,
+		PID:        req.PID,
+		CID:        req.CID,
+		UID:        req.UID,
 		Source:     req.Source,
 		Lang:       req.Lang,
 		Result:     constanct.OJ_JUDGE,
@@ -31,17 +31,17 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 
 func RejudgeSubmit(ctx *gin.Context, req *request.RejudgeSubmitReq) (interface{}, error) {
 	submit := dao.Submit{}
-	if req.Sid != nil {
-		submit.Sid = *req.Sid
+	if req.SID != nil {
+		submit.SID = *req.SID
 	}
-	if req.Cid != nil {
-		submit.Cid = *req.Cid
+	if req.CID != nil {
+		submit.CID = *req.CID
 	}
-	if req.Pid != nil {
-		submit.Pid = *req.Pid
+	if req.PID != nil {
+		submit.PID = *req.PID
 	}
-	if req.Uid != nil {
-		submit.Uid = *req.Uid
+	if req.UID != nil {
+		submit.UID = *req.UID
 	}
 	err := models.RejudgeSubmit(ctx, submit)
 	if err != nil {
@@ -54,14 +54,14 @@ func GetSubmits(ctx *gin.Context, req *request.SubmitListReq) (interface{}, erro
 	logger := utils.GetLogInstance()
 	resp := response.SubmitListResp{}
 	submit := dao.Submit{}
-	if req.Cid != nil {
-		submit.Cid = *req.Cid
+	if req.CID != nil {
+		submit.CID = *req.CID
 	}
-	if req.Pid != nil {
-		submit.Pid = *req.Pid
+	if req.PID != nil {
+		submit.PID = *req.PID
 	}
-	if req.Uid != nil {
-		submit.Uid = *req.Uid
+	if req.UID != nil {
+		submit.UID = *req.UID
 	}
 	offset, limit := utils.GetPageInfo(req.Page, req.Limit)
 	submits, err := models.GetSubmitList(ctx, submit, offset, limit)
@@ -78,8 +78,8 @@ func GetSubmits(ctx *gin.Context, req *request.SubmitListReq) (interface{}, erro
 	resp.Data = make([]response.SubmitLIstItem, len(submits))
 	for i, temp := range submits {
 		resp.Data[i] = response.SubmitLIstItem{
-			Sid:        temp.Sid,
-			Pid:        temp.Pid,
+			SID:        temp.SID,
+			PID:        temp.PID,
 			Lang:       temp.Lang,
 			Result:     temp.Result,
 			UseTime:    temp.Usetime,
@@ -92,15 +92,15 @@ func GetSubmits(ctx *gin.Context, req *request.SubmitListReq) (interface{}, erro
 
 func GetSubmit(ctx *gin.Context, req *request.GetSubmitReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
-	submit, err := mysqldao.SelectSubmitBySid(ctx, req.Sid)
+	submit, err := mysqldao.SelectSubmitBySID(ctx, req.SID)
 	if err != nil {
-		logger.Errorf("Call SelectSubmitBySid failed, sid=%v, err=%s", req.Sid, err.Error())
+		logger.Errorf("Call SelectSubmitBySID failed, SID=%v, err=%s", req.SID, err.Error())
 		return response.CreateResponse(constanct.MySQLErrorCode), err
 	}
 	return response.GetSubmitResp{
 		Response:   response.CreateResponse(constanct.SuccessCode),
-		Sid:        submit.Sid,
-		Pid:        submit.Pid,
+		SID:        submit.SID,
+		PID:        submit.PID,
 		Source:     submit.Source,
 		Lang:       submit.Lang,
 		Result:     submit.Result,

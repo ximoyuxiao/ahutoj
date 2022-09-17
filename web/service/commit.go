@@ -72,7 +72,7 @@ func GetCommit(ctx *gin.Context) {
 	var err error
 	req := new(request.GetSubmitReq)
 	cidStr := ctx.Param("id")
-	req.Sid, err = strconv.ParseInt(cidStr, 10, 64)
+	req.SID, err = strconv.ParseInt(cidStr, 10, 64)
 	if err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)

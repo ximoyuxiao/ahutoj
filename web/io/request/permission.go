@@ -1,11 +1,11 @@
 package request
 
 type PermissionReq struct {
-	Uid             string `json:"uid"`
-	Administrator   bool   `json:"administrator"`
-	Problem_edit    bool   `json:"problem_edit"`
-	Source_browser  bool   `json:"source_browser"`
-	Contest_creator bool   `json:"contest_creator"`
+	UID             string `json:"UID"`
+	Administrator   bool   `json:"SuperAdmin"`
+	Problem_edit    bool   `json:"ProbelmAdmin"`
+	Source_browser  bool   `json:"SourceAdmin"`
+	Contest_creator bool   `json:"ContestAdmin"`
 }
 type EditPermissionReq struct {
 	PermissionReq
@@ -16,5 +16,5 @@ type AddPermissionReq struct {
 type PermissionListReq GetListReq
 
 type DeletePermissionReq struct {
-	Uids []string `json:"uids"`
+	UIDs []string `json:"UIDs"`
 }

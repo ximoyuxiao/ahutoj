@@ -5,10 +5,10 @@ import (
 	"context"
 )
 
-func SelectContestByCid(ctx context.Context, cid int64) (dao.Contest, error) {
+func SelectContestByCID(ctx context.Context, CID int64) (dao.Contest, error) {
 	db := GetDB(ctx)
 	ret := dao.Contest{}
-	err := db.Table(ret.TableName()).Where("cid=?", cid).Find(&ret).Error
+	err := db.Table(ret.TableName()).Where("CID=?", CID).Find(&ret).Error
 	return ret, err
 }
 
@@ -20,10 +20,10 @@ func SelectContests(ctx context.Context, offset, limit int) ([]dao.Contest, erro
 	return ret, err
 }
 
-func DeleteContest(ctx context.Context, cid int64) error {
+func DeleteContest(ctx context.Context, CID int64) error {
 	db := GetDB(ctx)
 	tp := dao.Contest{}
-	err := db.Table(tp.TableName()).Where("cid=?", cid).Delete(&cid).Error
+	err := db.Table(tp.TableName()).Where("CID=?", CID).Delete(&CID).Error
 	return err
 }
 
@@ -33,16 +33,16 @@ func InserContest(ctx context.Context, contest dao.Contest) error {
 	return err
 }
 
-func SelectContestByUid(ctx context.Context, uid string) (int64, error) {
+func SelectContestByUID(ctx context.Context, UID string) (int64, error) {
 	db := GetDB(ctx)
 	ret := dao.Contest{}
-	err := db.Where("uid=?", uid).Last(&ret).Error
-	return ret.Cid, err
+	err := db.Where("UID=?", UID).Last(&ret).Error
+	return ret.CID, err
 }
 
 func UpdateContest(ctx context.Context, contest dao.Contest) error {
 	db := GetDB(ctx)
-	err := db.Table(contest.TableName()).Where("cid=?", contest.Cid).Updates(&contest).Error
+	err := db.Table(contest.TableName()).Where("CID=?", contest.CID).Updates(&contest).Error
 	return err
 }
 

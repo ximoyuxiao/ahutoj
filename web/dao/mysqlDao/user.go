@@ -5,16 +5,16 @@ import (
 	"context"
 )
 
-func SelectUserByUid(ctx context.Context, user *dao.User) error {
+func SelectUserByUID(ctx context.Context, user *dao.User) error {
 	db := GetDB(ctx)
-	// select * from User where uid = ''
-	err := db.Where("uid=?", user.Uid).Find(user).Error
+	// select * from User where UID = ''
+	err := db.Where("UID=?", user.UID).Find(user).Error
 	return err
 }
 
-func SelectUserCountByUid(ctx context.Context, uid string) (count int64, err error) {
+func SelectUserCountByUID(ctx context.Context, UID string) (count int64, err error) {
 	db := GetDB(ctx)
-	err = db.Table(dao.User{}.TableName()).Where("uid=?", uid).Count(&count).Error
+	err = db.Table(dao.User{}.TableName()).Where("UID=?", UID).Count(&count).Error
 	return count, err
 }
 
@@ -24,8 +24,8 @@ func InsertUserTable(ctx context.Context, user dao.User) error {
 	return err
 }
 
-func UpdateUserByUid(ctx context.Context, user *dao.User) error {
+func UpdateUserByUID(ctx context.Context, user *dao.User) error {
 	db := GetDB(ctx)
-	err := db.Where("uid=?", user.Uid).Updates(&user).Error
+	err := db.Where("UID=?", user.UID).Updates(&user).Error
 	return err
 }

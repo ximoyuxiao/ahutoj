@@ -1,21 +1,21 @@
 package request
 
 type List struct {
-	Lid   int64  `json:"lid"`
-	Uid   string `json:"uid"`
-	Title string `json:"title"`
-	Stime int64  `json:"stime"`
+	LID   int64  `json:"LID"`
+	UID   string `json:"UID"`
+	Title string `json:"Title"`
+	Stime int64  `json:"Stime"`
 }
 
 type ListProblem struct {
-	Lid int64 `json:"lid"`
-	Pid int   `json:"pid"`
+	LID int64 `json:"LID"`
+	PID int   `json:"PID"`
 }
 
 type ListAll struct {
-	Lid   int64  `json:"lid"`
-	Uid   string `json:"uid"`
-	Pid   int    `json:"pid"`
-	Title string `json:"title"`
-	Stime int64  `json:"stime"`
+	LID   int64  `json:"LID"`
+	UID   string `json:"UID"`
+	PID   int    `json:"PID"`
+	Title string `json:"Title"`
+	Stime int64  `json:"StartTime"`
 }

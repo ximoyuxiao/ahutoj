@@ -1,11 +1,11 @@
 package request
 
 type LoginReq struct {
-	Uid  string `json:"uid"`
-	Pass string `json:"pass"`
+	UID  string `json:"UID"`
+	Pass string `json:"Pass"`
 }
 
 type GetListReq struct {
-	Page  int `query:"page"`
-	Limit int `query:"limit"`
+	Page  int `query:"Page"`
+	Limit int `query:"Limit"`
 }

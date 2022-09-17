@@ -7,9 +7,9 @@ import (
 	"context"
 )
 
-func GetSubmitByCidFromDB(ctx context.Context, cid, page, limit int) ([]dao.Submit, error) {
+func GetSubmitByCIDFromDB(ctx context.Context, CID, page, limit int) ([]dao.Submit, error) {
 	temp := dao.Submit{
-		Cid: cid,
+		CID: CID,
 	}
 	offset, size := utils.GetPageInfo(page, limit)
 	return mysqldao.SelectSubmitList(ctx, temp, offset, size)

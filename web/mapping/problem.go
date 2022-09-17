@@ -6,7 +6,7 @@ import (
 )
 
 func ProblemReqToDao(req request.Problem) dao.Problem {
-	problem := dao.Problem{Pid: req.Pid}
+	problem := dao.Problem{PID: req.PID}
 
 	// 	LimitMemory:   req.LimitMemory,
 	if req.Title != nil {
@@ -22,10 +22,10 @@ func ProblemReqToDao(req request.Problem) dao.Problem {
 		problem.Output = *req.Output
 	}
 	if req.Sample_input != nil {
-		problem.Sample_input = *req.Sample_input
+		problem.SampleInput = *req.Sample_input
 	}
 	if req.Sample_output != nil {
-		problem.Sample_output = *req.Sample_output
+		problem.SampleOutput = *req.Sample_output
 	}
 	if req.Hit != nil {
 		problem.Hit = *req.Hit

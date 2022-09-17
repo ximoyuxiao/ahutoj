@@ -5,10 +5,10 @@ import (
 	"context"
 )
 
-func SelectPermissionByUid(ctx context.Context, uid string) (dao.Permission, error) {
+func SelectPermissionByUID(ctx context.Context, UID string) (dao.Permission, error) {
 	db := GetDB(ctx)
 	permission := dao.Permission{}
-	err := db.Table(permission.TableName()).Where("uid=?", uid).Find(&permission).Error
+	err := db.Table(permission.TableName()).Where("UID=?", UID).Find(&permission).Error
 	return permission, err
 }
 func SelectPermissionList(ctx context.Context, offset, size int) ([]dao.Permission, error) {
@@ -24,20 +24,20 @@ func InsertPermission(ctx context.Context, permission *dao.Permission) error {
 	return err
 }
 
-func DeletePermission(ctx context.Context, uid *string) error {
+func DeletePermission(ctx context.Context, UID *string) error {
 	db := GetDB(ctx)
-	err := db.Table(dao.Permission{}.TableName()).Where("uid=?", *uid).Delete(uid).Error
+	err := db.Table(dao.Permission{}.TableName()).Where("UID=?", *UID).Delete(UID).Error
 	return err
 }
 
 func UpdatePermission(ctx context.Context, permission *dao.Permission) error {
 	db := GetDB(ctx)
-	err := db.Table(dao.Permission{}.TableName()).Where("uid=?", permission.Uid).Updates(permission).Error
+	err := db.Table(dao.Permission{}.TableName()).Where("UID=?", permission.UID).Updates(permission).Error
 	return err
 }
 
 func SavePermission(ctx context.Context, permission *dao.Permission) error {
 	db := GetDB(ctx)
-	err := db.Table(dao.Permission{}.TableName()).Where("uid=?", permission.Uid).Save(permission).Error
+	err := db.Table(dao.Permission{}.TableName()).Where("UID=?", permission.UID).Save(permission).Error
 	return err
 }

@@ -27,7 +27,7 @@ func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
 }
 func EditProblem(req *request.EditProblemReq, c *gin.Context) (interface{}, error) {
 	problem := mapping.ProblemReqToDao(request.Problem(*req))
-	if req.Pid == 0 {
+	if req.PID == 0 {
 		return response.CreateResponse(constanct.InvalidParamCode), nil
 	}
 	err := models.EditProblem(c, &problem)
@@ -41,8 +41,8 @@ func EditProblem(req *request.EditProblemReq, c *gin.Context) (interface{}, erro
 
 func DeleteProblem(ctx *gin.Context, req *request.DeleteProblemReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
-	for _, pid := range req.Pids {
-		err := models.DeleteProblem(ctx, pid)
+	for _, PID := range req.PIDs {
+		err := models.DeleteProblem(ctx, PID)
 		if err != nil {
 			logger.Errorf("call DeleteProblem failed,err=%s", err.Error())
 			return nil, err
@@ -63,7 +63,7 @@ func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{},
 	ret.Data = make([]response.ProblemItemResp, 0, len(problems))
 	for _, problem := range problems {
 		ret.Data = append(ret.Data, response.ProblemItemResp{
-			Pid:   problem.Pid,
+			PID:   problem.PID,
 			Title: problem.Title,
 			Label: problem.Label,
 		})
@@ -71,11 +71,11 @@ func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{},
 	return ret, nil
 }
 
-func GetProblemInfo(ctx *gin.Context, pid int64) (interface{}, error) {
-	if !models.IsProblemExistByPid(ctx, &dao.Problem{Pid: int(pid)}) {
+func GetProblemInfo(ctx *gin.Context, PID int64) (interface{}, error) {
+	if !models.IsProblemExistByPID(ctx, &dao.Problem{PID: int(PID)}) {
 		return response.CreateResponse(constanct.PIDNotExistCode), nil
 	}
-	problem, err := models.GetProblemByPID(ctx, pid)
+	problem, err := models.GetProblemByPID(ctx, PID)
 	if err != nil {
 		return nil, err
 	}

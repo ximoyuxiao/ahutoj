@@ -20,16 +20,16 @@ func AddPermissionBit(permissionMap *PermissionBit, bit PermissionBit) {
 }
 func PermissionToBitMap(permission dao.Permission) int {
 	ans := PermissionBit(UNLOGINBit)
-	if permission.Administrator == "Y" {
+	if permission.SuperAdmin == "Y" {
 		AddPermissionBit(&ans, SuperAdminBit)
 	}
-	if permission.Contest_creator == "Y" {
+	if permission.ContestAdmin == "Y" {
 		AddPermissionBit(&ans, ContestAdminBit)
 	}
-	if permission.Problem_edit == "Y" {
+	if permission.ProblemAdmin == "Y" {
 		AddPermissionBit(&ans, ProblemAdminBit)
 	}
-	if permission.Source_browser == "Y" {
+	if permission.SourceAdmin == "Y" {
 		AddPermissionBit(&ans, SourceBorwserBit)
 	}
 	return int(ans)

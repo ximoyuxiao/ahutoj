@@ -25,6 +25,6 @@ const (
 )
 
 const (
-	ISPRIVATE int64 = 0
+	ISPRIVATE int64 = -1
 	ISPUBLIC  int64 = 1
 )

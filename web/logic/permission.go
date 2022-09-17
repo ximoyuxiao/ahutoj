@@ -10,12 +10,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetPermission(ctx *gin.Context, uid string) (interface{}, error) {
+func GetPermission(ctx *gin.Context, UID string) (interface{}, error) {
 	logger := utils.GetLogInstance()
-	permission, err := models.GetPermission(ctx, uid)
-	permission.Uid = uid
+	permission, err := models.GetPermission(ctx, UID)
+	permission.UID = UID
 	if err != nil {
-		logger.Errorf("call GetPermission failed , uid=%d, err=%s", uid, err.Error())
+		logger.Errorf("call GetPermission failed , UID=%d, err=%s", UID, err.Error())
 		return nil, err
 	}
 	return response.PermissionResp{
@@ -37,8 +37,8 @@ func EditPermission(ctx *gin.Context, req *request.EditPermissionReq) (interface
 
 func DeletePermission(ctx *gin.Context, req *request.DeletePermissionReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
-	for _, uid := range req.Uids {
-		err := models.DeletePermission(ctx, uid)
+	for _, UID := range req.UIDs {
+		err := models.DeletePermission(ctx, UID)
 		if err != nil {
 			logger.Errorf("Call DeletePermission Failed,err=%s", err.Error())
 			return nil, err
@@ -49,6 +49,9 @@ func DeletePermission(ctx *gin.Context, req *request.DeletePermissionReq) (inter
 
 func AddPermission(ctx *gin.Context, req *request.AddPermissionReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
+	if req.UID == "" {
+		return response.CreateResponse(constanct.UIDEmpty), nil
+	}
 	permission := models.PermisionReqToDao(req.PermissionReq)
 	err := models.AddPermission(ctx, &permission)
 	if err != nil {

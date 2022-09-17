@@ -8,7 +8,6 @@ import (
 	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
-	"sort"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,7 +15,7 @@ import (
 func AddContest(ctx *gin.Context, req *request.AddContestReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	contest := dao.Contest{
-		Uid:         middlewares.GetUid(ctx),
+		UID:         middlewares.GetUid(ctx),
 		Title:       req.Title,
 		Description: req.Description,
 		Begin_time:  req.Begin_time,
@@ -31,12 +30,12 @@ func AddContest(ctx *gin.Context, req *request.AddContestReq) (interface{}, erro
 		return nil, err
 	}
 
-	contest.Cid, err = models.GetCurrentCID(ctx, contest)
+	contest.CID, err = models.GetCurrentCID(ctx, contest)
 	if err != nil {
 		logger.Errorf("call GetCurrentCID failed, err=%s", err.Error())
 		return nil, err
 	}
-	err = models.AddConproblems(ctx, req.Pids, contest.Cid)
+	err = models.AddConproblems(ctx, req.Problems, contest.CID)
 	if err != nil {
 		logger.Errorf("call AddConproblems failed, err=%s", err.Error())
 		return nil, err
@@ -47,8 +46,8 @@ func AddContest(ctx *gin.Context, req *request.AddContestReq) (interface{}, erro
 func EditContest(ctx *gin.Context, req *request.EditContestReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	contest := dao.Contest{
-		Cid:         req.Cid,
-		Uid:         req.Uid,
+		CID:         req.CID,
+		UID:         req.UID,
 		Title:       req.Title,
 		Description: req.Description,
 		Begin_time:  req.Begin_time,
@@ -62,7 +61,7 @@ func EditContest(ctx *gin.Context, req *request.EditContestReq) (interface{}, er
 		logger.Errorf("call SaveContestDB failed, err=%s", err.Error())
 		return nil, err
 	}
-	err = models.AddConproblems(ctx, req.Pids, contest.Cid)
+	err = models.AddConproblems(ctx, req.Problems, contest.CID)
 	if err != nil {
 		logger.Errorf("call AddConproblems failed, err=%s", err.Error())
 		return nil, err
@@ -72,7 +71,7 @@ func EditContest(ctx *gin.Context, req *request.EditContestReq) (interface{}, er
 
 func DeleteContest(ctx *gin.Context, req *request.DeleteContestReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
-	err := models.DeleteContestDB(ctx, req.Cid)
+	err := models.DeleteContestDB(ctx, req.CID)
 	if err != nil {
 		logger.Errorf("call DeleteContestDB failed, err=%s", err.Error())
 		return nil, err
@@ -98,13 +97,13 @@ func GetListContest(ctx *gin.Context, req *request.ContestListReq) (interface{},
 	respData := make([]response.ContestListItem, len(ContestList))
 	for i, contest := range ContestList {
 		respData[i] = response.ContestListItem{
-			Cid:        contest.Cid,
-			Uid:        contest.Uid,
-			Title:      contest.Title,
-			Begin_time: contest.Begin_time,
-			End_time:   contest.End_time,
-			Ctype:      contest.Ctype,
-			Ispublic:   contest.Ispublic,
+			CID:       contest.CID,
+			UID:       contest.UID,
+			Title:     contest.Title,
+			BeginTime: contest.Begin_time,
+			EndTime:   contest.End_time,
+			Type:      contest.Ctype,
+			Ispublic:  contest.Ispublic,
 		}
 	}
 	counts, _ := models.GetContestCountFromDB(ctx)
@@ -117,12 +116,12 @@ func GetListContest(ctx *gin.Context, req *request.ContestListReq) (interface{},
 
 func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
-	contest, err := models.GetContestFromDB(ctx, req.Cid)
+	contest, err := models.GetContestFromDB(ctx, req.CID)
 	if err != nil {
-		logger.Errorf("call GetContestFromDB failed, cid=%s, err=%s", req.Cid, err.Error())
+		logger.Errorf("call GetContestFromDB failed, CID=%s, err=%s", req.CID, err.Error())
 		return nil, err
 	}
-	if contest.Cid != req.Cid {
+	if contest.CID != req.CID {
 		logger.Errorf("contest not exites req=%+v", utils.Sdump(req))
 		return response.CreateResponse(constanct.CIDNotExistCode), nil
 	}
@@ -130,15 +129,15 @@ func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, erro
 		logger.Errorf("contest pass word error req=%+v", utils.Sdump(req))
 		return response.CreateResponse(constanct.CIDPassWordErrorCode), nil
 	}
-	conPros, err := models.GetConProblemFromDB(ctx, req.Cid)
+	conPros, err := models.GetConProblemFromDB(ctx, req.CID)
 	if err != nil {
-		logger.Errorf("call GetConProblemFromDB failed, cid=%s, err=%s", req.Cid, err.Error())
+		logger.Errorf("call GetConProblemFromDB failed, CID=%s, err=%s", req.CID, err.Error())
 		return nil, err
 	}
 	respData := make([]response.ConProItem, 0)
 	for _, problem := range conPros {
 		temp := response.ConProItem{
-			Pid:        problem.Pid,
+			PID:        problem.PID,
 			Ptitle:     problem.Ptitle,
 			Submit_num: problem.Submit_num,
 			Ac_num:     problem.Ac_num,
@@ -147,8 +146,8 @@ func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, erro
 	}
 	return response.GetContestResp{
 		Response:    response.CreateResponse(constanct.SuccessCode),
-		Cid:         contest.Cid,
-		Uid:         contest.Uid,
+		CID:         contest.CID,
+		UID:         contest.UID,
 		Title:       contest.Title,
 		Description: contest.Description,
 		Begin_time:  contest.Begin_time,
@@ -160,80 +159,69 @@ func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, erro
 	}, nil
 }
 func initRankItem(rank *response.RankItem, Uname, Userid string) {
-	rank.Mark = 0
-	rank.Penalty = 0
-	rank.Rank = 1
 	rank.Uname = Uname
 	rank.UserID = Userid
 }
 
 //这个待后期优化
-/*rank uid,uname,solve 罚时 A，B，C，D，E，F，G...*/
+/*rank UID,uname,solve 罚时 A，B，C，D，E，F，G...*/
 func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
-	contest, err := models.GetContestFromDB(ctx, req.Cid)
+	contest, err := models.GetContestFromDB(ctx, req.CID)
 	if err != nil {
-		logger.Errorf("call GetContestFromDB Failed, cid=%d, err=%s", req.Cid, err.Error())
+		logger.Errorf("call GetContestFromDB Failed, CID=%d, err=%s", req.CID, err.Error())
 		return nil, err
 	}
-	problems, err := models.GetConProblemFromDB(ctx, req.Cid) //获得竞赛的题目
+	problems, err := models.GetConProblemFromDB(ctx, req.CID) //获得竞赛的题目
 	if err != nil {
-		logger.Errorf("call GetConProblemFromDB Failed, cid=%d, err=%s", req.Cid, err.Error())
+		logger.Errorf("call GetConProblemFromDB Failed, CID=%d, err=%s", req.CID, err.Error())
 		return nil, err
 	}
 	problemMap := make(map[int]dao.ConPro, 0)
 	problemIdxMap := make(map[int]int, 0)
 	for idx, problem := range problems {
 		temp := problem
-		problemMap[problem.Pid] = temp
-		problemIdxMap[problem.Pid] = idx
+		problemMap[problem.PID] = temp
+		problemIdxMap[problem.PID] = idx
 	}
-	submits, err := models.GetSubmitByCidFromDB(ctx, int(req.Cid), req.Page, req.Limit) //获取使用这个竞赛的所有提交
+	submits, err := models.GetSubmitByCIDFromDB(ctx, int(req.CID), req.Page, req.Limit) //获取使用这个竞赛的所有提交
 	if err != nil {
-		logger.Errorf("call GetContestFromDB Failed, cid=%d, err=%s", req.Cid, err.Error())
+		logger.Errorf("call GetContestFromDB Failed, CID=%d, err=%s", req.CID, err.Error())
 		return nil, err
 	}
 	userMap := make(map[string]int, 0)
 	ranks := make(response.RankItems, 0)
 	idx := 0
 	for _, submit := range submits {
-		rid, ok := userMap[submit.Uid]
+		rid, ok := userMap[submit.UID]
 		if !ok {
 			rid = idx
 			idx += 1
-			userMap[submit.Uid] = rid
-			user := dao.User{Uid: submit.Uid}
-			models.FindUserByUid(ctx, &user)
+			userMap[submit.UID] = rid
+			user := dao.User{UID: submit.UID}
+			models.FindUserByUID(ctx, &user)
 			ranks = append(ranks, response.RankItem{})
-			initRankItem(&ranks[rid], user.Uname, submit.Uid)
+			initRankItem(&ranks[rid], user.Uname, submit.UID)
 		}
 		rank := &ranks[rid]
-		if submit.Result == "Accept" {
-			if rank.Problems[problemIdxMap[submit.Pid]].Status == 2 {
+		if submit.Result == constanct.OJ_AC {
+			if rank.Problems[problemIdxMap[submit.PID]].Status == 2 {
 				continue
 			} else {
-				rank.Problems[problemIdxMap[submit.Pid]].Status = 2
-				rank.Problems[problemIdxMap[submit.Pid]].Pid = submit.Pid
-				rank.Problems[problemIdxMap[submit.Pid]].Time = submit.SubmitTime - contest.Begin_time
-				rank.Penalty += submit.SubmitTime - contest.Begin_time
-				rank.Solve += 1
+				rank.Problems[problemIdxMap[submit.PID]].Status = 2
+				rank.Problems[problemIdxMap[submit.PID]].PID = submit.PID
+				rank.Problems[problemIdxMap[submit.PID]].Time = submit.SubmitTime - contest.Begin_time
 			}
 		} else {
-			if rank.Problems[problemIdxMap[submit.Pid]].Status == 0 {
-				rank.Problems[problemIdxMap[submit.Pid]].Status = 1
-				rank.Problems[problemIdxMap[submit.Pid]].Pid = submit.Pid
-				rank.Problems[problemIdxMap[submit.Pid]].Time = submit.SubmitTime - contest.Begin_time
+			if rank.Problems[problemIdxMap[submit.PID]].Status == 0 {
+				rank.Problems[problemIdxMap[submit.PID]].Status = 1
+				rank.Problems[problemIdxMap[submit.PID]].PID = submit.PID
+				rank.Problems[problemIdxMap[submit.PID]].Time = submit.SubmitTime - contest.Begin_time
 			}
-			if submit.Result != "Compile Error" {
-				// 15分钟罚时
-				rank.Penalty += 1000 * 15 * 60
+			if submit.Result != constanct.OJ_CE {
+				continue
 			}
 		}
-		rank.Problems[problemIdxMap[submit.Pid]].Submit_num += 1
-	}
-	sort.Sort(ranks)
-	for idx := range ranks {
-		ranks[idx].Rank = int64(idx + 1)
 	}
 	return response.ConntestRankResp{
 		Response: response.CreateResponse(constanct.SuccessCode),

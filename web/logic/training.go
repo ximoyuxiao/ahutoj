@@ -14,14 +14,14 @@ import (
 func AddTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 
 	list := dao.List{
-		Lid:   req.Lid,
-		Uid:   req.Uid,
-		Title: req.Title,
-		Stime: req.Stime,
+		LID:       req.LID,
+		UID:       req.UID,
+		Title:     req.Title,
+		StartTime: req.Stime,
 	}
 	listproblem := dao.ListProblem{
-		Lid: req.Lid,
-		Pid: req.Pid,
+		LID: req.LID,
+		PID: req.PID,
 	}
 	//添加题单
 	err := models.CreateList(c, &list)
@@ -41,14 +41,14 @@ func AddTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 }
 func EditTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 	list := dao.List{
-		Lid:   req.Lid,
-		Uid:   req.Uid,
-		Title: req.Title,
-		Stime: req.Stime,
+		LID:       req.LID,
+		UID:       req.UID,
+		Title:     req.Title,
+		StartTime: req.Stime,
 	}
 	listproblem := dao.ListProblem{
-		Lid: req.Lid,
-		Pid: req.Pid,
+		LID: req.LID,
+		PID: req.PID,
 	}
 	//编辑题单
 	err := models.EditList(c, &list)
@@ -68,10 +68,10 @@ func EditTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 }
 func DeleteTraining(req *request.List, c *gin.Context) (interface{}, error) {
 	list := dao.List{
-		Lid:   req.Lid,
-		Uid:   req.Uid,
-		Title: req.Title,
-		Stime: req.Stime,
+		LID:       req.LID,
+		UID:       req.UID,
+		Title:     req.Title,
+		StartTime: req.Stime,
 	}
 	//删除题单
 	err := models.DeleteTraining(c, &list)

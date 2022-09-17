@@ -19,8 +19,8 @@ const (
 	Source_browser  PermissionType = 3
 )
 
-func GetPermission(ctx *gin.Context, uid string) (dao.Permission, error) {
-	permission, err := mysqldao.SelectPermissionByUid(ctx, uid)
+func GetPermission(ctx *gin.Context, UID string) (dao.Permission, error) {
+	permission, err := mysqldao.SelectPermissionByUID(ctx, UID)
 	if err != nil {
 		return dao.Permission{}, err
 	}
@@ -34,8 +34,8 @@ func EditPermission(ctx *gin.Context, permission *dao.Permission) error {
 	return mysqldao.SavePermission(ctx, permission)
 }
 
-func DeletePermission(ctx *gin.Context, uid string) error {
-	return mysqldao.DeletePermission(ctx, &uid)
+func DeletePermission(ctx *gin.Context, UID string) error {
+	return mysqldao.DeletePermission(ctx, &UID)
 }
 
 func GetPermissionList(ctx *gin.Context, offset, size int) ([]dao.Permission, error) {
@@ -44,57 +44,58 @@ func GetPermissionList(ctx *gin.Context, offset, size int) ([]dao.Permission, er
 }
 func PermisionReqToDao(req request.PermissionReq) dao.Permission {
 	Permission := dao.Permission{}
-	Permission.Uid = req.Uid
+	Permission.UID = req.UID
 	if req.Administrator {
-		Permission.Administrator = "Y"
+		Permission.SuperAdmin = "Y"
 	} else {
-		Permission.Administrator = "N"
+		Permission.SuperAdmin = "N"
 	}
 
 	if req.Contest_creator {
-		Permission.Contest_creator = "Y"
+		Permission.ContestAdmin = "Y"
 	} else {
-		Permission.Contest_creator = "N"
+		Permission.ContestAdmin = "N"
 	}
 
 	if req.Problem_edit {
-		Permission.Problem_edit = "Y"
+		Permission.ProblemAdmin = "Y"
 	} else {
-		Permission.Problem_edit = "N"
+		Permission.ProblemAdmin = "N"
 	}
 
 	if req.Source_browser {
-		Permission.Source_browser = "Y"
+		Permission.SourceAdmin = "Y"
 	} else {
-		Permission.Source_browser = "N"
+		Permission.SourceAdmin = "N"
 	}
+	Permission.ListAdmin = "N"
 	return Permission
 }
 
 func PermissionDaoToResp(permission dao.Permission) response.Permission {
 	return response.Permission{
-		Uid:           permission.Uid,
+		UID:           permission.UID,
 		PermissionMap: mapping.PermissionToBitMap(permission),
 	}
 }
 
-func CheckUserPermission(ctx *gin.Context, uid string, checkPermission PermissionType) bool {
-	permission, err := mysqldao.SelectPermissionByUid(ctx, uid)
+func CheckUserPermission(ctx *gin.Context, UID string, checkPermission PermissionType) bool {
+	permission, err := mysqldao.SelectPermissionByUID(ctx, UID)
 	if err != nil {
 		return false
 	}
-	if permission.Administrator == "Y" {
+	if permission.SuperAdmin == "Y" {
 		return true
 	}
 	switch checkPermission {
 	case Administrator:
-		return permission.Administrator == "Y"
+		return permission.SuperAdmin == "Y"
 	case Contest_creator:
-		return permission.Contest_creator == "Y"
+		return permission.ContestAdmin == "Y"
 	case Problem_edit:
-		return permission.Problem_edit == "Y"
+		return permission.ProblemAdmin == "Y"
 	case Source_browser:
-		return permission.Source_browser == "Y"
+		return permission.SourceAdmin == "Y"
 	default:
 		return false
 	}

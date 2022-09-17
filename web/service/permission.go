@@ -75,13 +75,13 @@ func GetListPermission(ctx *gin.Context) {
 
 func GetPermission(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
-	uid := ctx.Param("id")
+	UID := ctx.Param("id")
 
-	if uid == "" {
+	if UID == "" {
 		logger.Errorf("")
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
-	resp, _ := logic.GetPermission(ctx, uid)
+	resp, _ := logic.GetPermission(ctx, UID)
 	response.ResponseOK(ctx, resp)
 }

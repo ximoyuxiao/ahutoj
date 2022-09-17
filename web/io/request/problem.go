@@ -1,22 +1,22 @@
 package request
 
 type Problem struct {
-	Pid           int     `json:"pid"`
-	Title         *string `json:"title"`
-	Description   *string `json:"description"`
-	Input         *string `json:"input"`
-	Output        *string `json:"output"`
-	Sample_input  *string `json:"sample_input"`
-	Sample_output *string `json:"sample_output"`
-	LimitTime     *int64  `json:"limitTime"`
-	LimitMemory   *int64  `json:"limitMemory"`
-	Hit           *string `json:"hit"`
-	Label         *string `json:"label"`
+	PID           int     `json:"PID"`
+	Title         *string `json:"Title"`
+	Description   *string `json:"Description"`
+	Input         *string `json:"Input"`
+	Output        *string `json:"Output"`
+	Sample_input  *string `json:"SampleInput"`
+	Sample_output *string `json:"SampleOutput"`
+	LimitTime     *int64  `json:"LimitTime"`
+	LimitMemory   *int64  `json:"LimitMemory"`
+	Hit           *string `json:"Hit"`
+	Label         *string `json:"Label"`
 }
 type EditProblemReq Problem
 type AddProblemReq Problem
 type DeleteProblemReq struct {
-	Pids []int64 `json:"pids"`
+	PIDs []int64 `json:"PIDs"`
 }
 
 type ProblemListReq GetListReq

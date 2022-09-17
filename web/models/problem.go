@@ -9,8 +9,8 @@ import (
 )
 
 //判断题目是否存在
-func IsProblemExistByPid(ctx context.Context, problem *dao.Problem) bool {
-	count, err := mysqldao.SelectProblemCountByPid(ctx, problem.Pid)
+func IsProblemExistByPID(ctx context.Context, problem *dao.Problem) bool {
+	count, err := mysqldao.SelectProblemCountByPID(ctx, problem.PID)
 	if err != nil {
 		return false
 	}
@@ -37,23 +37,23 @@ func EditProblem(ctx context.Context, problem *dao.Problem) error {
 	return err
 }
 
-func DeleteProblem(ctx context.Context, pid int64) error {
+func DeleteProblem(ctx context.Context, PID int64) error {
 	logger := utils.GetLogInstance()
-	err := mysqldao.DeleteProblem(ctx, pid)
+	err := mysqldao.DeleteProblem(ctx, PID)
 	if err != nil {
-		logger.Errorf("call DeleteProblem failed,problem= %d, err=%s", pid, err.Error())
+		logger.Errorf("call DeleteProblem failed,problem= %d, err=%s", PID, err.Error())
 	}
 	return err
 }
 
 // 前期的话 先用 mysql 后期针对活跃数据会引入redis
-func GetProblemByPID(ctx context.Context, pid int64) (dao.Problem, error) {
+func GetProblemByPID(ctx context.Context, PID int64) (dao.Problem, error) {
 	logger := utils.GetLogInstance()
 	problem := dao.Problem{}
-	problem.Pid = int(pid)
-	err := mysqldao.SelectProblemByPid(ctx, &problem)
+	problem.PID = int(PID)
+	err := mysqldao.SelectProblemByPID(ctx, &problem)
 	if err != nil {
-		logger.Errorf("call SelectProblemByPid failed,pid=%d,err=%s", pid, err.Error())
+		logger.Errorf("call SelectProblemByPID failed,PID=%d,err=%s", PID, err.Error())
 		return problem, err
 	}
 	return problem, err
@@ -63,16 +63,16 @@ func GetProblemCount(ctx context.Context) (int64, error) {
 	return mysqldao.SelectProblemCount(ctx)
 }
 
-func GetProblems(ctx context.Context, pids []string) ([]dao.Problem, error) {
-	problems := make([]dao.Problem, len(pids))
+func GetProblems(ctx context.Context, PIDs []string) ([]dao.Problem, error) {
+	problems := make([]dao.Problem, len(PIDs))
 	logger := utils.GetLogInstance()
-	for idx, pidstr := range pids {
-		pid, err := strconv.ParseInt(pidstr, 10, 64)
+	for idx, PIDstr := range PIDs {
+		PID, err := strconv.ParseInt(PIDstr, 10, 64)
 		if err != nil {
 			logger.Errorf("call ParseInt failed,err=%s", err.Error())
 			return nil, err
 		}
-		problem, err := GetProblemByPID(ctx, pid)
+		problem, err := GetProblemByPID(ctx, PID)
 		if err != nil {
 			logger.Errorf("call GetProblemByPID failed,err=%s", err.Error())
 			return nil, err

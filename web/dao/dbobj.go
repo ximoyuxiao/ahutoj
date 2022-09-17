@@ -3,16 +3,17 @@ package dao
 import "ahutoj/web/io/constanct"
 
 type User struct {
-	Uid     string `gorm:"column:uid"`
-	Uname   string `gorm:"column:uname"`
-	Pass    string `gorm:"column:pass"`
-	School  string `gorm:"column:school"`
-	Classes string `gorm:"column:classes"`
-	Major   string `gorm:"column:major"`
-	Adept   string `gorm:"column:adept"`
-	Vjid    string `gorm:"column:vjid"`
-	Vjpwd   string `gorm:"column:vjpwd"`
-	Email   string `gorm:"column:email"`
+	UID     string `gorm:"column:UID"`
+	Uname   string `gorm:"column:UserName"`
+	Pass    string `gorm:"column:Pass"`
+	School  string `gorm:"column:School"`
+	Classes string `gorm:"column:Classes"`
+	Major   string `gorm:"column:Major"`
+	Adept   string `gorm:"column:Adept"`
+	Vjid    string `gorm:"column:Vjid"`
+	Vjpwd   string `gorm:"column:Vjpwd"`
+	Email   string `gorm:"column:Email"`
+	// HeadUrl string `gorm:"column:HeadUrl"`
 }
 
 func (u User) TableName() string {
@@ -20,11 +21,12 @@ func (u User) TableName() string {
 }
 
 type Permission struct {
-	Uid             string `gorm:"column:uid"`
-	Administrator   string `gorm:"column:administrator"`
-	Problem_edit    string `gorm:"column:problem_edit"`
-	Source_browser  string `gorm:"column:source_browser"`
-	Contest_creator string `gorm:"column:contest_creator"`
+	UID          string `gorm:"column:UID"`
+	SuperAdmin   string `gorm:"column:SuperAdmin"`
+	ProblemAdmin string `gorm:"column:ProblemAdmin"`
+	ListAdmin    string `gorm:"column:ListAdmin"`
+	SourceAdmin  string `gorm:"column:SourceAdmin"`
+	ContestAdmin string `gorm:"column:ContestAdmin"`
 }
 
 func (p Permission) TableName() string {
@@ -32,48 +34,49 @@ func (p Permission) TableName() string {
 }
 
 type Problem struct {
-	Pid           int    `gorm:"column:pid" json:"pid"`
-	Title         string `gorm:"column:title" json:"title"`
-	Description   string `gorm:"column:description" json:"description"`
-	Input         string `gorm:"column:input" json:"input"`
-	Output        string `gorm:"column:output" json:"output"`
-	Sample_input  string `gorm:"column:sample_input" json:"sample_input"`
-	Sample_output string `gorm:"column:sample_output" json:"sample_output"`
-	LimitTime     int64  `gorm:"column:limit_time" json:"limitTime"`
-	LimitMemory   int64  `gorm:"column:limit_memory" json:"limitMemory"`
-	Hit           string `gorm:"column:hit" json:"hit"`
-	Label         string `gorm:"column:label" json:"label"`
+	PID          int    `gorm:"column:PID" json:"PID"`
+	Title        string `gorm:"column:Title" json:"Title"`
+	Description  string `gorm:"column:Description" json:"Description"`
+	Input        string `gorm:"column:Input" json:"Input"`
+	Output       string `gorm:"column:Output" json:"Output"`
+	SampleInput  string `gorm:"column:SampleInput" json:"SampleInput"`
+	SampleOutput string `gorm:"column:SampleOutput" json:"SampleOutput"`
+	LimitTime    int64  `gorm:"column:LimitTime" json:"LimitTime"`
+	LimitMemory  int64  `gorm:"column:LimitMemory" json:"LimitMemory"`
+	Hit          string `gorm:"column:Hit" json:"Hit"`
+	Label        string `gorm:"column:Label" json:"Label"`
 }
 
 type List struct {
-	Lid   int64  `gorm:"column:lid"`
-	Uid   string `gorm:"column:uid"`
-	Title string `gorm:"column:title"`
-	Stime int64  `gorm:"column:stime"`
+	LID       int64  `gorm:"column:LID"`
+	UID       string `gorm:"column:UID"`
+	Title     string `gorm:"column:Title"`
+	StartTime int64  `gorm:"column:StartTime"`
 }
 
 type ListProblem struct {
-	Lid int64 `gorm:"column:lid"`
-	Pid int   `gorm:"column:pid"`
+	LID   int64  `gorm:"column:LID"`
+	PID   int    `gorm:"column:PID"`
+	Title string `gorm:"column:Title"`
 }
 
 type ListUser struct {
-	Lid        int64 `gorm:"column:lid"`
-	Uid        int   `gorm:"column:uid"`
-	Submit_num int   `gorm:"column:submit_num"`
-	Ac_num     int   `gorm:"column:ac_num"`
+	LID       int64 `gorm:"column:lid"`
+	UID       int   `gorm:"column:uid"`
+	SubmitNum int   `gorm:"column:SubmitNum"`
+	ACNum     int   `gorm:"column:AcNum"`
 }
 
 type Contest struct {
-	Cid         int64  `gorm:"column:cid"`
-	Uid         string `gorm:"column:uid"`
-	Title       string `gorm:"column:title"`
-	Description string `gorm:"column:description"`
-	Begin_time  int64  `gorm:"column:begin_time"`
-	End_time    int64  `gorm:"column:end_time"`
-	Ctype       int    `gorm:"column:ctype"`
-	Ispublic    int    `gorm:"column:ispublic"`
-	Pass        string `gorm:"column:pass"`
+	CID         int64  `gorm:"column:CID"`
+	UID         string `gorm:"column:UID"`
+	Title       string `gorm:"column:Title"`
+	Description string `gorm:"column:Description"`
+	Begin_time  int64  `gorm:"column:BeginTime"`
+	End_time    int64  `gorm:"column:EndTime"`
+	Ctype       int    `gorm:"column:Type"`
+	Ispublic    int    `gorm:"column:IsPublic"`
+	Pass        string `gorm:"column:Pass"`
 }
 
 func (p Contest) TableName() string {
@@ -81,11 +84,11 @@ func (p Contest) TableName() string {
 }
 
 type ConPro struct {
-	Cid        int64  `gorm:"column:cid"`
-	Pid        int    `gorm:"column:pid"`
-	Ptitle     string `gorm:"column:ptitle"`
-	Submit_num int    `gorm:"column:submit_num"`
-	Ac_num     int    `gorm:"column:ac_num"`
+	CID        int64  `gorm:"column:CID"`
+	PID        int    `gorm:"column:PID"`
+	Ptitle     string `gorm:"column:Title"`
+	Submit_num int    `gorm:"column:SubmitNum"`
+	Ac_num     int    `gorm:"column:ACNum"`
 }
 
 func (p ConPro) TableName() string {
@@ -93,17 +96,17 @@ func (p ConPro) TableName() string {
 }
 
 type Submit struct {
-	Sid        int                `gorm:"column:sid"`
-	Pid        int                `gorm:"column:pid"`
-	Uid        string             `gorm:"column:uid"`
-	Cid        int                `gorm:"column:cid"`
-	Judgeid    int                `gorm:"column:judgeid"`
-	Source     string             `gorm:"column:source"`
-	Lang       constanct.LANG     `gorm:"column:lang"`
-	Result     constanct.OJResult `gorm:"column:result"`
-	Usetime    int                `gorm:"column:usetime"`
-	Memory     int                `gorm:"column:memory"`
-	SubmitTime int64              `gorm:"column:submittime"`
+	SID        int                `gorm:"column:SID"`
+	PID        int                `gorm:"column:PID"`
+	UID        string             `gorm:"column:UID"`
+	CID        int                `gorm:"column:CID"`
+	Judgeid    int                `gorm:"column:Judgeid"`
+	Source     string             `gorm:"column:Source"`
+	Lang       constanct.LANG     `gorm:"column:Lang"`
+	Result     constanct.OJResult `gorm:"column:Result"`
+	Usetime    int                `gorm:"column:Usetime"`
+	Memory     int                `gorm:"column:Memory"`
+	SubmitTime int64              `gorm:"column:SubmitTime"`
 }
 
 func (p Submit) TableName() string {

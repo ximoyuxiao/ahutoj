@@ -7,8 +7,8 @@ import (
 
 type LoginResp struct {
 	Response
-	Token string `json:"token"`
-	Uname string `json:"name"`
+	Token string `json:"Token"`
+	Uname string `json:"UserName"`
 	Permission
 }
 
@@ -16,20 +16,20 @@ type RegisterResp LoginResp
 
 type UserResp struct {
 	Response
-	Uid     string `json:"uid"`
-	Uname   string `json:"uname"`
-	School  string `json:"school"`
-	Classes string `json:"classes"`
-	Major   string `json:"major"`
-	Adept   string `json:"adept"`
-	Vjid    string `json:"vjid"`
-	Email   string `json:"email"`
+	Uid     string `json:"UID"`
+	Uname   string `json:"UserName"`
+	School  string `json:"School"`
+	Classes string `json:"Classes"`
+	Major   string `json:"Major"`
+	Adept   string `json:"Adept"`
+	Vjid    string `json:"Vjid"`
+	Email   string `json:"Email"`
 }
 
 func CreateUserResp(user *dao.User) UserResp {
 	return UserResp{
 		Response: CreateResponse(constanct.SuccessCode),
-		Uid:      user.Uid,
+		Uid:      user.UID,
 		Uname:    user.Uname,
 		School:   user.School,
 		Classes:  user.Classes,

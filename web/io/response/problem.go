@@ -3,15 +3,15 @@ package response
 import "ahutoj/web/dao"
 
 type ProblemItemResp struct {
-	Pid   int    `json:"pid"`
-	Title string `json:"title"`
+	PID   int    `json:"PID"`
+	Title string `json:"Title"`
 	Label string `json:"Label"`
 }
 
 type ProblemListResp struct {
 	Response
-	Count int64             `json:"count"`
-	Data  []ProblemItemResp `json:"data"`
+	Count int64             `json:"Count"`
+	Data  []ProblemItemResp `json:"Data"`
 }
 
 type ProblemResp dao.Problem
