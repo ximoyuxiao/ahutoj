@@ -111,6 +111,7 @@ int main(int argc, char **argv)
                 );
                 solution.pop_back();
             }
+            //  信号量做处理 消息队列
             sleep(3);
         }   
     } 

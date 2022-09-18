@@ -76,6 +76,7 @@ type Contest struct {
 	End_time    int64  `gorm:"column:EndTime"`
 	Ctype       int    `gorm:"column:Type"`
 	Ispublic    int    `gorm:"column:IsPublic"`
+	Problems    string `gorm:"column:Problems"`
 	Pass        string `gorm:"column:Pass"`
 }
 

@@ -18,7 +18,7 @@ type UserInfoReq struct {
 	UID string `json:"uid" binding:"required"`
 }
 type UserEditReq struct {
-	Uname   string `json:"Uname"`
+	Uname   string `json:"UserName"`
 	School  string `json:"School"`
 	Classes string `json:"Classes"`
 	Major   string `json:"Major"`

@@ -22,6 +22,7 @@ func AddContest(ctx *gin.Context, req *request.AddContestReq) (interface{}, erro
 		End_time:    req.End_time,
 		Ctype:       req.Ctype,
 		Ispublic:    req.Ispublic,
+		Problems:    req.Problems,
 		Pass:        req.Pass,
 	}
 	err := models.AddContestToDb(ctx, contest)
@@ -54,6 +55,7 @@ func EditContest(ctx *gin.Context, req *request.EditContestReq) (interface{}, er
 		End_time:    req.End_time,
 		Ctype:       req.Ctype,
 		Ispublic:    req.Ispublic,
+		Problems:    req.Problems,
 		Pass:        req.Pass,
 	}
 	err := models.SaveContestDB(ctx, contest)
@@ -155,6 +157,7 @@ func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, erro
 		Ctype:       contest.Ctype,
 		Ispublic:    contest.Ispublic,
 		Size:        int64(len(conPros)),
+		Problems:    contest.Problems,
 		ProblemData: respData,
 	}, nil
 }

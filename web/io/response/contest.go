@@ -26,6 +26,7 @@ type GetContestResp struct {
 	Ctype       int          `json:"Type"`
 	Ispublic    int          `json:"IsPublic"`
 	Size        int64        `json:"Size"`
+	Problems    string       `json:"Problems"`
 	ProblemData []ConProItem `json:"Data"`
 }
 type ContestListResp struct {

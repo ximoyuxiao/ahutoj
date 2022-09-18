@@ -75,7 +75,6 @@ static void setfreeTimer(){
 }
 
 bool judgeClient::checkSource(){
-
     return true;
 }
 
@@ -525,7 +524,6 @@ bool judgeClient::judge()
                 }
                 break;
             }
-            
             case J_RUNNING:{
                 ILOG("J_RUNNING");
                 SubRes res  = OJ_AC;
