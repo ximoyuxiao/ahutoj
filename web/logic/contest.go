@@ -8,6 +8,7 @@ import (
 	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
+	"sort"
 
 	"github.com/gin-gonic/gin"
 )
@@ -109,6 +110,15 @@ func GetListContest(ctx *gin.Context, req *request.ContestListReq) (interface{},
 		}
 	}
 	counts, _ := models.GetContestCountFromDB(ctx)
+	sort.Slice(respData, func(i, j int) bool {
+		if respData[i].EndTime == respData[j].EndTime {
+			if respData[i].BeginTime == respData[j].BeginTime {
+				return respData[i].CID < respData[j].CID
+			}
+			return respData[i].BeginTime < respData[j].BeginTime
+		}
+		return respData[i].EndTime > respData[j].EndTime
+	})
 	return response.ContestListResp{
 		Response: response.CreateResponse(constanct.SuccessCode),
 		Size:     counts,
@@ -161,6 +171,7 @@ func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, erro
 		ProblemData: respData,
 	}, nil
 }
+
 func initRankItem(rank *response.RankItem, Uname, Userid string) {
 	rank.Uname = Uname
 	rank.UserID = Userid
