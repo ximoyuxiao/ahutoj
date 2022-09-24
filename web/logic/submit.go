@@ -8,6 +8,7 @@ import (
 	"ahutoj/web/io/response"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,8 +20,8 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 		UID:        req.UID,
 		Source:     req.Source,
 		Lang:       req.Lang,
-		Result:     constanct.OJ_JUDGE,
-		SubmitTime: req.SubmitTime,
+		Result:     constanct.OJ_PENDING,
+		SubmitTime: time.Now().Unix(),
 	}
 	err := models.CreateSubmit(ctx, submit)
 	if err != nil {
@@ -83,7 +84,7 @@ func GetSubmits(ctx *gin.Context, req *request.SubmitListReq) (interface{}, erro
 			Lang:       temp.Lang,
 			Result:     temp.Result,
 			UseTime:    temp.Usetime,
-			UseMemory:  temp.Memory,
+			UseMemory:  temp.UseMemory,
 			SubmitTime: temp.SubmitTime,
 		}
 	}
@@ -105,7 +106,7 @@ func GetSubmit(ctx *gin.Context, req *request.GetSubmitReq) (interface{}, error)
 		Lang:       submit.Lang,
 		Result:     submit.Result,
 		UseTime:    submit.Usetime,
-		UseMemory:  submit.Memory,
+		UseMemory:  submit.UseMemory,
 		SubmitTime: submit.SubmitTime,
 	}, nil
 }

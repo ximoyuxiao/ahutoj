@@ -11,10 +11,11 @@ typedef enum{
     OJ_OLE,
     OJ_CE,
     OJ_JUDGE,
-    OJ_REJUDGE
+    OJ_REJUDGE,
+    OJ_PENDING,
 }SubRes;
-static const char *runningres[] = {"","Accept","Wrong Answer","Time Limit Error","Mermory Limit Error",
-                                "Runtime Error","Presentation Error","Output Len Error","Compile Error","Judgeing","rejudge"};
+static const char *runningres[] = {"","AC","WA","TLE","MLE",
+                                "RE","PE","OLE","CE","JUDGEING","REJUDGEING","PENDING"};
 typedef enum{
     C = 1,
     CPP,

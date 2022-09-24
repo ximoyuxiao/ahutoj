@@ -31,7 +31,7 @@ bool SolutionDb::initDB(readConfig* rcf)
 vector<Solve*> SolutionDb::getSolve(){
     vector<Solve*> ret;
     char sql[256] = "";
-    sprintf(sql,"select sid,pid,uid,cid,source,lang from Submit where result='pendding' or result = 'rejuged'");
+    sprintf(sql,"select SID,PID,UID,CID,Source,Lang From Submit where Result='PENDING' or result = 'REJUDGEING'");
     auto db = mysqlDB::getInstance();
     MYSQL mysql;
     db->getDatabase(&mysql);

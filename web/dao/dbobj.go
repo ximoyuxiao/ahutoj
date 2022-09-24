@@ -106,7 +106,7 @@ type Submit struct {
 	Lang       constanct.LANG     `gorm:"column:Lang"`
 	Result     constanct.OJResult `gorm:"column:Result"`
 	Usetime    int                `gorm:"column:Usetime"`
-	Memory     int                `gorm:"column:Memory"`
+	UseMemory  int                `gorm:"column:UseMemory"`
 	SubmitTime int64              `gorm:"column:SubmitTime"`
 }
 
