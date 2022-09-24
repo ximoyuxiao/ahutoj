@@ -10,6 +10,7 @@ import (
 	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -76,14 +77,13 @@ func DoResiger(c *gin.Context, req *request.User) (interface{}, error) {
 	if exist {
 		return response.CreateResponse(constanct.UIDExistCOde), nil
 	}
-	// 2、密码加密处理（MD5)
-	user.Pass, _ = utils.MD5EnCode(req.UID, req.Pass)
-	// 3、创建用户
+	// 创建用户
 	err := models.CreateUser(c, &user)
 	if err != nil {
 		logger.Errorf("call CreateUser failed,err=%s", err.Error())
 		return response.CreateResponse(constanct.MySQLErrorCode), err
 	}
+	// 获取token
 	token, err := middlewares.GetToken(c, req.UID)
 	if err != nil {
 		logger.Errorf("call GetToken failed, err=%s", err.Error())
@@ -119,13 +119,49 @@ func GetUserInfo(c *gin.Context, req *string) (interface{}, error) {
 }
 
 func UpdateUserInfo(ctx *gin.Context, req request.UserEditReq) (interface{}, error) {
-	return response.CreateResponse(constanct.UIDNotExistCode), nil
+	return response.CreateResponse(constanct.Notimplemented), nil
 }
 
 func UpdateUserPass(ctx *gin.Context, req request.UserEditPassReq) (interface{}, error) {
-	return response.CreateResponse(constanct.UIDNotExistCode), nil
+	return response.CreateResponse(constanct.Notimplemented), nil
 }
 
 func UpdateUserVjudge(ctx *gin.Context, req request.UserEditVjudgeReq) (interface{}, error) {
-	return response.CreateResponse(constanct.UIDNotExistCode), nil
+	return response.CreateResponse(constanct.Notimplemented), nil
+}
+
+func AddUsers(ctx *gin.Context, req request.AddUsersReq) (interface{}, error) {
+	logger := utils.GetLogInstance()
+	resp := response.AddUsersResp{}
+	resp.CreateNumber = 0
+	resp.Data = make([]response.UsersItem, 0)
+	if req.Password == nil || *req.Password == "" {
+		req.Password = new(string)
+		*req.Password = "123456"
+	}
+	for idx := 1; idx <= req.Number; idx++ {
+		UID := fmt.Sprintf("%s%02d", req.Prefix, idx)
+		err := models.CreateUser(ctx, &dao.User{
+			UID:    UID,
+			Uname:  UID,
+			Pass:   *req.Password,
+			School: req.School,
+		})
+
+		if err != nil {
+			logger.Errorf("call CreateUser failed,UID=%+v,err=%s", UID, err.Error())
+			continue
+		} else {
+			resp.CreateNumber += 1
+			usersItem := response.UsersItem{
+				UID:      UID,
+				Uname:    UID,
+				Password: *req.Password,
+				School:   req.School,
+			}
+			resp.Data = append(resp.Data, usersItem)
+		}
+	}
+	resp.Response = response.CreateResponse(constanct.SuccessCode)
+	return resp, nil
 }

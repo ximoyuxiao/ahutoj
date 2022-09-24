@@ -35,6 +35,12 @@ type UserEditVjudgeReq struct {
 	Vjid  string `json:"Vjid"`
 	Vjpwd string `json:"Vjpwd"`
 }
+type AddUsersReq struct {
+	Number   int     `json:"Number"`
+	Prefix   string  `json:"Prefix"`
+	School   string  `json:"School"`
+	Password *string `json:"Password"`
+}
 
 func (u UserEditReq) ToUser(uid string) *dao.User {
 	return &dao.User{

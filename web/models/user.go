@@ -32,6 +32,8 @@ func EqualPassWord(ctx context.Context, user *dao.User, password string) bool {
 
 func CreateUser(ctx context.Context, user *dao.User) error {
 	logger := utils.GetLogInstance()
+	// 2、密码加密处理（MD5)
+	user.Pass, _ = utils.MD5EnCode(user.UID, user.Pass)
 	err := mysqldao.InsertUserTable(ctx, *user)
 	if err != nil {
 		logger.Error("call InsertUserTable failed,user= %+v, err=%s", utils.Sdump(user), err.Error())

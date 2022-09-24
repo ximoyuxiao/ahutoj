@@ -59,6 +59,7 @@ func regeisterRouters(router *gin.Engine) {
 			userRouter.POST("/edit/", service.EditUserInfo)
 			userRouter.POST("/edit/pass/", service.EditUserPass)
 			userRouter.POST("/vjudgeBind", service.VjudgeBind)
+
 		}
 
 		adminRouter := apiRouter.Group("/admin").Use(middlewares.JwtVerify)
@@ -68,6 +69,8 @@ func regeisterRouters(router *gin.Engine) {
 			adminRouter.POST("/permission/add/", service.AddPermission)
 			adminRouter.GET("/permission/list/", service.GetListPermission)
 			adminRouter.GET("/permission/:id", service.GetPermission)
+			adminRouter.POST("/users", service.AddUsers)
+
 		}
 
 		problemRouter := apiRouter.Group("/problem").Use(middlewares.JwtVerify)
@@ -119,7 +122,7 @@ func regeisterRouters(router *gin.Engine) {
 			fileRouter.DELETE("/:pid", service.RemoveFile)
 			// 解压文件
 			fileRouter.POST("/unzip/:pid", service.UnzipFile)
-			//
+			// 上传并解析题目
 			fileRouter.POST("/problem", service.UpProblemFile)
 		}
 	}

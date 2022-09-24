@@ -127,3 +127,20 @@ func VjudgeBind(ctx *gin.Context) {
 
 	response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
 }
+func AddUsers(ctx *gin.Context) {
+	logger := utils.GetLogInstance()
+	req := new(request.AddUsersReq)
+	err := ctx.ShouldBindWith(req, binding.JSON)
+	if err != nil {
+		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
+	}
+	resp, err := logic.AddUsers(ctx, *req)
+	if err != nil {
+		logger.Errorf("call AddUsers err=%s, req=%+v", err.Error(), utils.Sdump(req))
+		response.ResponseError(ctx, constanct.ServerBusyCode)
+		return
+	}
+	response.ResponseOK(ctx, resp)
+}

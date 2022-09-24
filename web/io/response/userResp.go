@@ -16,7 +16,7 @@ type RegisterResp LoginResp
 
 type UserResp struct {
 	Response
-	Uid     string `json:"UID"`
+	UID     string `json:"UID"`
 	Uname   string `json:"UserName"`
 	School  string `json:"School"`
 	Classes string `json:"Classes"`
@@ -25,11 +25,22 @@ type UserResp struct {
 	Vjid    string `json:"Vjid"`
 	Email   string `json:"Email"`
 }
+type UsersItem struct {
+	UID      string `json:"UID"`
+	Uname    string `json:"UserName"`
+	School   string `json:"School"`
+	Password string `json:"Password"`
+}
+type AddUsersResp struct {
+	Response
+	CreateNumber int         `json:"CreateNumber"`
+	Data         []UsersItem `json:"Data"`
+}
 
 func CreateUserResp(user *dao.User) UserResp {
 	return UserResp{
 		Response: CreateResponse(constanct.SuccessCode),
-		Uid:      user.UID,
+		UID:      user.UID,
 		Uname:    user.Uname,
 		School:   user.School,
 		Classes:  user.Classes,
