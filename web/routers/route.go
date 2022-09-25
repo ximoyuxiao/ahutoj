@@ -56,6 +56,7 @@ func regeisterRouters(router *gin.Engine) {
 		userRouter := apiRouter.Group("/user").Use(middlewares.JwtVerify)
 		{
 			userRouter.GET("/info", service.UserInfo)
+			userRouter.GET("/info/status", service.UserStatusInfo)
 			userRouter.POST("/edit/", service.EditUserInfo)
 			userRouter.POST("/edit/pass/", service.EditUserPass)
 			userRouter.POST("/vjudgeBind", service.VjudgeBind)

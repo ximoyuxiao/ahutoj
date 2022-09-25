@@ -29,3 +29,6 @@ func RejudgeSubmit(ctx context.Context, submit dao.Submit) error {
 func GetSubmitListCount(ctx context.Context, submit dao.Submit) (int64, error) {
 	return mysqldao.SelectCountSubmit(ctx, submit)
 }
+func GetUserStatusInfo(ctx context.Context, submit dao.Submit, lastTime int64) ([]dao.Submit, error) {
+	return mysqldao.SelectSubmitByUID(ctx, submit, lastTime)
+}

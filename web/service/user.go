@@ -18,7 +18,7 @@ import (
 
 func UserInfo(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
-	req := ctx.Query("uid")
+	req := ctx.Query("UID")
 	if req == "" {
 		req = middlewares.GetUid(ctx)
 	}
@@ -31,7 +31,23 @@ func UserInfo(ctx *gin.Context) {
 
 	response.ResponseOK(ctx, resp)
 }
+func UserStatusInfo(ctx *gin.Context) {
+	logger := utils.GetLogInstance()
+	req := new(request.UserStatusInfoReq)
+	if err := ctx.ShouldBindBodyWith(req, binding.JSON); err != nil {
+		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
+	}
 
+	resp, err := logic.GetUserStatusInfo(ctx, *req)
+	if err != nil {
+		logger.Errorf("call GetUserStatusInfo failed, req=%+v, err=%s", utils.Sdump(req), err.Error())
+		response.ResponseError(ctx, constanct.ServerBusyCode)
+		return
+	}
+	response.ResponseOK(ctx, resp)
+}
 func EditUserInfo(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := &request.UserEditReq{}

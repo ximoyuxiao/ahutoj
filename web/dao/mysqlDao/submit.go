@@ -38,3 +38,9 @@ func SelectCountSubmit(ctx context.Context, submit dao.Submit) (int64, error) {
 	err = db.Table(submit.TableName()).Where(&submit).Count(&ans).Error
 	return ans, err
 }
+func SelectSubmitByUID(ctx context.Context, submit dao.Submit, lastTime int64) ([]dao.Submit, error) {
+	ans := make([]dao.Submit, 0)
+	db := GetDB(ctx)
+	err := db.Table(submit.TableName()).Where(submit).Where("SubmitTime > ?", lastTime).Find(&ans).Error
+	return ans, err
+}

@@ -11,6 +11,7 @@ import (
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
 	"fmt"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -191,4 +192,46 @@ func AddUsers(ctx *gin.Context, req request.AddUsersReq) (interface{}, error) {
 		resp.Data = append(resp.Data, usersItem)
 	}
 	return nil, nil
+}
+
+func GetUserStatusInfo(ctx *gin.Context, req request.UserStatusInfoReq) (interface{}, error) {
+	logger := utils.GetLogInstance()
+	bigTime := time.Now() // 获取当前时间
+	resp := response.UserStatusInfoResp{
+		Response: response.CreateResponse(constanct.SuccessCode),
+	}
+	resp.Data = make([]response.UserStatusInfoItem, 0)
+	switch req.Type {
+	case constanct.Momth:
+		{
+			bigTime = bigTime.AddDate(0, -req.Time, 0)
+		}
+	case constanct.Year:
+		{
+			bigTime = bigTime.AddDate(-req.Time, 0, 0)
+		}
+	default:
+		{
+			bigTime = bigTime.AddDate(0, -6, 0)
+		}
+	}
+	submit := dao.Submit{
+		UID:    req.UID,
+		Result: req.Result,
+	}
+	submits, err := models.GetUserStatusInfo(ctx, submit, bigTime.Unix())
+	if err != nil {
+		logger.Errorf("call GetUserStatusInfo failed, req=%+v,err=%s", utils.Sdump(req), err.Error())
+		return nil, err
+	}
+	for _, submit := range submits {
+		temp := response.UserStatusInfoItem{
+			PID:        submit.PID,
+			Result:     submit.Result,
+			SubmitTime: submit.SubmitTime,
+		}
+		resp.Data = append(resp.Data, temp)
+	}
+
+	return resp, nil
 }

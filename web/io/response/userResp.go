@@ -37,6 +37,16 @@ type AddUsersResp struct {
 	Data         []UsersItem `json:"Data"`
 }
 
+type UserStatusInfoItem struct {
+	PID        int                `json:"PID"`
+	SubmitTime int64              `json:"SubmitTime"`
+	Result     constanct.OJResult `json:"Result"`
+}
+type UserStatusInfoResp struct {
+	Response
+	Data []UserStatusInfoItem `json:"Data"`
+}
+
 func CreateUserResp(user *dao.User) UserResp {
 	return UserResp{
 		Response: CreateResponse(constanct.SuccessCode),

@@ -1,6 +1,9 @@
 package request
 
-import "ahutoj/web/dao"
+import (
+	"ahutoj/web/dao"
+	"ahutoj/web/io/constanct"
+)
 
 type User struct {
 	UID     string `json:"UID" binding:"required"`
@@ -47,6 +50,13 @@ type AddUserItem struct {
 	Pass     string `json:"Pass"`
 }
 type AddUsersReq []AddUserItem
+
+type UserStatusInfoReq struct {
+	UID    string               `json:"UID"`
+	Type   constanct.StatusTime `json:"Type"`
+	Time   int                  `json:"Time"`
+	Result constanct.OJResult   `json:"Result"`
+}
 
 func (u UserEditReq) ToUser(uid string) *dao.User {
 	return &dao.User{
