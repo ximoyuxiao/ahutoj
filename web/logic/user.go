@@ -130,7 +130,7 @@ func UpdateUserVjudge(ctx *gin.Context, req request.UserEditVjudgeReq) (interfac
 	return response.CreateResponse(constanct.Notimplemented), nil
 }
 
-func AddUsers(ctx *gin.Context, req request.AddUsersReq) (interface{}, error) {
+func AddUsersRange(ctx *gin.Context, req request.AddUsersRangeReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	resp := response.AddUsersResp{}
 	resp.CreateNumber = 0
@@ -164,4 +164,31 @@ func AddUsers(ctx *gin.Context, req request.AddUsersReq) (interface{}, error) {
 	}
 	resp.Response = response.CreateResponse(constanct.SuccessCode)
 	return resp, nil
+}
+func AddUsers(ctx *gin.Context, req request.AddUsersReq) (interface{}, error) {
+	logger := utils.GetLogInstance()
+	resp := response.AddUsersResp{}
+	resp.CreateNumber = 0
+	resp.Data = make([]response.UsersItem, 0)
+	for _, item := range req {
+		user := dao.User{
+			UID:   item.UID,
+			Pass:  item.Pass,
+			Uname: item.UserName,
+		}
+		err := models.CreateUser(ctx, &user)
+		if err != nil {
+			logger.Errorf("call CreateUser failed,user=%+v,err=%s", user, err.Error())
+			continue
+		}
+		resp.CreateNumber += 1
+		usersItem := response.UsersItem{
+			UID:      user.UID,
+			Uname:    user.Uname,
+			Password: user.Pass,
+			School:   user.School,
+		}
+		resp.Data = append(resp.Data, usersItem)
+	}
+	return nil, nil
 }

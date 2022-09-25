@@ -69,6 +69,7 @@ func regeisterRouters(router *gin.Engine) {
 			adminRouter.POST("/permission/add/", service.AddPermission)
 			adminRouter.GET("/permission/list/", service.GetListPermission)
 			adminRouter.GET("/permission/:id", service.GetPermission)
+			adminRouter.POST("/users/Range", service.AddUsersRange)
 			adminRouter.POST("/users", service.AddUsers)
 
 		}
