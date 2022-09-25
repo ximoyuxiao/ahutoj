@@ -149,8 +149,24 @@ bool judgeClient::compile()
     DLOG("compile.txt");
     char ceFile[128]="";
     sprintf(ceFile,"%s/err.txt",dir);
-    if(getFileSize(ceFile)!=0)
+    if(getFileSize(ceFile)!=0){
+        int fd = open(ceFile,O_RDONLY);
+        string ceinfo;
+        char buff[BUFFER_SIZE]="";
+        int ret;
+        while(ret = read(fd,buff,BUFFER_SIZE)){
+            if(ret == -1){
+                if(errno == EINTR || errno == EAGAIN)
+                    continue;
+                ELOG("read:",strerror(errno));
+                break;
+            }
+            ceinfo += buff;
+            memset(buff,0,sizeof(buff));
+        }
+        this->solve->ceInfo(ceinfo);
         return false;
+    }
     return true;
 }
 
@@ -192,13 +208,13 @@ int get_page_fault_mem(struct rusage &ruse, pid_t &pidApp)
 	{
 		m_vmpeak = get_proc_status(pidApp, "VmPeak:");
 		m_vmdata = get_proc_status(pidApp, "VmData:");
-		printf("VmPeak:%d KB VmData:%d KB minflt:%d KB\n", m_vmpeak, m_vmdata,
+		DLOG("VmPeak:%d KB VmData:%d KB minflt:%d KB\n", m_vmpeak, m_vmdata,
 			   m_minflt >> 10);
 	}
 	return m_minflt;
 }
 
-bool judgeClient::running(SubRes &result,const char * runFile,const char *resFile)
+bool judgeClient::running(SubRes &result,const char * runFile,const char *resFile,long long &useMemory,long long &useTime)
 {
     pid = fork();
     if(pid < 0)
@@ -210,8 +226,6 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
     {
         int tempmemory = 0;
         int status, sig, exitcode;
-        int usetime = 0;
-        int useMemory = 0;
         struct user_regs_struct reg;
 	    struct rusage ruse;
         int first = true;   
@@ -224,11 +238,12 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
             }
 
             // 获取程序运行内存
-            tempmemory = get_proc_status(pid,"VmPeak:") << 10;
+            tempmemory = get_proc_status(pid,"VmPeak:") << 10; // B
             if (tempmemory > useMemory)
 			    useMemory = tempmemory;
             if (useMemory > this->solve->LimitMemory() * STD_MB){
                 DLOG("res:MLE userMemory:%d",useMemory);
+                useMemory = this->solve->LimitMemory() * STD_MB;
                 result = OJ_MLE;
                 ptrace(PTRACE_KILL, pid, NULL, NULL); //杀死子进程
                 break;
@@ -257,7 +272,7 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
 				case SIGXCPU:
                     DLOG("res:TLE signal:%d",exitcode);
 					result = OJ_TLE;
-					usetime = solve->LimitTime() * 1000;
+					useTime = solve->LimitTime() * 1000;
 					break;
 				case SIGXFSZ:
                     DLOG("res:OLE signal:%d",exitcode);
@@ -326,9 +341,9 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
             first = false;
         }
         ptrace(PTRACE_KILL, pid, NULL, NULL);    // 杀死出问题的进程
-        usetime += (ruse.ru_utime.tv_sec * 1000 + ruse.ru_utime.tv_usec / 1000) * cpu_compensation; // 统计用户态耗时，在更快速的CPU上加以cpu_compensation倍数放大
-        usetime += (ruse.ru_stime.tv_sec * 1000 + ruse.ru_stime.tv_usec / 1000) * cpu_compensation; // 统计内核态耗时，在更快速的CPU上加以cpu_compensation倍数放大
-        solve->setUsetime(usetime + solve->getUsetime());
+        useTime += (ruse.ru_utime.tv_sec * 1000 + ruse.ru_utime.tv_usec / 1000) * cpu_compensation; // 统计用户态耗时，在更快速的CPU上加以cpu_compensation倍数放大
+        useTime += (ruse.ru_stime.tv_sec * 1000 + ruse.ru_stime.tv_usec / 1000) * cpu_compensation; // 统计内核态耗时，在更快速的CPU上加以cpu_compensation倍数放大
+        solve->setUsetime(useTime + solve->getUsetime());
         kill(pid,SIGKILL);
     }
     else
@@ -532,13 +547,16 @@ bool judgeClient::judge()
                 init_syscalls_limits(this->solve->Lang());
                 for(std::size_t i = 0;i<inputFiles.size();i++){
                     DLOG("runnning:%s",inputFiles[i].c_str());
-                    running(res,inputFiles[i].c_str(),resoutfile);
+                    long long useTime = 0,useMemory = 0;
+                    running(res,inputFiles[i].c_str(),resoutfile,useMemory,useTime);
                     DLOG("runned:%s",outputFiles[i].c_str());
                     if(res != OJ_AC)
                         break;
                     cmpFIle(res,resoutfile,outputFiles[i].c_str());
                     if(res != OJ_AC)
                         break;
+                    solve->setUsetime(max(useTime,solve->getUsetime()));
+                    solve->setUseMemory(max(useMemory,solve->getuseMemory()));
                 }
                 if(res != OJ_AC){
                     Jstat = J_FAILED;

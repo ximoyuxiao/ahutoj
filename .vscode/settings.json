@@ -37,6 +37,9 @@
         "tuple": "cpp",
         "type_traits": "cpp",
         "utility": "cpp",
-        "typeinfo": "cpp"
-    }
+        "typeinfo": "cpp",
+        "optional": "cpp"
+    },
+    "go.toolsEnvVars": {},
+    "C_Cpp.errorSquiggles": "Enabled"
 }

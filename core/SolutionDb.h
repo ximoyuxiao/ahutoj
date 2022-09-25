@@ -11,6 +11,7 @@ class SolutionDb
 private:
     MyRedis* redis;
     mysqlDB* mydb;
+    void GetSolveLimit(Solve*);
 public:
     SolutionDb();
     ~SolutionDb();
@@ -18,6 +19,7 @@ public:
     vector<Solve*> getSolve();
     bool commitSolveToDb(Solve* solve);
     void ReleaseSolve(Solve* solve);
+    
 };
 
 

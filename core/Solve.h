@@ -8,21 +8,19 @@ using std::string;
 class Solve
 {
 private:
-    int     problemID;      //问题编号
-    int     solutionID;     //提交编号
-    int     UserID;         //用户ID
-    int     CompleteID;     //竞赛ID 
-    string  source;         //代码
-    int     limitTime;      //极限运行时间
-    int     limitMemory;    //极限运行内存
-    lanuage lang;           //使用语言
-    SubRes  res;            //运行结果
-    int     judgeID;        //JudgeID
-    int     usetime;        //运行时间
-    int     usememory;      //运行内存
-    string  ceinfo;         //错误信息
-    long    submitTime;     //提交时间
-   
+    int           problemID;      //问题编号
+    int           solutionID;     //提交编号
+    int           UserID;         //用户ID
+    int           CompleteID;     //竞赛ID 
+    string        source;         //代码
+    long long     limitTime;      //极限运行时间
+    long long     limitMemory;    //极限运行内存
+    lanuage       lang;           //使用语言
+    SubRes        res;            //运行结果
+    int           judgeID;        //JudgeID
+    long long     usetime;        //运行时间
+    long long     usememory;      //运行内存
+    string        ceinfo;         //错误信息
     void intTostr(char* args,int num);
 public:
     Solve(int problemID=0,int solutionID=0,const char *source="",int limitTime=0,int limitMeory=0,lanuage lang=C);
@@ -42,22 +40,23 @@ public:
     void SubmitTime(long submitTime);
     string Source();
     void Source(string code);
-    int LimitTime();
-    void LimitTime(int limit);
-    int  LimitMemory();
-    void LimitMemory(int limit);
+    long long LimitTime();
+    void LimitTime(long long limit);
+    long long  LimitMemory();
+    void LimitMemory(long long limit);
     lanuage Lang();
     void Lang(lanuage lang);
     SubRes Sres();
     void   Sres(SubRes subres);
     int getjudgeID();
     void setjudgeID(int judgeId);
-    int getUsetime();
-    void setUsetime(int usetime);
-    int getuseMemory();
-    void setUseMemory(int useMemory);
+    long long getUsetime();
+    void setUsetime(long long usetime);
+    long long getuseMemory();
+    void setUseMemory(long long useMemory);
     string ceInfo();
     void ceInfo(string ceinfo);
     void getargs(char *args[8]);
+    
 };
 #endif
