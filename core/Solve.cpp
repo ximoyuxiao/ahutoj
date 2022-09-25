@@ -65,6 +65,10 @@ void Solve::getargs(char* args[8])
     intTostr(args[6],lang);
     intTostr(args[7],getjudgeID());
 }
+void longlongTostr(char* args,long long num){
+    sprintf(args,"%lld",num);
+    return ;
+}
 void Solve::intTostr(char*args,int num)
 {
     sprintf(args,"%d",num);
@@ -95,28 +99,22 @@ int Solve::Cid(){
 void Solve::Cid(int cid){
     this->CompleteID = cid;
 }
-long Solve::SubmitTime(){
-    return submitTime;
-}
-void Solve::SubmitTime(long submitTime){
-    this->submitTime = submitTime;
-}
 string Solve::Source(){
     return source;
 }
 void Solve::Source(string code){
     this->source = code;
 }
-int Solve::LimitTime(){
+long long Solve::LimitTime(){
     return limitTime;
 }
-void Solve::LimitTime(int limit){
+void Solve::LimitTime(long long limit){
     this->limitTime = limit;
 }
-int  Solve::LimitMemory(){
+long long  Solve::LimitMemory(){
     return limitMemory;
 }
-void Solve::LimitMemory(int limit){
+void Solve::LimitMemory(long long limit){
     this->limitMemory = limit;
 }
 lanuage Solve::Lang(){
@@ -138,17 +136,17 @@ void Solve::setjudgeID(int judgeId)
 {
     this->judgeID = judgeId;
 }
-int Solve::getUsetime(){
+long long Solve::getUsetime(){
     return usetime;
 }
-void Solve::setUsetime(int usetime){
+void Solve::setUsetime(long long usetime){
     this->usememory = usetime;
 }
-int Solve::getuseMemory()
+long long Solve::getuseMemory()
 {
     return this->usememory;
 }
-void Solve::setUseMemory(int useMemory){
+void Solve::setUseMemory(long long useMemory){
     this->usememory = useMemory;
 }
 string Solve::ceInfo(){
@@ -158,3 +156,4 @@ void Solve::ceInfo(string ceinfo)
 {
     this->ceinfo = ceinfo;
 }
+

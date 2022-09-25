@@ -1,6 +1,6 @@
 #! /bin/bash
-sed -i 's/tencentyun/aliyun/g' /etc/apt/sources.list
-sudo apt update
+#sed -i 's/tencentyun/aliyun/g' /etc/apt/sources.list
+#sudo apt update
 # 安装一系列工具
 for pkg in net-tools make flex g++ clang libmysqlclient-dev libmysql++-dev nginx mysql-server pkg-config redis libhiredis-dev
 do
@@ -19,7 +19,7 @@ if [ $? -eq 1 ]
         echo "正在为您安装go..."
         sudo add-apt-repository ppa:longsleep/golang-backports
         sudo apt update
-        sudo apt install golang-go
+        sudo apt install -y golang-go
         go env -w GO111MODULE="on"
         go env -w GOPROXY="https://goproxy.cn,direct"
         go env -w GOSUMDB=off
@@ -28,7 +28,6 @@ if [ $? -eq 1 ]
         export PATH=$PATH:/usr/bin/go:${GOPATH}:${GOPATH}/bin
     else
         echo "go已经安装"
-
 fi
 # 安装air
 which air
@@ -51,7 +50,5 @@ make build
 cd core
 make all
 cd ..
-./judged
-./tmp/bin/main
 echo "username:$USER"
 echo "password:$PASSWORD"

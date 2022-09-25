@@ -27,7 +27,7 @@ private:
     bool checkSource();
     bool compile();
     long long getFileSize(const char * filepath);
-    bool running(SubRes &result,const char * runFile,const char *resFile);
+    bool running(SubRes &result,const char * runFile,const char *resFile,long long &useMemory,long long &useTime);
     bool getFiles();
     bool judgePE(FILE*source,FILE *res);
     bool cmpFIle(SubRes &result,char *myfile,const char* sourceFile);
