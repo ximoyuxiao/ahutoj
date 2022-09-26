@@ -12,7 +12,7 @@ static void judgeClient_AC(){
     all++;
     printf("Test AC:");
     Solve* solve = nullptr;
-    solve = solve = new Solve(1,1,"#include<iostream>\nusing namespace std;\nint main(){\n\tcout<<\"hello world\";\n\texit(0);\n}",1,128,CPP11);
+    solve =  new Solve(1,1,"#include<iostream>\nusing namespace std;\nint main(){\n\tcout<<\"hello world\";\n\texit(0);\n}",1,128,CPP11);
     judgeClient juc(solve);
     status = OJ_JUDGE;
     juc.judge();
@@ -28,7 +28,7 @@ static void judgeClient_PE(){
     all++;
     printf("Test PE:");
     Solve* solve = nullptr;
-    solve = solve = new Solve(1,1,"#include<iostream>\nusing namespace std;\nint main(){\n\tcout<<\"hello world\"<<endl;\n\texit(0);\n}",1,128,CPP11);
+    solve  = new Solve(1,1,"#include<iostream>\nusing namespace std;\nint main(){\n\tcout<<\"hello world\"<<endl;\n\texit(0);\n}",1,128,CPP11);
     judgeClient juc(solve);
     status = OJ_JUDGE;
     juc.judge();
@@ -38,13 +38,14 @@ static void judgeClient_PE(){
     }
     puts("pass");
     allPass++;
+    delete solve;
 }
 
 static void judgeClient_RE(){
     all++;
     printf("Test RE:");
     Solve* solve = nullptr;
-    solve = solve = new Solve(1,1,"#include<iostream>\nusing namespace std;\nint main(){\n\tint a=1,b=0;\n\tcout<<a/b;\n\texit(0);\n}",1,128,CPP11);
+    solve =  new Solve(1,1,"#include<iostream>\nusing namespace std;\nint main(){\n\tint a=1,b=0;\n\tcout<<a/b;\n\texit(0);\n}",1,128,CPP11);
     judgeClient juc(solve);
     status = OJ_JUDGE;
     juc.judge();
@@ -60,7 +61,7 @@ static void judgeClient_WA(){
      all++;
     printf("Test WA:");
     Solve* solve = nullptr;
-    solve = solve = new Solve(1,1,"#include<iostream>\nusing namespace std;\nint main(){\n\tcout<<\"world\";\n\texit(0);\n}",1,128,CPP11);
+    solve =  new Solve(1,1,"#include<iostream>\nusing namespace std;\nint main(){\n\tcout<<\"world\";\n\texit(0);\n}",1,128,CPP11);
     judgeClient juc(solve);
     status = OJ_JUDGE;
     juc.judge();
@@ -92,7 +93,7 @@ static void judgeClient_MLE(){
      all++;
     printf("Test MLE:");
     Solve* solve = nullptr;
-    solve = solve = new Solve(1,1,"#include<iostream>\n#include<cstdlib>\nusing namespace std;\nint main(){\n\tmalloc(256*1024*1024);\n\texit(0);\n}",1,128,CPP11);
+    solve =  new Solve(1,1,"#include<iostream>\n#include<cstdlib>\nusing namespace std;\nint main(){\n\tmalloc(256*1024*1024);\n\texit(0);\n}",1,128,CPP11);
     judgeClient juc(solve);
     status = OJ_JUDGE;
     juc.judge();

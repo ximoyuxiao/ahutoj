@@ -113,9 +113,9 @@ vector<Solve*> SolutionDb::getSolve(){
     return ret;
 }
 
+char sql[102400] ="";
 bool SolutionDb::commitSolveToDb(Solve* solve){
     // insert into Submit values (null,#{pid},#{uid},#{cid},#{judgeid},#{source},#{lang},'Judgeing',0,0,#{submitTime})
-    char sql[256] ="";
     sprintf(sql,"update Submit set JudgeID=%d,Result='%s',UseTime=%lld,UseMemory=%lld where SID=%d",
         solve->getjudgeID(),
         runningres[solve->Sres()],
@@ -130,11 +130,16 @@ bool SolutionDb::commitSolveToDb(Solve* solve){
     int res = mysql_query(&mysql,sql) == 0;
     if(solve->Sres() == OJ_CE){
         sprintf(sql,"insert into CEINFO values(%d,'%s')",solve->Sid(),solve->ceInfo().c_str());
+        ILOG("insert mysql:%s",sql);
         mysql_query(&mysql,sql);
     }
     db->CloseDatabase(&mysql,nullptr);
+    DLOG("Close DB:%d",solve->Sid());
     return res;
 }
 void SolutionDb::ReleaseSolve(Solve* solve){
-    delete solve;
+    DLOG("---begin solve");
+    if(solve != nullptr)
+        delete solve;
+    DLOG("---end delete solve!\n-----");
 }

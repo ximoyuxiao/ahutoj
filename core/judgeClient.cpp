@@ -18,8 +18,8 @@
 #include <sys/user.h>
 #include<mysql/mysql.h>
 #include "judgeClient.h"
-#include "mlog.h"
 #include "okcalls.h"
+#include "mlog.h"
 
 #define MAXBUFF 1024
 #define BUFFER_SIZE 4096
@@ -33,14 +33,12 @@
 #endif
 
 using namespace my;
-static pid_t pid ;
 static SubRes status = OJ_JUDGE;
 static double cpu_compensation = 1.0;
-const int call_array_size = CALL_ARRAY_SIZE;
-unsigned int call_id = 0;
-int call_counter[call_array_size] = {0};
 
-static void init_syscalls_limits(lanuage lang){
+
+
+void judgeClient::init_syscalls_limits(lanuage lang){
     memset(call_counter, 0, sizeof(call_counter));
     switch (lang)
     {
@@ -140,7 +138,7 @@ bool judgeClient::compile()
         }
         case PYTHON3:
         {
-            return false;
+            return true;
             break;
         }
         default:
@@ -216,7 +214,7 @@ int get_page_fault_mem(struct rusage &ruse, pid_t &pidApp)
 
 bool judgeClient::running(SubRes &result,const char * runFile,const char *resFile,long long &useMemory,long long &useTime)
 {
-    pid = fork();
+    pid_t pid = fork();
     if(pid < 0)
     {
         DLOG("fork:%s",strerror(errno));
@@ -230,7 +228,8 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
 	    struct rusage ruse;
         int first = true;   
         while(1){
-            wait4(pid,&status,__WALL,&ruse); //等待子进程切换内核态（调用系统API或者运行状态变化）
+            wait4(pid,&status,__WNOTHREAD,&ruse); //等待子进程切换内核态（调用系统API或者运行状态变化）
+            DLOG("Watch pid:%d run:%s/main",pid,dir);
             // 这一段也不知道干嘛的
             if (first){
                 ptrace(PTRACE_SETOPTIONS, pid, NULL, PTRACE_O_TRACESYSGOOD | PTRACE_O_TRACEEXIT
@@ -242,49 +241,50 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
             if (tempmemory > useMemory)
 			    useMemory = tempmemory;
             if (useMemory > this->solve->LimitMemory() * STD_MB){
-                DLOG("res:MLE userMemory:%d",useMemory);
+                DLOG("run:%s/main res:MLE userMemory:%d",dir,useMemory);
                 useMemory = this->solve->LimitMemory() * STD_MB;
                 result = OJ_MLE;
                 ptrace(PTRACE_KILL, pid, NULL, NULL); //杀死子进程
-                break;
+                continue;
             }
 
             // 子进程已经退出 ，返回值不为0则判RE
             if (WIFEXITED(status)) { 
                 exitcode = WEXITSTATUS(status);
                 if(exitcode){
-                    DLOG("res:RE exitcode:%d",exitcode);
+                    DLOG("dir:%s/main res:RE exitcode:%d",dir,exitcode);
                     result = OJ_RE;
                 }
                 break;
             }
+
             exitcode = WEXITSTATUS(status);
 
             if(exitcode == 0x05 || exitcode == 0 || exitcode == 133);  //休眠或者IO 啥也不做
             else{
                 if(result == OJ_AC){
                     switch (exitcode)                  // 根据退出的原因给出判题结果
-				{
-				case SIGCHLD:
-				case SIGALRM:
-					setfreeTimer();
-				case SIGKILL:
-				case SIGXCPU:
-                    DLOG("res:TLE signal:%d",exitcode);
-					result = OJ_TLE;
-					useTime = solve->LimitTime() * 1000;
-					break;
-				case SIGXFSZ:
-                    DLOG("res:OLE signal:%d",exitcode);
-					result = OJ_OLE;
-					break;
-				default:
-                    DLOG("res:RE signal:%d",exitcode);
-					result = OJ_RE;
-				}
+                    {
+                    case SIGCHLD:
+                    case SIGALRM:
+                        alarm(0);
+                    case SIGKILL:
+                    case SIGXCPU:
+                        DLOG("stop run:%s/main res:TLE signal:%d",dir,exitcode);
+                        result = OJ_TLE;
+                        useTime = solve->LimitTime() * 1000;
+                        break;
+                    case SIGXFSZ:
+                        DLOG("stop run:%s/main res:OLE signal:%d",exitcode);
+                        result = OJ_OLE;
+                        break;
+                    default:
+                        DLOG("stop run:%s/main res:RE signal:%d",dir,exitcode);
+                        result = OJ_RE;
+                    }
                 }
                 ptrace(PTRACE_KILL, pid, NULL, NULL);    // 杀死出问题的进程
-                break;
+                continue;
             }
             //  如果程序退出 并且检测到退出信号
             if (WIFSIGNALED(status))
@@ -303,21 +303,22 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
                     {
                     case SIGCHLD:
                     case SIGALRM:
-                        setfreeTimer();
+                        alarm(0);
                     case SIGKILL:
                     case SIGXCPU:
-                        DLOG("res:TLE,sig:%d",sig);
+                        DLOG("exit run:%s/main res:TLE,sig:%d",dir,sig);
                         result = OJ_TLE;
                         break;
                     case SIGXFSZ:
-                        DLOG("res:OLE,sig:%d",sig);
+                        DLOG("exit run:%s/main res:OLE,sig:%d",dir,sig);
                         result = OJ_OLE;
                         break;
                     default:
-                        DLOG("res:RE,sig:%d",sig);
+                        DLOG("exit run%s/main res:RE,sig:%d",dir,sig);
                         result = OJ_RE;
                     }
                 }
+                ptrace(PTRACE_KILL,pid,NULL,NULL);
                 break;
             }
 
@@ -331,20 +332,20 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
 			}
 			else
 			{
-                DLOG("call syscall forbiden! callid:%d",call_id);
+                DLOG("run:%s/main call syscall forbiden! callid:%d",dir,call_id);
 				result = OJ_RE;
 				ptrace(PTRACE_KILL, pid, NULL, NULL);
+                continue;
 			}
-			call_id=0;
+			this->call_id=0;
             // 等待下一次陷入中断
             ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
+            DLOG("run:%s/main leave ptrace pid:%d",dir,pid);
             first = false;
         }
-        ptrace(PTRACE_KILL, pid, NULL, NULL);    // 杀死出问题的进程
         useTime += (ruse.ru_utime.tv_sec * 1000 + ruse.ru_utime.tv_usec / 1000) * cpu_compensation; // 统计用户态耗时，在更快速的CPU上加以cpu_compensation倍数放大
         useTime += (ruse.ru_stime.tv_sec * 1000 + ruse.ru_stime.tv_usec / 1000) * cpu_compensation; // 统计内核态耗时，在更快速的CPU上加以cpu_compensation倍数放大
         solve->setUsetime(useTime + solve->getUsetime());
-        kill(pid,SIGKILL);
     }
     else
     {
@@ -362,22 +363,23 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
         dup2(rfd,STDIN_FILENO);
         dup2(wfd,STDOUT_FILENO);
         // 当发生系统调用的情况下,父进程可以跟踪子进程
-        ptrace(PTRACE_TRACEME, 0, NULL, NULL);
-        // 限制 运行时间为
         itimerval time;
         time.it_interval.tv_usec =0;
         time.it_interval.tv_sec = 0;
         time.it_value.tv_sec = this->solve->LimitTime();  
         time.it_value.tv_usec = 1000;
         setitimer(ITIMER_REAL,&time,NULL);
+        ptrace(PTRACE_TRACEME, 0, NULL, NULL);
+        // 限制 运行时间为
         char path[128]={0};
+        
         switch(lang){
         case CPP:
         case CPP11:
         case CPP17:
         case C:
             sprintf(path,"%s/main",dir);
-            execle(path,"main",NULL,envp);
+            execle(path,path,NULL,envp);
             break;
         case PYTHON3:    // python暂时还未完全  支持
 			execle("/usr/bin/python3", "/usr/bin/python3", "main.py",NULL,envp);
@@ -387,6 +389,7 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
         }
         exit(-1);
     }
+    waitpid(pid,NULL,0);
     return true;
 }
 
@@ -606,4 +609,5 @@ bool judgeClient::judge()
 judgeClient::judgeClient(Solve *solve){
     Jstat = J_CHECK;
     this->solve = solve;
+    this->call_id = 0;
 }

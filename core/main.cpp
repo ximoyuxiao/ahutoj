@@ -39,7 +39,7 @@ public:
     };
     virtual void run(){
         jc->judge();
-        ILOG("judge complete Result:%s",runningres[solve->Sres()]);
+        DLOG("judge complete Result:%s",runningres[solve->Sres()]);
         solutionDB.commitSolveToDb(solve);
         solutionDB.ReleaseSolve(solve);
     }
