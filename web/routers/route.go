@@ -118,8 +118,10 @@ func regeisterRouters(router *gin.Engine) {
 
 		fileRouter := apiRouter.Group("/file").Use(middlewares.JwtVerify)
 		{
-			// 上传文件
+			// 上传判题文件
 			fileRouter.POST("/:pid", service.UpFile)
+			// 获取判题文件列表
+			fileRouter.GET("/:pid", service.GetFileList)
 			// 删除文件
 			fileRouter.DELETE("/:pid", service.RemoveFile)
 			// 解压文件
@@ -136,14 +138,14 @@ func NotFindRegister(ctx *gin.Context) {
 
 func PingTest(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
-		"code":    200,
+		"code":    constanct.SuccessCode,
 		"messgae": "pong",
 	})
 }
 
 func serverTime(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
-		"code":    200,
+		"code":    constanct.SuccessCode,
 		"messgae": "success",
 		"time":    time.Now().Unix(),
 	})

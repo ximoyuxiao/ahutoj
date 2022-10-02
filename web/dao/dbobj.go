@@ -45,6 +45,8 @@ type Problem struct {
 	LimitMemory  int64  `gorm:"column:LimitMemory" json:"LimitMemory"`
 	Hit          string `gorm:"column:Hit" json:"Hit"`
 	Label        string `gorm:"column:Label" json:"Label"`
+	Origin       int64  `gorm:"column:Origin" json:"Origin"`
+	OriginPID    string `gorm:"column:OriginPID" json:"OriginPID"`
 }
 
 type List struct {

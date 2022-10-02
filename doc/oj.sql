@@ -40,7 +40,9 @@ create table Problem(
     LimitTime	     int,	
     LimitMemory	 int,
     Hit 	Text,
-    Label            Text
+    Label            Text,
+    Origin int,
+    OriginPID Text
 )DEFAULT CHARSET=utf8mb4;
 ALTER TABLE Problem AUTO_INCREMENT = 1000;
 
