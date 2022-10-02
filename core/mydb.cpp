@@ -39,9 +39,9 @@ int mysqlDB::getDatabase(MYSQL* mysql)
 
 void mysqlDB::CloseDatabase(MYSQL* mysql,MYSQL_RES* res)
 {
-    if(res != NULL)
+    if(res != nullptr)
         mysql_free_result(res);
-    if(mysql != NULL)
+    if(mysql != nullptr)
         mysql_close(mysql);
 }
 

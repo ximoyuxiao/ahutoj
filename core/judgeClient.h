@@ -5,7 +5,7 @@
 #include<string>
 #include<vector>
 using namespace std;
-
+const int call_array_size = 512;
 enum JSTAT{
     J_CHECK,
     J_GETFILE,
@@ -23,6 +23,8 @@ private:
     vector<string> inputFiles;
     vector<string> outputFiles;
     JSTAT Jstat;
+    unsigned int call_id;
+    int call_counter[call_array_size];
 private:
     bool checkSource();
     bool compile();
@@ -31,6 +33,7 @@ private:
     bool getFiles();
     bool judgePE(FILE*source,FILE *res);
     bool cmpFIle(SubRes &result,char *myfile,const char* sourceFile);
+    void init_syscalls_limits(lanuage lang);
 public:
     bool judge();
     Solve* GetSolve();

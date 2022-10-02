@@ -137,10 +137,10 @@ void Solve::setjudgeID(int judgeId)
     this->judgeID = judgeId;
 }
 long long Solve::getUsetime(){
-    return usetime;
+    return this->usetime;
 }
 void Solve::setUsetime(long long usetime){
-    this->usememory = usetime;
+    this->usetime = usetime;
 }
 long long Solve::getuseMemory()
 {

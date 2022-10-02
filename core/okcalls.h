@@ -16,6 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with HUSTOJ. if not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef OKCALLS_H__
+#define OKCALLS_H__
+
 #include <sys/syscall.h>
 #define HOJ_MAX_LIMIT -1
 #define CALL_ARRAY_SIZE 512
@@ -34,4 +37,6 @@
 #endif
 #ifdef __mips__
    #include "okcalls_mips.h"
+#endif
+
 #endif

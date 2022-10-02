@@ -1,3 +1,5 @@
+#ifndef __OKCALLS64__H__
+#define __OKCALLS64__H__
 /*
  * 
  *
@@ -149,3 +151,4 @@ int LANG_MV[CALL_ARRAY_SIZE] = {
         SYS_gettimeofday, 0 };
 //Cobal
 int LANG_CBV[CALL_ARRAY_SIZE]={0,1,3,4,5,8,9,10,11,12,13,14,17,21,41,42,59,89,158,202,218,231,257,273,302,0};
+#endif
