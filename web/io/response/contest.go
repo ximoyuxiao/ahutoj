@@ -1,5 +1,7 @@
 package response
 
+import "ahutoj/web/io/constanct"
+
 type ContestListItem struct {
 	CID       int64  `json:"CID"`
 	UID       string `json:"UID"`
@@ -35,14 +37,15 @@ type ContestListResp struct {
 	Data []ContestListItem `json:"Data"`
 }
 type ProblemItem struct {
-	PID    int   `json:"PID"`
-	Time   int64 `json:"Time"`
-	Status int64 `json:"Status"`
+	PID    int                `json:"PID"`    // 题目ID 其实我觉得这个可以不写的
+	Time   int64              `json:"Time"`   // 最后一次提交时间
+	Status constanct.OJResult `json:"Status"` // 最终状态
 }
 type RankItem struct {
-	UserID   string        `json:"UserID"`
-	Uname    string        `json:"Uname"`
-	Problems []ProblemItem `json:"Probelms"`
+	UserID    string        `json:"UserID"`
+	Uname     string        `json:"Uname"`
+	AllSubmit int64         `json:"AllSubmit"`
+	Problems  []ProblemItem `json:"Probelms"`
 }
 type ConntestRankResp struct {
 	Response

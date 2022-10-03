@@ -117,7 +117,7 @@ func GteRankContest(ctx *gin.Context) {
 	req := new(request.GetContestRankReq)
 	CIDStr := ctx.Param("id")
 	if CIDStr == "" {
-		logger.Errorf("call Param failed, err")
+		logger.Errorf("cid is empty")
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}

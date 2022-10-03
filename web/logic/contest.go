@@ -172,33 +172,38 @@ func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, erro
 	}, nil
 }
 
-func initRankItem(rank *response.RankItem, Uname, Userid string) {
+func initRankItem(rank *response.RankItem, Uname, Userid string, problemSize int) {
 	rank.Uname = Uname
 	rank.UserID = Userid
+	rank.AllSubmit = 0
+	rank.Problems = make([]response.ProblemItem, problemSize)
+	for idx := range rank.Problems {
+		problem := &rank.Problems[idx]
+		problem.PID = 0
+		problem.Time = 0
+		problem.Status = constanct.OJ_JUDGE
+	}
 }
 
 //这个待后期优化
 /*rank UID,uname,solve 罚时 A，B，C，D，E，F，G...*/
 func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
-	contest, err := models.GetContestFromDB(ctx, req.CID)
-	if err != nil {
-		logger.Errorf("call GetContestFromDB Failed, CID=%d, err=%s", req.CID, err.Error())
-		return nil, err
-	}
 	problems, err := models.GetConProblemFromDB(ctx, req.CID) //获得竞赛的题目
 	if err != nil {
 		logger.Errorf("call GetConProblemFromDB Failed, CID=%d, err=%s", req.CID, err.Error())
 		return nil, err
 	}
-	problemMap := make(map[int]dao.ConPro, 0)
+
 	problemIdxMap := make(map[int]int, 0)
 	for idx, problem := range problems {
-		temp := problem
-		problemMap[problem.PID] = temp
 		problemIdxMap[problem.PID] = idx
 	}
+
 	submits, err := models.GetSubmitByCIDFromDB(ctx, int(req.CID), req.Page, req.Limit) //获取使用这个竞赛的所有提交
+	sort.Slice(submits, func(i, j int) bool {
+		return submits[i].SubmitTime < submits[j].SubmitTime
+	})
 	if err != nil {
 		logger.Errorf("call GetContestFromDB Failed, CID=%d, err=%s", req.CID, err.Error())
 		return nil, err
@@ -215,26 +220,17 @@ func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface
 			user := dao.User{UID: submit.UID}
 			models.FindUserByUID(ctx, &user)
 			ranks = append(ranks, response.RankItem{})
-			initRankItem(&ranks[rid], user.Uname, submit.UID)
+			initRankItem(&ranks[rid], user.Uname, submit.UID, len(problems))
 		}
 		rank := &ranks[rid]
-		if submit.Result == constanct.OJ_AC {
-			if rank.Problems[problemIdxMap[submit.PID]].Status == 2 {
-				continue
-			} else {
-				rank.Problems[problemIdxMap[submit.PID]].Status = 2
-				rank.Problems[problemIdxMap[submit.PID]].PID = submit.PID
-				rank.Problems[problemIdxMap[submit.PID]].Time = submit.SubmitTime - contest.Begin_time
-			}
+		problem := &rank.Problems[problemIdxMap[submit.PID]]
+		problem.PID = submit.PID
+		if problem.Status == constanct.OJ_AC {
+			continue
 		} else {
-			if rank.Problems[problemIdxMap[submit.PID]].Status == 0 {
-				rank.Problems[problemIdxMap[submit.PID]].Status = 1
-				rank.Problems[problemIdxMap[submit.PID]].PID = submit.PID
-				rank.Problems[problemIdxMap[submit.PID]].Time = submit.SubmitTime - contest.Begin_time
-			}
-			if submit.Result != constanct.OJ_CE {
-				continue
-			}
+			problem.Status = constanct.OJ_AC
+			problem.Time = submit.SubmitTime
+			rank.AllSubmit++
 		}
 	}
 	return response.ConntestRankResp{
