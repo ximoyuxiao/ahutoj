@@ -5,10 +5,10 @@ import (
 	"context"
 )
 
-func SelectContestByCID(ctx context.Context, CID int64) (dao.Contest, error) {
+func SelectContestByCID(ctx context.Context, CID int64) (*dao.Contest, error) {
 	db := GetDB(ctx)
-	ret := dao.Contest{}
-	err := db.Table(ret.TableName()).Where("CID=?", CID).Find(&ret).Error
+	ret := new(dao.Contest)
+	err := db.Table(ret.TableName()).Where("CID=?", CID).Find(ret).Error
 	return ret, err
 }
 

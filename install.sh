@@ -46,6 +46,7 @@ CPU=`grep "cpu cores" /proc/cpuinfo |head -1|awk '{print $4}'`
 mysql -h localhost -u$USER -p$PASSWORD < ./doc/oj.sql
 # echo "insert into ahutoj.Perrmission values('admin','administrator','true','N');"|mysql -h localhost -u$USER -p$PASSWORD 
 cp ./config.yaml.bak ./config.yaml
+redis-cli < ./doc/redis.in
 make build
 cd core
 make all

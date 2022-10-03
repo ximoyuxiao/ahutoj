@@ -4,16 +4,19 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"time"
+	"fmt"
 )
 
 func SetKey(ctx context.Context, rdbfd int, key string, value interface{}) error {
 	rdb := redisPool.rdbs[rdbfd].rdb
 	if rdb != nil {
 		jvalue, _ := json.Marshal(value)
-		rdb.Set(ctx, key, string(jvalue), time.Hour)
+		cmd := rdb.Set(ctx, key, string(jvalue), 0)
+		res, _ := cmd.Result()
+		fmt.Println(res)
+		return cmd.Err()
 	}
-	return nil
+	return errors.New("rdbpool is not exits")
 }
 
 func GetKey(ctx context.Context, rdbfd int, key string, ret interface{}) error {
@@ -22,7 +25,10 @@ func GetKey(ctx context.Context, rdbfd int, key string, ret interface{}) error {
 	if rdb != nil {
 		cmd := rdb.Get(ctx, key)
 		err := cmd.Scan(&str)
-		json.Unmarshal([]byte(str), ret)
+		if err != nil {
+			return err
+		}
+		err = json.Unmarshal([]byte(str), ret)
 		return err
 	}
 	return errors.New("rdbpool is not exits")

@@ -10,6 +10,10 @@ import (
 
 type RedisStat int
 
+var (
+	Nil string = "redis: nil"
+)
+
 const (
 	RDB_INIT  RedisStat = 0
 	RDB_CLOSE RedisStat = 1

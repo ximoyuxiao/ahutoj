@@ -43,6 +43,11 @@ func TestSetObj(t *testing.T) {
 	}
 	redisdao.SetKey(ctx, rdbfd, "cat", cat)
 	ncats := new(Cat)
+	var ll int64
+	err := redisdao.GetKey(ctx, rdbfd, "ccc", &ll)
+	if err != nil {
+		t.Logf("err=%v", err.Error())
+	}
 	redisdao.GetKey(ctx, rdbfd, "cat", ncats)
 	if *ncats != cat {
 		t.Errorf("cat Set or get Obj failed, ncat:%v", utils.Sdump(ncats))
