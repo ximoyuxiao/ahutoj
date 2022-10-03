@@ -4,9 +4,11 @@ MyRedis::~MyRedis()
 {            
 }
 #include<iostream>
-bool MyRedis::connect(std::string host, int port)
+bool MyRedis::connect(std::string host, int port,const char* password)
 {
     this->cont = redisConnect(host.c_str(),port);
+    if(password != "")
+    redisCommand(this->cont,"auth %s",password);
     if(this->cont != nullptr && this->cont->err)
         return false;
     return true;

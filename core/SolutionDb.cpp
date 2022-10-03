@@ -22,8 +22,10 @@ bool SolutionDb::initDB(readConfig* rcf)
         rcf->getCOnfigString(host,"REDIS","host");
         string host1 = host;
         int port = rcf->getCOnfigInt("REDIS","port");
+        char password[128]="";
+        rcf->getCOnfigString(password,"REDIS","password");
         ILOG("host:%s,port:%d\n",host,port);
-        redis->connect(host1,port);
+        redis->connect(host1,port,password);
     }
     return true;
 }
