@@ -38,7 +38,7 @@ func initAPP(ConfigPath string) error {
 	}
 
 	//初始化Redis数据库
-	err = redisdao.InitRedis()
+	err = redisdao.InitRedisPool()
 	if err != nil {
 		logger.Errorf("init redis error redisConf=%+v, err=%s", utils.Sdump(utils.GetConfInstance().RedisConfig), err.Error())
 		os.Exit(1)

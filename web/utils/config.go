@@ -28,11 +28,12 @@ type MySQLConfig struct {
 	Password string `password:"password"`
 }
 type RedisConfig struct {
-	Host     string `mapstructure:"host"`
-	Port     uint16 `mapstructure:"port"`
-	Db       int16  `mapstructure:"db"`
-	PoolSize int16  `mapstructure:"pool_size"`
-	Password string `mapstructure:"password"`
+	Host      string `mapstructure:"host"`
+	Port      string `mapstructure:"port"`
+	Db        int    `mapstructure:"db"`
+	PoolSize  int16  `mapstructure:"pool_size"`
+	Password  string `mapstructure:"password"`
+	KeepAlive int64  `mapstructure:"keppalive"` // 秒为单位
 }
 type LogConfig struct {
 	FileName string `mapstructure:"filename"`
