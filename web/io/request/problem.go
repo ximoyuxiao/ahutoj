@@ -12,7 +12,7 @@ type Problem struct {
 	LimitMemory   *int64  `json:"LimitMemory"`
 	Hit           *string `json:"Hit"`
 	Label         *string `json:"Label"`
-	Origin        *int    `json:"Origin"`
+	Origin        *int64  `json:"Origin"`
 	OriginPID     *string `json:"OriginPID"`
 }
 type EditProblemReq Problem
