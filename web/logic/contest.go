@@ -197,6 +197,11 @@ func initRankItem(rank *response.RankItem, Uname, Userid string, problemSize int
 /*rank UID,uname,solve 罚时 A，B，C，D，E，F，G...*/
 func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
+	contest, err := models.GetContestFromDB(ctx, req.CID)
+	if err != nil {
+		logger.Errorf("call GetContestFromDB Failed, CID=%d, err=%s", req.CID, err.Error())
+		return nil, err
+	}
 	problems, err := models.GetConProblemFromDB(ctx, req.CID) //获得竞赛的题目
 	if err != nil {
 		logger.Errorf("call GetConProblemFromDB Failed, CID=%d, err=%s", req.CID, err.Error())
@@ -236,9 +241,12 @@ func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface
 		if problem.Status == constanct.OJ_AC {
 			continue
 		} else {
-			problem.Status = constanct.OJ_AC
-			problem.Time = submit.SubmitTime
+			problem.Status = submit.Result
+			problem.Time = submit.SubmitTime - contest.Begin_time
 			rank.AllSubmit++
+			if submit.Result == constanct.OJ_AC {
+				rank.ACNumber++
+			}
 		}
 	}
 	return response.ConntestRankResp{
