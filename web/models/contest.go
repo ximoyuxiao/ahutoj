@@ -53,8 +53,9 @@ func GetContestFromDB(ctx context.Context, CID int64) (dao.Contest, error) {
 			logger.Errorf("call SelectContestByCID failed,CID=%v, err=%v", CID, err.Error())
 			return dao.Contest{}, err
 		}
-		now := time.Now().Unix()
+		now := time.Now().Unix() * 1000
 		if contest.End_time >= now && contest.Begin_time <= now {
+			logger.Debugf("now=%v begin=%v endtime=%v", now, contest.Begin_time, contest.End_time)
 			err = redisdao.SaveContestToRDB(ctx, *contest)
 		}
 	}

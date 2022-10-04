@@ -40,6 +40,9 @@ static vector<string> splite(string key,char sp){
             s = "";
         }
     }
+    if(s != ""){
+        ret.push_back(s);
+    }
     return ret;
 }
 void SolutionDb::GetSolveLimit(Solve* solve){
