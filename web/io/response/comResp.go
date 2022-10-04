@@ -43,3 +43,9 @@ func CreateResponse(code constanct.ResCode) Response {
 		StatusMsg:  code.Msg(),
 	}
 }
+func CreateResponseStr(code constanct.ResCode, str string) Response {
+	return Response{
+		StatusCode: code,
+		StatusMsg:  str,
+	}
+}

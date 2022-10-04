@@ -35,6 +35,7 @@ const (
 	PIDNotExistCode      ResCode = 1009
 	CIDNotExistCode      ResCode = 1010
 	CIDPassWordErrorCode ResCode = 2000
+	CONTESTNOTEBEGIN     ResCode = 2005
 	MySQLErrorCode       ResCode = 2001
 	RedisErrorCode       ResCode = 2002
 	ServerBusyCode       ResCode = 5001
@@ -64,6 +65,7 @@ var codeMsgMap = map[ResCode]string{
 	Notimplemented:       "接口未实现",
 	CIDPassWordErrorCode: "竞赛密码错误",
 	FILEUNSUPPORT:        "不支持的文件类型",
+	CONTESTNOTEBEGIN:     "竞赛未开始",
 }
 var HttpCodeMap = map[ResCode]int{
 	SuccessCode:         http.StatusOK,

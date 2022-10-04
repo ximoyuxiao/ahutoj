@@ -130,6 +130,7 @@ func GetListContest(ctx *gin.Context, req *request.ContestListReq) (interface{},
 func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	contest, err := models.GetContestFromDB(ctx, req.CID)
+
 	if err != nil {
 		logger.Errorf("call GetContestFromDB failed, CID=%s, err=%s", req.CID, err.Error())
 		return nil, err
@@ -144,7 +145,10 @@ func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, erro
 	if uid != "" {
 		isAdmin = models.CheckUserPermission(ctx, uid, models.Contest_creator)
 	}
-
+	if !isAdmin && contest.Begin_time > time.Now().UnixMilli() {
+		logger.Errorf("contest not begin")
+		return response.CreateResponse(constanct.CONTESTNOTEBEGIN), nil
+	}
 	//不是管理员的情况下 竞赛私有  并且 （没有密码，或者密码错误）
 	if !isAdmin && contest.Ispublic != 1 && ((req.Pass == nil) || (req.Pass != nil && *req.Pass != contest.Pass)) {
 		logger.Errorf("contest pass word error req=%+v", utils.Sdump(req))
