@@ -8,7 +8,7 @@ import (
 
 func SelectSubmitList(ctx context.Context, submit dao.Submit, offset, limit int) (ans []dao.Submit, err error) {
 	db := GetDB(ctx)
-	err = db.Table(submit.TableName()).Where(&submit).Limit(limit).Offset(offset).Find(&ans).Error
+	err = db.Table(submit.TableName()).Where(&submit).Order("SID desc").Limit(limit).Offset(offset).Find(&ans).Error
 	return ans, err
 }
 func SelectSubmitByCID(ctx context.Context, CID int64, CheckTime int64) (ans []dao.Submit, err error) {
