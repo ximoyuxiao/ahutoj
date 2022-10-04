@@ -48,7 +48,7 @@ type RankItem struct {
 	AllSubmit int64         `json:"AllSubmit"`
 	ACNumber  int64         `json:"ACNumber"`
 	CENumber  int64         `json:"CENumber"`
-	Problems  []ProblemItem `json:"Probelms"`
+	Problems  []ProblemItem `json:"Problems"`
 }
 type ConntestRankResp struct {
 	Response
