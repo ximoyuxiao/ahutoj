@@ -54,7 +54,7 @@ var verifyMap = map[string]VerfiyLevel{
 	"/api/file/delete/:pid":         ProblemAdmin,
 	"/api/file/unzip/:pid":          ProblemAdmin,
 	"/api/submit/rejudge/":          SuperAdmin,
-	"/api/submit/commit/":           SuperAdmin,
+	"/api/submit/commit/":           CommomUser,
 	"/api/training/add/":            ListAdmin,
 	"/api/training/edit/":           ListAdmin,
 	"/api/training/delete/":         ListAdmin,
