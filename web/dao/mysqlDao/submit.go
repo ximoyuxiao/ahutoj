@@ -11,7 +11,15 @@ func SelectSubmitList(ctx context.Context, submit dao.Submit, offset, limit int)
 	err = db.Table(submit.TableName()).Where(&submit).Limit(limit).Offset(offset).Find(&ans).Error
 	return ans, err
 }
-
+func SelectSubmitByCID(ctx context.Context, CID int64, CheckTime int64) (ans []dao.Submit, err error) {
+	db := GetDB(ctx)
+	sql := db.Table(dao.Submit{}.TableName()).Where("CID =?", CID)
+	if CheckTime != 0 {
+		sql = sql.Where("SubmitTime <= ?", CheckTime)
+	}
+	err = sql.Find(&ans).Error
+	return ans, err
+}
 func SelectSubmitBySID(ctx context.Context, SID int64) (ans dao.Submit, err error) {
 	db := GetDB(ctx)
 	err = db.Table(dao.Submit{}.TableName()).Where("SID=?", SID).Find(&ans).Error

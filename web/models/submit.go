@@ -3,16 +3,11 @@ package models
 import (
 	"ahutoj/web/dao"
 	mysqldao "ahutoj/web/dao/mysqlDao"
-	"ahutoj/web/utils"
 	"context"
 )
 
-func GetSubmitByCIDFromDB(ctx context.Context, CID, page, limit int) ([]dao.Submit, error) {
-	temp := dao.Submit{
-		CID: CID,
-	}
-	offset, size := utils.GetPageInfo(page, limit)
-	return mysqldao.SelectSubmitList(ctx, temp, offset, size)
+func GetSubmitByCIDFromDB(ctx context.Context, CID, fb int64) ([]dao.Submit, error) {
+	return mysqldao.SelectSubmitByCID(ctx, CID, fb)
 }
 
 func CreateSubmit(ctx context.Context, submit dao.Submit) error {

@@ -9,11 +9,12 @@ import (
 var config = new(AppConfig)
 
 type AppConfig struct {
-	Port         string `mapstructure:"port"`
-	Mode         string `mapstructure:"mode"`
-	Sign         string `mapstructure:"sign"`
-	Version      string `mapstructure:"version"`
-	DataPath     string `mapstructure:"dataPath"`
+	Port         string  `mapstructure:"port"`
+	Mode         string  `mapstructure:"mode"`
+	Sign         string  `mapstructure:"sign"`
+	Version      string  `mapstructure:"version"`
+	DataPath     string  `mapstructure:"dataPath"`
+	Terminal     float64 `mapstructure:"Terminal"`
 	*MySQLConfig `mapstructure:"mysql"`
 	*RedisConfig `mapstructure:"redis"`
 	*LogConfig   `mapstructure:"log"`

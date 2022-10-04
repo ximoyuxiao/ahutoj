@@ -9,6 +9,7 @@ import (
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
 	"sort"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -212,8 +213,13 @@ func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface
 	for idx, problem := range problems {
 		problemIdxMap[problem.PID] = idx
 	}
-
-	submits, err := models.GetSubmitByCIDFromDB(ctx, int(req.CID), req.Page, req.Limit) //获取使用这个竞赛的所有提交
+	currentTime := time.Now().UnixMilli()
+	fb := int64(utils.GetConfInstance().Terminal*(float64(contest.End_time)-float64(contest.Begin_time)) + float64(contest.Begin_time))
+	if currentTime-contest.End_time > 0 {
+		fb = 0
+	}
+	//封榜时间
+	submits, err := models.GetSubmitByCIDFromDB(ctx, req.CID, fb) //获取使用这个竞赛的所有提交
 	sort.Slice(submits, func(i, j int) bool {
 		return submits[i].SubmitTime < submits[j].SubmitTime
 	})
@@ -244,8 +250,12 @@ func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface
 			problem.Status = submit.Result
 			problem.Time = submit.SubmitTime - contest.Begin_time
 			rank.AllSubmit++
+			problem.SubmitNumber++
 			if submit.Result == constanct.OJ_AC {
 				rank.ACNumber++
+			}
+			if submit.Result == constanct.OJ_CE {
+				rank.CENumber++
 			}
 		}
 	}
