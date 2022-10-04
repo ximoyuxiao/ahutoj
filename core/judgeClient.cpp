@@ -88,7 +88,7 @@ bool judgeClient::compile()
             FILE* fp = fopen(sourceFile,"w");
             fprintf(fp,"%s",solve->Source().c_str());
             fclose(fp);
-            sprintf(comp,"gcc %s -o %s/main 2>err.txt",sourceFile,dir);
+            sprintf(comp,"gcc %s -o %s/main 2>%s/err.txt",sourceFile,dir,dir);
             system(comp);
             break;
         }
