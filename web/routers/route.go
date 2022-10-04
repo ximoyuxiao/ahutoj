@@ -147,6 +147,6 @@ func serverTime(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"code":    constanct.SuccessCode,
 		"messgae": "success",
-		"time":    time.Now().Unix(),
+		"time":    time.Now().UnixMilli(),
 	})
 }

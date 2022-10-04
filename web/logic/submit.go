@@ -21,7 +21,7 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 		Source:     req.Source,
 		Lang:       req.Lang,
 		Result:     constanct.OJ_PENDING,
-		SubmitTime: time.Now().Unix(),
+		SubmitTime: time.Now().UnixMilli(),
 	}
 	err := models.CreateSubmit(ctx, submit)
 	if err != nil {
