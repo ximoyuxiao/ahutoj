@@ -1,12 +1,16 @@
 package service
 
 import (
+	"ahutoj/web/dao"
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/response"
+	"ahutoj/web/models"
 	"ahutoj/web/utils"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -118,8 +122,10 @@ func UpProblemFile(ctx *gin.Context) {
 	response.ResponseOK(ctx, response.CreateResponse(constanct.Notimplemented))
 }
 func GetFileType(filename string) string {
-	return ""
+	strs := strings.Split(filename, ".")
+	return strs[len(strs)-1]
 }
+
 func GetFileList(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	filepath := getPath(ctx)
@@ -127,6 +133,33 @@ func GetFileList(ctx *gin.Context) {
 		logger.Errorf("has no pid Invailed")
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
+	}
+	pidStr := ctx.Param("pid")
+	PID, err := strconv.ParseInt(pidStr, 10, 64)
+	if err != nil {
+		logger.Errorf("call ParseInt faile,pid=%s err=%s", pidStr, err.Error())
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
+	}
+	ok := models.IsProblemExistByPID(ctx, &dao.Problem{PID: int(PID)})
+	if !ok {
+		logger.Errorf("the problem not exist pid=%s", err.Error())
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
+	}
+	ok, err = pathExists(filepath)
+	if err != nil {
+		logger.Errorf("call pathExists failed,filepath:%s, err=%v", filepath, err.Error())
+		response.ResponseErrorStr(ctx, constanct.ServerBusyCode,
+			fmt.Sprintf("call pathExists failed,filepath:%s, err=%v", filepath, err.Error()))
+	}
+	if !ok {
+		err = os.Mkdir(filepath, os.ModeDir)
+		if err != nil {
+			logger.Errorf("call Mkdir failed,filepath:%s, err=%v", filepath, err.Error())
+			response.ResponseErrorStr(ctx, constanct.ServerBusyCode,
+				fmt.Sprintf("call Mkdir failed,filepath:%s, err=%v", filepath, err.Error()))
+		}
 	}
 	files, err := ioutil.ReadDir(filepath)
 	if err != nil {

@@ -27,6 +27,12 @@ func ResponseError(c *gin.Context, code constanct.ResCode) {
 	})
 }
 
+func ResponseErrorStr(c *gin.Context, code constanct.ResCode, str string) {
+	c.JSON(code.HttpCode(), Response{
+		StatusCode: code,
+		StatusMsg:  str,
+	})
+}
 func ResponseOK(c *gin.Context, resp interface{}) {
 	c.JSON(http.StatusOK, resp)
 }
