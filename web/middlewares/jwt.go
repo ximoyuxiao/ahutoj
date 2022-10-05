@@ -50,7 +50,7 @@ var verifyMap = map[string]VerfiyLevel{
 	"/api/contest/add/ ":            ContestAdmin,
 	"/api/contest/edit/":            ContestAdmin,
 	"/api/contest/delete/":          ContestAdmin,
-	"/api/file/add/:pid":            ProblemAdmin,
+	"/api/file/add/:pid":            CommomUser,
 	"/api/file/delete/:pid":         ProblemAdmin,
 	"/api/file/unzip/:pid":          ProblemAdmin,
 	"/api/submit/rejudge/":          SuperAdmin,
