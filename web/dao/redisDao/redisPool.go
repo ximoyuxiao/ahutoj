@@ -2,6 +2,7 @@ package redisdao
 
 import (
 	"ahutoj/web/utils"
+	"fmt"
 	"sync"
 	"time"
 
@@ -102,6 +103,9 @@ func findFreeRDB() int {
 			waitOpenRdb = idx
 		}
 	}
+	if waitOpenRdb == -1 {
+		return -1
+	}
 	err := connectRDB(waitOpenRdb)
 	if err != nil {
 		return -1
@@ -128,4 +132,15 @@ func GetRedisClient() *redis.Client {
 		DB:       redisPool.DB,
 	})
 	return rdb
+}
+
+func CloseRDB(rdbfd int) error {
+	redisPool.lock.Lock()
+	if rdbfd < 0 || rdbfd >= int(redisPool.PoolSize) {
+		return fmt.Errorf("the args ivainled,rdbfd=%v", rdbfd)
+	}
+	rdb := &redisPool.rdbs[rdbfd]
+	rdb.Status = RDB_BUSY
+	redisPool.lock.Unlock()
+	return nil
 }
