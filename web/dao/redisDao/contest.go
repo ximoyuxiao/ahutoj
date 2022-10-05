@@ -25,12 +25,9 @@ func GetContestFromDB(ctx context.Context, CID int64) (*dao.Contest, error) {
 
 func SaveContestToRDB(ctx context.Context, contest dao.Contest) error {
 	rdfd := GetRedis()
-<<<<<<< HEAD
-=======
 	if rdfd == -1 {
 		return errors.New("insufficient Redis connection resources")
 	}
->>>>>>> 161955b04d2e14185e4558d19ea7785596b8baff
 	defer CloseRDB(rdfd)
 	err := SetKey(ctx, rdfd, "contest-"+strconv.FormatInt(contest.CID, 10), contest)
 	return err
