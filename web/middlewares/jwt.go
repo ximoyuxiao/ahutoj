@@ -43,7 +43,7 @@ var verifyMap = map[string]VerfiyLevel{
 	"/api/admin/permission/delete/": SuperAdmin,
 	"/api/admin/permission/add/":    SuperAdmin,
 	"/api/admin/permission/list/":   SuperAdmin,
-	"/api/admin/permission/:id":     SuperAdmin,
+	"/api/admin/permission/:id":     CommomUser,
 	"/api/problem/add/":             ProblemAdmin,
 	"/api/problem/edit/":            ProblemAdmin,
 	"/api/problem/delete/":          ProblemAdmin,
