@@ -57,3 +57,7 @@ func MaxInt64(a, b int64) int64 {
 	}
 	return a
 }
+
+func CheckNum(ch int8) bool {
+	return ch <= '9' && ch >= '0'
+}

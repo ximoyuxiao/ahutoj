@@ -18,6 +18,7 @@ func GetDefaultOffset() int {
 	return DefaultOffset
 }
 
+/*状态码  做一个规范*/
 const (
 	SuccessCode          ResCode = 0
 	UIDEmpty             ResCode = 101

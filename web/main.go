@@ -4,6 +4,7 @@ import (
 	mysqldao "ahutoj/web/dao/mysqlDao"
 	redisdao "ahutoj/web/dao/redisDao"
 	"ahutoj/web/middlewares"
+	originjudge "ahutoj/web/originJudge"
 	"ahutoj/web/routers"
 	"ahutoj/web/utils"
 	"fmt"
@@ -45,7 +46,8 @@ func initAPP(ConfigPath string) error {
 	}
 	//初始化JWT
 	middlewares.InitJwt()
-
+	// 初始化 重判题目的协程
+	go originjudge.InitOriginThread()
 	routers.InitServer()
 	return nil
 }

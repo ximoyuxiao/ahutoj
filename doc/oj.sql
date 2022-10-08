@@ -107,6 +107,9 @@ create table Contest(
     IsPublic int,
     Problems Text,
     Pass varchar(128),
+    IsOriginJudge boolean,
+    OriginPID  Text,
+    OJPlatform int,
     constraint fk_ct_UID FOREIGN KEY (UID)
     references User(UID) ON UPDATE CASCADE ON DELETE CASCADE
 )DEFAULT CHARSET=utf8mb4;

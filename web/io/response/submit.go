@@ -9,8 +9,8 @@ type GetSubmitResp struct {
 	Source     string             `json:"Source"`
 	Lang       constanct.LANG     `json:"Lang"`
 	Result     constanct.OJResult `json:"Result"`
-	UseTime    int                `json:"UseTime"`
-	UseMemory  int                `json:"UseMemory"`
+	UseTime    int64              `json:"UseTime"`
+	UseMemory  int64              `json:"UseMemory"`
 	SubmitTime int64              `json:"SubmitTime"`
 }
 type SubmitLIstItem struct {
@@ -18,8 +18,8 @@ type SubmitLIstItem struct {
 	PID        int                `json:"PID"`
 	Lang       constanct.LANG     `json:"Lang"`
 	Result     constanct.OJResult `json:"Result"`
-	UseTime    int                `json:"UseTime"`
-	UseMemory  int                `json:"UseMemory"`
+	UseTime    int64              `json:"UseTime"`
+	UseMemory  int64              `json:"UseMemory"`
 	SubmitTime int64              `json:"SubmitTime"`
 }
 type SubmitListResp struct {

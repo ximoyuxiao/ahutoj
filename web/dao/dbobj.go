@@ -99,17 +99,20 @@ func (p ConPro) TableName() string {
 }
 
 type Submit struct {
-	SID        int                `gorm:"column:SID"`
-	PID        int                `gorm:"column:PID"`
-	UID        string             `gorm:"column:UID"`
-	CID        int                `gorm:"column:CID"`
-	Judgeid    int                `gorm:"column:Judgeid"`
-	Source     string             `gorm:"column:Source"`
-	Lang       constanct.LANG     `gorm:"column:Lang"`
-	Result     constanct.OJResult `gorm:"column:Result"`
-	Usetime    int                `gorm:"column:UseTime"`
-	UseMemory  int                `gorm:"column:UseMemory"`
-	SubmitTime int64              `gorm:"column:SubmitTime"`
+	SID           int                `gorm:"column:SID"`
+	PID           int                `gorm:"column:PID"`
+	UID           string             `gorm:"column:UID"`
+	CID           int                `gorm:"column:CID"`
+	Judgeid       int                `gorm:"column:Judgeid"`
+	Source        string             `gorm:"column:Source"`
+	Lang          constanct.LANG     `gorm:"column:Lang"`
+	Result        constanct.OJResult `gorm:"column:Result"`
+	Usetime       int64              `gorm:"column:UseTime"`
+	UseMemory     int64              `gorm:"column:UseMemory"`
+	SubmitTime    int64              `gorm:"column:SubmitTime"`
+	IsOriginJudge bool               `gorm:"column:IsOriginJudge"`
+	OriginPID     string             `gorm:"column:OriginPID"`
+	OJPlatform    int64              `gorm:"column:OJPlatform"`
 }
 
 func (p Submit) TableName() string {

@@ -14,17 +14,32 @@ import (
 )
 
 func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error) {
+	logger := utils.GetLogInstance()
 	submit := dao.Submit{
-		PID:        req.PID,
-		CID:        req.CID,
-		UID:        req.UID,
-		Source:     req.Source,
-		Lang:       req.Lang,
-		Result:     constanct.OJ_PENDING,
-		SubmitTime: time.Now().UnixMilli(),
+		PID:           req.PID,
+		CID:           req.CID,
+		UID:           req.UID,
+		Source:        req.Source,
+		Lang:          req.Lang,
+		Result:        constanct.OJ_PENDING,
+		SubmitTime:    time.Now().UnixMilli(),
+		IsOriginJudge: false,
+		OriginPID:     "",
+		OJPlatform:    0,
 	}
-	err := models.CreateSubmit(ctx, submit)
+	problem, err := models.GetProblemByPID(ctx, int64(req.PID))
 	if err != nil {
+		logger.Errorf("call GetProblemByPID failed,pid=%v, err=%s", req.PID, err.Error())
+		return nil, err
+	}
+	if problem.Origin != 0 {
+		submit.OJPlatform = problem.Origin
+		submit.IsOriginJudge = true
+		submit.OriginPID = problem.OriginPID
+	}
+	err = models.CreateSubmit(ctx, submit)
+	if err != nil {
+		logger.Errorf("call CreateSubmit failed, submit=%v, err=%s", submit, err.Error())
 		return nil, err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil

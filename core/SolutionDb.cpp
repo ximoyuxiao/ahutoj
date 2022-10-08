@@ -49,7 +49,7 @@ void SolutionDb::GetSolveLimit(Solve* solve){
     auto value = redis->getString(to_string(solve->Pid()));
     if (value == ""){
         char sql[256]="";
-        sprintf(sql,"select LimitTime,LimitMemory from Problem where PID=%d",solve->Pid());
+        sprintf(sql,"select LimitTime,LimitMemory from Problem where PID=%d and IsOriginJudge=0",solve->Pid());
         auto db = mysqlDB::getInstance();
         MYSQL mysql;
         db->getDatabase(&mysql);

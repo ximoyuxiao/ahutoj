@@ -52,3 +52,18 @@ func SelectSubmitByUID(ctx context.Context, submit dao.Submit, lastTime int64) (
 	err := db.Table(submit.TableName()).Where(submit).Where("SubmitTime > ?", lastTime).Find(&ans).Error
 	return ans, err
 }
+
+func UpdateSubmit(ctx context.Context, submit dao.Submit) error {
+	db := GetDB(ctx)
+	err := db.Table(submit.TableName()).Where("SID=?", submit.SID).Updates(&submit).Error
+	return err
+}
+func SelectSubmitIsOriginJudge(ctx context.Context) (ret []dao.Submit, err error) {
+	db := GetDB(ctx)
+	submit := dao.Submit{
+		IsOriginJudge: true,
+		Result:        constanct.OJ_PENDING,
+	}
+	err = db.Table(dao.Submit{}.TableName()).Where(submit).Find(&ret).Limit(20).Error
+	return ret, err
+}

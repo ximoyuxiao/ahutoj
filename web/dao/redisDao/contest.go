@@ -12,10 +12,13 @@ func GetContestFromDB(ctx context.Context, CID int64) (*dao.Contest, error) {
 	if rdfd == -1 {
 		return nil, errors.New("insufficient Redis connection resources")
 	}
+	// 函数 结束的时候   调用 defer后面的函数
 	defer CloseRDB(rdfd)
-	ret := new(dao.Contest)
+	ret := new(dao.Contest) /*指针*/
+	/*hash 表 通过 key -  value 去 获得*/
 	key := "contest-" + strconv.FormatInt(CID, 10)
 	err := GetKey(ctx, rdfd, key, ret)
+	/*这句话 就是判断 没有这个key的情况下*/
 	if err != nil && err.Error() == Nil {
 		return nil, nil
 	}
