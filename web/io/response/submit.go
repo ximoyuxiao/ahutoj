@@ -12,6 +12,7 @@ type GetSubmitResp struct {
 	UseTime    int64              `json:"UseTime"`
 	UseMemory  int64              `json:"UseMemory"`
 	SubmitTime int64              `json:"SubmitTime"`
+	CeInfo     *string            `json:"CeInfo"`
 }
 type SubmitLIstItem struct {
 	SID        int                `json:"SID"`

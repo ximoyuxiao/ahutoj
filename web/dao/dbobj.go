@@ -118,3 +118,12 @@ type Submit struct {
 func (p Submit) TableName() string {
 	return "Submit"
 }
+
+type CeInfo struct {
+	SID  int64
+	Info string
+}
+
+func (p CeInfo) TableName() string {
+	return "CEINFO"
+}

@@ -113,6 +113,11 @@ func GetSubmit(ctx *gin.Context, req *request.GetSubmitReq) (interface{}, error)
 		logger.Errorf("Call SelectSubmitBySID failed, SID=%v, err=%s", req.SID, err.Error())
 		return response.CreateResponse(constanct.MySQLErrorCode), err
 	}
+	var ceInfo *string = nil
+	if submit.Result == constanct.OJ_CE {
+		ceInfo = new(string)
+		*ceInfo = models.FindSubmitCeInfo(ctx, req.SID)
+	}
 	return response.GetSubmitResp{
 		Response:   response.CreateResponse(constanct.SuccessCode),
 		SID:        submit.SID,
@@ -123,5 +128,6 @@ func GetSubmit(ctx *gin.Context, req *request.GetSubmitReq) (interface{}, error)
 		UseTime:    submit.Usetime,
 		UseMemory:  submit.UseMemory,
 		SubmitTime: submit.SubmitTime,
+		CeInfo:     ceInfo,
 	}, nil
 }

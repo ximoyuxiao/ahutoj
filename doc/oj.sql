@@ -107,9 +107,6 @@ create table Contest(
     IsPublic int,
     Problems Text,
     Pass varchar(128),
-    IsOriginJudge boolean,
-    OriginPID  Text,
-    OJPlatform int,
     constraint fk_ct_UID FOREIGN KEY (UID)
     references User(UID) ON UPDATE CASCADE ON DELETE CASCADE
 )DEFAULT CHARSET=utf8mb4;
@@ -142,6 +139,9 @@ CREATE table Submit(
     UseTime int,
     UseMemory int,
     SubmitTime long,
+    IsOriginJudge boolean,
+    OriginPID  Text,
+    OJPlatform int,
     constraint fk_st_PIDs FOREIGN KEY (PID)
     references Problem(PID) ON UPDATE CASCADE ON DELETE CASCADE,
 
