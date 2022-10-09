@@ -17,11 +17,13 @@ func TestSubmitAndGetResult(t *testing.T) {
 		Source: `#include<iostream>
 		using namespace std;
 		int main(){
+			//111222
 			int a,b;
 			cin>>a>>b;
 			cout<<a+b<<endl;
 		return 0;
 		}`,
+		Result: constanct.OJ_JUDGE,
 	}
 	cfJudge.PID = "1003A"
 	cfJudge.Judge(context.Background(), cfJudge.Submit, cfJudge.PID)

@@ -46,16 +46,16 @@ var cflang = map[constanct.LANG]string{
 }
 
 var CFResultMap = map[string]constanct.OJResult{
-	"Accepted":                 constanct.OJ_AC,
-	"Compilationerror(.*?)":    constanct.OJ_CE,
-	"Memorylimitexceeded(.*?)": constanct.OJ_MLE,
-	"O(.*?)":                   constanct.OJ_OLE,
-	"P(.*?)":                   constanct.OJ_PE,
-	"Runtimeerror(.*?)":        constanct.OJ_RE,
-	"Timelimitexceeded(.*?)":   constanct.OJ_TLE,
-	"Wronganswer(.*?)":         constanct.OJ_WA,
-	"Running":                  constanct.OJ_JUDGE,
-	"Inqueue(.*?)":             constanct.OJ_JUDGE,
+	"Accepted":                   constanct.OJ_AC,
+	"Compilation error(.*?)":     constanct.OJ_CE,
+	"Memory limit exceeded(.*?)": constanct.OJ_MLE,
+	"O(.*?)":                     constanct.OJ_OLE,
+	"P(.*?)":                     constanct.OJ_PE,
+	"Runtimeerror(.*?)":          constanct.OJ_RE,
+	"Timelimitexceeded(.*?)":     constanct.OJ_TLE,
+	"Wronganswer(.*?)":           constanct.OJ_WA,
+	"Running":                    constanct.OJ_JUDGE,
+	"Inqueue(.*?)":               constanct.OJ_JUDGE,
 }
 
 var CfHeaders = map[string]string{
@@ -78,6 +78,7 @@ type CodeForceJudge struct {
 func (p CodeForceJudge) Judge(ctx context.Context, submit dao.Submit, PID string) error {
 	err := p.InitCodeForceJudge()
 	defer p.retRangeUser()
+	defer p.commitToDB()
 	p.Submit = submit
 	p.PID = PID
 	if err != nil {
@@ -94,7 +95,6 @@ func (p CodeForceJudge) Judge(ctx context.Context, submit dao.Submit, PID string
 		return fmt.Errorf("call submit failed,submit=%s", utils.Sdump(submit))
 	}
 	p.getResult()
-	p.commitToDB()
 	return nil
 }
 
@@ -265,14 +265,12 @@ func (p *CodeForceJudge) ParsePID() (string, string, error) {
 	return strs[1], strs[2], nil
 }
 
-func checkCFSubmitResp(resp *http.Response) bool {
-	Text, err := ParseRespToByte(resp)
-	if err != nil {
+func checkCFSubmitResp(resp *http.Response, CID string) bool {
+	if resp.StatusCode != 302 {
 		return false
 	}
-	re, _ := regexp.Compile(`submissionid="([0-9]*)"`)
-	ret := re.FindSubmatch(Text)
-	return ret != nil
+	Nexturl := "https://codeforces.com/" + GetContest(CID) + "/" + CID + "/my"
+	return Nexturl == resp.Header.Get("Location")
 }
 
 func GetContest(CID string) string {
@@ -303,18 +301,18 @@ func (p *CodeForceJudge) submit() bool {
 		"sourceCodeConfirmed":   "true",
 	}
 	data := MapToStrings(dataMap, "&")
-	resp, err := DoRequest(POST, url, p.Headers, p.judgeUser.Cookies, &data, true)
+	resp, err := DoRequest(POST, url, p.Headers, p.judgeUser.Cookies, &data, false)
 	if err != nil {
 		logger.Errorf("Call DoRequest failed,err=%s", err.Error())
 		return false
 	}
-	return checkCFSubmitResp(resp)
+	return checkCFSubmitResp(resp, CID)
 }
 
 func (p *CodeForceJudge) GetSubmitID() (string, error) {
 	CID, _, _ := p.ParsePID()
 	url := cfurl + "/" + GetContest(CID) + "/" + CID + "/my"
-	resp, err := DoRequest(GET, url, p.Headers, p.judgeUser.Cookies, nil, false)
+	resp, err := DoRequest(GET, url, p.Headers, p.judgeUser.Cookies, nil, true)
 	if err != nil {
 		logger.Errorf("call DoRequest failed,url:%s, err=%s", url, err.Error())
 		return "", err
@@ -323,7 +321,7 @@ func (p *CodeForceJudge) GetSubmitID() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	re, _ := regexp.Compile(`submissionid="([0-9]*)"`)
+	re, _ := regexp.Compile(`submissionId="(.*?)"`)
 	ret := re.FindSubmatch(Text)
 	if ret == nil {
 		return "", errors.New("not find submission")
@@ -356,6 +354,7 @@ func (p *CodeForceJudge) getResult() error {
 		return err
 	}
 	p.retRangeUser()
+
 	url := cfurl + "/" + GetContest(CID) + "/" + CID + "/submission/" + submissionID
 	for {
 		resp, err := DoRequest(GET, url, p.Headers, nil, nil, false)
@@ -402,5 +401,8 @@ func (p *CodeForceJudge) getResult() error {
 }
 
 func (p *CodeForceJudge) commitToDB() error {
+	if p.Submit.Result == constanct.OJ_JUDGE {
+		p.Submit.Result = constanct.OJ_PENDING
+	}
 	return models.UpdateSubmit(context.Background(), p.Submit)
 }
