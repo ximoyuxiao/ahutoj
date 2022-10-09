@@ -225,6 +225,7 @@ func (p *CodeForceJudge) login() error {
 		p.judgeUser, _ = getRangeUser()
 	}
 	userCount := p.judgeUser
+	logger.Debugf("use user:%+v:", utils.Sdump(userCount))
 	SetCookies(nil, &p.judgeUser.OriginJudgeUser)
 	if p.checkLoginSuccess() {
 		return nil
@@ -237,12 +238,14 @@ func (p *CodeForceJudge) login() error {
 	resp, err := DoRequest(POST, url, p.Headers, p.judgeUser.Cookies, &data, false)
 	if err != nil {
 		logger.Error(err.Error())
+		return err
 	}
 	//填充 cookie
 	SetCookies(resp, &p.judgeUser.OriginJudgeUser)
 	if p.checkLoginSuccess() {
 		return nil
 	}
+	logger.Errorf("login failed,data=%s", data)
 	return errors.New("login failed")
 }
 
