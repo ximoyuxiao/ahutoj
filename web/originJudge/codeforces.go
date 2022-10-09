@@ -77,6 +77,7 @@ type CodeForceJudge struct {
 
 func (p CodeForceJudge) Judge(ctx context.Context, submit dao.Submit, PID string) error {
 	err := p.InitCodeForceJudge()
+	defer p.retRangeUser()
 	p.Submit = submit
 	p.PID = PID
 	if err != nil {
@@ -157,10 +158,14 @@ func getRangeUser() (*CFJudgeUser, error) {
 	return nil, nil
 }
 
-func retRangeUser(judgeUser *CFJudgeUser) {
+func (p *CodeForceJudge) retRangeUser() {
+	if p.judgeUser == nil {
+		return
+	}
 	cfLock.Lock()
 	defer cfLock.Unlock()
-	judgeUser.Status = JUDGE_FREE
+	p.judgeUser.Status = JUDGE_FREE
+	p.judgeUser = nil
 }
 
 // 初始化一个判题机
@@ -216,8 +221,10 @@ func (p *CodeForceJudge) checkLoginSuccess() bool {
 func (p *CodeForceJudge) login() error {
 	logger := utils.GetLogInstance()
 	url := "https://codeforces.com/enter?locale=en"
-	userCount, _ := getRangeUser()
-	p.judgeUser = userCount
+	if p.judgeUser == nil {
+		p.judgeUser, _ = getRangeUser()
+	}
+	userCount := p.judgeUser
 	SetCookies(nil, &p.judgeUser.OriginJudgeUser)
 	if p.checkLoginSuccess() {
 		return nil
@@ -226,7 +233,7 @@ func (p *CodeForceJudge) login() error {
 	p.judgeUser.CsrfToken, _ = p.getCsrfToekn()
 	ftaa := getFtaa()
 	bfaa := "f1b3f18c715565b589b7823cda7448ce"
-	var data = fmt.Sprintf("csrf_token=%s&action=enter&handleOrEmail=%s&password=%s&remember=on&ftaa=%s&bfaa=%s&_taa=176", userCount.CsrfToken, userCount.ID, userCount.ID, ftaa, bfaa)
+	var data = fmt.Sprintf("csrf_token=%s&action=enter&handleOrEmail=%s&password=%s&remember=on&ftaa=%s&bfaa=%s&_taa=176", userCount.CsrfToken, userCount.ID, userCount.Password, ftaa, bfaa)
 	resp, err := DoRequest(POST, url, p.Headers, p.judgeUser.Cookies, &data, false)
 	if err != nil {
 		logger.Error(err.Error())
@@ -345,7 +352,7 @@ func (p *CodeForceJudge) getResult() error {
 		logger.Errorf("call GetSubmitID failed")
 		return err
 	}
-	retRangeUser(p.judgeUser)
+	p.retRangeUser()
 	url := cfurl + "/" + GetContest(CID) + "/" + CID + "/submission/" + submissionID
 	for {
 		resp, err := DoRequest(GET, url, p.Headers, nil, nil, false)
