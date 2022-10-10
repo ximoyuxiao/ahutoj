@@ -34,25 +34,25 @@ const ATcoderoj OJPlatform = 2
 var atcoderUrl = "https://atcoder.jp"
 
 var atcoderLang = map[constanct.LANG]string{
-	constanct.C:       "43",
-	constanct.CPP:     "50",
-	constanct.CPP11:   "50",
-	constanct.CPP17:   "54",
-	constanct.JAVA:    "36",
-	constanct.PYTHON3: "31",
+	constanct.C:       "4002",
+	constanct.CPP:     "4004",
+	constanct.CPP11:   "4004",
+	constanct.CPP17:   "4004",
+	constanct.JAVA:    "4005",
+	constanct.PYTHON3: "4006",
 }
 
 var atcoderResultMap = map[string]constanct.OJResult{
-	"AC":                       constanct.OJ_AC,
-	"Compilationerror(.*?)":    constanct.OJ_CE,
-	"Memorylimitexceeded(.*?)": constanct.OJ_MLE,
-	"O(.*?)":                   constanct.OJ_OLE,
-	"P(.*?)":                   constanct.OJ_PE,
-	"Runtimeerror(.*?)":        constanct.OJ_RE,
-	"TLE":                      constanct.OJ_TLE,
-	"Wronganswer(.*?)":         constanct.OJ_WA,
-	"Running":                  constanct.OJ_JUDGE,
-	"Inqueue(.*?)":             constanct.OJ_JUDGE,
+	"AC":           constanct.OJ_AC,
+	"CE":           constanct.OJ_CE,
+	"MLE":          constanct.OJ_MLE,
+	"OLE":          constanct.OJ_OLE,
+	"PE":           constanct.OJ_PE,
+	"RE":           constanct.OJ_RE,
+	"TLE":          constanct.OJ_TLE,
+	"WA":           constanct.OJ_WA,
+	"WJ":           constanct.OJ_JUDGE,
+	"Inqueue(.*?)": constanct.OJ_JUDGE,
 }
 
 var atcoderHeaders = map[string]string{
@@ -75,6 +75,8 @@ type AtCoderJudge struct {
 
 func (p AtCoderJudge) Judge(ctx context.Context, submit dao.Submit, PID string) error {
 	err := p.InitAtcoderJudge(ctx)
+	defer p.RetJudgeUser(ctx)
+	defer p.commitToDB(ctx)
 	p.Submit = submit
 	p.PID = PID
 	if err != nil {
@@ -96,15 +98,16 @@ func (p AtCoderJudge) Judge(ctx context.Context, submit dao.Submit, PID string) 
 }
 
 func getAtcoderUser(ctx context.Context) *ATcoderJudgeUser {
-	return &ATcoderJudgeUser{
-		OriginJudgeUser: OriginJudgeUser{
-			Status:   JUDGE_BUSY,
-			Cookies:  make(map[string]string, 0),
-			ID:       "XMYchen",
-			Password: "chen199094212",
-		},
-		CsrfToken: "",
+	atlock.Lock()
+	defer atlock.Unlock()
+	for idx := range atcoderJudgeUsers {
+		user := &atcoderJudgeUsers[idx]
+		if user.Status == JUDGE_FREE {
+			user.Status = JUDGE_BUSY
+			return user
+		}
 	}
+	return nil
 }
 func initAtcoderUserCount(ctx context.Context) {
 	atlock.Lock()
@@ -149,6 +152,7 @@ func (p *AtCoderJudge) checkAtcoderLogin(ctx context.Context) bool {
 	if err != nil {
 		return false
 	}
+	SetCookies(resp, &p.JudgeUser.OriginJudgeUser)
 	Text, err := ParseRespToByte(resp)
 	if err != nil {
 		return false
@@ -175,8 +179,9 @@ func (p *AtCoderJudge) getCsrfToekn() (string, error) {
 }
 func (p *AtCoderJudge) login(ctx context.Context) error {
 	// logger := utils.GetLogInstance()
-	userCount := getAtcoderUser(ctx)
-	p.JudgeUser = userCount
+	if p.JudgeUser == nil {
+		p.JudgeUser = getAtcoderUser(ctx)
+	}
 	if p.checkAtcoderLogin(ctx) {
 		return nil
 	}
@@ -189,7 +194,7 @@ func (p *AtCoderJudge) login(ctx context.Context) error {
 			"password":   p.JudgeUser.Password,
 			"csrf_token": p.JudgeUser.CsrfToken,
 		}
-		formdata := MapToStrings(data, "&")
+		formdata := MapToFormStrings(data, "&")
 		resp, err := DoRequest(POST, loginURL, p.Headers, p.JudgeUser.Cookies, &formdata, false)
 		if err != nil {
 			return err
@@ -203,7 +208,12 @@ func (p *AtCoderJudge) login(ctx context.Context) error {
 	return fmt.Errorf("try login failed")
 }
 func (p *AtCoderJudge) ParsePID(ctx context.Context) (string, string, error) {
-	return "", "", nil
+	re := regexp.MustCompile(`([A-Za-z0-9]*)_([A-Za-z]*)`)
+	ret := re.FindStringSubmatch(p.PID)
+	if ret == nil {
+		logger.Errorf("problem not found!")
+	}
+	return ret[1], ret[2], nil
 }
 
 func (p *AtCoderJudge) CheckAndGetSubmissionID(ctx context.Context, resp *http.Response) string {
@@ -243,7 +253,7 @@ func (p *AtCoderJudge) submit(ctx context.Context) error {
 		"sourceCode":          p.Submit.Source,
 		"csrf_token":          p.JudgeUser.CsrfToken,
 	}
-	data := MapToStrings(dataMap, "&")
+	data := MapToFormStrings(dataMap, "&")
 	resp, err := DoRequest(POST, submitUrl, p.Headers, p.JudgeUser.Cookies, &data, false)
 	if err != nil {
 		return err
@@ -251,19 +261,23 @@ func (p *AtCoderJudge) submit(ctx context.Context) error {
 	SetCookies(resp, &p.JudgeUser.OriginJudgeUser)
 	p.SubmissionID = p.CheckAndGetSubmissionID(ctx, resp)
 	if p.SubmissionID == "" {
-		return errors.New("submit SourceCode failed")
+		logger.Errorf("submit SourceCode failed,submit:%+v", utils.Sdump(p.Submit))
+		return fmt.Errorf("submit SourceCode failed,submit:%+v", utils.Sdump(p.Submit))
 	}
 	p.RetJudgeUser(ctx)
 	return nil
 }
 func (p *AtCoderJudge) RetJudgeUser(ctx context.Context) {
+	if p.JudgeUser == nil {
+		return
+	}
 	atlock.Lock()
 	defer atlock.Unlock()
 	p.JudgeUser.Status = JUDGE_FREE
 	p.JudgeUser = nil
 }
 func (p *AtCoderJudge) CheckResult(ctx context.Context, Text []byte) bool {
-	re := regexp.MustCompile(`<span class='label label-warning' data-toggle='tooltip' data-placement='top' title=".*?">([A-Za-z]*)</span>`)
+	re := regexp.MustCompile(`<span class='label label-.*?' data-toggle='tooltip' data-placement='top' title=".*?">([A-Za-z]*)</span>`)
 	ret := re.FindSubmatch(Text)
 	if ret == nil {
 		return false
@@ -283,6 +297,8 @@ func (p *AtCoderJudge) getResult(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
+		// 此处不设置cookie
+		// SetCookies(resp, &p.JudgeUser.OriginJudgeUser)
 		Text, _ := ParseRespToByte(resp)
 		if !p.CheckResult(ctx, Text) {
 			time.Sleep(time.Second)
@@ -292,13 +308,22 @@ func (p *AtCoderJudge) getResult(ctx context.Context) error {
 		re := regexp.MustCompile(`<td class="text-center">(.*?)</td>`)
 		ret := re.FindAllSubmatch(Text, 9)
 		timere := regexp.MustCompile(`[0-9]*`)
-		time := timere.FindString(string(ret[6][1]))
+		time := "0"
+		if len(ret) > 6 {
+			time = timere.FindString(string(ret[6][1]))
+		}
 		p.Submit.Usetime, _ = strconv.ParseInt(time, 10, 64)
-		memory := timere.FindString(string(ret[7][1]))
+		memory := "0"
+		if len(ret) > 7 {
+			memory = timere.FindString(string(ret[7][1]))
+		}
 		p.Submit.UseMemory, _ = strconv.ParseInt(memory, 10, 64)
 		return nil
 	}
 }
 func (p *AtCoderJudge) commitToDB(ctx context.Context) error {
-	return models.UpdateSubmit(ctx, p.Submit)
+	if p.Submit.Result == constanct.OJ_JUDGE {
+		p.Submit.Result = constanct.OJ_PENDING
+	}
+	return models.UpdateSubmit(context.Background(), p.Submit)
 }

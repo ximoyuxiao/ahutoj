@@ -51,9 +51,9 @@ var CFResultMap = map[string]constanct.OJResult{
 	"Memory limit exceeded(.*?)": constanct.OJ_MLE,
 	"O(.*?)":                     constanct.OJ_OLE,
 	"P(.*?)":                     constanct.OJ_PE,
-	"Runtimeerror(.*?)":          constanct.OJ_RE,
-	"Timelimitexceeded(.*?)":     constanct.OJ_TLE,
-	"Wronganswer(.*?)":           constanct.OJ_WA,
+	"Runtime error(.*?)":         constanct.OJ_RE,
+	"Time limit exceeded(.*?)":   constanct.OJ_TLE,
+	"Wrong answer(.*?)":          constanct.OJ_WA,
 	"Running":                    constanct.OJ_JUDGE,
 	"Inqueue(.*?)":               constanct.OJ_JUDGE,
 }
@@ -300,7 +300,7 @@ func (p *CodeForceJudge) submit() bool {
 		"_tta":                  "493",
 		"sourceCodeConfirmed":   "true",
 	}
-	data := MapToStrings(dataMap, "&")
+	data := MapToFormStrings(dataMap, "&")
 	resp, err := DoRequest(POST, url, p.Headers, p.judgeUser.Cookies, &data, false)
 	if err != nil {
 		logger.Errorf("Call DoRequest failed,err=%s", err.Error())
@@ -353,11 +353,13 @@ func (p *CodeForceJudge) getResult() error {
 		logger.Errorf("call GetSubmitID failed")
 		return err
 	}
-	p.retRangeUser()
+	if GetContest(CID) != "gym" {
+		p.retRangeUser()
+	}
 
 	url := cfurl + "/" + GetContest(CID) + "/" + CID + "/submission/" + submissionID
 	for {
-		resp, err := DoRequest(GET, url, p.Headers, nil, nil, false)
+		resp, err := DoRequest(GET, url, p.Headers, p.judgeUser.Cookies, nil, false)
 		if err != nil {
 			return err
 		}

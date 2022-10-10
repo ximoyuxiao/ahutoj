@@ -140,7 +140,7 @@ func CloseRDB(rdbfd int) error {
 		return fmt.Errorf("the args ivainled,rdbfd=%v", rdbfd)
 	}
 	rdb := &redisPool.rdbs[rdbfd]
-	rdb.Status = RDB_BUSY
+	rdb.Status = RDB_FREE
 	redisPool.lock.Unlock()
 	return nil
 }

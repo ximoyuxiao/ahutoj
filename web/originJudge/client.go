@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/bytedance/gopkg/util/logger"
@@ -69,6 +70,19 @@ func MapToStrings(data map[string]string, sep string) string {
 	return strings.Join(strs, sep)
 }
 
+func MapToFormStrings(data map[string]string, sep string) string {
+	if data == nil {
+		return ""
+	}
+	strs := make([]string, 0)
+	for key, value := range data {
+		key = url.QueryEscape(key)
+		value = url.QueryEscape(value)
+		strs = append(strs, key+"="+value)
+	}
+	return strings.Join(strs, sep)
+}
+
 func ParseRespToReader(resp *http.Response) io.ReadCloser {
 	var reader io.ReadCloser
 	if resp.Header.Get("Content-Encoding") == "gzip" {
@@ -101,7 +115,7 @@ func DealStrings(str string) string {
 }
 
 func SetCookies(resp *http.Response, p *OriginJudgeUser) error {
-	if resp != nil {
+	if resp != nil && p != nil {
 		cookies := resp.Cookies()
 		for _, cookie := range cookies {
 			p.Cookies[cookie.Name] = cookie.Value

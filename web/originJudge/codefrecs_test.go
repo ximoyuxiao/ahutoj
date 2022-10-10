@@ -2,8 +2,10 @@ package originjudge_test
 
 import (
 	"ahutoj/web/dao"
+	mysqldao "ahutoj/web/dao/mysqlDao"
 	"ahutoj/web/io/constanct"
 	originjudge "ahutoj/web/originJudge"
+	"ahutoj/web/utils"
 	"context"
 	"testing"
 	"time"
@@ -17,7 +19,7 @@ func TestSubmitAndGetResult(t *testing.T) {
 		Source: `#include<iostream>
 		using namespace std;
 		int main(){
-			//111222
+			//111222..q
 			int a,b;
 			cin>>a>>b;
 			cout<<a+b<<endl;
@@ -25,11 +27,16 @@ func TestSubmitAndGetResult(t *testing.T) {
 		}`,
 		Result: constanct.OJ_JUDGE,
 	}
-	cfJudge.PID = "1003A"
+	cfJudge.PID = "103446I"
 	cfJudge.Judge(context.Background(), cfJudge.Submit, cfJudge.PID)
 }
 
 func TestAtcoderLogin(t *testing.T) {
+	utils.ConfigInit("../../config.yaml")
+	mysqldao.InitMysql()
+	utils.LogInit()
+	submit, _ := mysqldao.SelectSubmitBySID(context.Background(), 1024)
+	submit.Result = constanct.OJ_JUDGE
 	atcoderJudger := originjudge.AtCoderJudge{}
-	atcoderJudger.Judge(context.Background(), dao.Submit{}, "1003A")
+	atcoderJudger.Judge(context.Background(), submit, "abc272_c")
 }

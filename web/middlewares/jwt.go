@@ -21,7 +21,7 @@ var (
 	ExpTime time.Duration
 )
 
-//map所需要的的权限 第x为为1表示  如果用户权限为第X位则具备权限
+// map所需要的的权限 第x为为1表示  如果用户权限为第X位则具备权限
 const (
 	UNLOGIN       VerfiyLevel = 0xff // 1111 1111
 	CommomUser    VerfiyLevel = 0xfe // 1111 1110
@@ -33,7 +33,7 @@ const (
 	SuperAdmin    VerfiyLevel = 0x80 // 1000 0000
 )
 
-//需要的权限等级
+// 需要的权限等级
 var verifyMap = map[string]VerfiyLevel{
 	"/api/logout/":                  CommomUser,
 	"/api/user/edit/":               CommomUser,
