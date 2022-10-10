@@ -323,7 +323,7 @@ func (p *AtCoderJudge) getResult(ctx context.Context) error {
 }
 func (p *AtCoderJudge) commitToDB(ctx context.Context) error {
 	if p.Submit.Result == constanct.OJ_JUDGE {
-		p.Submit.Result = constanct.OJ_PENDING
+		p.Submit.Result = constanct.OJ_FAILED
 	}
 	return models.UpdateSubmit(context.Background(), p.Submit)
 }

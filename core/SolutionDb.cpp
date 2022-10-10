@@ -121,6 +121,9 @@ vector<Solve*> SolutionDb::getSolve(){
 char sql[102400] ="";
 bool SolutionDb::commitSolveToDb(Solve* solve){
     // insert into Submit values (null,#{pid},#{uid},#{cid},#{judgeid},#{source},#{lang},'Judgeing',0,0,#{submitTime})
+    if(solve->Sres() == OJ_JUDGE){
+        solve->Sres(OJ_FAILED);
+    }
     sprintf(sql,"update Submit set JudgeID=%d,Result='%s',UseTime=%lld,UseMemory=%lld where SID=%d",
         solve->getjudgeID(),
         runningres[solve->Sres()],

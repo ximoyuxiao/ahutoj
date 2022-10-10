@@ -404,7 +404,7 @@ func (p *CodeForceJudge) getResult() error {
 
 func (p *CodeForceJudge) commitToDB() error {
 	if p.Submit.Result == constanct.OJ_JUDGE {
-		p.Submit.Result = constanct.OJ_PENDING
+		p.Submit.Result = constanct.OJ_FAILED
 	}
 	return models.UpdateSubmit(context.Background(), p.Submit)
 }

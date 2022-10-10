@@ -547,8 +547,8 @@ bool judgeClient::judge()
                 SubRes res  = OJ_AC;
                 char resoutfile[128];
                 sprintf(resoutfile,"%s/ans",dir);
-                init_syscalls_limits(this->solve->Lang());
                 for(std::size_t i = 0;i<inputFiles.size();i++){
+                    init_syscalls_limits(this->solve->Lang());
                     DLOG("runnning:%s",inputFiles[i].c_str());
                     long long useTime = 0,useMemory = 0;
                     running(res,inputFiles[i].c_str(),resoutfile,useMemory,useTime);
