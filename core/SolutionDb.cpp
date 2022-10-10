@@ -83,7 +83,7 @@ void SolutionDb::GetSolveLimit(Solve* solve){
 vector<Solve*> SolutionDb::getSolve(){
     vector<Solve*> ret;
     char sql[256] = "";
-    sprintf(sql,"select SID,PID,UID,CID,Source,Lang From Submit where Result='PENDING' or Result = 'REJUDGEING'");
+    sprintf(sql,"select SID,PID,UID,CID,Source,Lang From Submit where IsOriginJudge = 0 and (Result='PENDING' or Result = 'REJUDGEING')");
     auto db = mysqlDB::getInstance();
     MYSQL mysql;
     db->getDatabase(&mysql);
