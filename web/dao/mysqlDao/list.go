@@ -53,3 +53,10 @@ func UpdateListProblem(ctx context.Context, training dao.ListProblem) error {
 	db := GetDB(ctx)
 	return db.Table("ListProblem").Where("LID=?", training.LID).Updates(training).Error
 }
+func GetTrainingList(ctx context.Context, offset, limit int) ([]dao.List, error) {
+	db := GetDB(ctx)
+	tp := dao.List{}
+	ret := make([]dao.List, 0)
+	err := db.Table(tp.Title).Offset(offset).Limit(limit).Find(&ret).Error
+	return ret, err
+}

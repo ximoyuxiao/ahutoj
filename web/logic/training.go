@@ -17,7 +17,7 @@ func AddTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 		LID:       req.LID,
 		UID:       req.UID,
 		Title:     req.Title,
-		StartTime: req.Stime,
+		StartTime: req.StartTime,
 	}
 	listproblem := dao.ListProblem{
 		LID: req.LID,
@@ -44,7 +44,7 @@ func EditTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 		LID:       req.LID,
 		UID:       req.UID,
 		Title:     req.Title,
-		StartTime: req.Stime,
+		StartTime: req.StartTime,
 	}
 	listproblem := dao.ListProblem{
 		LID: req.LID,
@@ -71,7 +71,7 @@ func DeleteTraining(req *request.List, c *gin.Context) (interface{}, error) {
 		LID:       req.LID,
 		UID:       req.UID,
 		Title:     req.Title,
-		StartTime: req.Stime,
+		StartTime: req.StartTime,
 	}
 	//删除题单
 	err := models.DeleteTraining(c, &list)
@@ -81,4 +81,35 @@ func DeleteTraining(req *request.List, c *gin.Context) (interface{}, error) {
 		return response.CreateResponse(constanct.MySQLErrorCode), err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
+}
+func GetTrainingList(ctx *gin.Context, req *request.TrainingListReq) (interface{}, error) {
+	logger := utils.GetLogInstance()
+	var size int = 20
+	if req.Limit > 20 {
+		size = req.Limit
+	}
+	var offset int = 0
+	if req.Page > 0 {
+		offset = size * req.Page
+	}
+	TrainingList, err := models.GetTrainingList(ctx, offset, size)
+	if err != nil {
+		logger.Errorf("call GetTrainingListFromDb failed,err=%s", err.Error())
+		return nil, err
+	}
+	respData := make([]response.TrainingListItem, 0, len(TrainingList))
+	for i, training := range TrainingList {
+		respData[i] = response.TrainingListItem{
+			LID:       training.LID,
+			UID:       training.UID,
+			Title:     training.Title,
+			StartTime: training.StartTime,
+		}
+	}
+	return response.TrainingListResp{
+		Response: response.CreateResponse(constanct.SuccessCode),
+		Size:     int64(len(TrainingList)),
+		Data:     respData,
+	}, err
+
 }

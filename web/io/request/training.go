@@ -1,10 +1,10 @@
 package request
 
 type List struct {
-	LID   int64  `json:"LID"`
-	UID   string `json:"UID"`
-	Title string `json:"Title"`
-	Stime int64  `json:"Stime"`
+	LID       int64  `json:"LID"`
+	UID       string `json:"UID"`
+	Title     string `json:"Title"`
+	StartTime int64  `json:"StartTime"`
 }
 
 type ListProblem struct {
@@ -13,9 +13,10 @@ type ListProblem struct {
 }
 
 type ListAll struct {
-	LID   int64  `json:"LID"`
-	UID   string `json:"UID"`
-	PID   int    `json:"PID"`
-	Title string `json:"Title"`
-	Stime int64  `json:"StartTime"`
+	LID       int64  `json:"LID"`
+	UID       string `json:"UID"`
+	PID       int    `json:"PID"`
+	Title     string `json:"Title"`
+	StartTime int64  `json:"StartTime"`
 }
+type TrainingListReq GetListReq
