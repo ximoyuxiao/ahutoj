@@ -14,6 +14,7 @@ type Problem struct {
 	Label         *string `json:"Label"`
 	Origin        *int64  `json:"Origin"`
 	OriginPID     *string `json:"OriginPID"`
+	ContentType   int64   `json:"ContentType"`
 }
 type EditProblemReq Problem
 type AddProblemReq Problem

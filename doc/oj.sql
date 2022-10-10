@@ -53,7 +53,8 @@ create table Problem(
     Hit 	Text,
     Label            Text,
     Origin int,
-    OriginPID Text
+    OriginPID Text,
+    ContentType int
 )DEFAULT CHARSET=utf8mb4;
 ALTER TABLE Problem AUTO_INCREMENT = 1000;
 

@@ -44,5 +44,6 @@ func ProblemReqToDao(req request.Problem) dao.Problem {
 	if req.OriginPID != nil {
 		problem.OriginPID = *req.OriginPID
 	}
+	problem.ContentType = req.ContentType
 	return problem
 }
