@@ -73,7 +73,20 @@ func DeleteTraining(ctx *gin.Context) {
 }
 
 func GetListTraining(ctx *gin.Context) {
-
+	logger := utils.GetLogInstance()
+	req := new(request.TrainingListReq)
+	if err := ctx.ShouldBindBodyWith(req, binding.JSON); err != nil {
+		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
+	}
+	resp, err := logic.GetTrainingList(ctx, req)
+	if err != nil {
+		logger.Errorf("call GetTrainingList failed, err = %s", err.Error())
+		response.ResponseServerError(ctx, constanct.ServerBusyCode)
+		return
+	}
+	response.ResponseOK(ctx, resp)
 }
 
 func GetTraining(ctx *gin.Context) {

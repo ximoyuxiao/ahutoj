@@ -61,3 +61,6 @@ func DeleteTraining(ctx *gin.Context, list *dao.List) error {
 	}
 	return err
 }
+func GetTrainingList(ctx *gin.Context, offset, pagesize int) ([]dao.List, error) {
+	return mysqldao.GetTrainingList(ctx, offset, pagesize)
+}
