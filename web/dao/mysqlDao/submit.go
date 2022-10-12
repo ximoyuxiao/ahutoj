@@ -60,10 +60,6 @@ func UpdateSubmit(ctx context.Context, submit dao.Submit) error {
 }
 func SelectSubmitIsOriginJudge(ctx context.Context) (ret []dao.Submit, err error) {
 	db := GetDB(ctx)
-	submit := dao.Submit{
-		IsOriginJudge: true,
-		Result:        constanct.OJ_PENDING,
-	}
-	err = db.Table(dao.Submit{}.TableName()).Where(submit).Find(&ret).Limit(20).Error
+	err = db.Table(dao.Submit{}.TableName()).Where("IsOriginJudge=1 and (Result=? or Result=?)", constanct.OJ_REJUDGE, constanct.OJ_PENDING).Find(&ret).Limit(20).Error
 	return ret, err
 }

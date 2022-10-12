@@ -25,14 +25,14 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 		SubmitTime:    time.Now().UnixMilli(),
 		IsOriginJudge: false,
 		OriginPID:     "",
-		OJPlatform:    0,
+		OJPlatform:    -1,
 	}
 	problem, err := models.GetProblemByPID(ctx, int64(req.PID))
 	if err != nil {
 		logger.Errorf("call GetProblemByPID failed,pid=%v, err=%s", req.PID, err.Error())
 		return nil, err
 	}
-	if problem.Origin != 0 {
+	if problem.Origin != -1 {
 		submit.OJPlatform = problem.Origin
 		submit.IsOriginJudge = true
 		submit.OriginPID = problem.OriginPID
