@@ -6,6 +6,8 @@ import (
 	"ahutoj/web/models"
 	"context"
 	"time"
+
+	"github.com/bytedance/gopkg/util/logger"
 )
 
 type OJPlatform int64
@@ -45,6 +47,10 @@ func InitOriginThread() {
 			submit.Result = constanct.OJ_JUDGE
 			models.UpdateSubmit(context.Background(), submit)
 			originJudge := GetOriginJudgeFunc(OJPlatform(submit.OJPlatform))
+			if originJudge == nil {
+				logger.Errorf("not existe plateform,OJPlatform:%d", submit.OJPlatform)
+				continue
+			}
 			// 执行一个协程。
 			go originJudge.Judge(context.Background(), submit, submit.OriginPID)
 		}
