@@ -21,3 +21,14 @@ func GetProblemFromDB(ctx context.Context, pid int64) (*dao.Problem, error) {
 	}
 	return ret, err
 }
+
+func SaveProblemToRDB(ctx context.Context, problem dao.Problem) error {
+	rdfd := GetRedis()
+	if rdfd == -1 {
+		return errors.New("insufficient Redis connection resources")
+	}
+	defer CloseRDB(rdfd)
+	key := "problem-" + strconv.FormatInt(int64(problem.PID), 10)
+	err := SetKey(ctx, rdfd, key, problem)
+	return err
+}
