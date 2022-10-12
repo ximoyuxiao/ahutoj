@@ -49,7 +49,7 @@ void SolutionDb::GetSolveLimit(Solve* solve){
     auto value = redis->getString(to_string(solve->Pid()));
     if (value == ""){
         char sql[256]="";
-        sprintf(sql,"select LimitTime,LimitMemory from Problem where PID=%d and IsOriginJudge=0",solve->Pid());
+        sprintf(sql,"select LimitTime,LimitMemory from Problem where PID=%d",solve->Pid());
         auto db = mysqlDB::getInstance();
         MYSQL mysql;
         db->getDatabase(&mysql);
@@ -121,9 +121,6 @@ vector<Solve*> SolutionDb::getSolve(){
 char sql[102400] ="";
 bool SolutionDb::commitSolveToDb(Solve* solve){
     // insert into Submit values (null,#{pid},#{uid},#{cid},#{judgeid},#{source},#{lang},'Judgeing',0,0,#{submitTime})
-    if(solve->Sres() == OJ_JUDGE){
-        solve->Sres(OJ_FAILED);
-    }
     sprintf(sql,"update Submit set JudgeID=%d,Result='%s',UseTime=%lld,UseMemory=%lld where SID=%d",
         solve->getjudgeID(),
         runningres[solve->Sres()],

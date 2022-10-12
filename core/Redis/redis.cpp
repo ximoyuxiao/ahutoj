@@ -1,3 +1,4 @@
+#include<string.h>
 #include"redis.h"
 MyRedis::MyRedis():cont(nullptr),reply(nullptr){}
 MyRedis::~MyRedis()
@@ -7,8 +8,8 @@ MyRedis::~MyRedis()
 bool MyRedis::connect(std::string host, int port,const char* password)
 {
     this->cont = redisConnect(host.c_str(),port);
-    if(password != "")
-    redisCommand(this->cont,"auth %s",password);
+    if(strcmp(password,"") != 0)
+        redisCommand(this->cont,"auth %s",password);
     if(this->cont != nullptr && this->cont->err)
         return false;
     return true;

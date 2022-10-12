@@ -242,7 +242,6 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
 			    useMemory = tempmemory;
             if (useMemory > this->solve->LimitMemory() * STD_MB){
                 DLOG("run:%s/main res:MLE userMemory:%d",dir,useMemory);
-                useMemory = this->solve->LimitMemory() * STD_MB;
                 result = OJ_MLE;
                 ptrace(PTRACE_KILL, pid, NULL, NULL); //杀死子进程
                 continue;
@@ -272,7 +271,7 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
                     case SIGXCPU:
                         DLOG("stop run:%s/main res:TLE signal:%d",dir,exitcode);
                         result = OJ_TLE;
-                        useTime = solve->LimitTime() * 1000;
+                        useTime = solve->LimitTime();
                         break;
                     case SIGXFSZ:
                         DLOG("stop run:%s/main res:OLE signal:%d",exitcode);
@@ -366,8 +365,8 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
         itimerval time;
         time.it_interval.tv_usec =0;
         time.it_interval.tv_sec = 0;
-        time.it_value.tv_sec = this->solve->LimitTime();  
-        time.it_value.tv_usec = 1000;
+        time.it_value.tv_sec = this->solve->LimitTime() / 1000;  
+        time.it_value.tv_usec = 1000  + (this->solve->LimitTime() % 1000) *1e3;
         setitimer(ITIMER_REAL,&time,NULL);
         ptrace(PTRACE_TRACEME, 0, NULL, NULL);
         // 限制 运行时间为

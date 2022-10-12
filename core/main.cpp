@@ -40,6 +40,9 @@ public:
     virtual void run(){
         jc->judge();
         DLOG("judge complete Result:%s",runningres[solve->Sres()]);
+        if(solve->Sres() == OJ_JUDGE){
+            solve->Sres(OJ_FAILED);
+        }
         solutionDB.commitSolveToDb(solve);
         solutionDB.ReleaseSolve(solve);
     }
