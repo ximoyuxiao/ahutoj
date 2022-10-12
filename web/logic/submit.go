@@ -95,6 +95,7 @@ func GetSubmits(ctx *gin.Context, req *request.SubmitListReq) (interface{}, erro
 	for i, temp := range submits {
 		resp.Data[i] = response.SubmitLIstItem{
 			SID:        temp.SID,
+			UID:        temp.UID,
 			PID:        temp.PID,
 			Lang:       temp.Lang,
 			Result:     temp.Result,
@@ -121,6 +122,7 @@ func GetSubmit(ctx *gin.Context, req *request.GetSubmitReq) (interface{}, error)
 	return response.GetSubmitResp{
 		Response:   response.CreateResponse(constanct.SuccessCode),
 		SID:        submit.SID,
+		UID:        submit.UID,
 		PID:        submit.PID,
 		Source:     submit.Source,
 		Lang:       submit.Lang,

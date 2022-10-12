@@ -5,6 +5,7 @@ import "ahutoj/web/io/constanct"
 type GetSubmitResp struct {
 	Response
 	SID        int                `json:"SID"`
+	UID        string             `json:"UID"`
 	PID        int                `json:"PID"`
 	Source     string             `json:"Source"`
 	Lang       constanct.LANG     `json:"Lang"`
@@ -16,6 +17,7 @@ type GetSubmitResp struct {
 }
 type SubmitLIstItem struct {
 	SID        int                `json:"SID"`
+	UID        string             `json:"UID"`
 	PID        int                `json:"PID"`
 	Lang       constanct.LANG     `json:"Lang"`
 	Result     constanct.OJResult `json:"Result"`
