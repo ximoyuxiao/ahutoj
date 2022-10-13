@@ -16,7 +16,7 @@ typedef enum{
     OJ_FAILED,
 }SubRes;
 static const char *runningres[] = {"","AC","WA","TLE","MLE",
-                                "RE","PE","OLE","CE","JUDGEING","REJUDGEING","PENDING","FAILED"};
+                                "RE","PE","OLE","CE","JUDGING","REJUDGING","PENDING","FAILED"};
 typedef enum{
     C = 1,
     CPP,

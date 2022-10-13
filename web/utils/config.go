@@ -53,7 +53,7 @@ func ConfigInit(configPath string) error {
 		fmt.Printf("call Unmarshal Failed, err=%s\n", err.Error())
 		return err
 	}
-	fmt.Println(config)
+	fmt.Println(Sdump(config))
 	return nil
 
 }

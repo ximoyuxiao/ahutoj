@@ -12,8 +12,8 @@ const (
 	OJ_PE      OJResult = "PE"
 	OJ_OLE     OJResult = "OLE"
 	OJ_CE      OJResult = "CE"
-	OJ_JUDGE   OJResult = "JUDGEING"
-	OJ_REJUDGE OJResult = "REJUDGEING"
+	OJ_JUDGE   OJResult = "JUDGING"
+	OJ_REJUDGE OJResult = "REJUDGING"
 	OJ_PENDING OJResult = "PENDING"
 	OJ_FAILED  OJResult = "FAILED"
 )
