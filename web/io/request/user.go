@@ -77,3 +77,8 @@ func (u UserEditVjudgeReq) ToUser(UID string) *dao.User {
 		Vjpwd: u.Vjpwd,
 	}
 }
+
+type CodeForceBindReq struct {
+	CodeForceUser string `json:"CodeForceUser"`
+	CodeForcePass string `json:"CodeForcePass"`
+}

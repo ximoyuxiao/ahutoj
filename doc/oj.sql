@@ -27,6 +27,7 @@ create table User(
     Adept  varchar(128),
     Vjid   varchar(20),
     Vjpwd  varchar(128),
+    CodeForceUser Text,
     Email varchar(20),
     HeadUrl Text
 )DEFAULT CHARSET=utf8mb4;

@@ -60,6 +60,7 @@ func regeisterRouters(router *gin.Engine) {
 			userRouter.POST("/edit/", service.EditUserInfo)
 			userRouter.POST("/edit/pass/", service.EditUserPass)
 			userRouter.POST("/vjudgeBind", service.VjudgeBind)
+			userRouter.POST("/CodeForceBind", service.CodeForceBind)
 
 		}
 

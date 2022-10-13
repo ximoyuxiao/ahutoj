@@ -70,7 +70,7 @@ var CfHeaders = map[string]string{
 
 type CodeForceJudge struct {
 	Headers      map[string]string
-	judgeUser    *CFJudgeUser
+	JudgeUser    *CFJudgeUser
 	loginSuccess bool
 	OriginJudge
 }
@@ -85,7 +85,7 @@ func (p CodeForceJudge) Judge(ctx context.Context, submit dao.Submit, PID string
 		logger.Errorf("Call InitCodeForceJudge failed,err=%s", err.Error())
 		return fmt.Errorf("call InitCodeForceJudge failed,err=%s", err.Error())
 	}
-	err = p.login()
+	err = p.Login()
 	if err != nil {
 		logger.Errorf("Call login failed,err=%s", err.Error())
 		return fmt.Errorf("call login failed,err=%s", err.Error())
@@ -129,7 +129,7 @@ func (p *CodeForceJudge) getCsrfToekn() (string, error) {
 		logger.Errorf("call DoRequest failed,url:%s,err=%s", url, err.Error())
 		return "", err
 	}
-	SetCookies(resp, &p.judgeUser.OriginJudgeUser)
+	SetCookies(resp, &p.JudgeUser.OriginJudgeUser)
 	bodyText, err := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 	if err != nil {
@@ -159,13 +159,13 @@ func getRangeUser() (*CFJudgeUser, error) {
 }
 
 func (p *CodeForceJudge) retRangeUser() {
-	if p.judgeUser == nil {
+	if p.JudgeUser == nil {
 		return
 	}
 	cfLock.Lock()
 	defer cfLock.Unlock()
-	p.judgeUser.Status = JUDGE_FREE
-	p.judgeUser = nil
+	p.JudgeUser.Status = JUDGE_FREE
+	p.JudgeUser = nil
 }
 
 // 初始化一个判题机
@@ -176,8 +176,8 @@ func (p *CodeForceJudge) InitCodeForceJudge() error {
 	}
 	// 必须得到一个运行中的判题机
 	for {
-		p.judgeUser, _ = getRangeUser()
-		if p.judgeUser != nil {
+		p.JudgeUser, _ = getRangeUser()
+		if p.JudgeUser != nil {
 			break
 		}
 		time.Sleep(time.Second)
@@ -201,7 +201,7 @@ func (p *CodeForceJudge) checkLoginSuccess() bool {
 	if p.loginSuccess {
 		return true
 	}
-	resp, err := DoRequest(GET, cfurl, p.Headers, p.judgeUser.Cookies, nil, true)
+	resp, err := DoRequest(GET, cfurl, p.Headers, p.JudgeUser.Cookies, nil, true)
 	if err != nil {
 		logger.Errorf("call DoRequest failed")
 		return false
@@ -218,30 +218,30 @@ func (p *CodeForceJudge) checkLoginSuccess() bool {
 	return p.loginSuccess
 }
 
-func (p *CodeForceJudge) login() error {
+func (p *CodeForceJudge) Login() error {
 	logger := utils.GetLogInstance()
 	url := "https://codeforces.com/enter?locale=en"
-	if p.judgeUser == nil {
-		p.judgeUser, _ = getRangeUser()
+	if p.JudgeUser == nil {
+		p.JudgeUser, _ = getRangeUser()
 	}
-	userCount := p.judgeUser
+	userCount := p.JudgeUser
 	logger.Debugf("use user:%+v:", utils.Sdump(userCount))
-	SetCookies(nil, &p.judgeUser.OriginJudgeUser)
+	SetCookies(nil, &p.JudgeUser.OriginJudgeUser)
 	if p.checkLoginSuccess() {
 		return nil
 	}
 	/*没有登录的情况下  需要重新做一次登录*/
-	p.judgeUser.CsrfToken, _ = p.getCsrfToekn()
+	p.JudgeUser.CsrfToken, _ = p.getCsrfToekn()
 	ftaa := getFtaa()
 	bfaa := "f1b3f18c715565b589b7823cda7448ce"
 	var data = fmt.Sprintf("csrf_token=%s&action=enter&handleOrEmail=%s&password=%s&remember=on&ftaa=%s&bfaa=%s&_taa=176", userCount.CsrfToken, userCount.ID, userCount.Password, ftaa, bfaa)
-	resp, err := DoRequest(POST, url, p.Headers, p.judgeUser.Cookies, &data, false)
+	resp, err := DoRequest(POST, url, p.Headers, p.JudgeUser.Cookies, &data, false)
 	if err != nil {
 		logger.Error(err.Error())
 		return err
 	}
 	//填充 cookie
-	SetCookies(resp, &p.judgeUser.OriginJudgeUser)
+	SetCookies(resp, &p.JudgeUser.OriginJudgeUser)
 	if p.checkLoginSuccess() {
 		return nil
 	}
@@ -284,10 +284,10 @@ func GetContest(CID string) string {
 func (p *CodeForceJudge) submit() bool {
 	logger := utils.GetLogInstance()
 	CID, idx, _ := p.ParsePID()
-	url := cfurl + `/` + GetContest(CID) + `/` + CID + `/submit?csrf_token=` + p.judgeUser.CsrfToken
+	url := cfurl + `/` + GetContest(CID) + `/` + CID + `/submit?csrf_token=` + p.JudgeUser.CsrfToken
 	lang := p.GetCFLang()
 	var dataMap = map[string]string{
-		"csrf_token":            p.judgeUser.CsrfToken,
+		"csrf_token":            p.JudgeUser.CsrfToken,
 		"action":                "submitSolutionFormSubmitted",
 		"ftaa":                  getFtaa(),
 		"bfaa":                  "f1b3f18c715565b589b7823cda7448ce",
@@ -301,7 +301,7 @@ func (p *CodeForceJudge) submit() bool {
 		"sourceCodeConfirmed":   "true",
 	}
 	data := MapToFormStrings(dataMap, "&")
-	resp, err := DoRequest(POST, url, p.Headers, p.judgeUser.Cookies, &data, false)
+	resp, err := DoRequest(POST, url, p.Headers, p.JudgeUser.Cookies, &data, false)
 	if err != nil {
 		logger.Errorf("Call DoRequest failed,err=%s", err.Error())
 		return false
@@ -312,7 +312,7 @@ func (p *CodeForceJudge) submit() bool {
 func (p *CodeForceJudge) GetSubmitID() (string, error) {
 	CID, _, _ := p.ParsePID()
 	url := cfurl + "/" + GetContest(CID) + "/" + CID + "/my"
-	resp, err := DoRequest(GET, url, p.Headers, p.judgeUser.Cookies, nil, true)
+	resp, err := DoRequest(GET, url, p.Headers, p.JudgeUser.Cookies, nil, true)
 	if err != nil {
 		logger.Errorf("call DoRequest failed,url:%s, err=%s", url, err.Error())
 		return "", err
@@ -359,7 +359,7 @@ func (p *CodeForceJudge) getResult() error {
 
 	url := cfurl + "/" + GetContest(CID) + "/" + CID + "/submission/" + submissionID
 	for {
-		resp, err := DoRequest(GET, url, p.Headers, p.judgeUser.Cookies, nil, false)
+		resp, err := DoRequest(GET, url, p.Headers, p.JudgeUser.Cookies, nil, false)
 		if err != nil {
 			return err
 		}

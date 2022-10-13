@@ -16,14 +16,15 @@ type RegisterResp LoginResp
 
 type UserResp struct {
 	Response
-	UID     string `json:"UID"`
-	Uname   string `json:"UserName"`
-	School  string `json:"School"`
-	Classes string `json:"Classes"`
-	Major   string `json:"Major"`
-	Adept   string `json:"Adept"`
-	Vjid    string `json:"Vjid"`
-	Email   string `json:"Email"`
+	UID           string `json:"UID"`
+	Uname         string `json:"UserName"`
+	School        string `json:"School"`
+	Classes       string `json:"Classes"`
+	Major         string `json:"Major"`
+	Adept         string `json:"Adept"`
+	Vjid          string `json:"Vjid"`
+	Email         string `json:"Email"`
+	CodeForceUser string `json:"CodeForceUser"`
 }
 type UsersItem struct {
 	UID      string `json:"UID"`
@@ -49,14 +50,15 @@ type UserStatusInfoResp struct {
 
 func CreateUserResp(user *dao.User) UserResp {
 	return UserResp{
-		Response: CreateResponse(constanct.SuccessCode),
-		UID:      user.UID,
-		Uname:    user.Uname,
-		School:   user.School,
-		Classes:  user.Classes,
-		Major:    user.Major,
-		Adept:    user.Adept,
-		Vjid:     user.Vjid,
-		Email:    user.Email,
+		Response:      CreateResponse(constanct.SuccessCode),
+		UID:           user.UID,
+		Uname:         user.Uname,
+		School:        user.School,
+		Classes:       user.Classes,
+		Major:         user.Major,
+		Adept:         user.Adept,
+		Vjid:          user.Vjid,
+		Email:         user.Email,
+		CodeForceUser: user.CodeForceUser,
 	}
 }

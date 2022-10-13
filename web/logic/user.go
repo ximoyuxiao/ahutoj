@@ -9,8 +9,10 @@ import (
 	"ahutoj/web/mapping"
 	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
+	originjudge "ahutoj/web/originJudge"
 	"ahutoj/web/utils"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -166,6 +168,7 @@ func AddUsersRange(ctx *gin.Context, req request.AddUsersRangeReq) (interface{},
 	resp.Response = response.CreateResponse(constanct.SuccessCode)
 	return resp, nil
 }
+
 func AddUsers(ctx *gin.Context, req request.AddUsersReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	resp := response.AddUsersResp{}
@@ -234,4 +237,38 @@ func GetUserStatusInfo(ctx *gin.Context, req request.UserStatusInfoReq) (interfa
 	}
 
 	return resp, nil
+}
+
+func CodeForceBind(ctx *gin.Context, req request.CodeForceBindReq) (interface{}, error) {
+	req.CodeForcePass = strings.Trim(req.CodeForcePass, " ")
+	req.CodeForceUser = strings.Trim(req.CodeForceUser, " ")
+	if len(req.CodeForceUser) == 0 {
+		return response.CreateResponse(constanct.UIDEmpty), nil
+	}
+	if len(req.CodeForceUser) == 0 {
+		return response.CreateResponse(constanct.PassEmpty), nil
+	}
+	cj := originjudge.CodeForceJudge{
+		JudgeUser: &originjudge.CFJudgeUser{
+			OriginJudgeUser: originjudge.OriginJudgeUser{
+				ID:       req.CodeForceUser,
+				Password: req.CodeForcePass,
+			},
+		},
+	}
+	err := cj.Login()
+	if err != nil {
+		return response.CreateResponse(constanct.PassWordErrorCode), nil
+	}
+	/*应该有一步检查登录 暂时忽略*/
+	user := dao.User{
+		UID:           middlewares.GetUid(ctx),
+		CodeForceUser: req.CodeForceUser,
+	}
+
+	err = mysqldao.UpdateUserByUID(ctx, &user)
+	if err != nil {
+		return nil, err
+	}
+	return response.CreateResponse(constanct.SuccessCode), nil
 }

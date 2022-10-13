@@ -179,3 +179,20 @@ func AddUsers(ctx *gin.Context) {
 	}
 	response.ResponseOK(ctx, resp)
 }
+func CodeForceBind(ctx *gin.Context) {
+	logger := utils.GetLogInstance()
+	req := new(request.CodeForceBindReq)
+	err := ctx.ShouldBindWith(req, binding.JSON)
+	if err != nil {
+		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
+	}
+	resp, err := logic.CodeForceBind(ctx, *req)
+	if err != nil {
+		logger.Errorf("call CodeForceBind err=%s, req=%+v", err.Error(), utils.Sdump(req))
+		response.ResponseError(ctx, constanct.ServerBusyCode)
+		return
+	}
+	response.ResponseOK(ctx, resp)
+}

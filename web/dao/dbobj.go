@@ -3,16 +3,17 @@ package dao
 import "ahutoj/web/io/constanct"
 
 type User struct {
-	UID     string `gorm:"column:UID"`
-	Uname   string `gorm:"column:UserName"`
-	Pass    string `gorm:"column:Pass"`
-	School  string `gorm:"column:School"`
-	Classes string `gorm:"column:Classes"`
-	Major   string `gorm:"column:Major"`
-	Adept   string `gorm:"column:Adept"`
-	Vjid    string `gorm:"column:Vjid"`
-	Vjpwd   string `gorm:"column:Vjpwd"`
-	Email   string `gorm:"column:Email"`
+	UID           string `gorm:"column:UID"`
+	Uname         string `gorm:"column:UserName"`
+	Pass          string `gorm:"column:Pass"`
+	School        string `gorm:"column:School"`
+	Classes       string `gorm:"column:Classes"`
+	Major         string `gorm:"column:Major"`
+	Adept         string `gorm:"column:Adept"`
+	Vjid          string `gorm:"column:Vjid"`
+	Vjpwd         string `gorm:"column:Vjpwd"`
+	Email         string `gorm:"column:Email"`
+	CodeForceUser string `gorm:"column:CodeForceUser"`
 	// HeadUrl string `gorm:"column:HeadUrl"`
 }
 
