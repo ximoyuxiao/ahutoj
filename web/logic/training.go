@@ -5,6 +5,7 @@ import (
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
+	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
 
@@ -12,10 +13,8 @@ import (
 )
 
 func AddTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
-
 	list := dao.List{
-		LID:       req.LID,
-		UID:       req.UID,
+		UID:       middlewares.GetUid(c),
 		Title:     req.Title,
 		StartTime: req.StartTime,
 	}
@@ -30,12 +29,19 @@ func AddTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 		utils.GetLogInstance().Errorf("call CreateList failed,err=%s", err.Error())
 		return response.CreateResponse(constanct.MySQLErrorCode), err
 	}
-	//添加提单题目
-	err2 := models.CreateListProblem(c, &listproblem)
-	if err2 != nil {
+	list.LID, err = models.GetCurrentLID(c, list)
+	if err != nil {
 		//日志报错
-		utils.GetLogInstance().Errorf("call CreateListProblem failed,err=%s", err2.Error())
-		return response.CreateResponse(constanct.MySQLErrorCode), err2
+		utils.GetLogInstance().Errorf("call GetLID in CreateList failed,err=%s", err.Error())
+		return response.CreateResponse(constanct.MySQLErrorCode), err
+	}
+
+	//添加提单题目
+	err = models.CreateListProblem(c, &listproblem)
+	if err != nil {
+		//日志报错
+		utils.GetLogInstance().Errorf("call CreateListProblem failed,err=%s", err.Error())
+		return response.CreateResponse(constanct.MySQLErrorCode), err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
