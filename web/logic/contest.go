@@ -213,7 +213,7 @@ func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface
 		return nil, err
 	}
 
-	problemIdxMap := make(map[int]int, 0)
+	problemIdxMap := make(map[int64]int, 0)
 	for idx, problem := range problems {
 		problemIdxMap[problem.PID] = idx
 	}

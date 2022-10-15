@@ -35,7 +35,7 @@ func (p Permission) TableName() string {
 }
 
 type Problem struct {
-	PID          int    `gorm:"column:PID" json:"PID"`
+	PID          int64  `gorm:"column:PID" json:"PID"`
 	Title        string `gorm:"column:Title" json:"Title"`
 	Description  string `gorm:"column:Description" json:"Description"`
 	Input        string `gorm:"column:Input" json:"Input"`
@@ -60,15 +60,15 @@ type List struct {
 
 type ListProblem struct {
 	LID   int64  `gorm:"column:LID"`
-	PID   int    `gorm:"column:PID"`
+	PID   int64  `gorm:"column:PID"`
 	Title string `gorm:"column:Title"`
 }
 
 type ListUser struct {
-	LID       int64 `gorm:"column:lid"`
-	UID       int   `gorm:"column:uid"`
-	SubmitNum int   `gorm:"column:SubmitNum"`
-	ACNum     int   `gorm:"column:AcNum"`
+	LID       int64  `gorm:"column:lid"`
+	UID       string `gorm:"column:uid"`
+	SubmitNum int    `gorm:"column:SubmitNum"`
+	ACNum     int    `gorm:"column:AcNum"`
 }
 
 type Contest struct {
@@ -90,7 +90,7 @@ func (p Contest) TableName() string {
 
 type ConPro struct {
 	CID        int64  `gorm:"column:CID"`
-	PID        int    `gorm:"column:PID"`
+	PID        int64  `gorm:"column:PID"`
 	Ptitle     string `gorm:"column:Title"`
 	Submit_num int    `gorm:"column:SubmitNum"`
 	Ac_num     int    `gorm:"column:ACNum"`
@@ -101,11 +101,11 @@ func (p ConPro) TableName() string {
 }
 
 type Submit struct {
-	SID           int                `gorm:"column:SID"`
-	PID           int                `gorm:"column:PID"`
+	SID           int64              `gorm:"column:SID"`
+	PID           int64              `gorm:"column:PID"`
 	UID           string             `gorm:"column:UID"`
-	CID           int                `gorm:"column:CID"`
-	Judgeid       int                `gorm:"column:Judgeid"`
+	CID           int64              `gorm:"column:CID"`
+	Judgeid       int64              `gorm:"column:Judgeid"`
 	Source        string             `gorm:"column:Source"`
 	Lang          constanct.LANG     `gorm:"column:Lang"`
 	Result        constanct.OJResult `gorm:"column:Result"`

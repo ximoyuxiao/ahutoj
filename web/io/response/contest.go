@@ -12,7 +12,7 @@ type ContestListItem struct {
 	Ispublic  int    `json:"IsPublic"`
 }
 type ConProItem struct {
-	PID        int    `json:"PID"`
+	PID        int64  `json:"PID"`
 	Ptitle     string `json:"Title"`
 	Submit_num int    `json:"SubmitNum"`
 	Ac_num     int    `json:"ACNum"`
@@ -37,7 +37,7 @@ type ContestListResp struct {
 	Data []ContestListItem `json:"Data"`
 }
 type ProblemItem struct {
-	PID          int                `json:"PID"`          // 题目ID 其实我觉得这个可以不写的
+	PID          int64              `json:"PID"`          // 题目ID 其实我觉得这个可以不写的
 	Time         int64              `json:"Time"`         // 最后一次提交时间
 	SubmitNumber int64              `json:"SubmitNumber"` // 题目总的提交次数
 	Status       constanct.OJResult `json:"Status"`       // 最终状态

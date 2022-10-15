@@ -72,7 +72,7 @@ func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{},
 }
 
 func GetProblemInfo(ctx *gin.Context, PID int64) (interface{}, error) {
-	if !models.IsProblemExistByPID(ctx, &dao.Problem{PID: int(PID)}) {
+	if !models.IsProblemExistByPID(ctx, &dao.Problem{PID: PID}) {
 		return response.CreateResponse(constanct.PIDNotExistCode), nil
 	}
 	problem, err := models.GetProblemByPID(ctx, PID)

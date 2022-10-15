@@ -3,7 +3,7 @@ package response
 import "ahutoj/web/dao"
 
 type ProblemItemResp struct {
-	PID   int    `json:"PID"`
+	PID   int64  `json:"PID"`
 	Title string `json:"Title"`
 	Label string `json:"Label"`
 }

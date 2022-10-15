@@ -39,7 +39,7 @@ type AddUsersResp struct {
 }
 
 type UserStatusInfoItem struct {
-	PID        int                `json:"PID"`
+	PID        int64              `json:"PID"`
 	SubmitTime int64              `json:"SubmitTime"`
 	Result     constanct.OJResult `json:"Result"`
 }

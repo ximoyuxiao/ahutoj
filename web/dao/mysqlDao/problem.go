@@ -11,7 +11,7 @@ func SelectProblemByPID(ctx context.Context, problem *dao.Problem) error {
 	return err
 }
 
-func SelectProblemCountByPID(ctx context.Context, PID int) (count int64, err error) {
+func SelectProblemCountByPID(ctx context.Context, PID int64) (count int64, err error) {
 	db := GetDB(ctx)
 	err = db.Table("Problem").Where("PID=?", PID).Count(&count).Error
 	return count, err

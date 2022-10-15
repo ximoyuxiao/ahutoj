@@ -141,7 +141,7 @@ func GetFileList(ctx *gin.Context) {
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
-	ok := models.IsProblemExistByPID(ctx, &dao.Problem{PID: int(PID)})
+	ok := models.IsProblemExistByPID(ctx, &dao.Problem{PID: PID})
 	if !ok {
 		logger.Errorf("the problem not exist pid=%s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)

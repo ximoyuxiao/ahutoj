@@ -1,7 +1,7 @@
 package request
 
 type Problem struct {
-	PID           int     `json:"PID"`
+	PID           int64   `json:"PID"`
 	Title         *string `json:"Title"`
 	Description   *string `json:"Description"`
 	Input         *string `json:"Input"`
