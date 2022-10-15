@@ -249,10 +249,12 @@ func CodeForceBind(ctx *gin.Context, req request.CodeForceBindReq) (interface{},
 		return response.CreateResponse(constanct.PassEmpty), nil
 	}
 	cj := originjudge.CodeForceJudge{
+		Headers: originjudge.CfHeaders,
 		JudgeUser: &originjudge.CFJudgeUser{
 			OriginJudgeUser: originjudge.OriginJudgeUser{
 				ID:       req.CodeForceUser,
 				Password: req.CodeForcePass,
+				Cookies:  make(map[string]string, 0),
 			},
 		},
 	}
