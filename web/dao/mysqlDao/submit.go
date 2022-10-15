@@ -63,3 +63,9 @@ func SelectSubmitIsOriginJudge(ctx context.Context) (ret []dao.Submit, err error
 	err = db.Table(dao.Submit{}.TableName()).Where("IsOriginJudge=1 and (Result=? or Result=?)", constanct.OJ_REJUDGE, constanct.OJ_PENDING).Find(&ret).Limit(20).Error
 	return ret, err
 }
+
+func FindLastSIDByUID(ctx context.Context, UID string) (ret dao.Submit, err error) {
+	db := GetDB(ctx)
+	err = db.Table(ret.TableName()).Where("UID=?", UID).Last(&ret).Error
+	return ret, err
+}

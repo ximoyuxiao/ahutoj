@@ -46,6 +46,8 @@ func initAPP(ConfigPath string) error {
 	}
 	//初始化JWT
 	middlewares.InitJwt()
+
+	middlewares.InitSnowflake(utils.GetConfInstance().StartTime, utils.GetConfInstance().MachineID)
 	// 初始化 重判题目的协程
 	go originjudge.InitOriginThread()
 	routers.InitServer()

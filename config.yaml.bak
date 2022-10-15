@@ -2,6 +2,7 @@ port: ":4212"
 mode: "debug"
 sign: "ahutoj"
 version: "0.0.1"
+startTime: "2022-01-15"
 dataPath: "./core/Data"
 Terminal: 0.8   #封榜时间
 mysql:  

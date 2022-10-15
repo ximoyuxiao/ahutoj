@@ -33,3 +33,6 @@ func UpdateSubmit(ctx context.Context, submit dao.Submit) error {
 func GetOriginJudgeSubmit(ctx context.Context) ([]dao.Submit, error) {
 	return mysqldao.SelectSubmitIsOriginJudge(ctx)
 }
+func FindLastSIDByUID(ctx context.Context, UID string) (dao.Submit, error) {
+	return mysqldao.FindLastSIDByUID(ctx, UID)
+}

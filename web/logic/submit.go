@@ -27,7 +27,7 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 		OriginPID:     "",
 		OJPlatform:    -1,
 	}
-	problem, err := models.GetProblemByPID(ctx, int64(req.PID))
+	problem, err := models.GetProblemByPID(ctx, req.PID)
 	if err != nil {
 		logger.Errorf("call GetProblemByPID failed,pid=%v, err=%s", req.PID, err.Error())
 		return nil, err
@@ -42,7 +42,15 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 		logger.Errorf("call CreateSubmit failed, submit=%v, err=%s", submit, err.Error())
 		return nil, err
 	}
-	return response.CreateResponse(constanct.SuccessCode), nil
+	submit, err = models.FindLastSIDByUID(ctx, submit.UID)
+	if err != nil {
+		logger.Errorf("call FindLastSIDByUID failed, UID=%v, err=%s", submit.UID, err.Error())
+		return nil, err
+	}
+	return response.AddSubmitResp{
+		Response: response.CreateResponse(constanct.SuccessCode),
+		SID:      submit.SID,
+	}, nil
 }
 
 func RejudgeSubmit(ctx *gin.Context, req *request.RejudgeSubmitReq) (interface{}, error) {

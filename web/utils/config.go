@@ -13,6 +13,8 @@ type AppConfig struct {
 	Mode         string  `mapstructure:"mode"`
 	Sign         string  `mapstructure:"sign"`
 	Version      string  `mapstructure:"version"`
+	StartTime    string  `mapstructure:"startTime"`
+	MachineID    int64   `mapstructure:"machineID "`
 	DataPath     string  `mapstructure:"dataPath"`
 	Terminal     float64 `mapstructure:"Terminal"`
 	*MySQLConfig `mapstructure:"mysql"`

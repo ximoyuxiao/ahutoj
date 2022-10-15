@@ -31,3 +31,7 @@ type SubmitListResp struct {
 	LastTime int64            `json:"LastTime"`
 	Data     []SubmitLIstItem `json:"Data"`
 }
+type AddSubmitResp struct {
+	Response
+	SID int64 `json:"SID"`
+}
