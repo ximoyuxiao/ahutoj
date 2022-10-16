@@ -229,7 +229,7 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
         int first = true;   
         while(1){
             wait4(pid,&status,__WNOTHREAD,&ruse); //等待子进程切换内核态（调用系统API或者运行状态变化）
-            DLOG("Watch pid:%d run:%s/main",pid,dir);
+            //DLOG("Watch pid:%d run:%s/main",pid,dir);
             // 这一段也不知道干嘛的
             if (first){
                 ptrace(PTRACE_SETOPTIONS, pid, NULL, PTRACE_O_TRACESYSGOOD | PTRACE_O_TRACEEXIT
@@ -339,7 +339,7 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
 			this->call_id=0;
             // 等待下一次陷入中断
             ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
-            DLOG("run:%s/main leave ptrace pid:%d",dir,pid);
+            //DLOG("run:%s/main leave ptrace pid:%d",dir,pid);
             first = false;
         }
         useTime += (ruse.ru_utime.tv_sec * 1000 + ruse.ru_utime.tv_usec / 1000) * cpu_compensation; // 统计用户态耗时，在更快速的CPU上加以cpu_compensation倍数放大
@@ -472,7 +472,7 @@ bool judgeClient::cmpFIle(SubRes &result,char *myfile,const char* sourceFile)
     char diffFile[128];
     sprintf(diffFile,"%s/diff",dir);
     char cmd[128];
-    sprintf(cmd,"diff %s %s > %s",myfile,sourceFile,diffFile);
+    sprintf(cmd,"diff -w %s %s > %s",myfile,sourceFile,diffFile);
     DLOG(cmd);
     system(cmd);
     if(getFileSize(diffFile))
@@ -557,6 +557,9 @@ bool judgeClient::judge()
                     cmpFIle(res,resoutfile,outputFiles[i].c_str());
                     if(res != OJ_AC)
                         break;
+                    char cmd[1024] ={0};
+                    sprintf(cmd,"rm %s",resoutfile);
+                    system(cmd);
                     solve->setUsetime(max(useTime,solve->getUsetime()));
                     solve->setUseMemory(max(useMemory,solve->getuseMemory()));
                 }
