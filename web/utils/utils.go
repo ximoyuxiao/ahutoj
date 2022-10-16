@@ -28,6 +28,12 @@ func MD5EnCode(userID, password string) (string, error) {
 	return hex.EncodeToString(Md5.Sum(nil)), nil
 }
 
+func MD5EnCodeStr(str string) (string, error) {
+	Md5 := md5.New()
+	io.WriteString(Md5, str)
+	return hex.EncodeToString(Md5.Sum(nil)), nil
+}
+
 func Sdump(value ...interface{}) string {
 	return litter.Sdump(value...)
 }

@@ -29,6 +29,10 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 		OriginPID:     "",
 		OJPlatform:    -1,
 	}
+
+	if models.EqualLastSource(ctx, req.UID, req.PID, submit.Source) {
+		return response.CreateResponseStr(constanct.DUPLICATECODE, "禁止频繁重复提交代码"), nil
+	}
 	problem, err := models.GetProblemByPID(ctx, req.PID)
 	if err != nil {
 		logger.Errorf("call GetProblemByPID failed,pid=%v, err=%s", req.PID, err.Error())

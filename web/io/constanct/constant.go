@@ -45,6 +45,7 @@ const (
 	CONTESTNOTEBEGIN     ResCode = 2005
 	MySQLErrorCode       ResCode = 2001
 	RedisErrorCode       ResCode = 2002
+	DUPLICATECODE        ResCode = 2003
 	ServerBusyCode       ResCode = 5001
 	FILEUNSUPPORT        ResCode = 6001
 	Notimplemented       ResCode = 9999
