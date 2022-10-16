@@ -27,6 +27,9 @@ func GetPermission(ctx *gin.Context, UID string) (interface{}, error) {
 func EditPermission(ctx *gin.Context, req *request.EditPermissionReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	permission := models.PermisionReqToDao(req.PermissionReq)
+	if req.UID == "admin" {
+		return response.CreateResponse(constanct.VerifyErrorCode), nil
+	}
 	err := models.EditPermission(ctx, &permission)
 	if err != nil {
 		logger.Errorf("Call EditPermission Failed,err=%s", err.Error())
