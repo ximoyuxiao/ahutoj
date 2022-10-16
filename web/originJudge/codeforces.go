@@ -358,8 +358,13 @@ func (p *CodeForceJudge) getResult() error {
 	}
 
 	url := cfurl + "/" + GetContest(CID) + "/" + CID + "/submission/" + submissionID
+	var resp *http.Response
 	for {
-		resp, err := DoRequest(GET, url, p.Headers, p.JudgeUser.Cookies, nil, false)
+		if p.JudgeUser != nil {
+			resp, err = DoRequest(GET, url, p.Headers, p.JudgeUser.Cookies, nil, false)
+		} else {
+			resp, err = DoRequest(GET, url, p.Headers, nil, nil, false)
+		}
 		if err != nil {
 			return err
 		}

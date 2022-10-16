@@ -6,6 +6,8 @@ import (
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
+	"ahutoj/web/mapping"
+	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
 	"time"
@@ -118,6 +120,10 @@ func GetSubmits(ctx *gin.Context, req *request.SubmitListReq) (interface{}, erro
 func GetSubmit(ctx *gin.Context, req *request.GetSubmitReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	submit, err := mysqldao.SelectSubmitBySID(ctx, req.SID)
+	m_permission := middlewares.GetAdmin(ctx)
+	if (mapping.SourceBorwserBit&m_permission == 0) && submit.UID != middlewares.GetUid(ctx) {
+		return response.CreateResponse(constanct.VerifyErrorCode), err
+	}
 	if err != nil {
 		logger.Errorf("Call SelectSubmitBySID failed, SID=%v, err=%s", req.SID, err.Error())
 		return response.CreateResponse(constanct.MySQLErrorCode), err

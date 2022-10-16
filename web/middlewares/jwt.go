@@ -59,7 +59,7 @@ var verifyMap = map[string]VerfiyLevel{
 	"/api/training/edit/":           ListAdmin,
 	"/api/training/delete/":         ListAdmin,
 	"/api/admin/users":              SuperAdmin,
-	"/api/submit/:id":               SourceBorwser,
+	"/api/submit/:id":               CommomUser,
 }
 
 const JwtTokenCtxKey = "user"
@@ -126,6 +126,14 @@ func GetUid(ctx *gin.Context) string {
 		return ""
 	}
 	return myClaims.UserID
+}
+func GetAdmin(ctx *gin.Context) mapping.PermissionBit {
+	a, _ := ctx.Get(JwtTokenCtxKey)
+	MyClaims, ok := a.(*MyClaims)
+	if !ok {
+		return mapping.UNLOGINBit
+	}
+	return mapping.PermissionBit(MyClaims.PermissionMap)
 }
 
 // 验证token

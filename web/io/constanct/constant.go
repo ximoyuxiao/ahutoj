@@ -18,7 +18,13 @@ func GetDefaultOffset() int {
 	return DefaultOffset
 }
 
-/*状态码  做一个规范*/
+/*
+fixme:
+* 状态码长度：2 + 1 +  3 + 1
+* 状态码的意义：模块  + 功能  + 接口 + 位置（1，2,3)
+* 参数错误、过程错误、结果错误
+做一个规范
+*/
 const (
 	SuccessCode          ResCode = 0
 	UIDEmpty             ResCode = 101
