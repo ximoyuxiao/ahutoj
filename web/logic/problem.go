@@ -7,6 +7,7 @@ import (
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
 	"ahutoj/web/mapping"
+	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
 
@@ -54,12 +55,18 @@ func DeleteProblem(ctx *gin.Context, req *request.DeleteProblemReq) (interface{}
 func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{}, error) {
 	var ret response.ProblemListResp
 	offset, size := utils.GetPageInfo(req.Page, req.Limit)
-	problems, err := mysqldao.SelectProblemByLists(ctx, offset, size)
+	permission := middlewares.GetAdmin(ctx)
+	admin := (permission & mapping.ProblemAdminBit) != 0
+	problem := dao.Problem{}
+	if !admin {
+		problem.Visible = 1
+	}
+	problems, err := mysqldao.SelectProblemByLists(ctx, offset, size, problem)
 	if err != nil {
 		return nil, err
 	}
 	ret.Response = response.CreateResponse(constanct.SuccessCode)
-	ret.Count, _ = models.GetProblemCount(ctx)
+	ret.Count, _ = models.GetProblemCount(ctx, problem)
 	ret.Data = make([]response.ProblemItemResp, 0, len(problems))
 	for _, problem := range problems {
 		ret.Data = append(ret.Data, response.ProblemItemResp{
@@ -78,6 +85,12 @@ func GetProblemInfo(ctx *gin.Context, PID int64) (interface{}, error) {
 	problem, err := models.GetProblemByPID(ctx, PID)
 	if err != nil {
 		return nil, err
+	}
+	permission := middlewares.GetAdmin(ctx)
+	admin := (permission & mapping.ProblemAdminBit) != 0
+	/*1 可视 -1 不可见*/
+	if problem.Visible == -1 && !admin {
+		return response.CreateResponse(constanct.VerifyErrorCode), nil
 	}
 	return response.ProblemInfoResp{
 		Response:    response.CreateResponse(constanct.SuccessCode),

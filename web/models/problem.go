@@ -59,8 +59,8 @@ func GetProblemByPID(ctx context.Context, PID int64) (dao.Problem, error) {
 	return problem, err
 }
 
-func GetProblemCount(ctx context.Context) (int64, error) {
-	return mysqldao.SelectProblemCount(ctx)
+func GetProblemCount(ctx context.Context, problem dao.Problem) (int64, error) {
+	return mysqldao.SelectProblemCount(ctx, problem)
 }
 
 func GetProblems(ctx context.Context, PIDs []string) ([]dao.Problem, error) {

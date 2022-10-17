@@ -17,16 +17,16 @@ func SelectProblemCountByPID(ctx context.Context, PID int64) (count int64, err e
 	return count, err
 }
 
-func SelectProblemCount(ctx context.Context) (count int64, err error) {
+func SelectProblemCount(ctx context.Context, problem dao.Problem) (count int64, err error) {
 	db := GetDB(ctx)
 	err = db.Table("Problem").Count(&count).Error
 	return count, err
 }
 
-func SelectProblemByLists(ctx context.Context, offset, size int) ([]dao.Problem, error) {
+func SelectProblemByLists(ctx context.Context, offset, size int, problem dao.Problem) ([]dao.Problem, error) {
 	db := GetDB(ctx)
 	ret := make([]dao.Problem, 0, size)
-	err := db.Table("Problem").Offset(offset).Limit(size).Find(&ret).Error
+	err := db.Table("Problem").Where(problem).Offset(offset).Limit(size).Find(&ret).Error
 	return ret, err
 }
 func InsertProblemTable(ctx context.Context, problem dao.Problem) error {

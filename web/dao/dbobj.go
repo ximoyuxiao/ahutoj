@@ -49,6 +49,7 @@ type Problem struct {
 	Origin       int64  `gorm:"column:Origin" json:"Origin"`
 	OriginPID    string `gorm:"column:OriginPID" json:"OriginPID"`
 	ContentType  int64  `gorm:"column:ContentType" json:"ContentType"`
+	Visible      int    `gorm:"column:Visible" json:"Visible"`
 }
 
 type List struct {
