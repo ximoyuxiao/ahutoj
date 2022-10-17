@@ -123,7 +123,7 @@ func GetSubmits(ctx *gin.Context, req *request.SubmitListReq) (interface{}, erro
 func GetSubmit(ctx *gin.Context, req *request.GetSubmitReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	submit, err := mysqldao.SelectSubmitBySID(ctx, req.SID)
-	if middlewares.CheckUserHasPermission(ctx, middlewares.SourceBorwser) &&
+	if !middlewares.CheckUserHasPermission(ctx, middlewares.SourceBorwser) &&
 		submit.UID != middlewares.GetUid(ctx) {
 		return response.CreateResponse(constanct.VerifyErrorCode), err
 	}
