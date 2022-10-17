@@ -135,6 +135,9 @@ func GetAdmin(ctx *gin.Context) mapping.PermissionBit {
 	}
 	return mapping.PermissionBit(MyClaims.PermissionMap)
 }
+func CheckUserHasPermission(ctx *gin.Context, needVerfiyLevel VerfiyLevel) bool {
+	return VerfiyLevel(GetAdmin(ctx))&needVerfiyLevel != 0
+}
 
 // 验证token
 func JwtVerify(c *gin.Context) {
