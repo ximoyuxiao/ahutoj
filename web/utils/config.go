@@ -17,6 +17,7 @@ type AppConfig struct {
 	MachineID    int64   `mapstructure:"machineID "`
 	DataPath     string  `mapstructure:"dataPath"`
 	Terminal     float64 `mapstructure:"Terminal"`
+	OpenTime     float64 `mapstructure:"openTime"`
 	*MySQLConfig `mapstructure:"mysql"`
 	*RedisConfig `mapstructure:"redis"`
 	*LogConfig   `mapstructure:"log"`
