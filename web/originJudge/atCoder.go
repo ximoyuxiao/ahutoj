@@ -318,6 +318,7 @@ func (p *AtCoderJudge) getResult(ctx context.Context) error {
 			memory = timere.FindString(string(ret[7][1]))
 		}
 		p.Submit.UseMemory, _ = strconv.ParseInt(memory, 10, 64)
+		p.Submit.UseMemory *= 1024
 		return nil
 	}
 }

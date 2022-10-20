@@ -397,6 +397,7 @@ func (p *CodeForceJudge) getResult() error {
 				Memory := DealStrings(s.Text())
 				re, _ := regexp.Compile(`([0-9]*) KB`)
 				p.Submit.UseMemory, _ = strconv.ParseInt(re.FindStringSubmatch(Memory)[1], 10, 64)
+				p.Submit.UseMemory *= 1024
 			}
 		})
 		if p.Submit.Result != constanct.OJ_JUDGE {
