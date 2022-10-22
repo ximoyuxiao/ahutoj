@@ -60,3 +60,10 @@ func GetTrainingList(ctx context.Context, offset, limit int) ([]dao.List, error)
 	err := db.Table(tp.Title).Offset(offset).Limit(limit).Find(&ret).Error
 	return ret, err
 }
+
+func SelectListByUID(ctx context.Context, UID string) (int64, error) {
+	db := GetDB(ctx)
+	ret := dao.List{}
+	err := db.Where("UID=?", UID).Last(&ret).Error
+	return ret.LID, err
+}
