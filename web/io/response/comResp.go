@@ -9,28 +9,28 @@ import (
 
 type Response struct {
 	StatusCode constanct.ResCode `json:"code"`
-	StatusMsg  string            `json:"msg"`
+	// StatusMsg  string            `json:"msg"`
 }
 
 // ResponseError 响应错误
 func ResponseServerError(c *gin.Context, code constanct.ResCode) {
 	c.JSON(http.StatusBadGateway, Response{
 		StatusCode: code,
-		StatusMsg:  code.Msg(),
+		// StatusMsg:  code.Msg(),
 	})
 }
 
 func ResponseError(c *gin.Context, code constanct.ResCode) {
 	c.JSON(code.HttpCode(), Response{
 		StatusCode: code,
-		StatusMsg:  code.Msg(),
+		//StatusMsg:  code.Msg(),
 	})
 }
 
 func ResponseErrorStr(c *gin.Context, code constanct.ResCode, str string) {
 	c.JSON(code.HttpCode(), Response{
 		StatusCode: code,
-		StatusMsg:  str,
+		// StatusMsg:  str,
 	})
 }
 func ResponseOK(c *gin.Context, resp interface{}) {
@@ -40,12 +40,12 @@ func ResponseOK(c *gin.Context, resp interface{}) {
 func CreateResponse(code constanct.ResCode) Response {
 	return Response{
 		StatusCode: code,
-		StatusMsg:  code.Msg(),
+		// StatusMsg:  code.Msg(),
 	}
 }
 func CreateResponseStr(code constanct.ResCode, str string) Response {
 	return Response{
 		StatusCode: code,
-		StatusMsg:  str,
+		// StatusMsg:  str,
 	}
 }
