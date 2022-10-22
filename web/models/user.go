@@ -3,6 +3,8 @@ package models
 import (
 	"ahutoj/web/dao"
 	mysqldao "ahutoj/web/dao/mysqlDao"
+	"ahutoj/web/io/constanct"
+	"ahutoj/web/io/response"
 	"ahutoj/web/utils"
 	"context"
 )
@@ -11,6 +13,7 @@ import (
 func IsUserExistByUID(ctx context.Context, user *dao.User) bool {
 	count, err := mysqldao.SelectUserCountByUID(ctx, user.UID)
 	if err != nil {
+		response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Models, constanct.MysqlQuery))
 		return false
 	}
 	return count > 0
@@ -36,6 +39,7 @@ func CreateUser(ctx context.Context, user *dao.User) error {
 	user.Pass, _ = utils.MD5EnCode(user.UID, user.Pass)
 	err := mysqldao.InsertUserTable(ctx, *user)
 	if err != nil {
+		response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Models, constanct.MysqlAdd))
 		logger.Error("call InsertUserTable failed,user= %+v, err=%s", utils.Sdump(user), err.Error())
 	}
 	return err

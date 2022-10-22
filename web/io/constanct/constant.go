@@ -1,9 +1,21 @@
 package constanct
 
-import "net/http"
+import (
+	"net/http"
+)
 
 // ResCode int32
 type ResCode int32
+
+//新状态码 定义
+//模块码
+type ModuleCode int32
+
+//位置码
+type LocationCode int32
+
+//操作码
+type OperationCode int32
 
 const (
 	DefaultLimit  int = 20
@@ -18,16 +30,58 @@ func GetDefaultOffset() int {
 	return DefaultOffset
 }
 
-/*
-fixme:
-* 状态码长度：2 + 1 +  3 + 1
-* 状态码的意义：模块  + 功能  + 接口 + 位置（1，2,3)
-* 参数错误、过程错误、结果错误
-做一个规范
-*/
+//新状态码
+const SuccessCode ResCode = 0
 const (
-	SuccessCode          ResCode = 0
-	UIDEmpty             ResCode = 101
+	Auth     ModuleCode = 101
+	User     ModuleCode = 102
+	Admin    ModuleCode = 103
+	Problem  ModuleCode = 104
+	Training ModuleCode = 105
+	Contest  ModuleCode = 106
+	Submit   ModuleCode = 106
+	File     ModuleCode = 107
+)
+const (
+	Service LocationCode = 1
+	Logic   LocationCode = 2
+	Models  LocationCode = 3
+)
+const (
+	MysqlAdd                  OperationCode = 11
+	MysqlDelete               OperationCode = 12
+	MysqlUpdate               OperationCode = 13
+	MysqlQuery                OperationCode = 14
+	RedisAdd                  OperationCode = 15
+	RedisDelete               OperationCode = 16
+	RedisUpdate               OperationCode = 17
+	RedisQuery                OperationCode = 18
+	ServerBusy                OperationCode = 30 //服务器繁忙
+	ServerError               OperationCode = 31 //服务器错误
+	Parsesparameters          OperationCode = 32 //解析参数
+	ParametersTypeError       OperationCode = 33 //参数类型错误
+	ParametersFormatError     OperationCode = 34 //参数格式错误
+	ParametersConversionError OperationCode = 35 //参数转换失败
+	TokenBuildError           OperationCode = 36 //Token创建错误
+	DataEmpty                 OperationCode = 40 //数据为空
+	DataNotExist              OperationCode = 41 //数据不存在
+	DataResolutionError       OperationCode = 42 //数据解析失败
+	UIDExist                  OperationCode = 50 //UID已存在
+	UIDNotExist               OperationCode = 51 //UID不存在
+	UIDEmpty                  OperationCode = 52 //UID为空
+	PasswordError             OperationCode = 53 //密码错误
+	PasswordEmpty             OperationCode = 54 //密码为空
+	Notimplemented            OperationCode = 99 //接口未实现
+)
+
+func GetResCode(mod ModuleCode, loc LocationCode, op OperationCode) ResCode {
+	res := int32(int(mod)*1000 + int(loc)*100 + int(op))
+	return ResCode(res)
+}
+
+/*状态码  做一个规范*/
+//老状态码  未来要删除
+const (
 	PassEmpty            ResCode = 102
 	PageNotFound         ResCode = 404
 	VerifyErrorCode      ResCode = 501
@@ -48,13 +102,11 @@ const (
 	DUPLICATECODE        ResCode = 2003
 	ServerBusyCode       ResCode = 5001
 	FILEUNSUPPORT        ResCode = 6001
-	Notimplemented       ResCode = 9999
 )
 
 var codeMsgMap = map[ResCode]string{
 	SuccessCode:          "success",
 	PageNotFound:         "页面未找到",
-	UIDEmpty:             "账号为空",
 	PassEmpty:            "密码为空",
 	InvalidParamCode:     "请求参数错误",
 	UIDNotExistCode:      "账号不存在",
@@ -70,14 +122,13 @@ var codeMsgMap = map[ResCode]string{
 	CIDNotExistCode:      "竞赛不存在",
 	PIDNotExistCode:      "题目不存在",
 	VerifyErrorCode:      "用户权限不足",
-	Notimplemented:       "接口未实现",
 	CIDPassWordErrorCode: "竞赛密码错误",
 	FILEUNSUPPORT:        "不支持的文件类型",
 	CONTESTNOTEBEGIN:     "竞赛未开始",
 }
 var HttpCodeMap = map[ResCode]int{
-	SuccessCode:         http.StatusOK,
-	UIDEmpty:            http.StatusOK,
+	SuccessCode: http.StatusOK,
+	// UIDEmpty:            http.StatusOK,
 	PassEmpty:           http.StatusOK,
 	PageNotFound:        http.StatusNotFound,
 	InvalidParamCode:    http.StatusBadRequest,

@@ -53,7 +53,7 @@ func DeletePermission(ctx *gin.Context, req *request.DeletePermissionReq) (inter
 func AddPermission(ctx *gin.Context, req *request.AddPermissionReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	if req.UID == "" {
-		return response.CreateResponse(constanct.UIDEmpty), nil
+		return response.CreateResponse(constanct.GetResCode(constanct.Admin, constanct.Logic, constanct.PasswordEmpty)), nil
 	}
 	permission := models.PermisionReqToDao(req.PermissionReq)
 	err := models.AddPermission(ctx, &permission)

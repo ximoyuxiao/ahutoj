@@ -17,13 +17,13 @@ func Login(ctx *gin.Context) {
 	if err := ctx.ShouldBindWith(req, binding.JSON); err != nil {
 		// 请求参数有误，直接返回响应
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Auth, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 	resp, err := logic.CheckLogin(req, ctx)
 	if err != nil {
 		logger.Errorf("call CheckLogin failed,req=%+v,err=%s", utils.Sdump(req), err.Error())
-		response.ResponseError(ctx, resp.(response.Response).StatusCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Auth, constanct.Service, constanct.ServerError))
 	}
 	response.ResponseOK(ctx, resp)
 }
@@ -35,7 +35,7 @@ func Register(ctx *gin.Context) {
 	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Auth, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 	logger.Infof("req:%+v\n", req)
@@ -44,7 +44,7 @@ func Register(ctx *gin.Context) {
 	resp, err := logic.DoResiger(ctx, req)
 	if err != nil {
 		logger.Errorf("call DoResiger failed,req=%+v,err=%s", *req, err.Error())
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Auth, constanct.Service, constanct.ServerBusy))
 		return
 	}
 	// 3、 构建响应值，将处理结果返回

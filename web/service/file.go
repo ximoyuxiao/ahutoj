@@ -119,7 +119,7 @@ func UnzipFile(ctx *gin.Context) {
 }
 
 func UpProblemFile(ctx *gin.Context) {
-	response.ResponseOK(ctx, response.CreateResponse(constanct.Notimplemented))
+	response.ResponseOK(ctx, response.CreateResponse(constanct.GetResCode(constanct.File, constanct.Logic, constanct.Notimplemented)))
 }
 func GetFileType(filename string) string {
 	strs := strings.Split(filename, ".")
