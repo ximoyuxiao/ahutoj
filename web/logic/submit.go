@@ -6,6 +6,7 @@ import (
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
+	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
 	"time"
@@ -26,6 +27,10 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 		IsOriginJudge: false,
 		OriginPID:     "",
 		OJPlatform:    -1,
+	}
+
+	if models.EqualLastSource(ctx, req.UID, req.PID, submit.Source) {
+		return response.CreateResponseStr(constanct.DUPLICATECODE, "禁止频繁重复提交代码"), nil
 	}
 	problem, err := models.GetProblemByPID(ctx, req.PID)
 	if err != nil {
@@ -118,6 +123,10 @@ func GetSubmits(ctx *gin.Context, req *request.SubmitListReq) (interface{}, erro
 func GetSubmit(ctx *gin.Context, req *request.GetSubmitReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	submit, err := mysqldao.SelectSubmitBySID(ctx, req.SID)
+	if !middlewares.CheckUserHasPermission(ctx, middlewares.SourceBorwser) &&
+		submit.UID != middlewares.GetUid(ctx) {
+		return response.CreateResponse(constanct.VerifyErrorCode), err
+	}
 	if err != nil {
 		logger.Errorf("Call SelectSubmitBySID failed, SID=%v, err=%s", req.SID, err.Error())
 		return response.CreateResponse(constanct.MySQLErrorCode), err

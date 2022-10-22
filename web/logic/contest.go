@@ -198,8 +198,6 @@ func initRankItem(rank *response.RankItem, Uname, Userid string, problemSize int
 	}
 }
 
-//这个待后期优化
-/*rank UID,uname,solve 罚时 A，B，C，D，E，F，G...*/
 func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	contest, err := models.GetContestFromDB(ctx, req.CID)
@@ -219,7 +217,7 @@ func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface
 	}
 	currentTime := time.Now().UnixMilli()
 	fb := int64(utils.GetConfInstance().Terminal*(float64(contest.End_time)-float64(contest.Begin_time)) + float64(contest.Begin_time))
-	if currentTime-contest.End_time > 0 {
+	if currentTime-contest.End_time > int64(utils.GetConfInstance().OpenTime*float64(time.Hour)) {
 		fb = 0
 	}
 	//封榜时间
