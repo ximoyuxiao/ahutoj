@@ -151,14 +151,14 @@ func GetFileList(ctx *gin.Context) {
 	if err != nil {
 		logger.Errorf("call pathExists failed,filepath:%s, err=%v", filepath, err.Error())
 		response.ResponseErrorStr(ctx, constanct.ServerBusyCode,
-			fmt.Sprintf("call pathExists failed,filepath:%s, err=%v", filepath, err.Error()))
+			fmt.Sprintf("call pathExists failed,filepath:%s, err=%v", filepath, err.Error()), response.ERROR)
 	}
 	if !ok {
 		err = os.Mkdir(filepath, os.ModeDir)
 		if err != nil {
 			logger.Errorf("call Mkdir failed,filepath:%s, err=%v", filepath, err.Error())
 			response.ResponseErrorStr(ctx, constanct.ServerBusyCode,
-				fmt.Sprintf("call Mkdir failed,filepath:%s, err=%v", filepath, err.Error()))
+				fmt.Sprintf("call Mkdir failed,filepath:%s, err=%v", filepath, err.Error()), response.ERROR)
 		}
 	}
 	files, err := ioutil.ReadDir(filepath)

@@ -30,7 +30,7 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 	}
 
 	if models.EqualLastSource(ctx, req.UID, req.PID, submit.Source) {
-		return response.CreateResponseStr(constanct.DUPLICATECODE, "禁止频繁重复提交代码"), nil
+		return response.CreateResponseStr(constanct.DUPLICATECODE, "禁止频繁重复提交代码", response.WARNING), nil
 	}
 	problem, err := models.GetProblemByPID(ctx, req.PID)
 	if err != nil {
