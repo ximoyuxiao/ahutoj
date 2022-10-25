@@ -24,28 +24,28 @@ func CheckLogin(req *request.LoginReq, c *gin.Context) (interface{}, error) {
 		UID: req.UID,
 	}
 	if req.UID == "" {
-		return response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Logic, constanct.ParametersFormatError)), nil
+		return response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Logic, constanct.ParametersFormatError)), nil
 	}
 	if req.Pass == "" {
-		return response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Logic, constanct.ParametersFormatError)), nil
+		return response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Logic, constanct.ParametersFormatError)), nil
 	}
 	if ok := models.IsUserExistByUID(c, &user); !ok {
-		return response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Logic, constanct.UIDNotExist)), nil
+		return response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Logic, constanct.UIDNotExist)), nil
 	}
 	if err := models.FindUserByUID(c, &user); err != nil {
-		return response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Logic, constanct.DataEmpty)), err
+		return response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Logic, constanct.DataEmpty)), err
 	}
 	if ok := models.EqualPassWord(c, &user, req.Pass); !ok {
-		return response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Logic, constanct.PasswordError)), nil
+		return response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Logic, constanct.PasswordError)), nil
 	}
 	token, err := middlewares.GetToken(c, user.UID)
 	if err != nil {
 		logger.Errorf("call GetToken failed, err=%s", err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Logic, constanct.TokenBuildError)), nil
+		return response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Logic, constanct.TokenBuildError)), nil
 	}
 	permission, err := mysqldao.SelectPermissionByUID(c, user.UID)
 	if err != nil {
-		return response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Logic, constanct.MysqlQuery)), err
+		return response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Logic, constanct.MysqlQuery)), err
 	}
 	return response.LoginResp{
 		Response: response.Response{
@@ -78,23 +78,23 @@ func DoResiger(c *gin.Context, req *request.User) (interface{}, error) {
 	//查看用户账号是否存在
 	exist := models.IsUserExistByUID(c, &user)
 	if exist {
-		return response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Logic, constanct.UIDExist)), nil
+		return response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Logic, constanct.UIDExist)), nil
 	}
 	// 创建用户
 	err := models.CreateUser(c, &user)
 	if err != nil {
 		logger.Errorf("call CreateUser failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Logic, constanct.MysqlAdd)), err
+		return response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Logic, constanct.MysqlAdd)), err
 	}
 	// 获取token
 	token, err := middlewares.GetToken(c, req.UID)
 	if err != nil {
 		logger.Errorf("call GetToken failed, err=%s", err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Logic, constanct.TokenBuildError)), nil
+		return response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Logic, constanct.TokenBuildError)), nil
 	}
 	permission, err := mysqldao.SelectPermissionByUID(c, user.UID)
 	if err != nil {
-		return response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Logic, constanct.MysqlQuery)), err
+		return response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Logic, constanct.MysqlQuery)), err
 	}
 	// 4、返回注册成功的信息给用户
 	return response.RegisterResp{
@@ -115,22 +115,22 @@ func GetUserInfo(c *gin.Context, req *string) (interface{}, error) {
 	}
 	exist := models.IsUserExistByUID(c, &user)
 	if !exist {
-		return response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Logic, constanct.UIDNotExist)), nil
+		return response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Logic, constanct.UIDNotExist)), nil
 	}
 	models.FindUserByUID(c, &user)
 	return response.CreateUserResp(&user), nil
 }
 
 func UpdateUserInfo(ctx *gin.Context, req request.UserEditReq) (interface{}, error) {
-	return response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Logic, constanct.Notimplemented)), nil
+	return response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Logic, constanct.Notimplemented)), nil
 }
 
 func UpdateUserPass(ctx *gin.Context, req request.UserEditPassReq) (interface{}, error) {
-	return response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Logic, constanct.Notimplemented)), nil
+	return response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Logic, constanct.Notimplemented)), nil
 }
 
 func UpdateUserVjudge(ctx *gin.Context, req request.UserEditVjudgeReq) (interface{}, error) {
-	return response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Logic, constanct.Notimplemented)), nil
+	return response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Logic, constanct.Notimplemented)), nil
 }
 
 func AddUsersRange(ctx *gin.Context, req request.AddUsersRangeReq) (interface{}, error) {
@@ -243,10 +243,10 @@ func CodeForceBind(ctx *gin.Context, req request.CodeForceBindReq) (interface{},
 	req.CodeForcePass = strings.Trim(req.CodeForcePass, " ")
 	req.CodeForceUser = strings.Trim(req.CodeForceUser, " ")
 	if len(req.CodeForceUser) == 0 {
-		return response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Logic, constanct.UIDEmpty)), nil
+		return response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Logic, constanct.UIDEmpty)), nil
 	}
 	if len(req.CodeForceUser) == 0 {
-		return response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Logic, constanct.PasswordEmpty)), nil
+		return response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Logic, constanct.PasswordEmpty)), nil
 	}
 	cj := originjudge.CodeForceJudge{
 		Headers: originjudge.CfHeaders,
@@ -260,7 +260,7 @@ func CodeForceBind(ctx *gin.Context, req request.CodeForceBindReq) (interface{},
 	}
 	err := cj.Login()
 	if err != nil {
-		return response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Logic, constanct.PasswordError)), nil
+		return response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Logic, constanct.PasswordError)), nil
 	}
 	/*应该有一步检查登录 暂时忽略*/
 	user := dao.User{

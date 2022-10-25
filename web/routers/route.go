@@ -111,10 +111,10 @@ func regeisterRouters(router *gin.Engine) {
 
 		SubmitRouter := apiRouter.Group("/submit").Use(middlewares.JwtVerify)
 		{
-			SubmitRouter.POST("/commit/", service.AddCommit)
-			SubmitRouter.POST("/rejudge/", service.RejudgeCommit)
+			SubmitRouter.POST("/commit/", service.AddSubmit)
+			SubmitRouter.POST("/rejudge/", service.RejudgeSubmit)
 			SubmitRouter.GET("/status", service.StatusList)
-			SubmitRouter.GET("/:id", service.GetCommit)
+			SubmitRouter.GET("/:id", service.GetSubmit)
 		}
 
 		fileRouter := apiRouter.Group("/file").Use(middlewares.JwtVerify)

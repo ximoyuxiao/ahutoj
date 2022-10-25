@@ -16,11 +16,12 @@ func EditPermission(ctx *gin.Context) {
 	req := new(request.EditPermissionReq)
 	if err := ctx.ShouldBindWith(req, binding.JSON); err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Admin, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 	resp, err := logic.EditPermission(ctx, req)
 	if err != nil {
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Admin, constanct.Service, constanct.Parsesparameters))
 		logger.Errorf("call EditPermission failed,req=%+v, err=%s", *req, err.Error())
 	}
 	response.ResponseOK(ctx, resp)
@@ -31,13 +32,13 @@ func DeletePermission(ctx *gin.Context) {
 	req := new(request.DeletePermissionReq)
 	if err := ctx.ShouldBindWith(req, binding.JSON); err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Admin, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 	resp, err := logic.DeletePermission(ctx, req)
 	if err != nil {
 		logger.Errorf("call DeletePermission failed,req=%+v, err=%s", *req, err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Admin, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -48,12 +49,13 @@ func AddPermission(ctx *gin.Context) {
 	req := new(request.AddPermissionReq)
 	if err := ctx.ShouldBindWith(req, binding.JSON); err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Admin, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 	resp, err := logic.AddPermission(ctx, req)
 	if err != nil {
 		logger.Errorf("call AddPermission failed,req=%+v, err=%s", *req, err.Error())
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Admin, constanct.Service, constanct.Parsesparameters))
 	}
 	response.ResponseOK(ctx, resp)
 }
@@ -63,12 +65,13 @@ func GetListPermission(ctx *gin.Context) {
 	req := new(request.PermissionListReq)
 	if err := ctx.ShouldBindWith(req, binding.Query); err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Admin, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 	resp, err := logic.GetPermissionList(ctx, req)
 	if err != nil {
 		logger.Errorf("call GetPermissionList failed,req=%+v, err=%s", *req, err.Error())
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Admin, constanct.Service, constanct.Parsesparameters))
 	}
 	response.ResponseOK(ctx, resp)
 }
@@ -79,7 +82,7 @@ func GetPermission(ctx *gin.Context) {
 
 	if UID == "" {
 		logger.Errorf("")
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Admin, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 	resp, _ := logic.GetPermission(ctx, UID)

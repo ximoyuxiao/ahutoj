@@ -26,7 +26,7 @@ func UserInfo(ctx *gin.Context) {
 	resp, err := logic.GetUserInfo(ctx, &req)
 	if err != nil {
 		logger.Errorf("call GetUserInfo failed,req=%+v,err=%s", req, err.Error())
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.ServerBusy))
 	}
 
 	response.ResponseOK(ctx, resp)
@@ -36,14 +36,14 @@ func UserStatusInfo(ctx *gin.Context) {
 	req := new(request.UserStatusInfoReq)
 	if err := ctx.ShouldBindBodyWith(req, binding.JSON); err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 
 	resp, err := logic.GetUserStatusInfo(ctx, *req)
 	if err != nil {
 		logger.Errorf("call GetUserStatusInfo failed, req=%+v, err=%s", utils.Sdump(req), err.Error())
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.ServerBusy))
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -54,14 +54,14 @@ func EditUserInfo(ctx *gin.Context) {
 	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 	usr := req.ToUser(middlewares.GetUid(ctx))
 
 	// call db
 	if !models.IsUserExistByUID(ctx, usr) {
-		response.ResponseError(ctx, constanct.UIDNotExistCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.UIDNotExist))
 		return
 	}
 
@@ -75,7 +75,7 @@ func EditUserInfo(ctx *gin.Context) {
 	err = mysqldao.UpdateUserByUID(ctx, usr)
 	if err != nil {
 		logger.Errorf("update user info failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.MySQLErrorCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.MysqlUpdate))
 		return
 	}
 
@@ -88,7 +88,7 @@ func EditUserPass(ctx *gin.Context) {
 	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 
@@ -99,13 +99,13 @@ func EditUserPass(ctx *gin.Context) {
 	err = mysqldao.SelectUserByUID(ctx, usr)
 	if err != nil {
 		logger.Errorf("query user failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.MySQLErrorCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.MysqlQuery))
 		return
 	}
 
 	if !models.EqualPassWord(ctx, usr, req.OldPwd) {
 		logger.Errorf("user old_pwd error!!")
-		response.ResponseError(ctx, constanct.PassWordErrorCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.PasswordError))
 		return
 	}
 
@@ -126,7 +126,7 @@ func VjudgeBind(ctx *gin.Context) {
 	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 
@@ -137,7 +137,7 @@ func VjudgeBind(ctx *gin.Context) {
 	err = mysqldao.UpdateUserByUID(ctx, usr)
 	if err != nil {
 		logger.Errorf("update mysql error =%s", err.Error())
-		response.ResponseError(ctx, constanct.MySQLErrorCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.MysqlUpdate))
 		return
 	}
 
@@ -150,13 +150,13 @@ func AddUsersRange(ctx *gin.Context) {
 	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 	resp, err := logic.AddUsersRange(ctx, *req)
 	if err != nil {
 		logger.Errorf("call AddUsers err=%s, req=%+v", err.Error(), utils.Sdump(req))
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.ServerBusy))
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -168,13 +168,13 @@ func AddUsers(ctx *gin.Context) {
 	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 	resp, err := logic.AddUsers(ctx, *req)
 	if err != nil {
 		logger.Errorf("call AddUsers err=%s, req=%+v", err.Error(), utils.Sdump(req))
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.ServerBusy))
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -185,13 +185,13 @@ func CodeForceBind(ctx *gin.Context) {
 	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 	resp, err := logic.CodeForceBind(ctx, *req)
 	if err != nil {
 		logger.Errorf("call CodeForceBind err=%s, req=%+v", err.Error(), utils.Sdump(req))
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.ServerBusy))
 		return
 	}
 	response.ResponseOK(ctx, resp)

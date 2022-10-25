@@ -3,8 +3,6 @@ package models
 import (
 	"ahutoj/web/dao"
 	mysqldao "ahutoj/web/dao/mysqlDao"
-	"ahutoj/web/io/constanct"
-	"ahutoj/web/io/response"
 	"ahutoj/web/utils"
 	"context"
 )
@@ -13,7 +11,7 @@ import (
 func IsUserExistByUID(ctx context.Context, user *dao.User) bool {
 	count, err := mysqldao.SelectUserCountByUID(ctx, user.UID)
 	if err != nil {
-		response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Models, constanct.MysqlQuery))
+		// response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Models, constanct.MysqlQuery))
 		return false
 	}
 	return count > 0
@@ -21,13 +19,19 @@ func IsUserExistByUID(ctx context.Context, user *dao.User) bool {
 
 // 通过UID获得用户信息
 func FindUserByUID(ctx context.Context, user *dao.User) error {
-	return mysqldao.SelectUserByUID(ctx, user)
+	err := mysqldao.SelectUserByUID(ctx, user)
+	if err != nil {
+		// response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Models, constanct.MysqlQuery))
+		return err
+	}
+	return err
 }
 
 // 判断用户密码是否相同
 func EqualPassWord(ctx context.Context, user *dao.User, password string) bool {
 	md5Password, err := utils.MD5EnCode(user.UID, password)
 	if err != nil {
+		// response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Models, constanct.MysqlQuery))
 		return false
 	}
 	return md5Password == user.Pass
@@ -39,7 +43,7 @@ func CreateUser(ctx context.Context, user *dao.User) error {
 	user.Pass, _ = utils.MD5EnCode(user.UID, user.Pass)
 	err := mysqldao.InsertUserTable(ctx, *user)
 	if err != nil {
-		response.CreateResponse(constanct.GetResCode(constanct.Auth, constanct.Models, constanct.MysqlAdd))
+		// response.CreateResponse(constanct.GetResCode(constanct.User, constanct.Models, constanct.MysqlAdd))
 		logger.Error("call InsertUserTable failed,user= %+v, err=%s", utils.Sdump(user), err.Error())
 	}
 	return err

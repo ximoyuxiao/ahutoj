@@ -28,7 +28,7 @@ func EditPermission(ctx *gin.Context, req *request.EditPermissionReq) (interface
 	logger := utils.GetLogInstance()
 	permission := models.PermisionReqToDao(req.PermissionReq)
 	if req.UID == "admin" {
-		return response.CreateResponse(constanct.VerifyErrorCode), nil
+		return response.CreateResponse(constanct.GetResCode(constanct.Admin, constanct.Logic, constanct.VerifyError)), nil
 	}
 	err := models.EditPermission(ctx, &permission)
 	if err != nil {
