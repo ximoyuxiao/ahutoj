@@ -19,7 +19,7 @@ func AddTraining(ctx *gin.Context) {
 	if err != nil {
 		// 请求参数有误 直接返回响应
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Training, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 	fmt.Printf("req:%+v\n", req)
@@ -27,7 +27,7 @@ func AddTraining(ctx *gin.Context) {
 	resp, err := logic.AddTraining(req, ctx)
 	if err != nil {
 		logger.Errorf("call DoResiger failed,req=%+v,err=%s", *req, err.Error())
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Training, constanct.Service, constanct.ServerBusy))
 	}
 	response.ResponseOK(ctx, resp)
 }
@@ -39,7 +39,7 @@ func EditTraining(ctx *gin.Context) {
 	if err != nil {
 		// 请求参数有误 直接返回响应
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Training, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 	fmt.Printf("req:%+v\n", req)
@@ -47,7 +47,7 @@ func EditTraining(ctx *gin.Context) {
 	resp, err := logic.EditTraining(req, ctx)
 	if err != nil {
 		logger.Errorf("call DoResiger failed,req=%+v,err=%s", *req, err.Error())
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Training, constanct.Service, constanct.ServerBusy))
 	}
 	response.ResponseOK(ctx, resp)
 }
@@ -59,7 +59,7 @@ func DeleteTraining(ctx *gin.Context) {
 	if err != nil {
 		// 请求参数有误 直接返回响应
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Training, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 	fmt.Printf("req:%+v\n", req)
@@ -67,7 +67,7 @@ func DeleteTraining(ctx *gin.Context) {
 	resp, err := logic.DeleteTraining(req, ctx)
 	if err != nil {
 		logger.Errorf("call DoResiger failed,req=%+v,err=%s", *req, err.Error())
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Training, constanct.Service, constanct.ServerBusy))
 	}
 	response.ResponseOK(ctx, resp)
 }
@@ -77,13 +77,13 @@ func GetListTraining(ctx *gin.Context) {
 	req := new(request.TrainingListReq)
 	if err := ctx.ShouldBindWith(req, binding.Query); err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseError(ctx, constanct.GetResCode(constanct.Training, constanct.Service, constanct.Parsesparameters))
 		return
 	}
 	resp, err := logic.GetTrainingList(ctx, req)
 	if err != nil {
 		logger.Errorf("call GetTrainingList failed, err = %s", err.Error())
-		response.ResponseServerError(ctx, constanct.ServerBusyCode)
+		response.ResponseServerError(ctx, constanct.GetResCode(constanct.Training, constanct.Service, constanct.ServerBusy))
 		return
 	}
 	response.ResponseOK(ctx, resp)

@@ -30,12 +30,12 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 	}
 
 	if models.EqualLastSource(ctx, req.UID, req.PID, submit.Source) {
-		return response.CreateResponseStr(constanct.DUPLICATECODE, "禁止频繁重复提交代码", response.WARNING), nil
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Submit, constanct.Logic, constanct.Duplicate), "禁止频繁重复提交代码", response.WARNING), nil
 	}
 	problem, err := models.GetProblemByPID(ctx, req.PID)
 	if err != nil {
 		logger.Errorf("call GetProblemByPID failed,pid=%v, err=%s", req.PID, err.Error())
-		return nil, err
+		return response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Logic, constanct.MysqlQuery)), err
 	}
 	if problem.Origin != -1 {
 		submit.OJPlatform = problem.Origin
@@ -45,12 +45,12 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 	err = models.CreateSubmit(ctx, submit)
 	if err != nil {
 		logger.Errorf("call CreateSubmit failed, submit=%v, err=%s", submit, err.Error())
-		return nil, err
+		return response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Logic, constanct.MysqlAdd)), err
 	}
 	submit, err = models.FindLastSIDByUID(ctx, submit.UID)
 	if err != nil {
 		logger.Errorf("call FindLastSIDByUID failed, UID=%v, err=%s", submit.UID, err.Error())
-		return nil, err
+		return response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Logic, constanct.MysqlQuery)), err
 	}
 	return response.AddSubmitResp{
 		Response: response.CreateResponse(constanct.SuccessCode),
@@ -74,7 +74,7 @@ func RejudgeSubmit(ctx *gin.Context, req *request.RejudgeSubmitReq) (interface{}
 	}
 	err := models.RejudgeSubmit(ctx, submit)
 	if err != nil {
-		return nil, err
+		return response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Logic, constanct.MysqlUpdate)), err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
@@ -96,12 +96,12 @@ func GetSubmits(ctx *gin.Context, req *request.SubmitListReq) (interface{}, erro
 	submits, err := models.GetSubmitList(ctx, submit, offset, limit)
 	if err != nil {
 		logger.Errorf("call SelectSubmitList failed,req=%+v,err=%s", utils.Sdump(req), err.Error())
-		return nil, err
+		return response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Logic, constanct.MysqlQuery)), err
 	}
 	resp.Count, err = models.GetSubmitListCount(ctx, submit)
 	if err != nil {
 		logger.Errorf("call GetSubmitListCount failed,req=%+v,err=%s", utils.Sdump(req), err.Error())
-		return nil, err
+		return response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Logic, constanct.MysqlQuery)), err
 	}
 	resp.Response = response.CreateResponse(constanct.SuccessCode)
 	resp.Data = make([]response.SubmitLIstItem, len(submits))
@@ -125,11 +125,11 @@ func GetSubmit(ctx *gin.Context, req *request.GetSubmitReq) (interface{}, error)
 	submit, err := mysqldao.SelectSubmitBySID(ctx, req.SID)
 	if !middlewares.CheckUserHasPermission(ctx, middlewares.SourceBorwser) &&
 		submit.UID != middlewares.GetUid(ctx) {
-		return response.CreateResponse(constanct.VerifyErrorCode), err
+		return response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Logic, constanct.VerifyError)), err
 	}
 	if err != nil {
 		logger.Errorf("Call SelectSubmitBySID failed, SID=%v, err=%s", req.SID, err.Error())
-		return response.CreateResponse(constanct.MySQLErrorCode), err
+		return response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Logic, constanct.MysqlQuery)), err
 	}
 	var ceInfo *string = nil
 	if submit.Result == constanct.OJ_CE {

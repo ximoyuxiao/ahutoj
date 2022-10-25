@@ -11,38 +11,74 @@ import (
 )
 
 func GetSubmitByCIDFromDB(ctx context.Context, CID, fb int64) ([]dao.Submit, error) {
-	return mysqldao.SelectSubmitByCID(ctx, CID, fb)
+	res, err := mysqldao.SelectSubmitByCID(ctx, CID, fb)
+	if err != nil {
+		// response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Models, constanct.MysqlQuery))
+	}
+	return res, err
 }
 
 func CreateSubmit(ctx context.Context, submit dao.Submit) error {
-	return mysqldao.InsertSubmit(ctx, submit)
+	err := mysqldao.InsertSubmit(ctx, submit)
+	if err != nil {
+		// response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Models, constanct.MysqlAdd))
+	}
+	return err
 }
 
 func GetSubmitList(ctx context.Context, submit dao.Submit, offset, limit int) ([]dao.Submit, error) {
-	return mysqldao.SelectSubmitList(ctx, submit, offset, limit)
+	res, err := mysqldao.SelectSubmitList(ctx, submit, offset, limit)
+	if err != nil {
+		// response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Models, constanct.MysqlQuery))
+	}
+	return res, err
 }
 
 func RejudgeSubmit(ctx context.Context, submit dao.Submit) error {
-	return mysqldao.RejudgeSubmit(ctx, submit)
+	err := mysqldao.RejudgeSubmit(ctx, submit)
+	if err != nil {
+		// response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Models, constanct.MysqlUpdate))
+	}
+	return err
 }
 
 func GetSubmitListCount(ctx context.Context, submit dao.Submit) (int64, error) {
-	return mysqldao.SelectCountSubmit(ctx, submit)
+	res, err := mysqldao.SelectCountSubmit(ctx, submit)
+	if err != nil {
+		// response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Models, constanct.MysqlQuery))
+	}
+	return res, err
 }
 func GetUserStatusInfo(ctx context.Context, submit dao.Submit, lastTime int64) ([]dao.Submit, error) {
-	return mysqldao.SelectSubmitByUID(ctx, submit, lastTime)
+	res, err := mysqldao.SelectSubmitByUID(ctx, submit, lastTime)
+	if err != nil {
+		// response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Models, constanct.MysqlQuery))
+	}
+	return res, err
 }
 
 func UpdateSubmit(ctx context.Context, submit dao.Submit) error {
-	return mysqldao.UpdateSubmit(ctx, submit)
+	err := mysqldao.UpdateSubmit(ctx, submit)
+	if err != nil {
+		// response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Models, constanct.MysqlUpdate))
+	}
+	return err
 }
 
 func GetOriginJudgeSubmit(ctx context.Context) ([]dao.Submit, error) {
-	return mysqldao.SelectSubmitIsOriginJudge(ctx)
+	res, err := mysqldao.SelectSubmitIsOriginJudge(ctx)
+	if err != nil {
+		// response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Models, constanct.MysqlQuery))
+	}
+	return res, err
 }
 
 func FindLastSIDByUID(ctx context.Context, UID string) (dao.Submit, error) {
-	return mysqldao.FindLastSIDByUID(ctx, UID)
+	res, err := mysqldao.FindLastSIDByUID(ctx, UID)
+	if err != nil {
+		// response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Models, constanct.MysqlQuery))
+	}
+	return res, err
 }
 
 func EqualLastSource(ctx context.Context, UID string, PID int64, Source string) bool {

@@ -27,13 +27,13 @@ func AddTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 	if err != nil {
 		//日志报错
 		utils.GetLogInstance().Errorf("call CreateList failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.MySQLErrorCode), err
+		return response.CreateResponse(constanct.GetResCode(constanct.Training, constanct.Logic, constanct.MysqlAdd)), err
 	}
 	list.LID, err = models.GetCurrentLID(c, list)
 	if err != nil {
 		//日志报错
 		utils.GetLogInstance().Errorf("call GetLID in CreateList failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.MySQLErrorCode), err
+		return response.CreateResponse(constanct.GetResCode(constanct.Training, constanct.Logic, constanct.MysqlQuery)), err
 	}
 
 	//添加提单题目
@@ -41,7 +41,7 @@ func AddTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 	if err != nil {
 		//日志报错
 		utils.GetLogInstance().Errorf("call CreateListProblem failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.MySQLErrorCode), err
+		return response.CreateResponse(constanct.GetResCode(constanct.Training, constanct.Logic, constanct.MysqlAdd)), err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
@@ -61,14 +61,14 @@ func EditTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 	if err != nil {
 		//日志报错
 		utils.GetLogInstance().Errorf("call EditList failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.MySQLErrorCode), err
+		return response.CreateResponse(constanct.GetResCode(constanct.Training, constanct.Logic, constanct.MysqlUpdate)), err
 	}
 	//编辑提单题目
 	err2 := models.EditListProblem(c, &listproblem)
 	if err2 != nil {
 		//日志报错
 		utils.GetLogInstance().Errorf("call EditListProblem failed,err=%s", err2.Error())
-		return response.CreateResponse(constanct.MySQLErrorCode), err2
+		return response.CreateResponse(constanct.GetResCode(constanct.Training, constanct.Logic, constanct.MysqlUpdate)), err2
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
@@ -84,7 +84,7 @@ func DeleteTraining(req *request.List, c *gin.Context) (interface{}, error) {
 	if err != nil {
 		//日志报错
 		utils.GetLogInstance().Errorf("call DeleteList failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.MySQLErrorCode), err
+		return response.CreateResponse(constanct.GetResCode(constanct.Training, constanct.Logic, constanct.MysqlDelete)), err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
@@ -101,7 +101,7 @@ func GetTrainingList(ctx *gin.Context, req *request.TrainingListReq) (interface{
 	TrainingList, err := models.GetTrainingList(ctx, offset, size)
 	if err != nil {
 		logger.Errorf("call GetTrainingListFromDb failed,err=%s", err.Error())
-		return nil, err
+		return response.CreateResponse(constanct.GetResCode(constanct.Training, constanct.Logic, constanct.MysqlQuery)), err
 	}
 	respData := make([]response.TrainingListItem, 0, len(TrainingList))
 	for i, training := range TrainingList {

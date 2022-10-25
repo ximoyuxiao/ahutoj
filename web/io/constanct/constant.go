@@ -63,6 +63,7 @@ const (
 	ParametersFormatError     OperationCode = 34 //参数格式错误
 	ParametersConversionError OperationCode = 35 //参数转换失败
 	TokenBuildError           OperationCode = 36 //Token创建错误
+	VerifyError               OperationCode = 37 //用户权限不足
 	DataEmpty                 OperationCode = 40 //数据为空
 	DataNotExist              OperationCode = 41 //数据不存在
 	DataResolutionError       OperationCode = 42 //数据解析失败
@@ -71,6 +72,12 @@ const (
 	UIDEmpty                  OperationCode = 52 //UID为空
 	PasswordError             OperationCode = 53 //密码错误
 	PasswordEmpty             OperationCode = 54 //密码为空
+	PIDNotExist               OperationCode = 55 //PID不存在
+	CIDNotExist               OperationCode = 56 //CID不存在
+	CIDPassWordError          OperationCode = 57 //CID密码错误
+	ContestNotBegin           OperationCode = 60 //竞赛未开始
+	FileUnsupport             OperationCode = 71 //文件不支持
+	Duplicate                 OperationCode = 72 //副本
 	Notimplemented            OperationCode = 99 //接口未实现
 )
 
@@ -101,7 +108,7 @@ const (
 	RedisErrorCode       ResCode = 2002
 	DUPLICATECODE        ResCode = 2003
 	ServerBusyCode       ResCode = 5001
-	FILEUNSUPPORT        ResCode = 6001
+	// FILEUNSUPPORT        ResCode = 6001
 )
 
 var codeMsgMap = map[ResCode]string{
@@ -123,8 +130,8 @@ var codeMsgMap = map[ResCode]string{
 	PIDNotExistCode:      "题目不存在",
 	VerifyErrorCode:      "用户权限不足",
 	CIDPassWordErrorCode: "竞赛密码错误",
-	FILEUNSUPPORT:        "不支持的文件类型",
-	CONTESTNOTEBEGIN:     "竞赛未开始",
+	// FILEUNSUPPORT:        "不支持的文件类型",
+	CONTESTNOTEBEGIN: "竞赛未开始",
 }
 var HttpCodeMap = map[ResCode]int{
 	SuccessCode: http.StatusOK,
@@ -145,7 +152,7 @@ var HttpCodeMap = map[ResCode]int{
 	CIDNotExistCode:     http.StatusOK,
 	PIDNotExistCode:     http.StatusOK,
 	VerifyErrorCode:     http.StatusForbidden,
-	FILEUNSUPPORT:       http.StatusOK,
+	// FILEUNSUPPORT:       http.StatusOK,
 }
 
 func (c ResCode) Msg() string {

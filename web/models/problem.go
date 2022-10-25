@@ -12,6 +12,7 @@ import (
 func IsProblemExistByPID(ctx context.Context, problem *dao.Problem) bool {
 	count, err := mysqldao.SelectProblemCountByPID(ctx, problem.PID)
 	if err != nil {
+		// response.CreateResponse(constanct.GetResCode(constanct.Problem, constanct.Models, constanct.MysqlQuery))
 		return false
 	}
 	return count > 0
@@ -23,6 +24,7 @@ func CreateProblem(ctx context.Context, problem *dao.Problem) error {
 	err := mysqldao.InsertProblemTable(ctx, *problem)
 	if err != nil {
 		logger.Errorf("call InsertProblemTable failed,problem= %+v, err=%s", utils.Sdump(problem), err.Error())
+		// response.CreateResponse(constanct.GetResCode(constanct.Problem, constanct.Models, constanct.MysqlAdd))
 	}
 	return err
 }
@@ -33,6 +35,7 @@ func EditProblem(ctx context.Context, problem *dao.Problem) error {
 	err := mysqldao.EditProblemTable(ctx, *problem)
 	if err != nil {
 		logger.Errorf("call EditProblemTable failed,problem= %+v, err=%s", utils.Sdump(problem), err.Error())
+		// response.CreateResponse(constanct.GetResCode(constanct.Problem, constanct.Models, constanct.MysqlUpdate))
 	}
 	return err
 }
@@ -42,6 +45,7 @@ func DeleteProblem(ctx context.Context, PID int64) error {
 	err := mysqldao.DeleteProblem(ctx, PID)
 	if err != nil {
 		logger.Errorf("call DeleteProblem failed,problem= %d, err=%s", PID, err.Error())
+		// response.CreateResponse(constanct.GetResCode(constanct.Problem, constanct.Models, constanct.MysqlDelete))
 	}
 	return err
 }
@@ -54,13 +58,18 @@ func GetProblemByPID(ctx context.Context, PID int64) (dao.Problem, error) {
 	err := mysqldao.SelectProblemByPID(ctx, &problem)
 	if err != nil {
 		logger.Errorf("call SelectProblemByPID failed,PID=%d,err=%s", PID, err.Error())
+		// response.CreateResponse(constanct.GetResCode(constanct.Problem, constanct.Models, constanct.MysqlQuery))
 		return problem, err
 	}
 	return problem, err
 }
 
 func GetProblemCount(ctx context.Context, problem dao.Problem) (int64, error) {
-	return mysqldao.SelectProblemCount(ctx, problem)
+	res, err := mysqldao.SelectProblemCount(ctx, problem)
+	if err != nil {
+		// response.CreateResponse(constanct.GetResCode(constanct.Problem, constanct.Models, constanct.MysqlQuery))
+	}
+	return res, err
 }
 
 func GetProblems(ctx context.Context, PIDs []string) ([]dao.Problem, error) {
