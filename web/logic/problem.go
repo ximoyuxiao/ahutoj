@@ -21,11 +21,12 @@ func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
 	if err != nil {
 		//日志报错
 		utils.GetLogInstance().Errorf("call CreateProblem failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Problem, constanct.Logic, constanct.MysqlAdd)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Problem, constanct.Models, constanct.MysqlAdd), "创建题目失败", response.ERROR), err
 	}
 	//成功返回
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
+
 func EditProblem(req *request.EditProblemReq, c *gin.Context) (interface{}, error) {
 	problem := mapping.ProblemReqToDao(request.Problem(*req))
 	if req.PID == 0 {
@@ -88,7 +89,7 @@ func GetProblemInfo(ctx *gin.Context, PID int64) (interface{}, error) {
 	admin := middlewares.CheckUserHasPermission(ctx, middlewares.ProblemAdmin)
 	/*1 可视 -1 不可见*/
 	if problem.Visible == -1 && !admin {
-		return response.CreateResponse(constanct.GetResCode(constanct.Problem, constanct.Logic, constanct.VerifyError)), nil
+		return response.CreateResponse(constanct.GetResCode(constanct.Problem, constanct.Service, constanct.VerifyError)), nil
 	}
 	return response.ProblemInfoResp{
 		Response:    response.CreateResponse(constanct.SuccessCode),

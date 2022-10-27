@@ -203,12 +203,12 @@ func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface
 	contest, err := models.GetContestFromDB(ctx, req.CID)
 	if err != nil {
 		logger.Errorf("call GetContestFromDB Failed, CID=%d, err=%s", req.CID, err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.MysqlQuery)), err
+		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Models, constanct.MysqlQuery)), err
 	}
 	problems, err := models.GetConProblemFromDB(ctx, req.CID) //获得竞赛的题目
 	if err != nil {
 		logger.Errorf("call GetConProblemFromDB Failed, CID=%d, err=%s", req.CID, err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.MysqlQuery)), err
+		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Models, constanct.MysqlQuery)), err
 	}
 
 	problemIdxMap := make(map[int64]int, 0)
@@ -227,7 +227,7 @@ func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface
 	})
 	if err != nil {
 		logger.Errorf("call GetContestFromDB Failed, CID=%d, err=%s", req.CID, err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.MysqlQuery)), err
+		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Models, constanct.MysqlQuery)), err
 	}
 	userMap := make(map[string]int, 0)
 	ranks := make(response.RankItems, 0)

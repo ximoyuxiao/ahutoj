@@ -20,14 +20,14 @@ func AddProblem(ctx *gin.Context) {
 	if err != nil {
 		// 请求参数有误 直接返回响应
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.Problem, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 	fmt.Printf("req:%+v\n", req)
 	resp, err := logic.AddProblem(req, ctx)
 	if err != nil {
 		logger.Errorf("call AddProblem failed,req=%+v,err=%s", *req, err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.Problem, constanct.Service, constanct.ServerBusy))
+		response.ResponseError(ctx, constanct.ServerBusyCode)
 	}
 	response.ResponseOK(ctx, resp)
 }
