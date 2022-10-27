@@ -30,12 +30,12 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 	}
 
 	if models.EqualLastSource(ctx, req.UID, req.PID, submit.Source) {
-		return response.CreateResponseStr(constanct.GetResCode(constanct.Submit, constanct.Logic, constanct.Duplicate), "禁止频繁重复提交代码", response.WARNING), nil
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Submit, constanct.Models, constanct.Duplicate), "禁止频繁重复提交代码", response.WARNING), nil
 	}
 	problem, err := models.GetProblemByPID(ctx, req.PID)
 	if err != nil {
 		logger.Errorf("call GetProblemByPID failed,pid=%v, err=%s", req.PID, err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Logic, constanct.MysqlQuery)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Submit, constanct.Models, constanct.MysqlQuery), "获取题目PID失败", response.ERROR), err
 	}
 	if problem.Origin != -1 {
 		submit.OJPlatform = problem.Origin
@@ -45,12 +45,12 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 	err = models.CreateSubmit(ctx, submit)
 	if err != nil {
 		logger.Errorf("call CreateSubmit failed, submit=%v, err=%s", submit, err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Logic, constanct.MysqlAdd)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Submit, constanct.Models, constanct.MysqlAdd), "创建提交失败", response.ERROR), err
 	}
 	submit, err = models.FindLastSIDByUID(ctx, submit.UID)
 	if err != nil {
 		logger.Errorf("call FindLastSIDByUID failed, UID=%v, err=%s", submit.UID, err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Logic, constanct.MysqlQuery)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Submit, constanct.Models, constanct.MysqlQuery), "寻找该用户上次提交 失败", response.ERROR), err
 	}
 	return response.AddSubmitResp{
 		Response: response.CreateResponse(constanct.SuccessCode),
@@ -74,7 +74,7 @@ func RejudgeSubmit(ctx *gin.Context, req *request.RejudgeSubmitReq) (interface{}
 	}
 	err := models.RejudgeSubmit(ctx, submit)
 	if err != nil {
-		return response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Logic, constanct.MysqlUpdate)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Submit, constanct.Models, constanct.MysqlUpdate), "修改提交信息失败", response.ERROR), err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
@@ -96,12 +96,12 @@ func GetSubmits(ctx *gin.Context, req *request.SubmitListReq) (interface{}, erro
 	submits, err := models.GetSubmitList(ctx, submit, offset, limit)
 	if err != nil {
 		logger.Errorf("call SelectSubmitList failed,req=%+v,err=%s", utils.Sdump(req), err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Logic, constanct.MysqlQuery)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Submit, constanct.Models, constanct.MysqlQuery), "获取提交列表失败", response.ERROR), err
 	}
 	resp.Count, err = models.GetSubmitListCount(ctx, submit)
 	if err != nil {
 		logger.Errorf("call GetSubmitListCount failed,req=%+v,err=%s", utils.Sdump(req), err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Logic, constanct.MysqlQuery)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Submit, constanct.Models, constanct.MysqlQuery), "获取提交列表数量失败", response.ERROR), err
 	}
 	resp.Response = response.CreateResponse(constanct.SuccessCode)
 	resp.Data = make([]response.SubmitLIstItem, len(submits))
@@ -123,13 +123,13 @@ func GetSubmits(ctx *gin.Context, req *request.SubmitListReq) (interface{}, erro
 func GetSubmit(ctx *gin.Context, req *request.GetSubmitReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	submit, err := mysqldao.SelectSubmitBySID(ctx, req.SID)
-	if !middlewares.CheckUserHasPermission(ctx, middlewares.SourceBorwser) &&
-		submit.UID != middlewares.GetUid(ctx) {
-		return response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Logic, constanct.VerifyError)), err
-	}
 	if err != nil {
 		logger.Errorf("Call SelectSubmitBySID failed, SID=%v, err=%s", req.SID, err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Submit, constanct.Logic, constanct.MysqlQuery)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Submit, constanct.Models, constanct.MysqlQuery), "提交结果不存在", response.ERROR), err
+	}
+	if !middlewares.CheckUserHasPermission(ctx, middlewares.SourceBorwser) &&
+		submit.UID != middlewares.GetUid(ctx) {
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Submit, constanct.Service, constanct.VerifyError), "用户权限不够", response.ERROR), err
 	}
 	var ceInfo *string = nil
 	if submit.Result == constanct.OJ_CE {

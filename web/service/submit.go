@@ -18,14 +18,14 @@ func AddSubmit(ctx *gin.Context) {
 	req := new(request.AddSubmitReq)
 	if err := ctx.ShouldBindWith(req, binding.JSON); err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.Submit, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 
 	resp, err := logic.AddSubmit(ctx, req)
 	if err != nil {
 		logger.Errorf("call AddSubmit failed, req=%+v, err=%s", utils.Sdump(req), err)
-		response.ResponseError(ctx, constanct.GetResCode(constanct.Submit, constanct.Service, constanct.MysqlAdd))
+		response.ResponseError(ctx, constanct.ServerBusyCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -36,14 +36,14 @@ func RejudgeSubmit(ctx *gin.Context) {
 	req := new(request.RejudgeSubmitReq)
 	if err := ctx.ShouldBindWith(req, binding.JSON); err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.Submit, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 
 	resp, err := logic.RejudgeSubmit(ctx, req)
 	if err != nil {
 		logger.Errorf("call RejudgeSubmit failed, req=%+v, err=%s", utils.Sdump(req), err)
-		response.ResponseError(ctx, constanct.GetResCode(constanct.Submit, constanct.Service, constanct.MysqlUpdate))
+		response.ResponseError(ctx, constanct.ServerBusyCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -54,14 +54,14 @@ func StatusList(ctx *gin.Context) {
 	req := new(request.SubmitListReq)
 	if err := ctx.ShouldBindWith(req, binding.Query); err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.Submit, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 
 	resp, err := logic.GetSubmits(ctx, req)
 	if err != nil {
 		logger.Errorf("call GetSubmitList failed, req=%+v, err=%s", utils.Sdump(req), err)
-		response.ResponseError(ctx, constanct.GetResCode(constanct.Submit, constanct.Service, constanct.MysqlQuery))
+		response.ResponseError(ctx, constanct.ServerBusyCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -75,14 +75,14 @@ func GetSubmit(ctx *gin.Context) {
 	req.SID, err = strconv.ParseInt(cidStr, 10, 64)
 	if err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.Submit, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 
 	resp, err := logic.GetSubmit(ctx, req)
 	if err != nil {
 		logger.Errorf("call GetSubmit failed, req=%+v, err=%s", utils.Sdump(req), err)
-		response.ResponseError(ctx, constanct.GetResCode(constanct.Submit, constanct.Service, constanct.MysqlQuery))
+		response.ResponseError(ctx, constanct.ServerBusyCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)

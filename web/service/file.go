@@ -67,13 +67,13 @@ func UpFile(ctx *gin.Context) {
 	file, err := ctx.FormFile("file")
 	if err != nil {
 		logger.Errorf("call FormFile filed, err=%s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.File, constanct.Service, constanct.FileUnsupport))
+		response.ResponseErrorStr(ctx, constanct.GetResCode(constanct.File, constanct.Service, constanct.FileUnsupport), "文件上传失败", response.ERROR)
 		return
 	}
 	logger.Infof("upfile:%s", file.Filename)
 	if !checkSuccessFile(file.Filename) {
 		logger.Errorf("chekfile failed filename:%s", file.Filename)
-		response.ResponseError(ctx, constanct.GetResCode(constanct.File, constanct.Service, constanct.FileUnsupport))
+		response.ResponseErrorStr(ctx, constanct.GetResCode(constanct.File, constanct.Logic, constanct.FileUnsupport), "文件校验失败", response.ERROR)
 		return
 	}
 	//SaveUploadedFile上传表单文件到指定的路径
@@ -85,7 +85,7 @@ func RemoveFile(ctx *gin.Context) {
 	path := getPath(ctx)
 	filename := ctx.PostForm("file")
 	if filename == "" {
-		response.ResponseError(ctx, constanct.GetResCode(constanct.File, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 	logger := utils.GetLogInstance()
@@ -94,7 +94,7 @@ func RemoveFile(ctx *gin.Context) {
 	err := os.Remove(filepath)
 	if err != nil {
 		logger.Errorf("call Remove failed, err=%s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.File, constanct.Service, constanct.FileUnsupport))
+		response.ResponseErrorStr(ctx, constanct.GetResCode(constanct.File, constanct.Service, constanct.FileUnsupport), "文件删除失败", response.ERROR)
 		return
 	}
 	response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
@@ -105,11 +105,11 @@ func UnzipFile(ctx *gin.Context) {
 	path := getPath(ctx)
 	ok, _ := pathExists(path)
 	if !ok {
-		response.ResponseError(ctx, constanct.GetResCode(constanct.File, constanct.Service, constanct.VerifyError))
+		response.ResponseErrorStr(ctx, constanct.GetResCode(constanct.File, constanct.Service, constanct.VerifyError), "权限不足", response.ERROR)
 	}
 	filename := ctx.PostForm("file")
 	if filename == "" {
-		response.ResponseError(ctx, constanct.GetResCode(constanct.File, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 	}
 	filepath := path + "/" + filename
 	logger.Infof("带解压文件:%s", filepath)
@@ -119,7 +119,7 @@ func UnzipFile(ctx *gin.Context) {
 }
 
 func UpProblemFile(ctx *gin.Context) {
-	response.ResponseOK(ctx, response.CreateResponse(constanct.GetResCode(constanct.File, constanct.Service, constanct.Notimplemented)))
+	response.ResponseOK(ctx, response.CreateResponseStr(constanct.GetResCode(constanct.File, constanct.Service, constanct.Notimplemented), "接口未实现", response.ERROR))
 }
 func GetFileType(filename string) string {
 	strs := strings.Split(filename, ".")
@@ -131,20 +131,20 @@ func GetFileList(ctx *gin.Context) {
 	filepath := getPath(ctx)
 	if filepath == "" {
 		logger.Errorf("has no pid Invailed")
-		response.ResponseError(ctx, constanct.GetResCode(constanct.File, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 	pidStr := ctx.Param("pid")
 	PID, err := strconv.ParseInt(pidStr, 10, 64)
 	if err != nil {
 		logger.Errorf("call ParseInt faile,pid=%s err=%s", pidStr, err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.File, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 	ok := models.IsProblemExistByPID(ctx, &dao.Problem{PID: PID})
 	if !ok {
 		logger.Errorf("the problem not exist pid=%s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.File, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 	ok, err = pathExists(filepath)
@@ -164,7 +164,7 @@ func GetFileList(ctx *gin.Context) {
 	files, err := ioutil.ReadDir(filepath)
 	if err != nil {
 		logger.Errorf("call ReadDir faile,filepath=%s err=%s", filepath, err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.File, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 	resp := response.GetFileListResp{}
