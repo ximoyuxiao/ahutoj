@@ -16,6 +16,7 @@ func GetPermission(ctx *gin.Context, UID string) (interface{}, error) {
 	permission.UID = UID
 	if err != nil {
 		logger.Errorf("call GetPermission failed , UID=%d, err=%s", UID, err.Error())
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return nil, err
 	}
 	return response.PermissionResp{
@@ -33,6 +34,7 @@ func EditPermission(ctx *gin.Context, req *request.EditPermissionReq) (interface
 	err := models.EditPermission(ctx, &permission)
 	if err != nil {
 		logger.Errorf("Call EditPermission Failed,err=%s", err.Error())
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return nil, err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
@@ -44,6 +46,7 @@ func DeletePermission(ctx *gin.Context, req *request.DeletePermissionReq) (inter
 		err := models.DeletePermission(ctx, UID)
 		if err != nil {
 			logger.Errorf("Call DeletePermission Failed,err=%s", err.Error())
+			response.ResponseError(ctx, constanct.ParametersInvlidCode)
 			return nil, err
 		}
 	}
@@ -59,6 +62,7 @@ func AddPermission(ctx *gin.Context, req *request.AddPermissionReq) (interface{}
 	err := models.AddPermission(ctx, &permission)
 	if err != nil {
 		logger.Errorf("call AddPermission Failed,err=%s", err.Error())
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return nil, err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
@@ -78,6 +82,7 @@ func GetPermissionList(ctx *gin.Context, req *request.PermissionListReq) (interf
 	permissions, err := models.GetPermissionList(ctx, offset, size)
 	if err != nil {
 		logger.Errorf("call GetPermissionList Failed,err=%s", err.Error())
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return nil, err
 	}
 	ret.Conut = len(permissions)

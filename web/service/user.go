@@ -26,7 +26,8 @@ func UserInfo(ctx *gin.Context) {
 	resp, err := logic.GetUserInfo(ctx, &req)
 	if err != nil {
 		logger.Errorf("call GetUserInfo failed,req=%+v,err=%s", req, err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.ServerBusy))
+		response.ResponseError(ctx, constanct.ServerBusyCode)
+		return
 	}
 
 	response.ResponseOK(ctx, resp)
@@ -36,14 +37,14 @@ func UserStatusInfo(ctx *gin.Context) {
 	req := new(request.UserStatusInfoReq)
 	if err := ctx.ShouldBindBodyWith(req, binding.JSON); err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 
 	resp, err := logic.GetUserStatusInfo(ctx, *req)
 	if err != nil {
 		logger.Errorf("call GetUserStatusInfo failed, req=%+v, err=%s", utils.Sdump(req), err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.ServerBusy))
+		response.ResponseError(ctx, constanct.ServerBusyCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -54,7 +55,7 @@ func EditUserInfo(ctx *gin.Context) {
 	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 	usr := req.ToUser(middlewares.GetUid(ctx))
@@ -75,7 +76,7 @@ func EditUserInfo(ctx *gin.Context) {
 	err = mysqldao.UpdateUserByUID(ctx, usr)
 	if err != nil {
 		logger.Errorf("update user info failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.MysqlUpdate))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 
@@ -88,7 +89,7 @@ func EditUserPass(ctx *gin.Context) {
 	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 
@@ -99,7 +100,7 @@ func EditUserPass(ctx *gin.Context) {
 	err = mysqldao.SelectUserByUID(ctx, usr)
 	if err != nil {
 		logger.Errorf("query user failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.MysqlQuery))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 
@@ -114,7 +115,7 @@ func EditUserPass(ctx *gin.Context) {
 	err = mysqldao.UpdateUserByUID(ctx, usr)
 	if err != nil {
 		logger.Errorf("update user passwd failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.MySQLErrorCode)
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 	response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
@@ -126,7 +127,7 @@ func VjudgeBind(ctx *gin.Context) {
 	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 
@@ -137,7 +138,7 @@ func VjudgeBind(ctx *gin.Context) {
 	err = mysqldao.UpdateUserByUID(ctx, usr)
 	if err != nil {
 		logger.Errorf("update mysql error =%s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.MysqlUpdate))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 
@@ -150,13 +151,13 @@ func AddUsersRange(ctx *gin.Context) {
 	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 	resp, err := logic.AddUsersRange(ctx, *req)
 	if err != nil {
 		logger.Errorf("call AddUsers err=%s, req=%+v", err.Error(), utils.Sdump(req))
-		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.ServerBusy))
+		response.ResponseError(ctx, constanct.ServerBusyCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -168,13 +169,13 @@ func AddUsers(ctx *gin.Context) {
 	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 	resp, err := logic.AddUsers(ctx, *req)
 	if err != nil {
 		logger.Errorf("call AddUsers err=%s, req=%+v", err.Error(), utils.Sdump(req))
-		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.ServerBusy))
+		response.ResponseError(ctx, constanct.ServerBusyCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -185,13 +186,13 @@ func CodeForceBind(ctx *gin.Context) {
 	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 	resp, err := logic.CodeForceBind(ctx, *req)
 	if err != nil {
 		logger.Errorf("call CodeForceBind err=%s, req=%+v", err.Error(), utils.Sdump(req))
-		response.ResponseError(ctx, constanct.GetResCode(constanct.User, constanct.Service, constanct.ServerBusy))
+		response.ResponseError(ctx, constanct.ServerBusyCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
