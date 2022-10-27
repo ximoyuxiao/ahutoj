@@ -152,7 +152,7 @@ func JwtVerify(c *gin.Context) {
 			return
 		}
 		logger.Errorf("token is empty")
-		response.ResponseError(c, constanct.TokenInvalidCode)
+		response.ResponseErrorStr(c, constanct.GetResCode(constanct.Auth, constanct.Service, constanct.DataEmpty), "用户未登录", response.INFO)
 		c.Abort()
 		return
 	}
@@ -160,7 +160,7 @@ func JwtVerify(c *gin.Context) {
 	claims, err := ParseToken(token)
 	if err != nil {
 		logger.Errorf("token parse error, token=%s, err = %s", token, err.Error())
-		response.ResponseError(c, constanct.TokenInvalidCode)
+		response.ResponseErrorStr(c, constanct.GetResCode(constanct.Auth, constanct.Service, constanct.DataResolutionError), "用户权限过期，请重新登录", response.INFO)
 		c.Abort()
 		return
 	}
@@ -170,7 +170,7 @@ func JwtVerify(c *gin.Context) {
 		c.Next()
 		return
 	}
-	response.ResponseError(c, constanct.VerifyErrorCode)
+	response.ResponseErrorStr(c, constanct.GetResCode(constanct.Auth, constanct.Service, constanct.VerifyError), "没有访问该功能的权限", response.INFO)
 	logger.Infof("the Url(%s) need Verify", url)
 	c.Abort()
 }

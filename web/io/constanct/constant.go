@@ -92,17 +92,20 @@ func GetResCode(mod ModuleCode, loc LocationCode, op OperationCode) ResCode {
 const (
 	ParametersInvlidCode ResCode = 100132
 	ServerBusyCode       ResCode = 100131
+	PageNotFound         ResCode = 100160
 )
 
 var codeMsgMap = map[ResCode]string{
 	SuccessCode:          "success",
 	ParametersInvlidCode: "参数错误",
 	ServerBusyCode:       "服务器错误",
+	PageNotFound:         "页面未找到",
 }
 var HttpCodeMap = map[ResCode]int{
 	SuccessCode:          http.StatusOK,
 	ParametersInvlidCode: http.StatusBadRequest,
 	ServerBusyCode:       http.StatusInternalServerError,
+	PageNotFound:         http.StatusNotFound,
 }
 
 func (c ResCode) Msg() string {

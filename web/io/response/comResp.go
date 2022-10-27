@@ -39,7 +39,7 @@ func ResponseError(c *gin.Context, code constanct.ResCode) {
 func ResponseErrorStr(c *gin.Context, code constanct.ResCode, str string, retType RetType) {
 	c.JSON(code.HttpCode(), Response{
 		StatusCode: code,
-		StatusMsg:  fmt.Sprintf("%s\\%s", str, retType),
+		StatusMsg:  fmt.Sprintf("%s\\\\%s", str, retType),
 	})
 }
 func ResponseOK(c *gin.Context, resp interface{}) {

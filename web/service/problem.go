@@ -28,6 +28,7 @@ func AddProblem(ctx *gin.Context) {
 	if err != nil {
 		logger.Errorf("call AddProblem failed,req=%+v,err=%s", *req, err.Error())
 		response.ResponseError(ctx, constanct.ServerBusyCode)
+		return
 	}
 	response.ResponseOK(ctx, resp)
 }
@@ -39,10 +40,15 @@ func GetProblemList(ctx *gin.Context) {
 	if err != nil {
 		// 请求参数有误 直接返回响应
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.Problem, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
-	resp, _ := logic.GetProblemList(ctx, req)
+	resp, err := logic.GetProblemList(ctx, req)
+	if err != nil {
+		logger.Errorf("call GetProblemList failed,req=%+v,err=%s", *req, err.Error())
+		response.ResponseError(ctx, constanct.ServerBusyCode)
+		return
+	}
 	response.ResponseOK(ctx, resp)
 }
 
@@ -52,11 +58,16 @@ func GetProblem(ctx *gin.Context) {
 	pid, err := strconv.ParseInt(pidString, 10, 64)
 	if err != nil {
 		logger.Errorf("call ParseInt failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.Problem, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 
-	resp, _ := logic.GetProblemInfo(ctx, pid)
+	resp, err := logic.GetProblemInfo(ctx, pid)
+	if err != nil {
+		logger.Errorf("call GetProblemInfo failed, err = %s", err.Error())
+		response.ResponseError(ctx, constanct.ServerBusyCode)
+		return
+	}
 	response.ResponseOK(ctx, resp)
 }
 
@@ -67,14 +78,15 @@ func EditProblem(ctx *gin.Context) {
 	if err != nil {
 		//请求参数有误 直接返回响应
 		logger.Errorf("call ShouldBindWith failed, err =%s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.Problem, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 	logger.Info("req:%+v\n", req)
 	resp, err := logic.EditProblem(req, ctx)
 	if err != nil {
 		logger.Errorf("call DoResiger failed,req=%+v,err=%s", *req, err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.Problem, constanct.Service, constanct.ServerBusy))
+		response.ResponseError(ctx, constanct.ServerBusyCode)
+		return
 	}
 	response.ResponseOK(ctx, resp)
 }
@@ -85,13 +97,14 @@ func DeleteProblem(ctx *gin.Context) {
 	err := ctx.BindJSON(req)
 	if err != nil {
 		logger.Errorf("call ShouldBindWith failed, err =%s", err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.Problem, constanct.Service, constanct.Parsesparameters))
+		response.ResponseError(ctx, constanct.ParametersInvlidCode)
 		return
 	}
 	resp, err := logic.DeleteProblem(ctx, req)
 	if err != nil {
 		logger.Errorf("call DoResiger failed,req=%+v,err=%s", *req, err.Error())
-		response.ResponseError(ctx, constanct.GetResCode(constanct.Problem, constanct.Service, constanct.ServerBusy))
+		response.ResponseError(ctx, constanct.ServerBusyCode)
+		return
 	}
 	response.ResponseOK(ctx, resp)
 }

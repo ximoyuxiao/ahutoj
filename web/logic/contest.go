@@ -30,18 +30,18 @@ func AddContest(ctx *gin.Context, req *request.AddContestReq) (interface{}, erro
 	err := models.AddContestToDb(ctx, contest)
 	if err != nil {
 		logger.Errorf("call AddContestToDb failed, err=%s", err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.MysqlAdd)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Contest, constanct.Models, constanct.MysqlAdd), "创建竞赛失败", response.ERROR), err
 	}
 
 	contest.CID, err = models.GetCurrentCID(ctx, contest)
 	if err != nil {
 		logger.Errorf("call GetCurrentCID failed, err=%s", err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.MysqlQuery)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Contest, constanct.Models, constanct.MysqlQuery), "创建竞赛失败", response.ERROR), err
 	}
 	err = models.AddConproblems(ctx, req.Problems, contest.CID)
 	if err != nil {
 		logger.Errorf("call AddConproblems failed, err=%s", err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.MysqlAdd)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.MysqlAdd), "添加竞赛题目失败", response.ERROR), err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
@@ -63,12 +63,16 @@ func EditContest(ctx *gin.Context, req *request.EditContestReq) (interface{}, er
 	err := models.SaveContestDB(ctx, contest)
 	if err != nil {
 		logger.Errorf("call SaveContestDB failed, err=%s", err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.MysqlUpdate)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Contest, constanct.Models, constanct.MysqlUpdate),
+			"编辑竞赛失败",
+			response.ERROR), err
 	}
 	err = models.AddConproblems(ctx, req.Problems, contest.CID)
 	if err != nil {
 		logger.Errorf("call AddConproblems failed, err=%s", err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.MysqlAdd)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Contest, constanct.Models, constanct.MysqlAdd),
+			"编辑竞赛题目失败",
+			response.ERROR), err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
@@ -78,7 +82,8 @@ func DeleteContest(ctx *gin.Context, req *request.DeleteContestReq) (interface{}
 	err := models.DeleteContestDB(ctx, req.CID)
 	if err != nil {
 		logger.Errorf("call DeleteContestDB failed, err=%s", err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.MysqlUpdate)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Contest, constanct.Models, constanct.MysqlUpdate),
+			"删除竞赛失败", response.ERROR), err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
@@ -96,7 +101,8 @@ func GetListContest(ctx *gin.Context, req *request.ContestListReq) (interface{},
 	ContestList, err := models.GetContestListFromDb(ctx, offset, size)
 	if err != nil {
 		logger.Errorf("call GetContestListFromDb failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.MysqlQuery)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Contest, constanct.Models, constanct.MysqlQuery),
+			"查询竞赛列表失败", response.ERROR), err
 	}
 	respData := make([]response.ContestListItem, len(ContestList))
 	for i, contest := range ContestList {
@@ -133,11 +139,13 @@ func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, erro
 
 	if err != nil {
 		logger.Errorf("call GetContestFromDB failed, CID=%s, err=%s", req.CID, err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.MysqlQuery)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.MysqlQuery),
+			"获取竞赛信息失败", response.ERROR), err
 	}
 	if contest.CID != req.CID {
 		logger.Errorf("contest not exites req=%+v", utils.Sdump(req))
-		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.CIDNotExist)), nil
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.CIDNotExist),
+			"竞赛不存在", response.ERROR), nil
 	}
 
 	uid := middlewares.GetUid(ctx)
@@ -147,17 +155,20 @@ func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, erro
 	}
 	if !isAdmin && contest.Begin_time > time.Now().UnixMilli() {
 		logger.Errorf("contest not begin")
-		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.ContestNotBegin)), nil
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.ContestNotBegin),
+			"竞赛未开始", response.WARNING), nil
 	}
 	//不是管理员的情况下 竞赛私有  并且 （没有密码，或者密码错误）
 	if !isAdmin && contest.Ispublic != 1 && ((req.Pass == nil) || (req.Pass != nil && *req.Pass != contest.Pass)) {
 		logger.Errorf("contest pass word error req=%+v", utils.Sdump(req))
-		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.CIDPassWordError)), nil
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.CIDPassWordError),
+			"密码错误", response.ERROR), nil
 	}
 	conPros, err := models.GetConProblemFromDB(ctx, req.CID)
 	if err != nil {
 		logger.Errorf("call GetConProblemFromDB failed, CID=%s, err=%s", req.CID, err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.MysqlQuery)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Contest, constanct.Logic, constanct.MysqlQuery),
+			"获取竞赛题目失败", response.ERROR), err
 	}
 	respData := make([]response.ConProItem, 0)
 	for _, problem := range conPros {
@@ -203,12 +214,14 @@ func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface
 	contest, err := models.GetContestFromDB(ctx, req.CID)
 	if err != nil {
 		logger.Errorf("call GetContestFromDB Failed, CID=%d, err=%s", req.CID, err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Models, constanct.MysqlQuery)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Contest, constanct.Models, constanct.MysqlQuery),
+			"获取排名信息失败", response.ERROR), err
 	}
 	problems, err := models.GetConProblemFromDB(ctx, req.CID) //获得竞赛的题目
 	if err != nil {
 		logger.Errorf("call GetConProblemFromDB Failed, CID=%d, err=%s", req.CID, err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Models, constanct.MysqlQuery)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Contest, constanct.Models, constanct.MysqlQuery),
+			"获取排名信息失败", response.ERROR), err
 	}
 
 	problemIdxMap := make(map[int64]int, 0)
@@ -227,7 +240,8 @@ func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface
 	})
 	if err != nil {
 		logger.Errorf("call GetContestFromDB Failed, CID=%d, err=%s", req.CID, err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Contest, constanct.Models, constanct.MysqlQuery)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Contest, constanct.Models, constanct.MysqlQuery),
+			"获取排名信息失败", response.ERROR), err
 	}
 	userMap := make(map[string]int, 0)
 	ranks := make(response.RankItems, 0)

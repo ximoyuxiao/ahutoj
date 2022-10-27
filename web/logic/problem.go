@@ -30,13 +30,13 @@ func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
 func EditProblem(req *request.EditProblemReq, c *gin.Context) (interface{}, error) {
 	problem := mapping.ProblemReqToDao(request.Problem(*req))
 	if req.PID == 0 {
-		return response.CreateResponse(constanct.GetResCode(constanct.Problem, constanct.Logic, constanct.Parsesparameters)), nil
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Problem, constanct.Service, constanct.Parsesparameters), "题目ID不能为空", response.WARNING), nil
 	}
 	err := models.EditProblem(c, &problem)
 	if err != nil {
 		//日志报错
 		utils.GetLogInstance().Errorf("call EditProblem failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.GetResCode(constanct.Problem, constanct.Logic, constanct.MysqlUpdate)), err
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Problem, constanct.Models, constanct.MysqlUpdate), "编辑题目失败，请重试", response.ERROR), err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
@@ -47,7 +47,7 @@ func DeleteProblem(ctx *gin.Context, req *request.DeleteProblemReq) (interface{}
 		err := models.DeleteProblem(ctx, PID)
 		if err != nil {
 			logger.Errorf("call DeleteProblem failed,err=%s", err.Error())
-			return nil, err
+			return response.CreateResponseStr(constanct.GetResCode(constanct.Problem, constanct.Models, constanct.MysqlDelete), "题目删除失败，请重试", response.ERROR), nil
 		}
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
@@ -80,7 +80,7 @@ func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{},
 
 func GetProblemInfo(ctx *gin.Context, PID int64) (interface{}, error) {
 	if !models.IsProblemExistByPID(ctx, &dao.Problem{PID: PID}) {
-		return response.CreateResponse(constanct.GetResCode(constanct.Problem, constanct.Logic, constanct.PIDNotExist)), nil
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Problem, constanct.Logic, constanct.PIDNotExist), "题目不存在", response.INFO), nil
 	}
 	problem, err := models.GetProblemByPID(ctx, PID)
 	if err != nil {
@@ -89,7 +89,7 @@ func GetProblemInfo(ctx *gin.Context, PID int64) (interface{}, error) {
 	admin := middlewares.CheckUserHasPermission(ctx, middlewares.ProblemAdmin)
 	/*1 可视 -1 不可见*/
 	if problem.Visible == -1 && !admin {
-		return response.CreateResponse(constanct.GetResCode(constanct.Problem, constanct.Service, constanct.VerifyError)), nil
+		return response.CreateResponseStr(constanct.GetResCode(constanct.Problem, constanct.Logic, constanct.PIDNotExist), "题目不存在", response.INFO), nil
 	}
 	return response.ProblemInfoResp{
 		Response:    response.CreateResponse(constanct.SuccessCode),
