@@ -40,8 +40,8 @@ const (
 	Problem  ModuleCode = 104
 	Training ModuleCode = 105
 	Contest  ModuleCode = 106
-	Submit   ModuleCode = 106
-	File     ModuleCode = 107
+	Submit   ModuleCode = 107
+	File     ModuleCode = 108
 )
 const (
 	Service LocationCode = 1
