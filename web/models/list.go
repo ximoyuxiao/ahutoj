@@ -64,3 +64,7 @@ func DeleteTraining(ctx *gin.Context, list *dao.List) error {
 func GetTrainingList(ctx *gin.Context, offset, pagesize int) ([]dao.List, error) {
 	return mysqldao.GetTrainingList(ctx, offset, pagesize)
 }
+
+func GetCurrentLID(ctx *gin.Context, list dao.List) (int64, error) {
+	return mysqldao.SelectListByUID(ctx, list.UID)
+}

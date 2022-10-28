@@ -46,7 +46,7 @@ func CloseTimeoutRDB() {
 		redisPool.lock.Lock()
 		for idx := range redisPool.rdbs {
 			rdb := &redisPool.rdbs[idx]
-			if rdb.lastTime-currentTime < 0 && rdb.Status == RDB_FREE {
+			if currentTime-rdb.lastTime < redisPool.KeepAlive && rdb.Status == RDB_FREE {
 				rdb.lastTime = 0
 				rdb.Status = RDB_CLOSE
 				rdb.rdb.Close()
@@ -136,11 +136,11 @@ func GetRedisClient() *redis.Client {
 
 func CloseRDB(rdbfd int) error {
 	redisPool.lock.Lock()
+	defer redisPool.lock.Unlock()
 	if rdbfd < 0 || rdbfd >= int(redisPool.PoolSize) {
 		return fmt.Errorf("the args ivainled,rdbfd=%v", rdbfd)
 	}
 	rdb := &redisPool.rdbs[rdbfd]
 	rdb.Status = RDB_FREE
-	redisPool.lock.Unlock()
 	return nil
 }
