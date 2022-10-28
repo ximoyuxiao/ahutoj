@@ -25,7 +25,7 @@ func AddCommit(ctx *gin.Context) {
 	resp, err := logic.AddSubmit(ctx, req)
 	if err != nil {
 		logger.Errorf("call AddSubmit failed, req=%+v, err=%s", utils.Sdump(req), err)
-		response.ResponseError(ctx, constanct.MySQLErrorCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -43,7 +43,7 @@ func RejudgeCommit(ctx *gin.Context) {
 	resp, err := logic.RejudgeSubmit(ctx, req)
 	if err != nil {
 		logger.Errorf("call RejudgeSubmit failed, req=%+v, err=%s", utils.Sdump(req), err)
-		response.ResponseError(ctx, constanct.MySQLErrorCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -61,7 +61,7 @@ func StatusList(ctx *gin.Context) {
 	resp, err := logic.GetSubmits(ctx, req)
 	if err != nil {
 		logger.Errorf("call GetSubmitList failed, req=%+v, err=%s", utils.Sdump(req), err)
-		response.ResponseError(ctx, constanct.MySQLErrorCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -82,7 +82,7 @@ func GetCommit(ctx *gin.Context) {
 	resp, err := logic.GetSubmit(ctx, req)
 	if err != nil {
 		logger.Errorf("call GetSubmit failed, req=%+v, err=%s", utils.Sdump(req), err)
-		response.ResponseError(ctx, constanct.MySQLErrorCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)

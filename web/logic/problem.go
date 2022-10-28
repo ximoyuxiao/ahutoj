@@ -21,7 +21,7 @@ func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
 	if err != nil {
 		//日志报错
 		utils.GetLogInstance().Errorf("call CreateProblem failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.MySQLErrorCode), err
+		return response.CreateResponse(constanct.PROBLEM_ADD_FAILED), err
 	}
 	//成功返回
 	return response.CreateResponse(constanct.SuccessCode), nil
@@ -29,13 +29,13 @@ func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
 func EditProblem(req *request.EditProblemReq, c *gin.Context) (interface{}, error) {
 	problem := mapping.ProblemReqToDao(request.Problem(*req))
 	if req.PID == 0 {
-		return response.CreateResponse(constanct.InvalidParamCode), nil
+		return response.CreateResponse(constanct.PROBLEM_EDIT_PIDNoteExistCode), nil
 	}
 	err := models.EditProblem(c, &problem)
 	if err != nil {
 		//日志报错
 		utils.GetLogInstance().Errorf("call EditProblem failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.MySQLErrorCode), err
+		return response.CreateResponse(constanct.PROBLEM_EDIT_FAILED), err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
@@ -46,7 +46,7 @@ func DeleteProblem(ctx *gin.Context, req *request.DeleteProblemReq) (interface{}
 		err := models.DeleteProblem(ctx, PID)
 		if err != nil {
 			logger.Errorf("call DeleteProblem failed,err=%s", err.Error())
-			return nil, err
+			return response.CreateResponse(constanct.PROBLEM_DELETE_FAILED), err
 		}
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
@@ -62,7 +62,7 @@ func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{},
 	}
 	problems, err := mysqldao.SelectProblemByLists(ctx, offset, size, problem)
 	if err != nil {
-		return nil, err
+		return response.CreateResponse(constanct.PROBLEM_LIST_FAILED), err
 	}
 	ret.Response = response.CreateResponse(constanct.SuccessCode)
 	ret.Count, _ = models.GetProblemCount(ctx, problem)
@@ -79,7 +79,7 @@ func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{},
 
 func GetProblemInfo(ctx *gin.Context, PID int64) (interface{}, error) {
 	if !models.IsProblemExistByPID(ctx, &dao.Problem{PID: PID}) {
-		return response.CreateResponse(constanct.PIDNotExistCode), nil
+		return response.CreateResponse(constanct.PROBLEM_GET_PIDNotExistCode), nil
 	}
 	problem, err := models.GetProblemByPID(ctx, PID)
 	if err != nil {
@@ -88,11 +88,10 @@ func GetProblemInfo(ctx *gin.Context, PID int64) (interface{}, error) {
 	admin := middlewares.CheckUserHasPermission(ctx, middlewares.ProblemAdmin)
 	/*1 可视 -1 不可见*/
 	if problem.Visible == -1 && !admin {
-		return response.CreateResponse(constanct.VerifyErrorCode), nil
+		return response.CreateResponse(constanct.PROBLEM_GET_PIDNotExistCode), nil
 	}
 	return response.ProblemInfoResp{
 		Response:    response.CreateResponse(constanct.SuccessCode),
 		ProblemResp: response.ProblemResp(problem),
 	}, nil
-
 }

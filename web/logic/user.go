@@ -24,41 +24,42 @@ func CheckLogin(req *request.LoginReq, c *gin.Context) (interface{}, error) {
 		UID: req.UID,
 	}
 	if req.UID == "" {
-		return response.CreateResponse(constanct.UIDEmpty), nil
+		return response.CreateResponse(constanct.AUTH_LOGIN_UIDEmptyCode), nil
 	}
+
 	if req.Pass == "" {
-		return response.CreateResponse(constanct.PassEmpty), nil
+		return response.CreateResponse(constanct.AUTH_LOGIN_PassEmptyCode), nil
 	}
+
 	if ok := models.IsUserExistByUID(c, &user); !ok {
-		return response.CreateResponse(constanct.UIDNotExistCode), nil
+		return response.CreateResponse(constanct.AUTH_LOGIN_UIDNotExistCode), nil
 	}
+
 	if err := models.FindUserByUID(c, &user); err != nil {
-		return response.CreateResponse(constanct.MySQLErrorCode), err
+		return nil, err
 	}
 	if ok := models.EqualPassWord(c, &user, req.Pass); !ok {
-		return response.CreateResponse(constanct.PassWordErrorCode), nil
+		return response.CreateResponse(constanct.AUTH_LOGIN_PASSERRORCode), nil
 	}
 	token, err := middlewares.GetToken(c, user.UID)
 	if err != nil {
 		logger.Errorf("call GetToken failed, err=%s", err.Error())
-		return response.CreateResponse(constanct.TokenBuildErrorCode), nil
+		return response.CreateResponse(constanct.AUTH_LOGIN_TokenBuildCode), nil
 	}
 	permission, err := mysqldao.SelectPermissionByUID(c, user.UID)
 	if err != nil {
-		return response.CreateResponse(constanct.MySQLErrorCode), err
+		return nil, err
 	}
 	return response.LoginResp{
-		Response: response.Response{
-			StatusCode: constanct.SuccessCode,
-			StatusMsg:  constanct.SuccessCode.Msg(),
-		},
-		Token: token,
-		Uname: user.Uname,
+		Response: response.CreateResponse(constanct.SuccessCode),
+		Token:    token,
+		Uname:    user.Uname,
 		Permission: response.Permission{
 			PermissionMap: mapping.PermissionToBitMap(permission),
 		},
 	}, nil
 }
+
 func DoResiger(c *gin.Context, req *request.User) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	user := dao.User{
@@ -78,59 +79,53 @@ func DoResiger(c *gin.Context, req *request.User) (interface{}, error) {
 	//查看用户账号是否存在
 	exist := models.IsUserExistByUID(c, &user)
 	if exist {
-		return response.CreateResponse(constanct.UIDExistCOde), nil
+		return response.CreateResponse(constanct.AUTH_REGISTER_UIDExistCode), nil
 	}
 	// 创建用户
 	err := models.CreateUser(c, &user)
 	if err != nil {
 		logger.Errorf("call CreateUser failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.MySQLErrorCode), err
+		return response.CreateResponse(constanct.AUTH_REGISTER_FAILED), nil
 	}
 	// 获取token
 	token, err := middlewares.GetToken(c, req.UID)
 	if err != nil {
 		logger.Errorf("call GetToken failed, err=%s", err.Error())
-		return response.CreateResponse(constanct.TokenBuildErrorCode), nil
+		return response.CreateResponse(constanct.AUTH_REGISTER_TokenBuildCode), nil
 	}
 	permission, err := mysqldao.SelectPermissionByUID(c, user.UID)
 	if err != nil {
-		return response.CreateResponse(constanct.MySQLErrorCode), err
+		return nil, err
 	}
 	// 4、返回注册成功的信息给用户
 	return response.RegisterResp{
-		Response: response.Response{
-			StatusCode: constanct.SuccessCode,
-			StatusMsg:  constanct.SuccessCode.Msg(),
-		},
-		Token: token,
-		Uname: user.Uname,
+		Response: response.CreateResponse(constanct.SuccessCode),
+		Token:    token,
+		Uname:    user.Uname,
 		Permission: response.Permission{
 			PermissionMap: mapping.PermissionToBitMap(permission),
 		},
 	}, nil
 }
+
 func GetUserInfo(c *gin.Context, req *string) (interface{}, error) {
 	user := dao.User{
 		UID: *req,
 	}
 	exist := models.IsUserExistByUID(c, &user)
 	if !exist {
-		return response.CreateResponse(constanct.UIDNotExistCode), nil
+		return response.CreateResponse(constanct.USER_INFO_UIDNotExistCode), nil
 	}
 	models.FindUserByUID(c, &user)
 	return response.CreateUserResp(&user), nil
 }
 
 func UpdateUserInfo(ctx *gin.Context, req request.UserEditReq) (interface{}, error) {
-	return response.CreateResponse(constanct.Notimplemented), nil
+	return response.CreateResponse(constanct.NotimplementedCode), nil
 }
 
 func UpdateUserPass(ctx *gin.Context, req request.UserEditPassReq) (interface{}, error) {
-	return response.CreateResponse(constanct.Notimplemented), nil
-}
-
-func UpdateUserVjudge(ctx *gin.Context, req request.UserEditVjudgeReq) (interface{}, error) {
-	return response.CreateResponse(constanct.Notimplemented), nil
+	return response.CreateResponse(constanct.NotimplementedCode), nil
 }
 
 func AddUsersRange(ctx *gin.Context, req request.AddUsersRangeReq) (interface{}, error) {
@@ -194,7 +189,8 @@ func AddUsers(ctx *gin.Context, req request.AddUsersReq) (interface{}, error) {
 		}
 		resp.Data = append(resp.Data, usersItem)
 	}
-	return nil, nil
+	resp.Response = response.CreateResponse(constanct.SuccessCode)
+	return resp, nil
 }
 
 func GetUserStatusInfo(ctx *gin.Context, req request.UserStatusInfoReq) (interface{}, error) {
@@ -243,10 +239,10 @@ func CodeForceBind(ctx *gin.Context, req request.CodeForceBindReq) (interface{},
 	req.CodeForcePass = strings.Trim(req.CodeForcePass, " ")
 	req.CodeForceUser = strings.Trim(req.CodeForceUser, " ")
 	if len(req.CodeForceUser) == 0 {
-		return response.CreateResponse(constanct.UIDEmpty), nil
+		return response.CreateResponse(constanct.USER_CFBIND_UserEmptyCode), nil
 	}
 	if len(req.CodeForceUser) == 0 {
-		return response.CreateResponse(constanct.PassEmpty), nil
+		return response.CreateResponse(constanct.USER_CFBIND_PassEmptyCode), nil
 	}
 	cj := originjudge.CodeForceJudge{
 		Headers: originjudge.CfHeaders,
@@ -260,9 +256,8 @@ func CodeForceBind(ctx *gin.Context, req request.CodeForceBindReq) (interface{},
 	}
 	err := cj.Login()
 	if err != nil {
-		return response.CreateResponse(constanct.PassWordErrorCode), nil
+		return response.CreateResponse(constanct.USER_CFBIND_PassErrorCode), nil
 	}
-	/*应该有一步检查登录 暂时忽略*/
 	user := dao.User{
 		UID:           middlewares.GetUid(ctx),
 		CodeForceUser: req.CodeForceUser,

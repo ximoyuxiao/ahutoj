@@ -61,7 +61,6 @@ func regeisterRouters(router *gin.Engine) {
 			userRouter.POST("/edit/pass/", service.EditUserPass)
 			userRouter.POST("/vjudgeBind", service.VjudgeBind)
 			userRouter.POST("/CodeForceBind/", service.CodeForceBind)
-
 		}
 
 		adminRouter := apiRouter.Group("/admin").Use(middlewares.JwtVerify)
@@ -134,7 +133,7 @@ func regeisterRouters(router *gin.Engine) {
 }
 
 func NotFindRegister(ctx *gin.Context) {
-	response.ResponseError(ctx, constanct.PageNotFound)
+	response.ResponseError(ctx, constanct.PageNotFoundCode)
 }
 
 func PingTest(ctx *gin.Context) {

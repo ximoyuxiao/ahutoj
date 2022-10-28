@@ -33,6 +33,7 @@ func checkSuccessFile(filename string) bool {
 	}
 	return false
 }
+
 func pathExists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err == nil {
@@ -43,6 +44,7 @@ func pathExists(path string) (bool, error) {
 	}
 	return false, err
 }
+
 func getPath(ctx *gin.Context) string {
 	pid := ctx.Param("pid")
 	if pid == "" {
@@ -51,6 +53,7 @@ func getPath(ctx *gin.Context) string {
 	//判断文件夹存在 这要求我们创建题目的时候 必须创建一个对应的文件夹
 	return utils.GetConfInstance().DataPath + "/" + pid
 }
+
 func UpFile(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	pid := ctx.Param("pid")
@@ -67,13 +70,13 @@ func UpFile(ctx *gin.Context) {
 	file, err := ctx.FormFile("file")
 	if err != nil {
 		logger.Errorf("call FormFile filed, err=%s", err.Error())
-		response.ResponseError(ctx, constanct.FILEUNSUPPORT)
+		response.ResponseError(ctx, constanct.FILE_UP_UNSUPPORTCode)
 		return
 	}
 	logger.Infof("upfile:%s", file.Filename)
 	if !checkSuccessFile(file.Filename) {
 		logger.Errorf("chekfile failed filename:%s", file.Filename)
-		response.ResponseError(ctx, constanct.FILEUNSUPPORT)
+		response.ResponseError(ctx, constanct.FILE_UP_UNSUPPORTCode)
 		return
 	}
 	//SaveUploadedFile上传表单文件到指定的路径
@@ -94,7 +97,7 @@ func RemoveFile(ctx *gin.Context) {
 	err := os.Remove(filepath)
 	if err != nil {
 		logger.Errorf("call Remove failed, err=%s", err.Error())
-		response.ResponseError(ctx, constanct.FILEUNSUPPORT)
+		response.ResponseError(ctx, constanct.FILE_REMOVE_FAILEDCode)
 		return
 	}
 	response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
@@ -105,7 +108,7 @@ func UnzipFile(ctx *gin.Context) {
 	path := getPath(ctx)
 	ok, _ := pathExists(path)
 	if !ok {
-		response.ResponseError(ctx, constanct.NotLoginCode)
+		response.ResponseError(ctx, constanct.FILE_UNZIP_NotExistCode)
 	}
 	filename := ctx.PostForm("file")
 	if filename == "" {
@@ -119,8 +122,9 @@ func UnzipFile(ctx *gin.Context) {
 }
 
 func UpProblemFile(ctx *gin.Context) {
-	response.ResponseOK(ctx, response.CreateResponse(constanct.Notimplemented))
+	response.ResponseOK(ctx, response.CreateResponse(constanct.NotimplementedCode))
 }
+
 func GetFileType(filename string) string {
 	strs := strings.Split(filename, ".")
 	return strs[len(strs)-1]
@@ -150,15 +154,15 @@ func GetFileList(ctx *gin.Context) {
 	ok, err = pathExists(filepath)
 	if err != nil {
 		logger.Errorf("call pathExists failed,filepath:%s, err=%v", filepath, err.Error())
-		response.ResponseErrorStr(ctx, constanct.ServerBusyCode,
-			fmt.Sprintf("call pathExists failed,filepath:%s, err=%v", filepath, err.Error()))
+		response.ResponseErrorStr(ctx, constanct.ServerErrorCode,
+			fmt.Sprintf("call pathExists failed,filepath:%s, err=%v", filepath, err.Error()), response.ERROR)
 	}
 	if !ok {
 		err = os.Mkdir(filepath, os.ModeDir)
 		if err != nil {
 			logger.Errorf("call Mkdir failed,filepath:%s, err=%v", filepath, err.Error())
-			response.ResponseErrorStr(ctx, constanct.ServerBusyCode,
-				fmt.Sprintf("call Mkdir failed,filepath:%s, err=%v", filepath, err.Error()))
+			response.ResponseErrorStr(ctx, constanct.FILE_LIST_FAILEDCode,
+				fmt.Sprintf("call Mkdir failed,filepath:%s, err=%v", filepath, err.Error()), response.ERROR)
 		}
 	}
 	files, err := ioutil.ReadDir(filepath)

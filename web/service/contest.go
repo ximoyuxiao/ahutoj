@@ -23,7 +23,7 @@ func AddContest(ctx *gin.Context) {
 	resp, err := logic.AddContest(ctx, req)
 	if err != nil {
 		logger.Errorf("call AddContest failed, err = %s", err.Error())
-		response.ResponseServerError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -40,7 +40,7 @@ func EditContest(ctx *gin.Context) {
 	resp, err := logic.EditContest(ctx, req)
 	if err != nil {
 		logger.Errorf("call EditContest failed, err = %s", err.Error())
-		response.ResponseServerError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -57,7 +57,7 @@ func DeleteContest(ctx *gin.Context) {
 	resp, err := logic.DeleteContest(ctx, req)
 	if err != nil {
 		logger.Errorf("call DeleteContest failed, err = %s", err.Error())
-		response.ResponseServerError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -74,7 +74,7 @@ func GetListContest(ctx *gin.Context) {
 	resp, err := logic.GetListContest(ctx, req)
 	if err != nil {
 		logger.Errorf("call GetListContest failed, err = %s", err.Error())
-		response.ResponseServerError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -106,7 +106,7 @@ func GetContest(ctx *gin.Context) {
 	resp, err := logic.GetContest(ctx, req)
 	if err != nil {
 		logger.Errorf("call GetContest failed, err = %s", err.Error())
-		response.ResponseServerError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -139,7 +139,7 @@ func GteRankContest(ctx *gin.Context) {
 	resp, err := logic.GteRankContest(ctx, req)
 	if err != nil {
 		logger.Errorf("call AddContest failed, err = %s", err.Error())
-		response.ResponseServerError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)

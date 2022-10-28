@@ -21,12 +21,8 @@ const (
 	ERROR   RetType = "error"
 )
 
-// ResponseError 响应错误
-func ResponseServerError(c *gin.Context, code constanct.ResCode) {
-	c.JSON(http.StatusBadGateway, Response{
-		StatusCode: code,
-		StatusMsg:  code.Msg(),
-	})
+func ResponseOK(c *gin.Context, resp interface{}) {
+	c.JSON(http.StatusOK, resp)
 }
 
 func ResponseError(c *gin.Context, code constanct.ResCode) {
@@ -42,9 +38,6 @@ func ResponseErrorStr(c *gin.Context, code constanct.ResCode, str string, retTyp
 		StatusMsg:  fmt.Sprintf("%s\\%s", str, retType),
 	})
 }
-func ResponseOK(c *gin.Context, resp interface{}) {
-	c.JSON(http.StatusOK, resp)
-}
 
 func CreateResponse(code constanct.ResCode) Response {
 	return Response{
@@ -52,6 +45,7 @@ func CreateResponse(code constanct.ResCode) Response {
 		StatusMsg:  "",
 	}
 }
+
 func CreateResponseStr(code constanct.ResCode, str string, retType RetType) Response {
 	return Response{
 		StatusCode: code,
