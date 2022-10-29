@@ -27,13 +27,13 @@ func AddTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 	if err != nil {
 		//日志报错
 		utils.GetLogInstance().Errorf("call CreateList failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.MySQLErrorCode), err
+		return response.CreateResponse(constanct.TRAIN_ADD_FAILED), err
 	}
 	list.LID, err = models.GetCurrentLID(c, list)
 	if err != nil {
 		//日志报错
 		utils.GetLogInstance().Errorf("call GetLID in CreateList failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.MySQLErrorCode), err
+		return response.CreateResponse(constanct.TRAIN_ADD_FAILED), err
 	}
 
 	//添加提单题目
@@ -41,10 +41,11 @@ func AddTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 	if err != nil {
 		//日志报错
 		utils.GetLogInstance().Errorf("call CreateListProblem failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.MySQLErrorCode), err
+		return response.CreateResponse(constanct.TRAIN_ADD_FAILED), err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
+
 func EditTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 	list := dao.List{
 		LID:       req.LID,
@@ -61,17 +62,18 @@ func EditTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 	if err != nil {
 		//日志报错
 		utils.GetLogInstance().Errorf("call EditList failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.MySQLErrorCode), err
+		return response.CreateResponse(constanct.TRAIN_EDIT_FAILED), err
 	}
 	//编辑提单题目
 	err2 := models.EditListProblem(c, &listproblem)
 	if err2 != nil {
 		//日志报错
 		utils.GetLogInstance().Errorf("call EditListProblem failed,err=%s", err2.Error())
-		return response.CreateResponse(constanct.MySQLErrorCode), err2
+		return response.CreateResponse(constanct.TRAIN_EDIT_FAILED), err2
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
+
 func DeleteTraining(req *request.List, c *gin.Context) (interface{}, error) {
 	list := dao.List{
 		LID:       req.LID,
@@ -84,10 +86,11 @@ func DeleteTraining(req *request.List, c *gin.Context) (interface{}, error) {
 	if err != nil {
 		//日志报错
 		utils.GetLogInstance().Errorf("call DeleteList failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.MySQLErrorCode), err
+		return response.CreateResponse(constanct.TRAIN_DELETE_FAILED), err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
+
 func GetTrainingList(ctx *gin.Context, req *request.TrainingListReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	var size int = 20

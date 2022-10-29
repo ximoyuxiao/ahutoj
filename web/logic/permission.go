@@ -16,7 +16,7 @@ func GetPermission(ctx *gin.Context, UID string) (interface{}, error) {
 	permission.UID = UID
 	if err != nil {
 		logger.Errorf("call GetPermission failed , UID=%d, err=%s", UID, err.Error())
-		return nil, err
+		return response.CreateResponse(constanct.ADMIN_GET_FAILED), err
 	}
 	return response.PermissionResp{
 		Response:   response.CreateResponse(constanct.SuccessCode),
@@ -28,12 +28,12 @@ func EditPermission(ctx *gin.Context, req *request.EditPermissionReq) (interface
 	logger := utils.GetLogInstance()
 	permission := models.PermisionReqToDao(req.PermissionReq)
 	if req.UID == "admin" {
-		return response.CreateResponse(constanct.VerifyErrorCode), nil
+		return response.CreateResponse(constanct.ADMIN_EDIT_ADMIN), nil
 	}
 	err := models.EditPermission(ctx, &permission)
 	if err != nil {
 		logger.Errorf("Call EditPermission Failed,err=%s", err.Error())
-		return nil, err
+		return response.CreateResponse(constanct.ADMIN_EDIT_FAILED), err
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
@@ -44,7 +44,7 @@ func DeletePermission(ctx *gin.Context, req *request.DeletePermissionReq) (inter
 		err := models.DeletePermission(ctx, UID)
 		if err != nil {
 			logger.Errorf("Call DeletePermission Failed,err=%s", err.Error())
-			return nil, err
+			return response.CreateResponse(constanct.ADMIN_DELETE_FAILED), err
 		}
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
@@ -53,7 +53,7 @@ func DeletePermission(ctx *gin.Context, req *request.DeletePermissionReq) (inter
 func AddPermission(ctx *gin.Context, req *request.AddPermissionReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	if req.UID == "" {
-		return response.CreateResponse(constanct.UIDEmpty), nil
+		return response.CreateResponse(constanct.ADMIN_ADD_UIDEmpty), nil
 	}
 	permission := models.PermisionReqToDao(req.PermissionReq)
 	err := models.AddPermission(ctx, &permission)
@@ -78,7 +78,7 @@ func GetPermissionList(ctx *gin.Context, req *request.PermissionListReq) (interf
 	permissions, err := models.GetPermissionList(ctx, offset, size)
 	if err != nil {
 		logger.Errorf("call GetPermissionList Failed,err=%s", err.Error())
-		return nil, err
+		return response.CreateResponse(constanct.ADMIN_LIST_FAILED), err
 	}
 	ret.Conut = len(permissions)
 	ret.Data = make([]response.Permission, 0, len(permissions))

@@ -152,7 +152,7 @@ func JwtVerify(c *gin.Context) {
 			return
 		}
 		logger.Errorf("token is empty")
-		response.ResponseError(c, constanct.TokenInvalidCode)
+		response.ResponseError(c, constanct.AUTH_Token_EmptyCode)
 		c.Abort()
 		return
 	}
@@ -160,7 +160,7 @@ func JwtVerify(c *gin.Context) {
 	claims, err := ParseToken(token)
 	if err != nil {
 		logger.Errorf("token parse error, token=%s, err = %s", token, err.Error())
-		response.ResponseError(c, constanct.TokenInvalidCode)
+		response.ResponseError(c, constanct.AUTH_Token_InvalidCode)
 		c.Abort()
 		return
 	}
@@ -170,7 +170,7 @@ func JwtVerify(c *gin.Context) {
 		c.Next()
 		return
 	}
-	response.ResponseError(c, constanct.VerifyErrorCode)
+	response.ResponseError(c, constanct.AUTH_Token_URLVerifyCode)
 	logger.Infof("the Url(%s) need Verify", url)
 	c.Abort()
 }

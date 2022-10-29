@@ -23,7 +23,7 @@ func Login(ctx *gin.Context) {
 	resp, err := logic.CheckLogin(req, ctx)
 	if err != nil {
 		logger.Errorf("call CheckLogin failed,req=%+v,err=%s", utils.Sdump(req), err.Error())
-		response.ResponseError(ctx, resp.(response.Response).StatusCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 	}
 	response.ResponseOK(ctx, resp)
 }
@@ -44,7 +44,7 @@ func Register(ctx *gin.Context) {
 	resp, err := logic.DoResiger(ctx, req)
 	if err != nil {
 		logger.Errorf("call DoResiger failed,req=%+v,err=%s", *req, err.Error())
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}
 	// 3、 构建响应值，将处理结果返回

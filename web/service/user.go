@@ -26,11 +26,12 @@ func UserInfo(ctx *gin.Context) {
 	resp, err := logic.GetUserInfo(ctx, &req)
 	if err != nil {
 		logger.Errorf("call GetUserInfo failed,req=%+v,err=%s", req, err.Error())
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 	}
 
 	response.ResponseOK(ctx, resp)
 }
+
 func UserStatusInfo(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := new(request.UserStatusInfoReq)
@@ -43,25 +44,26 @@ func UserStatusInfo(ctx *gin.Context) {
 	resp, err := logic.GetUserStatusInfo(ctx, *req)
 	if err != nil {
 		logger.Errorf("call GetUserStatusInfo failed, req=%+v, err=%s", utils.Sdump(req), err.Error())
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
 }
+
 func EditUserInfo(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := &request.UserEditReq{}
 	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
+		response.ResponseOK(ctx, constanct.InvalidParamCode)
 		return
 	}
 	usr := req.ToUser(middlewares.GetUid(ctx))
 
 	// call db
 	if !models.IsUserExistByUID(ctx, usr) {
-		response.ResponseError(ctx, constanct.UIDNotExistCode)
+		response.ResponseOK(ctx, constanct.USER_EDITINFO_UIDNotExistCode)
 		return
 	}
 
@@ -75,7 +77,7 @@ func EditUserInfo(ctx *gin.Context) {
 	err = mysqldao.UpdateUserByUID(ctx, usr)
 	if err != nil {
 		logger.Errorf("update user info failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.MySQLErrorCode)
+		response.ResponseOK(ctx, constanct.USER_CFBIND_FAILED)
 		return
 	}
 
@@ -99,49 +101,52 @@ func EditUserPass(ctx *gin.Context) {
 	err = mysqldao.SelectUserByUID(ctx, usr)
 	if err != nil {
 		logger.Errorf("query user failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.MySQLErrorCode)
+		response.ResponseError(ctx, constanct.USER_EDITPASS_FAILED)
 		return
 	}
 
 	if !models.EqualPassWord(ctx, usr, req.OldPwd) {
 		logger.Errorf("user old_pwd error!!")
-		response.ResponseError(ctx, constanct.PassWordErrorCode)
+		response.ResponseError(ctx, constanct.USER_EDITPASS_PasswordCode)
 		return
 	}
-
+	if req.Pwd == "" {
+		response.ResponseError(ctx, constanct.USER_EDITPASS_PasswordEmptyCode)
+		return
+	}
 	usr.Pass, _ = utils.MD5EnCode(usr.UID, req.Pwd)
 
 	err = mysqldao.UpdateUserByUID(ctx, usr)
 	if err != nil {
 		logger.Errorf("update user passwd failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.MySQLErrorCode)
+		response.ResponseError(ctx, constanct.USER_EDITPASS_FAILED)
 		return
 	}
 	response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
 }
 
 func VjudgeBind(ctx *gin.Context) {
-	logger := utils.GetLogInstance()
-	req := &request.UserEditVjudgeReq{}
-	err := ctx.ShouldBindWith(req, binding.JSON)
-	if err != nil {
-		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
-		return
-	}
+	// logger := utils.GetLogInstance()
+	// req := &request.UserEditVjudgeReq{}
+	// err := ctx.ShouldBindWith(req, binding.JSON)
+	// if err != nil {
+	// 	logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
+	// 	response.ResponseError(ctx, constanct.InvalidParamCode)
+	// 	return
+	// }
 
-	usr := req.ToUser(middlewares.GetUid(ctx))
-	// usr.Vjpwd, _ = utils.MD5EnCode(req.Vjid, req.Vjpwd)
+	// usr := req.ToUser(middlewares.GetUid(ctx))
+	// // usr.Vjpwd, _ = utils.MD5EnCode(req.Vjid, req.Vjpwd)
 
-	// call db
-	err = mysqldao.UpdateUserByUID(ctx, usr)
-	if err != nil {
-		logger.Errorf("update mysql error =%s", err.Error())
-		response.ResponseError(ctx, constanct.MySQLErrorCode)
-		return
-	}
+	// // call db
+	// err = mysqldao.UpdateUserByUID(ctx, usr)
+	// if err != nil {
+	// 	logger.Errorf("update mysql error =%s", err.Error())
+	// 	response.ResponseError(ctx, constanct.MySQLErrorCode)
+	// 	return
+	// }
 
-	response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
+	response.ResponseOK(ctx, response.CreateResponse(constanct.NotimplementedCode))
 }
 
 func AddUsersRange(ctx *gin.Context) {
@@ -156,7 +161,7 @@ func AddUsersRange(ctx *gin.Context) {
 	resp, err := logic.AddUsersRange(ctx, *req)
 	if err != nil {
 		logger.Errorf("call AddUsers err=%s, req=%+v", err.Error(), utils.Sdump(req))
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
@@ -174,11 +179,12 @@ func AddUsers(ctx *gin.Context) {
 	resp, err := logic.AddUsers(ctx, *req)
 	if err != nil {
 		logger.Errorf("call AddUsers err=%s, req=%+v", err.Error(), utils.Sdump(req))
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
 }
+
 func CodeForceBind(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := new(request.CodeForceBindReq)
@@ -191,7 +197,7 @@ func CodeForceBind(ctx *gin.Context) {
 	resp, err := logic.CodeForceBind(ctx, *req)
 	if err != nil {
 		logger.Errorf("call CodeForceBind err=%s, req=%+v", err.Error(), utils.Sdump(req))
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)

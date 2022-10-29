@@ -27,7 +27,7 @@ func AddProblem(ctx *gin.Context) {
 	resp, err := logic.AddProblem(req, ctx)
 	if err != nil {
 		logger.Errorf("call AddProblem failed,req=%+v,err=%s", *req, err.Error())
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 	}
 	response.ResponseOK(ctx, resp)
 }
@@ -42,7 +42,12 @@ func GetProblemList(ctx *gin.Context) {
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
-	resp, _ := logic.GetProblemList(ctx, req)
+	resp, err := logic.GetProblemList(ctx, req)
+	if err != nil {
+		logger.Errorf("call GetProblemList failed, err = %s", err.Error())
+		response.ResponseError(ctx, constanct.ServerErrorCode)
+		return
+	}
 	response.ResponseOK(ctx, resp)
 }
 
@@ -56,7 +61,12 @@ func GetProblem(ctx *gin.Context) {
 		return
 	}
 
-	resp, _ := logic.GetProblemInfo(ctx, pid)
+	resp, err := logic.GetProblemInfo(ctx, pid)
+	if err != nil {
+		logger.Errorf("call GetProblemInfo failed, err = %s", err.Error())
+		response.ResponseError(ctx, constanct.ServerErrorCode)
+		return
+	}
 	response.ResponseOK(ctx, resp)
 }
 
@@ -74,7 +84,8 @@ func EditProblem(ctx *gin.Context) {
 	resp, err := logic.EditProblem(req, ctx)
 	if err != nil {
 		logger.Errorf("call DoResiger failed,req=%+v,err=%s", *req, err.Error())
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
+		return
 	}
 	response.ResponseOK(ctx, resp)
 }
@@ -91,7 +102,8 @@ func DeleteProblem(ctx *gin.Context) {
 	resp, err := logic.DeleteProblem(ctx, req)
 	if err != nil {
 		logger.Errorf("call DoResiger failed,req=%+v,err=%s", *req, err.Error())
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
+		return
 	}
 	response.ResponseOK(ctx, resp)
 }

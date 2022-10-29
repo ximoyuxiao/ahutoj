@@ -27,7 +27,7 @@ func AddTraining(ctx *gin.Context) {
 	resp, err := logic.AddTraining(req, ctx)
 	if err != nil {
 		logger.Errorf("call DoResiger failed,req=%+v,err=%s", *req, err.Error())
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 	}
 	response.ResponseOK(ctx, resp)
 }
@@ -47,7 +47,7 @@ func EditTraining(ctx *gin.Context) {
 	resp, err := logic.EditTraining(req, ctx)
 	if err != nil {
 		logger.Errorf("call DoResiger failed,req=%+v,err=%s", *req, err.Error())
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 	}
 	response.ResponseOK(ctx, resp)
 }
@@ -67,7 +67,7 @@ func DeleteTraining(ctx *gin.Context) {
 	resp, err := logic.DeleteTraining(req, ctx)
 	if err != nil {
 		logger.Errorf("call DoResiger failed,req=%+v,err=%s", *req, err.Error())
-		response.ResponseError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 	}
 	response.ResponseOK(ctx, resp)
 }
@@ -83,7 +83,7 @@ func GetListTraining(ctx *gin.Context) {
 	resp, err := logic.GetTrainingList(ctx, req)
 	if err != nil {
 		logger.Errorf("call GetTrainingList failed, err = %s", err.Error())
-		response.ResponseServerError(ctx, constanct.ServerBusyCode)
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
