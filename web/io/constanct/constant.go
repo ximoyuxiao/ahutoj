@@ -156,7 +156,7 @@ const (
 )
 
 var codeMsgMap = map[ResCode]string{
-	SuccessCode:                      "success",
+	SuccessCode:                      "",
 	InvalidParamCode:                 "请求参数错误",
 	ServerErrorCode:                  "服务器错误",
 	PageNotFoundCode:                 "页面不存在",
