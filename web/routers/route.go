@@ -39,10 +39,11 @@ func InitServer() {
 }
 
 func regeisterRouters(router *gin.Engine) {
-	router.GET("/ping", PingTest) // 测试网络连通性
+
 	// 相当于接口 /api/ 这组路径
 	apiRouter := router.Group("/api")
 	{
+		apiRouter.GET("/ping", PingTest) // 测试网络连通性
 		apiRouter.GET("/now", serverTime)
 		// 相当于接口/api/Auth/ 的这组路径
 		authRouter := apiRouter.Group("/auth")
@@ -139,7 +140,7 @@ func NotFindRegister(ctx *gin.Context) {
 func PingTest(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"code":    constanct.SuccessCode,
-		"messgae": "pong",
+		"messgae": "",
 	})
 }
 
