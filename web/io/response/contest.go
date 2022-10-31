@@ -45,6 +45,7 @@ type ProblemItem struct {
 type RankItem struct {
 	UserID    string        `json:"UserID"`
 	Uname     string        `json:"Uname"`
+	Uclass    string        `json:"Uclass"`
 	AllSubmit int64         `json:"AllSubmit"`
 	ACNumber  int64         `json:"ACNumber"`
 	CENumber  int64         `json:"CENumber"`

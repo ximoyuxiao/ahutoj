@@ -185,9 +185,10 @@ func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, erro
 	}, nil
 }
 
-func initRankItem(rank *response.RankItem, Uname, Userid string, problemSize int) {
-	rank.Uname = Uname
-	rank.UserID = Userid
+func initRankItem(rank *response.RankItem, user dao.User, problemSize int) {
+	rank.Uname = user.Uname
+	rank.UserID = user.UID
+	rank.Uclass = user.Classes
 	rank.AllSubmit = 0
 	rank.Problems = make([]response.ProblemItem, problemSize)
 	for idx := range rank.Problems {
@@ -241,7 +242,7 @@ func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface
 			user := dao.User{UID: submit.UID}
 			models.FindUserByUID(ctx, &user)
 			ranks = append(ranks, response.RankItem{})
-			initRankItem(&ranks[rid], user.Uname, submit.UID, len(problems))
+			initRankItem(&ranks[rid], user, len(problems))
 		}
 		rank := &ranks[rid]
 		problem := &rank.Problems[problemIdxMap[submit.PID]]
