@@ -92,6 +92,12 @@ func GetSubmits(ctx *gin.Context, req *request.SubmitListReq) (interface{}, erro
 	if req.UID != nil {
 		submit.UID = *req.UID
 	}
+	if req.Lang != nil {
+		submit.Lang = *req.Lang
+	}
+	if req.Result != nil {
+		submit.Result = *req.Result
+	}
 	offset, limit := utils.GetPageInfo(req.Page, req.Limit)
 	submits, err := models.GetSubmitList(ctx, submit, offset, limit)
 	if err != nil {

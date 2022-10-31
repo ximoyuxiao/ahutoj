@@ -23,9 +23,11 @@ type GetSubmitReq struct {
 }
 
 type SubmitListReq struct {
-	PID *int64  `query:"PID"`
-	UID *string `query:"UID"`
-	CID *int64  `query:"CID"`
+	PID    *int64              `query:"PID"`
+	UID    *string             `query:"UID"`
+	CID    *int64              `query:"CID"`
+	Result *constanct.OJResult `query:"Result"`
+	Lang   *constanct.LANG     `query:"Lang"`
 	GetListReq
 }
 
