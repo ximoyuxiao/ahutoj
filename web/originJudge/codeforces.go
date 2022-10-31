@@ -294,7 +294,7 @@ func (p *CodeForceJudge) submit() bool {
 		"submittedProblemIndex": idx,
 		"programTypeId":         lang,
 		"contestId":             CID,
-		"source":                p.Submit.Source,
+		"source":                fmt.Sprintf("%s//submitTime:%v\n", p.Submit.Source, time.Now().UnixMilli()),
 		"sourceFile":            "",
 		"tabSize":               "4",
 		"_tta":                  "493",

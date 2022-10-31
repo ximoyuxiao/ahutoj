@@ -38,6 +38,12 @@ func TestAtcoderLogin(t *testing.T) {
 	utils.LogInit()
 	submit, _ := mysqldao.SelectSubmitBySID(context.Background(), 1024)
 	submit.Result = constanct.OJ_JUDGE
-	atcoderJudger := originjudge.AtCoderJudge{}
-	atcoderJudger.Judge(context.Background(), submit, "abc272_c")
+	for {
+		for i := 0; i < 5; i++ {
+			originJudge := originjudge.GetOriginJudgeFunc(originjudge.OJPlatform(submit.OJPlatform))
+			originJudge.Judge(context.Background(), submit, "abc272_c")
+		}
+		time.Sleep(20 * time.Second)
+	}
+
 }

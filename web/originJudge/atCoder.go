@@ -20,7 +20,8 @@ import (
 
 type ATcoderJudgeUser struct {
 	OriginJudgeUser
-	CsrfToken string
+	LastSubmitTime int64
+	CsrfToken      string
 }
 
 var atlock sync.Mutex
@@ -74,9 +75,12 @@ type AtCoderJudge struct {
 }
 
 func (p AtCoderJudge) Judge(ctx context.Context, submit dao.Submit, PID string) error {
+	logger := utils.GetLogInstance()
+	logger.Infof("use atcoder judgeing:SID:%v", submit.SID)
 	err := p.InitAtcoderJudge(ctx)
 	defer p.RetJudgeUser(ctx)
 	defer p.commitToDB(ctx)
+	defer logger.Infof("judge complete judgeing:SID:%v", submit.SID)
 	p.Submit = submit
 	p.PID = PID
 	if err != nil {
@@ -110,13 +114,14 @@ func getAtcoderUser(ctx context.Context) *ATcoderJudgeUser {
 	defer atlock.Unlock()
 	for idx := range atcoderJudgeUsers {
 		user := &atcoderJudgeUsers[idx]
-		if user.Status == JUDGE_FREE {
+		if user.Status == JUDGE_FREE && time.Now().UnixNano()-user.LastSubmitTime >= 2*int64(time.Second) {
 			user.Status = JUDGE_BUSY
 			return user
 		}
 	}
 	return nil
 }
+
 func initAtcoderUserCount(ctx context.Context) {
 	atlock.Lock()
 	defer atlock.Unlock()
@@ -191,15 +196,15 @@ func (p *AtCoderJudge) getCsrfToekn() (string, error) {
 
 func (p *AtCoderJudge) login(ctx context.Context) error {
 	// logger := utils.GetLogInstance()
-	if p.JudgeUser == nil {
-		p.JudgeUser = getAtcoderUser(ctx)
-	}
-	if p.checkAtcoderLogin(ctx) {
-		return nil
-	}
 	/*没有登录信息  登录*/
 	loginURL := "https://atcoder.jp/login"
 	for i := 1; i < 10; i++ {
+		for p.JudgeUser == nil {
+			p.JudgeUser = getAtcoderUser(ctx)
+		}
+		if p.checkAtcoderLogin(ctx) {
+			return nil
+		}
 		p.JudgeUser.CsrfToken, _ = p.getCsrfToekn()
 		var data = map[string]string{
 			"username":   p.JudgeUser.ID,
@@ -215,7 +220,7 @@ func (p *AtCoderJudge) login(ctx context.Context) error {
 		if p.checkAtcoderLogin(ctx) {
 			return nil
 		}
-		p.JudgeUser.OriginJudgeUser.Cookies = make(map[string]string, 0)
+		p.RetJudgeUser(ctx)
 	}
 	return fmt.Errorf("try login failed")
 }
@@ -287,6 +292,7 @@ func (p *AtCoderJudge) RetJudgeUser(ctx context.Context) {
 	}
 	atlock.Lock()
 	defer atlock.Unlock()
+	p.JudgeUser.LastSubmitTime = time.Now().UnixNano()
 	p.JudgeUser.Status = JUDGE_FREE
 	p.JudgeUser = nil
 }
