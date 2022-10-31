@@ -44,7 +44,10 @@ USER=`sudo cat /etc/mysql/debian.cnf |grep user|head -1|awk  '{print $3}'`
 PASSWORD=`sudo cat /etc/mysql/debian.cnf |grep password|head -1|awk  '{print $3}'`
 CPU=`grep "cpu cores" /proc/cpuinfo |head -1|awk '{print $4}'`
 mysql -h localhost -u$USER -p$PASSWORD < ./doc/oj.sql
-# echo "insert into ahutoj.Perrmission values('admin','administrator','true','N');"|mysql -h localhost -u$USER -p$PASSWORD 
+# echo "insert into ahutoj.Perrmission values('admin','administrator','true','N');"|mysql -h localhost -u$USER -p$PASSWORD
+sed -i 's/skip-external-locking/# skip-external-locking/g' /etc/mysql/mysql.conf.d/mysqld.cnf
+sed -i 's/bind-address            = 127.0.0.1/bind-address            = 0.0.0.0/g' /etc/mysql/mysql.conf.d/mysqld.cnf
+systemctl restart mysql
 cp ./config.yaml.bak ./config.yaml
 redis-cli < ./doc/redis.in
 make build
@@ -53,3 +56,12 @@ make all
 cd ..
 echo "username:$USER"
 echo "password:$PASSWORD"
+
+
+installNPM(){
+    pwd=`pwd`
+    ln -s $pwd/node-v16.3.0-linux-x64/bin/node /usr/local/bin/node
+    ln -s $pwd/node-v16.3.0-linux-x64/bin/npm /usr/local/bin/npm
+    npm i vue-tsc -D
+    npm install -g vite
+}

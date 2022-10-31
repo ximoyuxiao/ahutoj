@@ -11,3 +11,5 @@ judged
 test
 *.rdb
 push.sh
+test.go
+*.log

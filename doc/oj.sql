@@ -1,4 +1,12 @@
-drop table IF EXISTS CEINFO
+#1.创建表空间
+create database ahutoj;
+#2.创建用户
+CREATE USER 'AHUTOnlinejudge'@'localhost' IDENTIFIED BY '2019ahut';
+#3.授予用户表空间的权限
+grant all privileges on ahutoj.* to 'AHUTOnlinejudge'@'%';
+#4.创建表
+use ahutoj
+drop table IF EXISTS CEINFO;
 drop TABLE IF EXISTS Submit;
 drop table IF EXISTS ConPro;
 drop table IF EXISTS Contest;
@@ -8,15 +16,6 @@ drop table IF EXISTS List;
 drop table IF EXISTS Problem;
 drop table IF EXISTS Permission;
 drop table IF EXISTS User;
-drop database IF EXISTS ahutoj;
-#1.创建表空间
-create database ahutoj;
-#2.创建用户
-CREATE USER 'AHUTOnlinejudge'@'localhost' IDENTIFIED BY '2019ahut';
-#3.授予用户表空间的权限
-grant all privileges on ahutoj.* to 'AHUTOnlinejudge'@'localhost';
-#4.创建表
-use ahutoj
 create table User(
     UID varchar(20)   primary key,
     UserName  varchar(20),
@@ -56,7 +55,7 @@ create table Problem(
     Origin int,
     OriginPID Text,
     ContentType int,
-    Visible  int,
+    Visible  int
 )DEFAULT CHARSET=utf8mb4;
 ALTER TABLE Problem AUTO_INCREMENT = 1000;
 
@@ -167,3 +166,7 @@ insert into Contest values(null,'admin','测试比赛2','用于测试',163955900
 insert into Contest values(null,'admin','测试比赛3','用于测试',1639559000000,1639599000000,1,1,"",null);
 insert into List values(null,'admin','测试',1639599000000);
 insert into ConPro values(1000,1000,'A+B问题',0,0);
+
+use mysql;
+update user set host='%' where user='AHUTOnlinejudge';
+flush privileges;
