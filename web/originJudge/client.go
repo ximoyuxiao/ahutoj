@@ -7,8 +7,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-
-	"github.com/bytedance/gopkg/util/logger"
 )
 
 type HttpMethodType string
@@ -27,6 +25,7 @@ const (
 
 /*useRedirect 是否使用重定向，不是的话跳过重定向，是就不管*/
 func DoRequest(method HttpMethodType, url string, headers map[string]string, cookies map[string]string, body *string, useRedirect bool) (*http.Response, error) {
+	logger := utils.GetLogInstance()
 	client := &http.Client{}
 	if !useRedirect {
 		client.CheckRedirect = func(req *http.Request, via []*http.Request) error {

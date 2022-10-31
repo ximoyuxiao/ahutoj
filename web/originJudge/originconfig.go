@@ -4,10 +4,9 @@ import (
 	"ahutoj/web/dao"
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/models"
+	"ahutoj/web/utils"
 	"context"
 	"time"
-
-	"github.com/bytedance/gopkg/util/logger"
 )
 
 type OJPlatform int64
@@ -39,11 +38,13 @@ func GetOriginJudgeFunc(oj OJPlatform) OriginFunc {
 }
 
 func InitOriginThread() {
+	logger := utils.GetLogInstance()
 	for {
 		/*1、从数据库 当中 提取外部判题*/
 		submits, _ := models.GetOriginJudgeSubmit(context.Background())
 		/*2、得到后批量更新状态*/
 		for _, submit := range submits {
+			logger.Errorf("submit size:%d", len(submits))
 			submit.Result = constanct.OJ_JUDGE
 			models.UpdateSubmit(context.Background(), submit)
 			originJudge := GetOriginJudgeFunc(OJPlatform(submit.OJPlatform))
@@ -54,6 +55,6 @@ func InitOriginThread() {
 			// 执行一个协程。
 			go originJudge.Judge(context.Background(), submit, submit.OriginPID)
 		}
-		time.Sleep(2 * time.Second)
+		time.Sleep(5 * time.Second)
 	}
 }

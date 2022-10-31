@@ -14,13 +14,12 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"github.com/bytedance/gopkg/util/logger"
 )
 
 type ATcoderJudgeUser struct {
 	OriginJudgeUser
 	LastSubmitTime int64
+	SleepTime      int64
 	CsrfToken      string
 }
 
@@ -78,24 +77,24 @@ func (p AtCoderJudge) Judge(ctx context.Context, submit dao.Submit, PID string) 
 	logger := utils.GetLogInstance()
 	logger.Infof("use atcoder judgeing:SID:%v", submit.SID)
 	err := p.InitAtcoderJudge(ctx)
+	if err != nil {
+		logger.Errorf("Call InitAtcoderJudge failed,err=%v", err.Error())
+		return fmt.Errorf("call InitAtcoderJudge failed,err=%v", err.Error())
+	}
 	defer p.RetJudgeUser(ctx)
 	defer p.commitToDB(ctx)
-	defer logger.Infof("judge complete judgeing:SID:%v", submit.SID)
+	defer logger.Infof("judge complete judgeing:SID:%v result:%v", p.Submit.SID, submit.Result)
 	p.Submit = submit
 	p.PID = PID
-	if err != nil {
-		logger.Errorf("Call InitAtcoderJudge failed,err=%s", err.Error())
-		return fmt.Errorf("call InitAtcoderJudge failed,err=%s", err.Error())
-	}
 	err = p.login(ctx)
 	if err != nil {
-		logger.Errorf("Call login failed,err=%s", err.Error())
-		return fmt.Errorf("call login failed,err=%s", err.Error())
+		logger.Errorf("Call login failed,err=%v", err.Error())
+		return fmt.Errorf("call login failed,err=%v", err.Error())
 	}
 	p.SetJudeID(ctx)
 	if err = p.submit(ctx); err != nil {
-		logger.Errorf("Call submit failed,submit=%s", utils.Sdump(submit))
-		return fmt.Errorf("call submit failed,submit=%s", utils.Sdump(submit))
+		logger.Errorf("Call submit failed,submit=%v", submit.PID)
+		return fmt.Errorf("call submit failed,submit=%v", submit.PID)
 	}
 	p.getResult(ctx)
 	return nil
@@ -114,7 +113,10 @@ func getAtcoderUser(ctx context.Context) *ATcoderJudgeUser {
 	defer atlock.Unlock()
 	for idx := range atcoderJudgeUsers {
 		user := &atcoderJudgeUsers[idx]
-		if user.Status == JUDGE_FREE && time.Now().UnixNano()-user.LastSubmitTime >= 2*int64(time.Second) {
+		if user.Status == JUDGE_FREE && time.Now().UnixNano()-user.LastSubmitTime >= user.SleepTime {
+			if user.SleepTime == 10*int64(time.Second) {
+				user.SleepTime = 60 * int64(time.Second)
+			}
 			user.Status = JUDGE_BUSY
 			return user
 		}
@@ -136,6 +138,7 @@ func initAtcoderUserCount(ctx context.Context) {
 				ID:       fmt.Sprintf("AOJjudge%02d", i),
 				Password: "AhutAcm@108",
 			},
+			SleepTime: 10 * int64(time.Second),
 			CsrfToken: "",
 		})
 	}
@@ -159,24 +162,25 @@ func (p *AtCoderJudge) InitAtcoderJudge(ctx context.Context) error {
 	return nil
 }
 
-func (p *AtCoderJudge) checkAtcoderLogin(ctx context.Context) bool {
+func (p *AtCoderJudge) checkAtcoderLogin(ctx context.Context) (bool, error) {
+	// logger := utils.GetLogInstance()
 	if p.LoginSuccess {
-		return true
+		return true, nil
 	}
 	resp, err := DoRequest(GET, atcoderUrl, p.Headers, p.JudgeUser.Cookies, nil, false)
 	if err != nil {
-		return false
+		return false, fmt.Errorf("call DoRequest failed,err=%v", err.Error())
 	}
 	SetCookies(resp, &p.JudgeUser.OriginJudgeUser)
 	Text, err := ParseRespToByte(resp)
 	if err != nil {
-		return false
+		return false, fmt.Errorf("call ParseRespToByte failed,err=%v", err.Error())
 	}
 	idx := strings.Index(string(Text), "Sign Out")
 	if idx != -1 {
 		p.LoginSuccess = true
 	}
-	return p.LoginSuccess
+	return p.LoginSuccess, nil
 }
 
 func (p *AtCoderJudge) getCsrfToekn() (string, error) {
@@ -195,15 +199,19 @@ func (p *AtCoderJudge) getCsrfToekn() (string, error) {
 }
 
 func (p *AtCoderJudge) login(ctx context.Context) error {
-	// logger := utils.GetLogInstance()
+	logger := utils.GetLogInstance()
 	/*没有登录信息  登录*/
 	loginURL := "https://atcoder.jp/login"
 	for i := 1; i < 10; i++ {
 		for p.JudgeUser == nil {
 			p.JudgeUser = getAtcoderUser(ctx)
 		}
-		if p.checkAtcoderLogin(ctx) {
+		ok, err := p.checkAtcoderLogin(ctx)
+		if ok {
 			return nil
+		}
+		if err != nil {
+			logger.Debugf("call checkAtcoderLogin failed,err=%v", err.Error())
 		}
 		p.JudgeUser.CsrfToken, _ = p.getCsrfToekn()
 		var data = map[string]string{
@@ -217,8 +225,12 @@ func (p *AtCoderJudge) login(ctx context.Context) error {
 			return err
 		}
 		SetCookies(resp, &p.JudgeUser.OriginJudgeUser)
-		if p.checkAtcoderLogin(ctx) {
+		ok, err = p.checkAtcoderLogin(ctx)
+		if ok {
 			return nil
+		}
+		if err != nil {
+			logger.Debugf("call checkAtcoderLogin failed,err=%v", err.Error())
 		}
 		p.RetJudgeUser(ctx)
 	}
@@ -226,6 +238,7 @@ func (p *AtCoderJudge) login(ctx context.Context) error {
 }
 
 func (p *AtCoderJudge) ParsePID(ctx context.Context) (string, string, error) {
+	logger := utils.GetLogInstance()
 	re := regexp.MustCompile(`([A-Za-z0-9]*)_([A-Za-z]*)`)
 	ret := re.FindStringSubmatch(p.PID)
 	if ret == nil {
@@ -234,35 +247,39 @@ func (p *AtCoderJudge) ParsePID(ctx context.Context) (string, string, error) {
 	return ret[1], ret[2], nil
 }
 
-func (p *AtCoderJudge) CheckAndGetSubmissionID(ctx context.Context, resp *http.Response) string {
+func (p *AtCoderJudge) CheckAndGetSubmissionID(ctx context.Context, resp *http.Response) (string, error) {
 	if resp.StatusCode != 302 {
-		return ""
+		Text, _ := ParseRespToByte(resp)
+		re := regexp.MustCompile("<div class=\"alert alert-danger alert-dismissible col-sm-12 fade in\" role=\"alert\" >\n\t\t\t\t<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n\t\t\t\t<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>(.*?)\n\t\t\t</div>")
+		ret := re.FindSubmatch(Text)
+		return "", fmt.Errorf("resp should 302 but statusCode:%v errInfo:%v", resp.StatusCode, string(ret[1]))
 	}
 	CID, _, _ := p.ParsePID(ctx)
 	redyLocal := "/contests/" + CID + "/submissions/me"
 	local := resp.Header.Get("Location")
 	if local != redyLocal {
-		return ""
+		return "", fmt.Errorf("resp Location should:%v,but Location:%v", redyLocal, local)
 	}
 	checkUrl := atcoderUrl + redyLocal
 	resp, err := DoRequest(GET, checkUrl, p.Headers, p.JudgeUser.Cookies, nil, false)
 	if err != nil {
-		return ""
+		return "", err
 	}
 	SetCookies(resp, &p.JudgeUser.OriginJudgeUser)
 	Text, err := ParseRespToByte(resp)
 	if err != nil {
-		return ""
+		return "", err
 	}
 	re := regexp.MustCompile(`<a href="/contests/.*?/submissions/([0-9]*)">Detail</a>`)
 	ret := re.FindSubmatch(Text)
 	if ret == nil {
-		return ""
+		return "", fmt.Errorf("not found ret resp.status:%v and url:%v", resp.StatusCode, checkUrl)
 	}
-	return string(ret[1])
+	return string(ret[1]), nil
 }
 
 func (p *AtCoderJudge) submit(ctx context.Context) error {
+	logger := utils.GetLogInstance()
 	CID, _, _ := p.ParsePID(ctx)
 	submitUrl := atcoderUrl + "/contests/" + CID + "/submit"
 	var dataMap = map[string]string{
@@ -277,12 +294,12 @@ func (p *AtCoderJudge) submit(ctx context.Context) error {
 		return err
 	}
 	SetCookies(resp, &p.JudgeUser.OriginJudgeUser)
-	p.SubmissionID = p.CheckAndGetSubmissionID(ctx, resp)
-	if p.SubmissionID == "" {
-		logger.Errorf("submit SourceCode failed,submit:%+v", utils.Sdump(p.Submit))
-		return fmt.Errorf("submit SourceCode failed,submit:%+v", utils.Sdump(p.Submit))
+	p.SubmissionID, err = p.CheckAndGetSubmissionID(ctx, resp)
+	if err != nil {
+		logger.Errorf("submit SourceCode failed,submit:%+v,err:%v", p.Submit.PID, err.Error())
+		return fmt.Errorf("submit SourceCode failed,submit:%+v,err:%v", p.Submit.PID, err.Error())
 	}
-	p.RetJudgeUser(ctx)
+	p.JudgeUser.LastSubmitTime = time.Now().UnixNano()
 	return nil
 }
 

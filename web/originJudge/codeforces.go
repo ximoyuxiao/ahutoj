@@ -19,7 +19,7 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/bytedance/gopkg/util/logger"
+	"github.com/sirupsen/logrus"
 )
 
 type CFJudgeUser struct {
@@ -27,6 +27,7 @@ type CFJudgeUser struct {
 	CsrfToken string
 }
 
+var logger *logrus.Logger = utils.GetLogInstance()
 var cfLock sync.Mutex
 
 type CFJudgeUsers []CFJudgeUser
@@ -122,7 +123,6 @@ func (p *CodeForceJudge) initCodeforceHead() {
 }
 
 func (p *CodeForceJudge) getCsrfToekn() (string, error) {
-	logger := utils.GetLogInstance()
 	url := "https://codeforces.com"
 	resp, err := DoRequest(GET, url, nil, nil, nil, true)
 	if err != nil {
@@ -170,7 +170,7 @@ func (p *CodeForceJudge) retRangeUser() {
 
 // 初始化一个判题机
 func (p *CodeForceJudge) InitCodeForceJudge() error {
-	// logger := utils.GetLogInstance()
+	// ()
 	if JudgeUsers == nil {
 		initUserCount()
 	}
@@ -197,7 +197,6 @@ func getFtaa() string {
 }
 
 func (p *CodeForceJudge) checkLoginSuccess() bool {
-	logger := utils.GetLogInstance()
 	if p.loginSuccess {
 		return true
 	}
@@ -219,7 +218,7 @@ func (p *CodeForceJudge) checkLoginSuccess() bool {
 }
 
 func (p *CodeForceJudge) Login() error {
-	logger := utils.GetLogInstance()
+
 	url := "https://codeforces.com/enter?locale=en"
 	if p.JudgeUser == nil {
 		p.JudgeUser, _ = getRangeUser()
@@ -282,7 +281,6 @@ func GetContest(CID string) string {
 }
 
 func (p *CodeForceJudge) submit() bool {
-	logger := utils.GetLogInstance()
 	CID, idx, _ := p.ParsePID()
 	url := cfurl + `/` + GetContest(CID) + `/` + CID + `/submit?csrf_token=` + p.JudgeUser.CsrfToken
 	lang := p.GetCFLang()
@@ -341,7 +339,6 @@ func CheckResult(result string) constanct.OJResult {
 }
 
 func (p *CodeForceJudge) getResult() error {
-	logger := utils.GetLogInstance()
 	// https://codeforces.com/contest/1003/submission/174882990
 	CID, _, err := p.ParsePID()
 	if err != nil {
