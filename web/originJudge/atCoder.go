@@ -88,13 +88,21 @@ func (p AtCoderJudge) Judge(ctx context.Context, submit dao.Submit, PID string) 
 		logger.Errorf("Call login failed,err=%s", err.Error())
 		return fmt.Errorf("call login failed,err=%s", err.Error())
 	}
+	p.SetJudeID(ctx)
 	if err = p.submit(ctx); err != nil {
 		logger.Errorf("Call submit failed,submit=%s", utils.Sdump(submit))
 		return fmt.Errorf("call submit failed,submit=%s", utils.Sdump(submit))
 	}
 	p.getResult(ctx)
-	p.commitToDB(ctx)
 	return nil
+}
+
+func (p *AtCoderJudge) SetJudeID(ctx context.Context) {
+	for idx, judge := range atcoderJudgeUsers {
+		if judge.ID == p.JudgeUser.ID {
+			p.Submit.JudgeID = int64(idx + 1)
+		}
+	}
 }
 
 func getAtcoderUser(ctx context.Context) *ATcoderJudgeUser {
@@ -127,6 +135,7 @@ func initAtcoderUserCount(ctx context.Context) {
 		})
 	}
 }
+
 func (p *AtCoderJudge) InitAtcoderJudge(ctx context.Context) error {
 	// logger := utils.GetLogInstance()
 	if atcoderJudgeUsers == nil {
@@ -144,6 +153,7 @@ func (p *AtCoderJudge) InitAtcoderJudge(ctx context.Context) error {
 	p.Headers = atcoderHeaders
 	return nil
 }
+
 func (p *AtCoderJudge) checkAtcoderLogin(ctx context.Context) bool {
 	if p.LoginSuccess {
 		return true
@@ -163,6 +173,7 @@ func (p *AtCoderJudge) checkAtcoderLogin(ctx context.Context) bool {
 	}
 	return p.LoginSuccess
 }
+
 func (p *AtCoderJudge) getCsrfToekn() (string, error) {
 	resp, err := DoRequest(GET, atcoderUrl, p.Headers, p.JudgeUser.Cookies, nil, false)
 	if err != nil {
@@ -177,6 +188,7 @@ func (p *AtCoderJudge) getCsrfToekn() (string, error) {
 	}
 	return string(ret[1]), nil
 }
+
 func (p *AtCoderJudge) login(ctx context.Context) error {
 	// logger := utils.GetLogInstance()
 	if p.JudgeUser == nil {
@@ -207,6 +219,7 @@ func (p *AtCoderJudge) login(ctx context.Context) error {
 	}
 	return fmt.Errorf("try login failed")
 }
+
 func (p *AtCoderJudge) ParsePID(ctx context.Context) (string, string, error) {
 	re := regexp.MustCompile(`([A-Za-z0-9]*)_([A-Za-z]*)`)
 	ret := re.FindStringSubmatch(p.PID)
@@ -267,6 +280,7 @@ func (p *AtCoderJudge) submit(ctx context.Context) error {
 	p.RetJudgeUser(ctx)
 	return nil
 }
+
 func (p *AtCoderJudge) RetJudgeUser(ctx context.Context) {
 	if p.JudgeUser == nil {
 		return
@@ -276,6 +290,7 @@ func (p *AtCoderJudge) RetJudgeUser(ctx context.Context) {
 	p.JudgeUser.Status = JUDGE_FREE
 	p.JudgeUser = nil
 }
+
 func (p *AtCoderJudge) CheckResult(ctx context.Context, Text []byte) bool {
 	re := regexp.MustCompile(`<span class='label label-.*?' data-toggle='tooltip' data-placement='top' title=".*?">([A-Za-z]*)</span>`)
 	ret := re.FindSubmatch(Text)
@@ -289,6 +304,7 @@ func (p *AtCoderJudge) CheckResult(ctx context.Context, Text []byte) bool {
 	p.Submit.Result = atcoderResultMap[result]
 	return true
 }
+
 func (p *AtCoderJudge) getResult(ctx context.Context) error {
 	CID, _, _ := p.ParsePID(ctx)
 	submissionUrl := atcoderUrl + "/contests/" + CID + "/submissions/" + p.SubmissionID
@@ -322,6 +338,7 @@ func (p *AtCoderJudge) getResult(ctx context.Context) error {
 		return nil
 	}
 }
+
 func (p *AtCoderJudge) commitToDB(ctx context.Context) error {
 	if p.Submit.Result == constanct.OJ_JUDGE {
 		p.Submit.Result = constanct.OJ_FAILED

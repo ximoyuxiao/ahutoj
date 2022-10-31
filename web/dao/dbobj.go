@@ -106,7 +106,7 @@ type Submit struct {
 	PID           int64              `gorm:"column:PID"`
 	UID           string             `gorm:"column:UID"`
 	CID           int64              `gorm:"column:CID"`
-	Judgeid       int64              `gorm:"column:Judgeid"`
+	JudgeID       int64              `gorm:"column:JudgeID"`
 	Source        string             `gorm:"column:Source"`
 	Lang          constanct.LANG     `gorm:"column:Lang"`
 	Result        constanct.OJResult `gorm:"column:Result"`
