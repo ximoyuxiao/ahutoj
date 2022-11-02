@@ -49,7 +49,9 @@ func initAPP(ConfigPath string) error {
 
 	middlewares.InitSnowflake(utils.GetConfInstance().StartTime, utils.GetConfInstance().MachineID)
 	// 初始化 重判题目的协程
-	go originjudge.InitOriginThread()
+	if utils.GetConfInstance().UseOriginJudge {
+		go originjudge.InitOriginThread()
+	}
 	routers.InitServer()
 	return nil
 }

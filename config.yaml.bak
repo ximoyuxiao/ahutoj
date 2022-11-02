@@ -1,12 +1,37 @@
+# 端口号
 port: ":4212"
 mode: "debug"
+# 签名
 sign: "ahutoj"
-version: "0.0.1"
+version: "1.0.0"
+# 开始时间  雪花ID的配置
 startTime: "2022-01-15"
 machineID: 1
+# 判题数据
 dataPath: "./core/Data"
-Terminal: 0.8   #封榜时间
-openTime: 0     #结束后多久打开单位Hoour
+#封榜时间
+terminal: 0.8  
+
+# 是否开放注册
+openRegisiters: true
+# 外部判题相关配置
+useOriginJudges: true
+# 注册一个AtCoder判题机，首先配置ID前缀，配置公共密码 ID:prefix + 数字(最多支持 1-100) 
+atCoderJudges:
+    count: 20 
+    prefix: "AOJjudge"
+    password: "AhutAcm@108"
+# 外部判题使用codeforce
+codeForceJudge:   
+    count: 20 
+    prefix: "AOJjudge"
+    password: "AhutAcm@108"
+# 外部判题使用洛谷
+LuoguJudge: true      
+    count: 20 
+    prefix: "AOJjudge"
+    password: "AhutAcm@108"
+
 mysql:  
     driver: "mysql"
     host: "127.0.0.1"
@@ -25,5 +50,5 @@ redis:
 
 log:
     level: "debug"
-    filename: "console"
+    filename: "ahutoj.log"
     max_size: 4194304

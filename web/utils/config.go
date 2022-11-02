@@ -9,18 +9,24 @@ import (
 var config = new(AppConfig)
 
 type AppConfig struct {
-	Port         string  `mapstructure:"port"`
-	Mode         string  `mapstructure:"mode"`
-	Sign         string  `mapstructure:"sign"`
-	Version      string  `mapstructure:"version"`
-	StartTime    string  `mapstructure:"startTime"`
-	MachineID    int64   `mapstructure:"machineID "`
-	DataPath     string  `mapstructure:"dataPath"`
-	Terminal     float64 `mapstructure:"Terminal"`
-	OpenTime     float64 `mapstructure:"openTime"`
-	*MySQLConfig `mapstructure:"mysql"`
-	*RedisConfig `mapstructure:"redis"`
-	*LogConfig   `mapstructure:"log"`
+	Port          string  `mapstructure:"port"`
+	Mode          string  `mapstructure:"mode"`
+	Sign          string  `mapstructure:"sign"`
+	Version       string  `mapstructure:"version"`
+	StartTime     string  `mapstructure:"startTime"`
+	MachineID     int64   `mapstructure:"machineID "`
+	DataPath      string  `mapstructure:"dataPath"`
+	Terminal      float64 `mapstructure:"terminal"`
+	OpenTime      float64 `mapstructure:"openTime"`
+	OpenRegisiter bool    `mapstructure:"openRegisiter"`
+	*MySQLConfig  `mapstructure:"mysql"`
+	*RedisConfig  `mapstructure:"redis"`
+	*LogConfig    `mapstructure:"log"`
+
+	UseOriginJudge  bool `mapstructure:"useOriginJudge"`
+	*AtCoderJudges  `mapstructure:"atCoderJudges"`
+	*CodeForceJudge `mapstructure:"codeForceJudge"`
+	*LuoguJudge     `mapstructure:"luoguJudge"`
 }
 
 type MySQLConfig struct {
@@ -43,6 +49,22 @@ type LogConfig struct {
 	FileName string `mapstructure:"filename"`
 	MaxSize  int32  `mapstructure:"max_size"`
 	Level    string `mapstructure:"level"`
+}
+type AtCoderJudges struct {
+	Count    int64  `mapstructure:"count"`
+	Prefix   string `mapstructure:"prefix"`
+	Password string `mapstructure:"password"`
+}
+
+type CodeForceJudge struct {
+	Count    int64  `mapstructure:"count"`
+	Prefix   string `mapstructure:"prefix"`
+	Password string `mapstructure:"password"`
+}
+type LuoguJudge struct {
+	Count    int64  `mapstructure:"count"`
+	Prefix   string `mapstructure:"prefix"`
+	Password string `mapstructure:"password"`
 }
 
 func ConfigInit(configPath string) error {

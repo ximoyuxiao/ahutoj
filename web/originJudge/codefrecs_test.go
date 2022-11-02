@@ -12,6 +12,7 @@ import (
 )
 
 func TestSubmitAndGetResult(t *testing.T) {
+	utils.ConfigInit("../../config.yaml")
 	cfJudge := originjudge.CodeForceJudge{}
 	cfJudge.Submit = dao.Submit{
 		Lang:       constanct.CPP11,

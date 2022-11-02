@@ -130,13 +130,14 @@ func initAtcoderUserCount(ctx context.Context) {
 	if atcoderJudgeUsers != nil {
 		return
 	}
-	for i := 1; i <= 20; i++ {
+	config := utils.GetConfInstance().AtCoderJudges
+	for i := 1; i <= int(config.Count); i++ {
 		atcoderJudgeUsers = append(atcoderJudgeUsers, ATcoderJudgeUser{
 			OriginJudgeUser: OriginJudgeUser{
 				Status:   JUDGE_FREE,
 				Cookies:  make(map[string]string, 0),
-				ID:       fmt.Sprintf("AOJjudge%02d", i),
-				Password: "AhutAcm@108",
+				ID:       fmt.Sprintf("%v%02d", config.Prefix, i),
+				Password: config.Password,
 			},
 			SleepTime: 10 * int64(time.Second),
 			CsrfToken: "",

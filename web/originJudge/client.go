@@ -41,7 +41,7 @@ func DoRequest(method HttpMethodType, url string, headers map[string]string, coo
 	req, err := http.NewRequest(string(method), url, data)
 	req.ContentLength = int64(contntLength)
 	if err != nil {
-		logger.Errorf("call NewRequest failed,method=%s, method=%s, data=%s, err=%s", method, url, body, err.Error())
+		logger.Errorf("call NewRequest failed,method=%v, method=%v, data=%v, err=%v", method, url, body, err.Error())
 		return nil, err
 	}
 	if cookies != nil {

@@ -83,19 +83,22 @@ func (p CodeForceJudge) Judge(ctx context.Context, submit dao.Submit, PID string
 	p.Submit = submit
 	p.PID = PID
 	if err != nil {
-		logger.Errorf("Call InitCodeForceJudge failed,err=%s", err.Error())
-		return fmt.Errorf("call InitCodeForceJudge failed,err=%s", err.Error())
+		logger.Errorf("Call InitCodeForceJudge failed,err=%v", err.Error())
+		return fmt.Errorf("call InitCodeForceJudge failed,err=%v", err.Error())
 	}
 	err = p.Login()
 	if err != nil {
-		logger.Errorf("Call login failed,err=%s", err.Error())
-		return fmt.Errorf("call login failed,err=%s", err.Error())
+		logger.Errorf("Call login failed,err=%v", err.Error())
+		return fmt.Errorf("call login failed,err=%v", err.Error())
 	}
 	if !p.submit() {
-		logger.Errorf("Call submit failed,submit=%s", utils.Sdump(submit))
-		return fmt.Errorf("call submit failed,submit=%s", utils.Sdump(submit))
+		logger.Errorf("Call submit failed,submit=%v", submit.SID)
+		return fmt.Errorf("call submit failed,submit=%v", submit.SID)
 	}
-	p.getResult()
+	err = p.getResult()
+	if err != nil {
+		logger.Errorf("Call getResult failed,submit:%v, err:%v", submit.SID, err.Error())
+	}
 	return nil
 }
 
@@ -105,13 +108,14 @@ func initUserCount() {
 	if JudgeUsers != nil {
 		return
 	}
-	for i := 1; i <= 20; i++ {
+	config := utils.GetConfInstance().CodeForceJudge
+	for i := 1; i <= int(config.Count); i++ {
 		JudgeUsers = append(JudgeUsers, CFJudgeUser{
 			OriginJudgeUser: OriginJudgeUser{
 				Status:   JUDGE_FREE,
 				Cookies:  make(map[string]string, 0),
-				ID:       fmt.Sprintf("AOJjudge%02d", i),
-				Password: "AhutAcm@108",
+				ID:       fmt.Sprintf("%v%02d", config.Prefix, i),
+				Password: config.Password,
 			},
 			CsrfToken: "",
 		})
@@ -126,14 +130,14 @@ func (p *CodeForceJudge) getCsrfToekn() (string, error) {
 	url := "https://codeforces.com"
 	resp, err := DoRequest(GET, url, nil, nil, nil, true)
 	if err != nil {
-		logger.Errorf("call DoRequest failed,url:%s,err=%s", url, err.Error())
+		logger.Errorf("call DoRequest failed,url:%v,err=%v", url, err.Error())
 		return "", err
 	}
 	SetCookies(resp, &p.JudgeUser.OriginJudgeUser)
 	bodyText, err := ioutil.ReadAll(resp.Body)
 	defer resp.Body.Close()
 	if err != nil {
-		logger.Errorf("call ReadAll failed,resp=%+v,err=%s", utils.Sdump(resp), err.Error())
+		logger.Errorf("call ReadAll failed,resp=%+v,err=%v", utils.Sdump(resp), err.Error())
 		return "", err
 	}
 	re, _ := regexp.Compile(`<meta name="X-Csrf-Token" content="(?s:([0-9a-f]*))"`)
@@ -233,7 +237,7 @@ func (p *CodeForceJudge) Login() error {
 	p.JudgeUser.CsrfToken, _ = p.getCsrfToekn()
 	ftaa := getFtaa()
 	bfaa := "f1b3f18c715565b589b7823cda7448ce"
-	var data = fmt.Sprintf("csrf_token=%s&action=enter&handleOrEmail=%s&password=%s&remember=on&ftaa=%s&bfaa=%s&_taa=176", userCount.CsrfToken, userCount.ID, userCount.Password, ftaa, bfaa)
+	var data = fmt.Sprintf("csrf_token=%v&action=enter&handleOrEmail=%v&password=%v&remember=on&ftaa=%v&bfaa=%v&_taa=176", userCount.CsrfToken, userCount.ID, userCount.Password, ftaa, bfaa)
 	resp, err := DoRequest(POST, url, p.Headers, p.JudgeUser.Cookies, &data, false)
 	if err != nil {
 		logger.Error(err.Error())
@@ -244,7 +248,7 @@ func (p *CodeForceJudge) Login() error {
 	if p.checkLoginSuccess() {
 		return nil
 	}
-	logger.Errorf("login failed,data=%s", data)
+	logger.Errorf("login failed,data=%v", data)
 	return errors.New("login failed")
 }
 
@@ -259,7 +263,7 @@ func (p *CodeForceJudge) ParsePID() (string, string, error) {
 	re, _ := regexp.Compile("([0-9]*)([A-Z]*)")
 	strs := re.FindStringSubmatch(p.PID)
 	if len(strs) < 3 {
-		return "", "", fmt.Errorf("ParsePID failed ,pid:%s", p.PID)
+		return "", "", fmt.Errorf("ParsePID failed ,pid:%v", p.PID)
 	}
 	return strs[1], strs[2], nil
 }
@@ -292,7 +296,7 @@ func (p *CodeForceJudge) submit() bool {
 		"submittedProblemIndex": idx,
 		"programTypeId":         lang,
 		"contestId":             CID,
-		"source":                fmt.Sprintf("%s//submitTime:%v\n", p.Submit.Source, time.Now().UnixMilli()),
+		"source":                fmt.Sprintf("%v//submitTime:%v\n", p.Submit.Source, time.Now().UnixMilli()),
 		"sourceFile":            "",
 		"tabSize":               "4",
 		"_tta":                  "493",
@@ -301,7 +305,7 @@ func (p *CodeForceJudge) submit() bool {
 	data := MapToFormStrings(dataMap, "&")
 	resp, err := DoRequest(POST, url, p.Headers, p.JudgeUser.Cookies, &data, false)
 	if err != nil {
-		logger.Errorf("Call DoRequest failed,err=%s", err.Error())
+		logger.Errorf("Call DoRequest failed,err=%v", err.Error())
 		return false
 	}
 	return checkCFSubmitResp(resp, CID)
@@ -312,7 +316,7 @@ func (p *CodeForceJudge) GetSubmitID() (string, error) {
 	url := cfurl + "/" + GetContest(CID) + "/" + CID + "/my"
 	resp, err := DoRequest(GET, url, p.Headers, p.JudgeUser.Cookies, nil, true)
 	if err != nil {
-		logger.Errorf("call DoRequest failed,url:%s, err=%s", url, err.Error())
+		logger.Errorf("call DoRequest failed,url:%v, err=%v", url, err.Error())
 		return "", err
 	}
 	Text, err := ParseRespToByte(resp)
@@ -342,7 +346,7 @@ func (p *CodeForceJudge) getResult() error {
 	// https://codeforces.com/contest/1003/submission/174882990
 	CID, _, err := p.ParsePID()
 	if err != nil {
-		logger.Errorf("call ParsePID failed,PID:%s, err=%s", p.PID, err.Error())
+		logger.Errorf("call ParsePID failed,PID:%v, err=%v", p.PID, err.Error())
 		return err
 	}
 	submissionID, err := p.GetSubmitID()
