@@ -1,6 +1,6 @@
 include Redis/redis.mk
 include Tpool/tpool.mk
-CXXFLAGS +=-I/usr/local/mysql/include/mysql -I/usr/include/mysql -g -Wall
+CXXFLAGS +=-I/usr/local/mysql/include/mysql -I/usr/include/mysql -g -Wall -std=c++11
 LDFLAGS += -L/usr/local/mysql/lib/mysql -L/usr/lib/mysql  -L/usr/lib64/mysql
 LIBS += -lmysqlclient
 TARGET = judged

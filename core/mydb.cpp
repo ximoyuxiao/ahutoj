@@ -29,9 +29,9 @@ mysqlDB* mysqlDB::getInstance(){
 int mysqlDB::getDatabase(MYSQL* mysql)
 {
     mysql_init(mysql);
-    if(!mysql_real_connect(mysql,host.c_str(),user.c_str(),pass.c_str(),db.c_str(),port,NULL,0))
+    if(mysql_real_connect(mysql,host.c_str(),user.c_str(),pass.c_str(),db.c_str(),port,NULL,0))
     {
-        mysql_query(mysql,"set names utf8");
+        mysql_query(mysql,"set names utf8mb4");
         return 0;
     }
     return mysql_errno(mysql);
