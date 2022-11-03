@@ -123,6 +123,7 @@ func regeisterRouters(router *gin.Engine) {
 			fileRouter.POST("/:pid", service.UpFile)
 			// 获取判题文件列表
 			fileRouter.GET("/:pid", service.GetFileList)
+			fileRouter.POST("/image/", service.UpImagefile)
 			// 删除文件
 			fileRouter.DELETE("/:pid", service.RemoveFile)
 			// 解压文件

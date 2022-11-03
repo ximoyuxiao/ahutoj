@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/bytedance/gopkg/util/logger"
 	"github.com/gin-gonic/gin"
 )
 
@@ -124,6 +125,22 @@ func UnzipFile(ctx *gin.Context) {
 func UpProblemFile(ctx *gin.Context) {
 	response.ResponseOK(ctx, response.CreateResponse(constanct.NotimplementedCode))
 }
+func checkAndCreatDir(ctx *gin.Context, filepath string) {
+	ok, err := pathExists(filepath)
+	if err != nil {
+		logger.Errorf("call pathExists failed,filepath:%s, err=%v", filepath, err.Error())
+		response.ResponseErrorStr(ctx, constanct.ServerErrorCode,
+			fmt.Sprintf("call pathExists failed,filepath:%s, err=%v", filepath, err.Error()), response.ERROR)
+	}
+	if !ok {
+		err = os.Mkdir(filepath, os.ModeDir)
+		if err != nil {
+			logger.Errorf("call Mkdir failed,filepath:%s, err=%v", filepath, err.Error())
+			response.ResponseErrorStr(ctx, constanct.FILE_LIST_FAILEDCode,
+				fmt.Sprintf("call Mkdir failed,filepath:%s, err=%v", filepath, err.Error()), response.ERROR)
+		}
+	}
+}
 
 func GetFileType(filename string) string {
 	strs := strings.Split(filename, ".")
@@ -151,20 +168,7 @@ func GetFileList(ctx *gin.Context) {
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
-	ok, err = pathExists(filepath)
-	if err != nil {
-		logger.Errorf("call pathExists failed,filepath:%s, err=%v", filepath, err.Error())
-		response.ResponseErrorStr(ctx, constanct.ServerErrorCode,
-			fmt.Sprintf("call pathExists failed,filepath:%s, err=%v", filepath, err.Error()), response.ERROR)
-	}
-	if !ok {
-		err = os.Mkdir(filepath, os.ModeDir)
-		if err != nil {
-			logger.Errorf("call Mkdir failed,filepath:%s, err=%v", filepath, err.Error())
-			response.ResponseErrorStr(ctx, constanct.FILE_LIST_FAILEDCode,
-				fmt.Sprintf("call Mkdir failed,filepath:%s, err=%v", filepath, err.Error()), response.ERROR)
-		}
-	}
+	checkAndCreatDir(ctx, filepath)
 	files, err := ioutil.ReadDir(filepath)
 	if err != nil {
 		logger.Errorf("call ReadDir faile,filepath=%s err=%s", filepath, err.Error())
@@ -183,4 +187,43 @@ func GetFileList(ctx *gin.Context) {
 	resp.Response = response.CreateResponse(constanct.SuccessCode)
 	resp.Count = len(resp.Data)
 	response.ResponseOK(ctx, resp)
+}
+
+func checkImageFile(filename string) bool {
+	logger := utils.GetLogInstance()
+	var passImageSuffix = []string{
+		"png", "jpg", "jpeg",
+	}
+	filenames := strings.Split(filename, ".")
+	logger.Debugf("filenames:%+v", filenames)
+	if len(filenames) == 1 {
+		return false
+	}
+	suffix := filenames[len(filenames)-1]
+	for _, data := range passImageSuffix {
+		if data == suffix {
+			return true
+		}
+	}
+	return false
+}
+
+func UpImagefile(ctx *gin.Context) {
+	logger := utils.GetLogInstance()
+	file, err := ctx.FormFile("file")
+	if err != nil {
+		logger.Errorf("call FormFile filed, err=%s", err.Error())
+		response.ResponseError(ctx, constanct.FILE_UP_UNSUPPORTCode)
+		return
+	}
+	logger.Infof("upfile:%s", file.Filename)
+	if !checkImageFile(file.Filename) {
+		logger.Errorf("chekfile failed filename:%s", file.Filename)
+		response.ResponseError(ctx, constanct.FILE_UP_UNSUPPORTCode)
+		return
+	}
+	//SaveUploadedFile上传表单文件到指定的路径
+	checkAndCreatDir(ctx, "./image/")
+	ctx.SaveUploadedFile(file, "./image/"+file.Filename)
+	response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
 }
