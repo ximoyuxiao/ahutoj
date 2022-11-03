@@ -153,6 +153,8 @@ const (
 	FILE_UNZIP_NotExistCode  ResCode = 180303
 
 	FILE_LIST_FAILEDCode ResCode = 180401
+
+	FILE_UPIMAGE_FAILED ResCode = 180501
 )
 
 var codeMsgMap = map[ResCode]string{
@@ -225,6 +227,7 @@ var codeMsgMap = map[ResCode]string{
 	FILE_UNZIP_UNSUPPORTCode:         "文件类型不支持",
 	FILE_UNZIP_NotExistCode:          "不存在的文件",
 	FILE_LIST_FAILEDCode:             "获取判题文件失败",
+	FILE_UPIMAGE_FAILED:              "上传图片失败",
 }
 var HttpCodeMap = map[ResCode]int{
 	SuccessCode:        http.StatusOK,

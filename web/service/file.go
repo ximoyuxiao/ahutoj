@@ -127,21 +127,20 @@ func UnzipFile(ctx *gin.Context) {
 func UpProblemFile(ctx *gin.Context) {
 	response.ResponseOK(ctx, response.CreateResponse(constanct.NotimplementedCode))
 }
-func checkAndCreatDir(ctx *gin.Context, filepath string) {
+
+func checkAndCreatDir(ctx *gin.Context, filepath string) error {
 	ok, err := pathExists(filepath)
 	if err != nil {
 		logger.Errorf("call pathExists failed,filepath:%s, err=%v", filepath, err.Error())
-		response.ResponseErrorStr(ctx, constanct.ServerErrorCode,
-			fmt.Sprintf("call pathExists failed,filepath:%s, err=%v", filepath, err.Error()), response.ERROR)
 	}
 	if !ok {
 		err = os.Mkdir(filepath, os.ModeDir)
 		if err != nil {
 			logger.Errorf("call Mkdir failed,filepath:%s, err=%v", filepath, err.Error())
-			response.ResponseErrorStr(ctx, constanct.FILE_LIST_FAILEDCode,
-				fmt.Sprintf("call Mkdir failed,filepath:%s, err=%v", filepath, err.Error()), response.ERROR)
+			return err
 		}
 	}
+	return nil
 }
 
 func GetFileType(filename string) string {
@@ -170,7 +169,12 @@ func GetFileList(ctx *gin.Context) {
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
-	checkAndCreatDir(ctx, filepath)
+	err = checkAndCreatDir(ctx, filepath)
+	if err != nil {
+		logger.Errorf("call checkAndCreatDir failed,filepath:%v,err=%v", filepath, err.Error())
+		response.ResponseError(ctx, constanct.FILE_UP_FAILEDCode)
+		return
+	}
 	files, err := ioutil.ReadDir(filepath)
 	if err != nil {
 		logger.Errorf("call ReadDir faile,filepath=%s err=%s", filepath, err.Error())
@@ -209,6 +213,7 @@ func checkImageFile(filename string) bool {
 	}
 	return false
 }
+
 func buildFileName(file *multipart.FileHeader) string {
 	now := time.Now().UnixNano()
 	strs := strings.Split(file.Filename, ".")
@@ -221,24 +226,30 @@ func buildFileName(file *multipart.FileHeader) string {
 	imageName := fmt.Sprintf("%v%v.%v", md5str, now, suffix)
 	return imageName
 }
+
 func UpImagefile(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	file, err := ctx.FormFile("file")
 	if err != nil {
 		logger.Errorf("call FormFile filed, err=%s", err.Error())
-		response.ResponseError(ctx, constanct.FILE_UP_UNSUPPORTCode)
+		response.ResponseError(ctx, constanct.FILE_UPIMAGE_FAILED)
 		return
 	}
 	logger.Infof("upfile:%s", file.Filename)
 	if !checkImageFile(file.Filename) {
 		logger.Errorf("chekfile failed filename:%s", file.Filename)
-		response.ResponseError(ctx, constanct.FILE_UP_UNSUPPORTCode)
+		response.ResponseError(ctx, constanct.FILE_UPIMAGE_FAILED)
 		return
 	}
 
 	imagePath := utils.GetConfInstance().ImagePath
 	//SaveUploadedFile上传表单文件到指定的路径
-	checkAndCreatDir(ctx, imagePath)
+	err = checkAndCreatDir(ctx, imagePath)
+	if err != nil {
+		logger.Errorf("call checkAndCreatDir failed imagePath:%s", imagePath)
+		response.ResponseError(ctx, constanct.FILE_UPIMAGE_FAILED)
+		return
+	}
 	name := buildFileName(file)
 	ctx.SaveUploadedFile(file, imagePath+name)
 	response.ResponseOK(ctx, struct {
@@ -246,7 +257,7 @@ func UpImagefile(ctx *gin.Context) {
 		ImageURL string `json:"ImageURL"`
 	}{
 		Response: response.CreateResponse(constanct.SuccessCode),
-		ImageURL: "/image/" + name,
+		ImageURL: "image/" + name,
 	},
 	)
 }

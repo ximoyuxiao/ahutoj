@@ -9,6 +9,7 @@ startTime: "2022-01-15"
 machineID: 1
 # 判题数据
 dataPath: "./core/Data"
+imagePath: "./image/"
 #封榜时间
 terminal: 0.8  
 
