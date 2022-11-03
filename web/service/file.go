@@ -8,10 +8,12 @@ import (
 	"ahutoj/web/utils"
 	"fmt"
 	"io/ioutil"
+	"mime/multipart"
 	"os"
 	"os/exec"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/bytedance/gopkg/util/logger"
 	"github.com/gin-gonic/gin"
@@ -207,7 +209,18 @@ func checkImageFile(filename string) bool {
 	}
 	return false
 }
-
+func buildFileName(file *multipart.FileHeader) string {
+	now := time.Now().UnixNano()
+	strs := strings.Split(file.Filename, ".")
+	src, _ := file.Open()
+	defer src.Close()
+	var bytes []byte = make([]byte, file.Size)
+	src.Read(bytes)
+	md5str, _ := utils.MD5EnCodeStr(string(bytes))
+	suffix := strs[len(strs)-1]
+	imageName := fmt.Sprintf("%v%v.%v", md5str, now, suffix)
+	return imageName
+}
 func UpImagefile(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	file, err := ctx.FormFile("file")
@@ -222,8 +235,18 @@ func UpImagefile(ctx *gin.Context) {
 		response.ResponseError(ctx, constanct.FILE_UP_UNSUPPORTCode)
 		return
 	}
+
+	imagePath := utils.GetConfInstance().ImagePath
 	//SaveUploadedFile上传表单文件到指定的路径
-	checkAndCreatDir(ctx, "./image/")
-	ctx.SaveUploadedFile(file, "./image/"+file.Filename)
-	response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
+	checkAndCreatDir(ctx, imagePath)
+	name := buildFileName(file)
+	ctx.SaveUploadedFile(file, imagePath+name)
+	response.ResponseOK(ctx, struct {
+		response.Response
+		ImageURL string `json:"ImageURL"`
+	}{
+		Response: response.CreateResponse(constanct.SuccessCode),
+		ImageURL: "/image/" + name,
+	},
+	)
 }

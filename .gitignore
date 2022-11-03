@@ -13,3 +13,4 @@ test
 push.sh
 test.go
 *.log
+image

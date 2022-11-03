@@ -52,3 +52,6 @@ func CreateResponseStr(code constanct.ResCode, str string, retType RetType) Resp
 		StatusMsg:  fmt.Sprintf("%s\\\\%s", str, retType),
 	}
 }
+
+type ImageResp struct {
+}
