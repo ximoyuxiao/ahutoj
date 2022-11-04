@@ -60,6 +60,8 @@ var verifyMap = map[string]VerfiyLevel{
 	"/api/training/delete/":         ListAdmin,
 	"/api/admin/users":              SuperAdmin,
 	"/api/submit/:id":               CommomUser,
+	"/api/user/editHead/":           CommomUser,
+	"/api/file/image/":              ProblemAdmin,
 }
 
 const JwtTokenCtxKey = "user"

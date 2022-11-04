@@ -9,21 +9,21 @@ import (
 var config = new(AppConfig)
 
 type AppConfig struct {
-	Port          string  `mapstructure:"port"`
-	Mode          string  `mapstructure:"mode"`
-	Sign          string  `mapstructure:"sign"`
-	Version       string  `mapstructure:"version"`
-	StartTime     string  `mapstructure:"startTime"`
-	MachineID     int64   `mapstructure:"machineID "`
-	DataPath      string  `mapstructure:"dataPath"`
-	Terminal      float64 `mapstructure:"terminal"`
-	OpenTime      float64 `mapstructure:"openTime"`
-	ImagePath     string  `mapstructure:"imagePath"`
-	OpenRegisiter bool    `mapstructure:"openRegisiter"`
-	*MySQLConfig  `mapstructure:"mysql"`
-	*RedisConfig  `mapstructure:"redis"`
-	*LogConfig    `mapstructure:"log"`
-
+	Port            string  `mapstructure:"port"`
+	Mode            string  `mapstructure:"mode"`
+	Sign            string  `mapstructure:"sign"`
+	Version         string  `mapstructure:"version"`
+	StartTime       string  `mapstructure:"startTime"`
+	MachineID       int64   `mapstructure:"machineID "`
+	DataPath        string  `mapstructure:"dataPath"`
+	Terminal        float64 `mapstructure:"terminal"`
+	OpenTime        float64 `mapstructure:"openTime"`
+	ImagePath       string  `mapstructure:"imagePath"`
+	HeadPath        string  `mapstructure:"headPath"`
+	OpenRegisiter   bool    `mapstructure:"openRegisiter"`
+	*MySQLConfig    `mapstructure:"mysql"`
+	*RedisConfig    `mapstructure:"redis"`
+	*LogConfig      `mapstructure:"log"`
 	UseOriginJudge  bool `mapstructure:"useOriginJudge"`
 	*AtCoderJudges  `mapstructure:"atCoderJudges"`
 	*CodeForceJudge `mapstructure:"codeForceJudge"`

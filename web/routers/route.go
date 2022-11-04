@@ -62,6 +62,7 @@ func regeisterRouters(router *gin.Engine) {
 			userRouter.POST("/edit/pass/", service.EditUserPass)
 			userRouter.POST("/vjudgeBind", service.VjudgeBind)
 			userRouter.POST("/CodeForceBind/", service.CodeForceBind)
+			userRouter.POST("/editHead/", service.EditImage)
 		}
 
 		adminRouter := apiRouter.Group("/admin").Use(middlewares.JwtVerify)

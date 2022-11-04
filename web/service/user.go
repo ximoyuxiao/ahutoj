@@ -202,3 +202,48 @@ func CodeForceBind(ctx *gin.Context) {
 	}
 	response.ResponseOK(ctx, resp)
 }
+
+func EditImage(ctx *gin.Context) {
+	logger := utils.GetLogInstance()
+	file, err := ctx.FormFile("file")
+	if err != nil {
+		logger.Errorf("call FormFile filed, err=%s", err.Error())
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
+	}
+	logger.Infof("upfile:%s", file.Filename)
+	if !checkImageFile(file.Filename) {
+		logger.Errorf("chekfile failed filename:%s", file.Filename)
+		response.ResponseError(ctx, constanct.USER_EDITIMAG_TPYECODE)
+		return
+	}
+
+	headPath := utils.GetConfInstance().HeadPath
+	//SaveUploadedFile上传表单文件到指定的路径
+	err = CheckAndCreatDir(ctx, headPath)
+	if err != nil {
+		logger.Errorf("call CheckAndCreatDir failed headPath:%s", headPath)
+		response.ResponseError(ctx, constanct.USER_EDITIMAG_FAILED)
+		return
+	}
+	suffix := getFileSuffix(file.Filename)
+	name := middlewares.GetUid(ctx)
+	headURL := headPath + "UID:" + name + "." + suffix
+	//更新用户信息
+	user := dao.User{
+		UID:     middlewares.GetUid(ctx),
+		HeadURL: headURL,
+	}
+	err = mysqldao.UpdateUserByUID(ctx, &user)
+	if err != nil {
+		logger.Errorf("update Image Failed,err:%v", err.Error())
+		response.ResponseError(ctx, constanct.ServerErrorCode)
+		return
+	}
+	err = ctx.SaveUploadedFile(file, headURL)
+	if err != nil {
+		logger.Errorf("update Image Failed,please,headURL=%v,err:%v", headURL, err.Error())
+		response.ResponseError(ctx, constanct.USER_EDITIMAG_SAVECODE)
+	}
+	response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
+}

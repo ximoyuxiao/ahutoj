@@ -128,7 +128,7 @@ func UpProblemFile(ctx *gin.Context) {
 	response.ResponseOK(ctx, response.CreateResponse(constanct.NotimplementedCode))
 }
 
-func checkAndCreatDir(ctx *gin.Context, filepath string) error {
+func CheckAndCreatDir(ctx *gin.Context, filepath string) error {
 	ok, err := pathExists(filepath)
 	if err != nil {
 		logger.Errorf("call pathExists failed,filepath:%s, err=%v", filepath, err.Error())
@@ -169,9 +169,9 @@ func GetFileList(ctx *gin.Context) {
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
-	err = checkAndCreatDir(ctx, filepath)
+	err = CheckAndCreatDir(ctx, filepath)
 	if err != nil {
-		logger.Errorf("call checkAndCreatDir failed,filepath:%v,err=%v", filepath, err.Error())
+		logger.Errorf("call CheckAndCreatDir failed,filepath:%v,err=%v", filepath, err.Error())
 		response.ResponseError(ctx, constanct.FILE_UP_FAILEDCode)
 		return
 	}
@@ -213,7 +213,10 @@ func checkImageFile(filename string) bool {
 	}
 	return false
 }
-
+func getFileSuffix(filename string) string {
+	strs := strings.Split(filename, ".")
+	return strs[len(strs)-1]
+}
 func buildFileName(file *multipart.FileHeader) string {
 	now := time.Now().UnixNano()
 	strs := strings.Split(file.Filename, ".")
@@ -244,9 +247,9 @@ func UpImagefile(ctx *gin.Context) {
 
 	imagePath := utils.GetConfInstance().ImagePath
 	//SaveUploadedFile上传表单文件到指定的路径
-	err = checkAndCreatDir(ctx, imagePath)
+	err = CheckAndCreatDir(ctx, imagePath)
 	if err != nil {
-		logger.Errorf("call checkAndCreatDir failed imagePath:%s", imagePath)
+		logger.Errorf("call CheckAndCreatDir failed imagePath:%s", imagePath)
 		response.ResponseError(ctx, constanct.FILE_UPIMAGE_FAILED)
 		return
 	}

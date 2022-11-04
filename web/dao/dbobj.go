@@ -14,7 +14,7 @@ type User struct {
 	Vjpwd         string `gorm:"column:Vjpwd"`
 	Email         string `gorm:"column:Email"`
 	CodeForceUser string `gorm:"column:CodeForceUser"`
-	// HeadUrl string `gorm:"column:HeadUrl"`
+	HeadURL       string `gorm:"column:HeadUrl"`
 }
 
 func (u User) TableName() string {

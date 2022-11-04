@@ -66,6 +66,10 @@ const (
 	USER_CFBIND_UserEmptyCode ResCode = 120502
 	USER_CFBIND_PassEmptyCode ResCode = 120503
 	USER_CFBIND_PassErrorCode ResCode = 120504
+
+	USER_EDITIMAG_FAILED   ResCode = 120601
+	USER_EDITIMAG_SAVECODE ResCode = 120602
+	USER_EDITIMAG_TPYECODE ResCode = 120603
 )
 
 /*admin 13*/
@@ -228,6 +232,8 @@ var codeMsgMap = map[ResCode]string{
 	FILE_UNZIP_NotExistCode:          "不存在的文件",
 	FILE_LIST_FAILEDCode:             "获取判题文件失败",
 	FILE_UPIMAGE_FAILED:              "上传图片失败",
+	USER_EDITIMAG_SAVECODE:           "上传图片失败",
+	USER_EDITIMAG_TPYECODE:           "错误的图片类型",
 }
 var HttpCodeMap = map[ResCode]int{
 	SuccessCode:        http.StatusOK,
