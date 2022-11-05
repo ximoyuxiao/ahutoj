@@ -228,7 +228,7 @@ func EditImage(ctx *gin.Context) {
 	}
 	suffix := getFileSuffix(file.Filename)
 	name := middlewares.GetUid(ctx)
-	headURL := headPath + "UID:" + name + "." + suffix
+	headURL := headPath + "UID_" + name + "." + suffix
 	//更新用户信息
 	user := dao.User{
 		UID:     middlewares.GetUid(ctx),
@@ -245,5 +245,12 @@ func EditImage(ctx *gin.Context) {
 		logger.Errorf("update Image Failed,please,headURL=%v,err:%v", headURL, err.Error())
 		response.ResponseError(ctx, constanct.USER_EDITIMAG_SAVECODE)
 	}
-	response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
+	response.ResponseOK(ctx, struct {
+		response.Response
+		ImageURL string `json:"ImageURL"`
+	}{
+		Response: response.CreateResponse(constanct.SuccessCode),
+		ImageURL: "image/head/" + "UID_" + name + "." + suffix,
+	},
+	)
 }
