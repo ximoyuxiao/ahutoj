@@ -1,6 +1,6 @@
 CXXFLAGS += -std=c++11 -g
 
-JudgeObj = judgeClient_tect.o\
+JudgeObj = judgeClient_test.o\
 	../judgeClient.o\
 	../mlog.o\
 	../Solve.o\
