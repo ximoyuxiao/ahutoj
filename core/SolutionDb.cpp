@@ -1,5 +1,6 @@
 #include "SolutionDb.h"
 #include "result.h"
+#include "Tpool/locker.h"
 #include "mlog.h"
 using namespace my;
 SolutionDb::SolutionDb()
@@ -119,8 +120,11 @@ vector<Solve*> SolutionDb::getSolve(){
 }
 
 char sql[102400] ="";
+// 等待优化
+locker sqlLock;
 bool SolutionDb::commitSolveToDb(Solve* solve){
     // insert into Submit values (null,#{pid},#{uid},#{cid},#{judgeid},#{source},#{lang},'Judgeing',0,0,#{submitTime})
+    sqlLock.lock();
     sprintf(sql,"update Submit set JudgeID=%d,Result='%s',UseTime=%lld,UseMemory=%lld where SID=%d",
         solve->getjudgeID(),
         runningres[solve->Sres()],
@@ -138,6 +142,7 @@ bool SolutionDb::commitSolveToDb(Solve* solve){
         ILOG("insert mysql:%s",sql);
         mysql_query(&mysql,sql);
     }
+    sqlLock.unlock();
     db->CloseDatabase(&mysql,nullptr);
     DLOG("Close DB:%d",solve->Sid());
     return res;

@@ -138,7 +138,15 @@ bool judgeClient::compile()
         }
         case PYTHON3:
         {
-            return true;
+            //Python是及时解释性语言，但是要产生错误文件，防止上层判断报错
+            sprintf(sourceFile, "%s/main.py", dir);
+            sprintf(comp, "%s/err.txt", dir);
+            FILE *fp = fopen(sourceFile, "w");
+            fprintf(fp, "%s", solve->Source().c_str());
+            fclose(fp);
+
+            FILE *errfp = fopen(comp, "w");
+            fclose(errfp);
             break;
         }
         default:
@@ -229,7 +237,7 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
         int first = true;   
         while(1){
             wait4(pid,&status,__WNOTHREAD,&ruse); //等待子进程切换内核态（调用系统API或者运行状态变化）
-            //DLOG("Watch pid:%d run:%s/main",pid,dir);
+            // DLOG("Watch pid:%d run:%s/main",pid,dir);
             // 这一段也不知道干嘛的
             if (first){
                 ptrace(PTRACE_SETOPTIONS, pid, NULL, PTRACE_O_TRACESYSGOOD | PTRACE_O_TRACEEXIT
@@ -240,7 +248,7 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
             tempmemory = get_proc_status(pid,"VmPeak:") << 10; // B
             if (tempmemory > useMemory)
 			    useMemory = tempmemory;
-            if (useMemory > this->solve->LimitMemory() * STD_MB){
+            if (result==OJ_AC && useMemory > this->solve->LimitMemory() * STD_MB){
                 DLOG("run:%s/main res:MLE userMemory:%d",dir,useMemory);
                 result = OJ_MLE;
                 ptrace(PTRACE_KILL, pid, NULL, NULL); //杀死子进程
@@ -258,7 +266,6 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
             }
 
             exitcode = WEXITSTATUS(status);
-
             if(exitcode == 0x05 || exitcode == 0 || exitcode == 133);  //休眠或者IO 啥也不做
             else{
                 if(result == OJ_AC){
@@ -320,26 +327,25 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
                 ptrace(PTRACE_KILL,pid,NULL,NULL);
                 break;
             }
-
             //禁用 sysCall
             call_id=ptrace(PTRACE_GETREGS, pid, NULL, &reg);
-			call_id = ((unsigned int)reg.REG_SYSCALL) % call_array_size;
+            call_id = ((unsigned int)reg.REG_SYSCALL) % call_array_size;
 
             if (call_counter[call_id])
-			{
-				call_counter[call_id]--;
-			}
-			else
-			{
+            {
+                call_counter[call_id]--;
+            }
+            else
+            {
                 DLOG("run:%s/main call syscall forbiden! callid:%d",dir,call_id);
-				result = OJ_RE;
-				ptrace(PTRACE_KILL, pid, NULL, NULL);
+                result = OJ_RE;
+                ptrace(PTRACE_KILL, pid, NULL, NULL);
                 continue;
-			}
-			this->call_id=0;
+            }
+            this->call_id=0;
             // 等待下一次陷入中断
             ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
-            //DLOG("run:%s/main leave ptrace pid:%d",dir,pid);
+            // DLOG("run:%s/main leave ptrace pid:%d",dir,pid);
             first = false;
         }
         useTime += (ruse.ru_utime.tv_sec * 1000 + ruse.ru_utime.tv_usec / 1000) * cpu_compensation; // 统计用户态耗时，在更快速的CPU上加以cpu_compensation倍数放大
@@ -380,8 +386,9 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
             sprintf(path,"%s/main",dir);
             execle(path,path,NULL,envp);
             break;
-        case PYTHON3:    // python暂时还未完全  支持
-			execle("/usr/bin/python3", "/usr/bin/python3", "main.py",NULL,envp);
+        case PYTHON3:
+            sprintf(path,"%s/main.py",dir);
+			execle("/usr/bin/python3", "/usr/bin/python3", path, NULL,envp);
         default:
             ELOG("暂未支持该语言:%d",lang);
             break;
