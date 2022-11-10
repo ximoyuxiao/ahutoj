@@ -16,6 +16,8 @@ const (
 	OJ_REJUDGE OJResult = "REJUDGING"
 	OJ_PENDING OJResult = "PENDING"
 	OJ_FAILED  OJResult = "FAILED"
+	OJ_DENIAL  OJResult = "DENIAL_JUDGE"
+	OJ_TIMEOUT OJResult = "JUDGE_TIMEOUT"
 )
 const (
 	C       LANG = 1

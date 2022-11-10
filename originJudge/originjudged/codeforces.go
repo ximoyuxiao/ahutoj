@@ -57,6 +57,7 @@ var CFResultMap = map[string]constanct.OJResult{
 	"Wrong answer(.*?)":          constanct.OJ_WA,
 	"Running":                    constanct.OJ_JUDGE,
 	"Inqueue(.*?)":               constanct.OJ_JUDGE,
+	"Denial of judgement":        constanct.OJ_DENIAL,
 }
 
 var CfHeaders = map[string]string{
@@ -360,7 +361,8 @@ func (p *CodeForceJudge) getResult() error {
 
 	url := cfurl + "/" + GetContest(CID) + "/" + CID + "/submission/" + submissionID
 	var resp *http.Response
-	for {
+	// 120次大概就是两分钟时间给出结果
+	for i := 0; i < 120; i++ {
 		if p.JudgeUser != nil {
 			resp, err = DoRequest(GET, url, p.Headers, p.JudgeUser.Cookies, nil, false)
 		} else {
@@ -406,7 +408,10 @@ func (p *CodeForceJudge) getResult() error {
 		}
 		time.Sleep(time.Second)
 	}
-	// return nil
+	if p.Submit.Result == constanct.OJ_JUDGE {
+		p.Submit.Result = constanct.OJ_TIMEOUT // 判题超时
+	}
+	return fmt.Errorf("codeforeces judge timeout submissionID:%v", submissionID)
 }
 
 func (p *CodeForceJudge) commitToDB() error {

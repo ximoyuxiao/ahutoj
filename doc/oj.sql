@@ -138,8 +138,8 @@ CREATE table Submit(
     Source Text,
     Lang int,
     Result varchar(30),
-    UseTime int,
-    UseMemory int,
+    UseTime long,
+    UseMemory long,
     SubmitTime long,
     IsOriginJudge boolean,
     OriginPID  Text,
@@ -158,14 +158,7 @@ create table CEINFO(
 
 ALTER TABLE Submit AUTO_INCREMENT = 1000;
 #5.添加数据
-insert into User values('admin','墨羽','21de184f26d37d33d5581d923ae52c17','AHUT','软191','软件工程',null,null,'a2571717957@163.com','动态规划','');             
 insert into Permission values('admin','Y','Y','Y','Y','Y');
-insert into Problem values(null,'A+B问题','输入一个数字A和一个数字B要求输出A和B的和','分别输入两个整数A和B','输出A和B的和','1 2','3','1','128','','基础',0,0);
-insert into Contest values(null,'admin','测试比赛1','用于测试',1639559000000,1639599000000,1,1,"1000,",null);
-insert into Contest values(null,'admin','测试比赛2','用于测试',1639559000000,1639599000000,1,1,"",null);
-insert into Contest values(null,'admin','测试比赛3','用于测试',1639559000000,1639599000000,1,1,"",null);
-insert into List values(null,'admin','测试',1639599000000);
-insert into ConPro values(1000,1000,'A+B问题',0,0);
 
 use mysql;
 update user set host='%' where user='AHUTOnlinejudge';

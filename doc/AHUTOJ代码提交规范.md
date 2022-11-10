@@ -5,7 +5,7 @@
 ```sh
 git clone + 仓库的链接
 如：
-git clone https://gitee.com/practice-platform_a2571717957/ahut-onlinjudge-a.git
+git clone git@github.com:199094212/ahutoj.git
 ```
 
 ### 修改代码

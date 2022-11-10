@@ -332,13 +332,15 @@ func (p *AtCoderJudge) CheckResult(ctx context.Context, Text []byte) bool {
 func (p *AtCoderJudge) getResult(ctx context.Context) error {
 	CID, _, _ := p.ParsePID(ctx)
 	submissionUrl := atcoderUrl + "/contests/" + CID + "/submissions/" + p.SubmissionID
-	for {
+	for i := 0; i < 120; i++ {
 		resp, err := DoRequest(GET, submissionUrl, nil, nil, nil, false)
 		if err != nil {
 			return err
 		}
 		// 此处不设置cookie
-		// SetCookies(resp, &p.JudgeUser.OriginJudgeUser)
+		if p.JudgeUser != nil {
+			SetCookies(resp, &p.JudgeUser.OriginJudgeUser)
+		}
 		Text, _ := ParseRespToByte(resp)
 		if !p.CheckResult(ctx, Text) {
 			time.Sleep(time.Second)
@@ -361,6 +363,8 @@ func (p *AtCoderJudge) getResult(ctx context.Context) error {
 		p.Submit.UseMemory *= 1024
 		return nil
 	}
+	p.Submit.Result = constanct.OJ_TIMEOUT
+	return fmt.Errorf("atcoder judge timeout submissionID:%v", p.SubmissionID)
 }
 
 func (p *AtCoderJudge) commitToDB(ctx context.Context) error {
