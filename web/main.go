@@ -4,7 +4,6 @@ import (
 	mysqldao "ahutoj/web/dao/mysqlDao"
 	redisdao "ahutoj/web/dao/redisDao"
 	"ahutoj/web/middlewares"
-	originjudge "ahutoj/web/originJudge"
 	"ahutoj/web/routers"
 	"ahutoj/web/utils"
 	"fmt"
@@ -48,10 +47,6 @@ func initAPP(ConfigPath string) error {
 	middlewares.InitJwt()
 
 	middlewares.InitSnowflake(utils.GetConfInstance().StartTime, utils.GetConfInstance().MachineID)
-	// 初始化 重判题目的协程
-	if utils.GetConfInstance().UseOriginJudge {
-		go originjudge.InitOriginThread()
-	}
 	routers.InitServer()
 	return nil
 }

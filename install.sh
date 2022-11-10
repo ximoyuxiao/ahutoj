@@ -39,6 +39,8 @@ else
     go install github.com/cosmtrek/air@latest
 fi
 
+# 安装所有软件
+make install
 # 建立数据库
 USER=`sudo cat /etc/mysql/debian.cnf |grep user|head -1|awk  '{print $3}'`
 PASSWORD=`sudo cat /etc/mysql/debian.cnf |grep password|head -1|awk  '{print $3}'`

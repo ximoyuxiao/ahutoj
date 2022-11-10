@@ -1,6 +1,7 @@
 package logic
 
 import (
+	originJudged "ahutoj/originJudge/originjudged"
 	"ahutoj/web/dao"
 	mysqldao "ahutoj/web/dao/mysqlDao"
 	"ahutoj/web/io/constanct"
@@ -9,7 +10,6 @@ import (
 	"ahutoj/web/mapping"
 	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
-	originjudge "ahutoj/web/originJudge"
 	"ahutoj/web/utils"
 	"fmt"
 	"strings"
@@ -244,10 +244,10 @@ func CodeForceBind(ctx *gin.Context, req request.CodeForceBindReq) (interface{},
 	if len(req.CodeForceUser) == 0 {
 		return response.CreateResponse(constanct.USER_CFBIND_PassEmptyCode), nil
 	}
-	cj := originjudge.CodeForceJudge{
-		Headers: originjudge.CfHeaders,
-		JudgeUser: &originjudge.CFJudgeUser{
-			OriginJudgeUser: originjudge.OriginJudgeUser{
+	cj := originJudged.CodeForceJudge{
+		Headers: originJudged.CfHeaders,
+		JudgeUser: &originJudged.CFJudgeUser{
+			OriginJudgeUser: originJudged.OriginJudgeUser{
 				ID:       req.CodeForceUser,
 				Password: req.CodeForcePass,
 				Cookies:  make(map[string]string, 0),
