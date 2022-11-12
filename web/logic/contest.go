@@ -193,7 +193,7 @@ func initRankItem(rank *response.RankItem, user dao.User, problemSize int) {
 	rank.Problems = make([]response.ProblemItem, problemSize)
 	for idx := range rank.Problems {
 		problem := &rank.Problems[idx]
-		problem.PID = 0
+		problem.PID = ""
 		problem.Time = 0
 		problem.Status = constanct.OJ_JUDGE
 	}
@@ -212,7 +212,7 @@ func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface
 		return response.CreateResponse(constanct.CONTEST_RANK_FAILED), err
 	}
 
-	problemIdxMap := make(map[int64]int, 0)
+	problemIdxMap := make(map[string]int, 0)
 	for idx, problem := range problems {
 		problemIdxMap[problem.PID] = idx
 	}

@@ -15,8 +15,8 @@ func AddConProblemToDb(ctx context.Context, conPro dao.ConPro) error {
 func GetConProblemFromDB(ctx context.Context, CID int64) ([]dao.ConPro, error) {
 	return mysqldao.SelectConProblemByCID(ctx, CID)
 }
-func CheckHasConProInContest(ctx context.Context, PID, CID int64) bool {
-	return mysqldao.SelectCountConProInContestByProblem(ctx, PID, CID) > 0
+func CheckHasConProInContest(ctx context.Context, PID string, CID int64) bool {
+	return mysqldao.SelectCountConProInContestByProblem(ctx, CID, PID) > 0
 }
 
 func AddConproblems(ctx context.Context, PIDs string, CID int64) error {
@@ -28,7 +28,7 @@ func AddConproblems(ctx context.Context, PIDs string, CID int64) error {
 		return err
 	}
 	for _, problem := range problems {
-		if CheckHasConProInContest(ctx, int64(problem.PID), CID) {
+		if CheckHasConProInContest(ctx, problem.PID, CID) {
 			continue
 		}
 		conPro := dao.ConPro{

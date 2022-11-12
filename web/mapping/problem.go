@@ -6,7 +6,10 @@ import (
 )
 
 func ProblemReqToDao(req request.Problem) dao.Problem {
-	problem := dao.Problem{PID: req.PID}
+	problem := dao.Problem{}
+	if req.PID != nil {
+		problem.PID = *req.PID
+	}
 	// 	LimitMemory:   req.LimitMemory,
 	if req.Title != nil {
 		problem.Title = *req.Title
@@ -44,6 +47,7 @@ func ProblemReqToDao(req request.Problem) dao.Problem {
 	if req.OriginPID != nil {
 		problem.OriginPID = *req.OriginPID
 	}
+	problem.PType = string(req.PType)
 	problem.ContentType = req.ContentType
 	problem.Visible = req.Visible
 	return problem

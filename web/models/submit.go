@@ -45,7 +45,7 @@ func FindLastSIDByUID(ctx context.Context, UID string) (dao.Submit, error) {
 	return mysqldao.FindLastSIDByUID(ctx, UID)
 }
 
-func EqualLastSource(ctx context.Context, UID string, PID int64, Source string) bool {
+func EqualLastSource(ctx context.Context, UID string, PID string, Source string) bool {
 	SourceMD5, err := utils.MD5EnCodeStr(Source)
 	if err != nil {
 		logger.Errorf("call MD5EnCodeStr failed. Source:%s", Source)

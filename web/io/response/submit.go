@@ -6,7 +6,7 @@ type GetSubmitResp struct {
 	Response
 	SID        int64              `json:"SID"`
 	UID        string             `json:"UID"`
-	PID        int64              `json:"PID"`
+	PID        string             `json:"PID"`
 	Source     string             `json:"Source"`
 	Lang       constanct.LANG     `json:"Lang"`
 	Result     constanct.OJResult `json:"Result"`
@@ -18,7 +18,7 @@ type GetSubmitResp struct {
 type SubmitLIstItem struct {
 	SID        int64              `json:"SID"`
 	UID        string             `json:"UID"`
-	PID        int64              `json:"PID"`
+	PID        string             `json:"PID"`
 	Lang       constanct.LANG     `json:"Lang"`
 	Result     constanct.OJResult `json:"Result"`
 	UseTime    int64              `json:"UseTime"`

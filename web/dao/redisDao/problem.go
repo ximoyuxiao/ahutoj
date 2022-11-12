@@ -4,17 +4,18 @@ import (
 	"ahutoj/web/dao"
 	"context"
 	"errors"
-	"strconv"
 )
 
-func GetProblemFromDB(ctx context.Context, pid int64) (*dao.Problem, error) {
+var ProblemMAXValue string
+
+func GetProblemFromDB(ctx context.Context, PID string) (*dao.Problem, error) {
 	rdfd := GetRedis()
 	if rdfd == -1 {
 		return nil, errors.New("insufficient Redis connection resources")
 	}
 	defer CloseRDB(rdfd)
 	ret := new(dao.Problem)
-	key := "problem-" + strconv.FormatInt(pid, 10)
+	key := "problem-" + PID
 	err := GetKey(ctx, rdfd, key, ret)
 	if err != nil && err.Error() == Nil {
 		return nil, nil
@@ -28,7 +29,28 @@ func SaveProblemToRDB(ctx context.Context, problem dao.Problem) error {
 		return errors.New("insufficient Redis connection resources")
 	}
 	defer CloseRDB(rdfd)
-	key := "problem-" + strconv.FormatInt(int64(problem.PID), 10)
+	key := "problem-" + problem.PID
 	err := SetKey(ctx, rdfd, key, problem)
+	return err
+}
+
+func GetLastANDPID(ctx context.Context) (int64, error) {
+	rdfd := GetRedis()
+	if rdfd == -1 {
+		return 0, errors.New("insufficient Redis connection resources")
+	}
+	var PID int64
+	defer CloseRDB(rdfd)
+	err := GetKey(ctx, rdfd, "NewPID", &PID)
+	return PID, err
+}
+
+func UpdateNextPID(ctx context.Context, PID string) error {
+	rdfd := GetRedis()
+	if rdfd == -1 {
+		return errors.New("insufficient Redis connection resources")
+	}
+	defer CloseRDB(rdfd)
+	err := SetKey(ctx, rdfd, "NewPID", PID)
 	return err
 }

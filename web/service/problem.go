@@ -7,7 +7,6 @@ import (
 	"ahutoj/web/logic"
 	"ahutoj/web/utils"
 	"fmt"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -28,6 +27,7 @@ func AddProblem(ctx *gin.Context) {
 	if err != nil {
 		logger.Errorf("call AddProblem failed,req=%+v,err=%s", *req, err.Error())
 		response.ResponseError(ctx, constanct.ServerErrorCode)
+		return
 	}
 	response.ResponseOK(ctx, resp)
 }
@@ -53,15 +53,8 @@ func GetProblemList(ctx *gin.Context) {
 
 func GetProblem(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
-	pidString := ctx.Param("id")
-	pid, err := strconv.ParseInt(pidString, 10, 64)
-	if err != nil {
-		logger.Errorf("call ParseInt failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
-		return
-	}
-
-	resp, err := logic.GetProblemInfo(ctx, pid)
+	PID := ctx.Param("id")
+	resp, err := logic.GetProblemInfo(ctx, PID)
 	if err != nil {
 		logger.Errorf("call GetProblemInfo failed, err = %s", err.Error())
 		response.ResponseError(ctx, constanct.ServerErrorCode)

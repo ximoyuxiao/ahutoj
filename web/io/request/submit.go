@@ -3,7 +3,7 @@ package request
 import "ahutoj/web/io/constanct"
 
 type AddSubmitReq struct {
-	PID        int64          `json:"PID"`
+	PID        string         `json:"PID"`
 	UID        string         `json:"UID"`
 	CID        int64          `json:"CID"`
 	Source     string         `json:"Source"`
@@ -13,7 +13,7 @@ type AddSubmitReq struct {
 
 type RejudgeSubmitReq struct {
 	SID *int64  `json:"SID"`
-	PID *int64  `json:"PID"`
+	PID *string `json:"PID"`
 	UID *string `json:"UID"`
 	CID *int64  `json:"CID"`
 }
@@ -23,7 +23,7 @@ type GetSubmitReq struct {
 }
 
 type SubmitListReq struct {
-	PID    *int64              `query:"PID"`
+	PID    *string             `query:"PID"`
 	UID    *string             `query:"UID"`
 	CID    *int64              `query:"CID"`
 	Result *constanct.OJResult `query:"Result"`

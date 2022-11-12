@@ -3,12 +3,14 @@ package models
 import (
 	"ahutoj/web/dao"
 	mysqldao "ahutoj/web/dao/mysqlDao"
+	redisdao "ahutoj/web/dao/redisDao"
+	"ahutoj/web/io/constanct"
 	"ahutoj/web/utils"
 	"context"
-	"strconv"
+	"fmt"
 )
 
-//判断题目是否存在
+// 判断题目是否存在
 func IsProblemExistByPID(ctx context.Context, problem *dao.Problem) bool {
 	count, err := mysqldao.SelectProblemCountByPID(ctx, problem.PID)
 	if err != nil {
@@ -17,7 +19,7 @@ func IsProblemExistByPID(ctx context.Context, problem *dao.Problem) bool {
 	return count > 0
 }
 
-//创建题目
+// 创建题目
 func CreateProblem(ctx context.Context, problem *dao.Problem) error {
 	logger := utils.GetLogInstance()
 	err := mysqldao.InsertProblemTable(ctx, *problem)
@@ -27,7 +29,7 @@ func CreateProblem(ctx context.Context, problem *dao.Problem) error {
 	return err
 }
 
-//编辑题目
+// 编辑题目
 func EditProblem(ctx context.Context, problem *dao.Problem) error {
 	logger := utils.GetLogInstance()
 	err := mysqldao.EditProblemTable(ctx, *problem)
@@ -37,7 +39,7 @@ func EditProblem(ctx context.Context, problem *dao.Problem) error {
 	return err
 }
 
-func DeleteProblem(ctx context.Context, PID int64) error {
+func DeleteProblem(ctx context.Context, PID string) error {
 	logger := utils.GetLogInstance()
 	err := mysqldao.DeleteProblem(ctx, PID)
 	if err != nil {
@@ -47,7 +49,7 @@ func DeleteProblem(ctx context.Context, PID int64) error {
 }
 
 // 前期的话 先用 mysql 后期针对活跃数据会引入redis
-func GetProblemByPID(ctx context.Context, PID int64) (dao.Problem, error) {
+func GetProblemByPID(ctx context.Context, PID string) (dao.Problem, error) {
 	logger := utils.GetLogInstance()
 	problem := dao.Problem{}
 	problem.PID = PID
@@ -66,12 +68,7 @@ func GetProblemCount(ctx context.Context, problem dao.Problem) (int64, error) {
 func GetProblems(ctx context.Context, PIDs []string) ([]dao.Problem, error) {
 	problems := make([]dao.Problem, len(PIDs))
 	logger := utils.GetLogInstance()
-	for idx, PIDstr := range PIDs {
-		PID, err := strconv.ParseInt(PIDstr, 10, 64)
-		if err != nil {
-			logger.Errorf("call ParseInt failed,err=%s", err.Error())
-			return nil, err
-		}
+	for idx, PID := range PIDs {
 		problem, err := GetProblemByPID(ctx, PID)
 		if err != nil {
 			logger.Errorf("call GetProblemByPID failed,err=%s", err.Error())
@@ -80,4 +77,33 @@ func GetProblems(ctx context.Context, PIDs []string) ([]dao.Problem, error) {
 		problems[idx] = problem
 	}
 	return problems, nil
+}
+func ChekckProblemType(ctx context.Context, PType constanct.ProblemType) bool {
+	if PType == "" {
+		return false
+	}
+	if PType == constanct.LOCALTYPE {
+		return true
+	}
+	if PType == constanct.ATCODERTYPE {
+		return true
+	}
+	if PType == constanct.CODEFORCESTYPE {
+		return true
+	}
+	return false
+}
+func GetNextProblemPID(ctx context.Context) (string, error) {
+	logger := utils.GetLogInstance()
+	PID, err := redisdao.GetLastANDPID(ctx)
+	if err != nil || PID == 0 {
+		PID, err = mysqldao.SelectProblemLastPID(ctx)
+		logger.Debugf("PID:%v", PID)
+
+		if err != nil {
+			logger.Errorf("call SelectProblemLastPID failed,err:%v", err.Error())
+			return "", err
+		}
+	}
+	return fmt.Sprintf("%v", PID+1), nil
 }

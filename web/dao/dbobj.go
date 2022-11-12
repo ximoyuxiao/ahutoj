@@ -35,7 +35,8 @@ func (p Permission) TableName() string {
 }
 
 type Problem struct {
-	PID          int64  `gorm:"column:PID" json:"PID"`
+	PID          string `gorm:"column:PID" json:"PID"`
+	PType        string `gorm:"column:PType" json:"PType"`
 	Title        string `gorm:"column:Title" json:"Title"`
 	Description  string `gorm:"column:Description" json:"Description"`
 	Input        string `gorm:"column:Input" json:"Input"`
@@ -61,7 +62,7 @@ type List struct {
 
 type ListProblem struct {
 	LID   int64  `gorm:"column:LID"`
-	PID   int64  `gorm:"column:PID"`
+	PID   string `gorm:"column:PID"`
 	Title string `gorm:"column:Title"`
 }
 
@@ -91,7 +92,7 @@ func (p Contest) TableName() string {
 
 type ConPro struct {
 	CID        int64  `gorm:"column:CID"`
-	PID        int64  `gorm:"column:PID"`
+	PID        string `gorm:"column:PID"`
 	Ptitle     string `gorm:"column:Title"`
 	Submit_num int    `gorm:"column:SubmitNum"`
 	Ac_num     int    `gorm:"column:ACNum"`
@@ -103,7 +104,7 @@ func (p ConPro) TableName() string {
 
 type Submit struct {
 	SID           int64              `gorm:"column:SID"`
-	PID           int64              `gorm:"column:PID"`
+	PID           string             `gorm:"column:PID"`
 	UID           string             `gorm:"column:UID"`
 	CID           int64              `gorm:"column:CID"`
 	JudgeID       int64              `gorm:"column:JudgeID"`

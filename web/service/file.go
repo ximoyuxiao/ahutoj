@@ -11,7 +11,6 @@ import (
 	"mime/multipart"
 	"os"
 	"os/exec"
-	"strconv"
 	"strings"
 	"time"
 
@@ -156,20 +155,14 @@ func GetFileList(ctx *gin.Context) {
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
-	pidStr := ctx.Param("pid")
-	PID, err := strconv.ParseInt(pidStr, 10, 64)
-	if err != nil {
-		logger.Errorf("call ParseInt faile,pid=%s err=%s", pidStr, err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
-		return
-	}
+	PID := ctx.Param("pid")
 	ok := models.IsProblemExistByPID(ctx, &dao.Problem{PID: PID})
 	if !ok {
-		logger.Errorf("the problem not exist pid=%s", err.Error())
+		logger.Errorf("the problem not exist pid=%s", PID)
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
-	err = CheckAndCreatDir(ctx, filepath)
+	err := CheckAndCreatDir(ctx, filepath)
 	if err != nil {
 		logger.Errorf("call CheckAndCreatDir failed,filepath:%v,err=%v", filepath, err.Error())
 		response.ResponseError(ctx, constanct.FILE_UP_FAILEDCode)

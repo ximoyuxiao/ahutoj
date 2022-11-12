@@ -89,7 +89,8 @@ const (
 
 /*problem 14*/
 const (
-	PROBLEM_ADD_FAILED ResCode = 140101
+	PROBLEM_ADD_FAILED        ResCode = 140101
+	Problem_ADD_PTYPEERR_CODE ResCode = 140102
 
 	PROBLEM_EDIT_FAILED           ResCode = 140201
 	PROBLEM_EDIT_PIDNoteExistCode ResCode = 140202
@@ -199,6 +200,7 @@ var codeMsgMap = map[ResCode]string{
 	ADMIN_LIST_FAILED:                "获取用户权限列表失败",
 	ADMIN_GET_FAILED:                 "获取用户权限信息失败",
 	PROBLEM_ADD_FAILED:               "添加题目失败",
+	Problem_ADD_PTYPEERR_CODE:        "不存在的题目类型",
 	PROBLEM_EDIT_FAILED:              "编辑题目失败",
 	PROBLEM_EDIT_PIDNoteExistCode:    "题目不存在",
 	PROBLEM_DELETE_FAILED:            "删除题目失败",

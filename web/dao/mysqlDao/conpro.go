@@ -18,7 +18,7 @@ func SelectConProblemByCID(ctx context.Context, CID int64) ([]dao.ConPro, error)
 	return ret, err
 }
 
-func SelectCountConProInContestByProblem(ctx context.Context, PID, CID int64) int64 {
+func SelectCountConProInContestByProblem(ctx context.Context, CID int64, PID string) int64 {
 	db := GetDB(ctx)
 	var ret int64
 	db.Table(dao.ConPro{}.TableName()).Where("CID=? and PID=?", CID, PID).Count(&ret)
