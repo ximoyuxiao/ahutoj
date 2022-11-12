@@ -18,7 +18,6 @@
 #include <sys/user.h>
 #include<mysql/mysql.h>
 #include "judgeClient.h"
-#include "okcalls.h"
 #include "mlog.h"
 
 #define MAXBUFF 1024
@@ -40,27 +39,7 @@ static double cpu_compensation = 1.0;
 
 void judgeClient::init_syscalls_limits(lanuage lang){
     memset(call_counter, 0, sizeof(call_counter));
-    switch (lang)
-    {
-    case CPP:
-    case CPP11:
-    case CPP17:
-    case C:{
-        for (int i = 0; i == 0 || LANG_CV[i]; i++)
-			call_counter[LANG_CV[i]] = HOJ_MAX_LIMIT;
-        break;
-    }
-    case PYTHON3:{
-        for (int i = 0; i == 0 || LANG_YV[i]; i++)
-			call_counter[LANG_YV[i]] = HOJ_MAX_LIMIT;
-        break;
-    }
-    default:{
-        for (int i = 0; i < call_array_size; i++)
-			call_counter[i] = 0;
-    }
-        break;
-    }
+    language->init_syscalls_limits(call_counter);
 }
 
 static void setfreeTimer(){
@@ -78,80 +57,7 @@ bool judgeClient::checkSource(){
 
 bool judgeClient::compile()
 {
-    char comp[MAXBUFF];
-    char sourceFile[128];
-    switch (solve->Lang())
-    {
-        case C:
-        {
-            sprintf(sourceFile,"%s/%d.c",dir,solve->Pid());
-            FILE* fp = fopen(sourceFile,"w");
-            fprintf(fp,"%s",solve->Source().c_str());
-            fclose(fp);
-            sprintf(comp,"gcc %s -o %s/main 2>%s/err.txt",sourceFile,dir,dir);
-            system(comp);
-            break;
-        }
-        case CPP:
-        {
-            sprintf(sourceFile,"%s/%d.cpp",dir,solve->Pid());
-            DLOG("SourceFile:%s",sourceFile);
-            FILE* fp = fopen(sourceFile,"w");
-            fprintf(fp,"%s",solve->Source().c_str());
-            fclose(fp);
-            sprintf(comp,"g++ %s -o %s/main 2>%s/err.txt",sourceFile,dir,dir);
-            system(comp);
-            break;
-        }
-        case CPP11:
-        {
-            sprintf(sourceFile,"%s/%d.cpp",dir,solve->Pid());
-            DLOG("SourceFile:%s",sourceFile);
-            FILE* fp = fopen(sourceFile,"w");
-            fprintf(fp,"%s",solve->Source().c_str());
-            DLOG("source:\n%s",solve->Source().c_str());
-            fclose(fp);
-            sprintf(comp,"g++ %s -o %s/main -std=c++11 2> %s/err.txt",sourceFile,dir,dir);
-            DLOG("%s",comp);
-            system(comp);
-            break;
-        }
-        case CPP17:
-        {
-            sprintf(sourceFile,"%s/%d.cpp",dir,solve->Pid());
-            FILE* fp = fopen(sourceFile,"w");
-            fprintf(fp,"%s",solve->Source().c_str());
-            fclose(fp);
-            sprintf(comp,"g++ %s -o %s/main -std=c++17 2>%s/err.txt",sourceFile,dir,dir);
-            system(comp);
-            break;
-        }
-        case JAVA:
-        {
-            sprintf(sourceFile,"%s/Main.java",dir);
-            FILE* fp = fopen(sourceFile,"w");
-            fprintf(fp,"%s",solve->Source().c_str());
-            fclose(fp);
-            sprintf(comp,"javac %s %s/Main.class 2>%s/err.txt",sourceFile,dir,dir);
-            system(comp);
-            break;
-        }
-        case PYTHON3:
-        {
-            //Python是及时解释性语言，但是要产生错误文件，防止上层判断报错
-            sprintf(sourceFile, "%s/main.py", dir);
-            sprintf(comp, "%s/err.txt", dir);
-            FILE *fp = fopen(sourceFile, "w");
-            fprintf(fp, "%s", solve->Source().c_str());
-            fclose(fp);
-
-            FILE *errfp = fopen(comp, "w");
-            fclose(errfp);
-            break;
-        }
-        default:
-            break;
-    }
+    language->compile(dir, solve->Pid(), solve->Source().c_str());
     DLOG("compile.txt");
     char ceFile[128]="";
     sprintf(ceFile,"%s/err.txt",dir);
@@ -376,23 +282,7 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
         setitimer(ITIMER_REAL,&time,NULL);
         ptrace(PTRACE_TRACEME, 0, NULL, NULL);
         // 限制 运行时间为
-        char path[128]={0};
-        
-        switch(lang){
-        case CPP:
-        case CPP11:
-        case CPP17:
-        case C:
-            sprintf(path,"%s/main",dir);
-            execle(path,path,NULL,envp);
-            break;
-        case PYTHON3:
-            sprintf(path,"%s/main.py",dir);
-			execle("/usr/bin/python3", "/usr/bin/python3", path, NULL,envp);
-        default:
-            ELOG("暂未支持该语言:%d",lang);
-            break;
-        }
+        language->run(dir, envp);
         exit(-1);
     }
     waitpid(pid,NULL,0);
@@ -472,7 +362,7 @@ bool judgeClient::judgePE(FILE*source,FILE *res)
     return sourcech == resch;
 }
 
-bool judgeClient::cmpFIle(SubRes &result,char *myfile,const char* sourceFile)
+bool judgeClient::cmpFIle(SubRes &result,const char *myfile,const char* sourceFile)
 {
     if(result !=OJ_AC)
         return false;
@@ -536,7 +426,7 @@ bool judgeClient::judge()
                 Jstat = J_COMPILE;
                 break;
             }
-            
+
             case J_COMPILE:{
                 ILOG("J_COMPILE");
                 if(compile()){
@@ -619,4 +509,11 @@ judgeClient::judgeClient(Solve *solve){
     Jstat = J_CHECK;
     this->solve = solve;
     this->call_id = 0;
+    this->language = Language::SolveToLanguage(solve);
+}
+
+judgeClient::~judgeClient(){
+    if(this->language != NULL){
+        delete this->language;
+    }
 }

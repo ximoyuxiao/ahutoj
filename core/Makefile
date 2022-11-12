@@ -16,7 +16,8 @@ Tpool/cond.o\
 Tpool/sem.o\
 Tpool/threadpool.o\
 Conf.o\
-readConfig.o
+readConfig.o\
+Language.o
 all:${TARGET}
 
 ${TARGET}:${SOURCE}
