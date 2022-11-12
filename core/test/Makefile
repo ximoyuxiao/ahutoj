@@ -3,6 +3,7 @@ CXXFLAGS += -std=c++11 -g
 JudgeObj = judgeClient_test.o\
 	../judgeClient.o\
 	../mlog.o\
+	../Language.o\
 	../Solve.o\
  	../Tpool/cond.o\
   	../Tpool/locker.o\
