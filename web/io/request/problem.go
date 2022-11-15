@@ -26,4 +26,7 @@ type DeleteProblemReq struct {
 	PIDs []string `json:"PIDs"`
 }
 
-type ProblemListReq GetListReq
+type ProblemListReq struct {
+	GetListReq
+	PType *constanct.ProblemType `json:"PType"`
+}

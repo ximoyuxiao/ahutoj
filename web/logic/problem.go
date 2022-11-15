@@ -2,7 +2,6 @@ package logic
 
 import (
 	"ahutoj/web/dao"
-	mysqldao "ahutoj/web/dao/mysqlDao"
 	redisdao "ahutoj/web/dao/redisDao"
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/request"
@@ -93,7 +92,12 @@ func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{},
 	if !admin {
 		problem.Visible = 1
 	}
-	problems, err := mysqldao.SelectProblemByLists(ctx, offset, size, problem)
+	if req.PType == nil {
+		problem.PType = constanct.LOCALTYPE
+	} else {
+		problem.PType = *req.PType
+	}
+	problems, err := models.GetProblemList(ctx, offset, size, problem)
 	if err != nil {
 		return response.CreateResponse(constanct.PROBLEM_LIST_FAILED), err
 	}

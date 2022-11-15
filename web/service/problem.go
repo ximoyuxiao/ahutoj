@@ -42,6 +42,13 @@ func GetProblemList(ctx *gin.Context) {
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
+	err = ctx.ShouldBindJSON(req)
+	// err = ctx.ShouldBindBodyWith(req, binding.JSON)
+	if err != nil && err.Error() != "EOF" {
+		logger.Errorf("call ShouldBindBodyWith failed, err = %s", err.Error())
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
+	}
 	resp, err := logic.GetProblemList(ctx, req)
 	if err != nil {
 		logger.Errorf("call GetProblemList failed, err = %s", err.Error())

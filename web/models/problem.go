@@ -78,6 +78,11 @@ func GetProblems(ctx context.Context, PIDs []string) ([]dao.Problem, error) {
 	}
 	return problems, nil
 }
+
+func GetProblemList(ctx context.Context, offset, size int, problem dao.Problem) ([]dao.Problem, error) {
+	return mysqldao.SelectListProblem(ctx, offset, size, problem)
+}
+
 func ChekckProblemType(ctx context.Context, PType constanct.ProblemType) bool {
 	if PType == "" {
 		return true
