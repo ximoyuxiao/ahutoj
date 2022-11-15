@@ -47,7 +47,7 @@ func ProblemReqToDao(req request.Problem) dao.Problem {
 	if req.OriginPID != nil {
 		problem.OriginPID = *req.OriginPID
 	}
-	problem.PType = string(req.PType)
+	problem.PType = req.PType
 	problem.ContentType = req.ContentType
 	problem.Visible = req.Visible
 	return problem

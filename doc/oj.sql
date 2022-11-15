@@ -41,7 +41,8 @@ create table Permission(
 )DEFAULT CHARSET=utf8mb4;
 
 create table Problem(
-    PID int primary key AUTO_INCREMENT,
+    PID varchar(40) primary key AUTO_INCREMENT,
+    PType int,
     Title Text not null,
     Description	 Text not null,
     Input	 Text,	
@@ -54,7 +55,8 @@ create table Problem(
     Label            Text,
     Origin int,
     OriginPID Text,
-    ContentType int,
+    ContentType int,    
+    Sort       int,
     Visible  int
 )DEFAULT CHARSET=utf8mb4;
 ALTER TABLE Problem AUTO_INCREMENT = 1000;
@@ -71,7 +73,7 @@ ALTER TABLE List AUTO_INCREMENT = 1000;
 
 create table ListProblem(
     LID int,
-    PID int,
+    PID varchar(40),
     Title Text,
     constraint pk_lpt primary key(LID,PID),
    
@@ -116,7 +118,7 @@ ALTER TABLE Contest AUTO_INCREMENT = 1000;
 
 create table ConPro(
     CID int,
-    PID int,
+    PID varchar(40),
     Title Text,
     SubmitNum int,
     ACNum int,
@@ -131,7 +133,7 @@ create table ConPro(
 
 CREATE table Submit(
     SID int primary key AUTO_INCREMENT,
-    PID int,
+    PID varchar(40),
     UID varchar(20),
     CID int,
     JudgeID int	,

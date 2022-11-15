@@ -80,7 +80,7 @@ func GetProblems(ctx context.Context, PIDs []string) ([]dao.Problem, error) {
 }
 func ChekckProblemType(ctx context.Context, PType constanct.ProblemType) bool {
 	if PType == "" {
-		return false
+		return true
 	}
 	if PType == constanct.LOCALTYPE {
 		return true

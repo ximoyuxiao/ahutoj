@@ -261,7 +261,7 @@ func (p *CodeForceJudge) ParsePID() (string, string, error) {
 	if len(p.PID) < 1 {
 		return "", "", errors.New("")
 	}
-	re, _ := regexp.Compile("([0-9]*)([A-Z]*)")
+	re, _ := regexp.Compile("([0-9]*)([A-Z]*[0-9]*)")
 	strs := re.FindStringSubmatch(p.PID)
 	if len(strs) < 3 {
 		return "", "", fmt.Errorf("ParsePID failed ,pid:%v", p.PID)

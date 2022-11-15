@@ -35,22 +35,23 @@ func (p Permission) TableName() string {
 }
 
 type Problem struct {
-	PID          string `gorm:"column:PID" json:"PID"`
-	PType        string `gorm:"column:PType" json:"PType"`
-	Title        string `gorm:"column:Title" json:"Title"`
-	Description  string `gorm:"column:Description" json:"Description"`
-	Input        string `gorm:"column:Input" json:"Input"`
-	Output       string `gorm:"column:Output" json:"Output"`
-	SampleInput  string `gorm:"column:SampleInput" json:"SampleInput"`
-	SampleOutput string `gorm:"column:SampleOutput" json:"SampleOutput"`
-	LimitTime    int64  `gorm:"column:LimitTime" json:"LimitTime"`
-	LimitMemory  int64  `gorm:"column:LimitMemory" json:"LimitMemory"`
-	Hit          string `gorm:"column:Hit" json:"Hit"`
-	Label        string `gorm:"column:Label" json:"Label"`
-	Origin       int64  `gorm:"column:Origin" json:"Origin"`
-	OriginPID    string `gorm:"column:OriginPID" json:"OriginPID"`
-	ContentType  int64  `gorm:"column:ContentType" json:"ContentType"`
-	Visible      int    `gorm:"column:Visible" json:"Visible"`
+	PID          string                `gorm:"column:PID" json:"PID"`
+	PType        constanct.ProblemType `gorm:"column:PType" json:"PType"`
+	Title        string                `gorm:"column:Title" json:"Title"`
+	Description  string                `gorm:"column:Description" json:"Description"`
+	Input        string                `gorm:"column:Input" json:"Input"`
+	Output       string                `gorm:"column:Output" json:"Output"`
+	SampleInput  string                `gorm:"column:SampleInput" json:"SampleInput"`
+	SampleOutput string                `gorm:"column:SampleOutput" json:"SampleOutput"`
+	LimitTime    int64                 `gorm:"column:LimitTime" json:"LimitTime"`
+	LimitMemory  int64                 `gorm:"column:LimitMemory" json:"LimitMemory"`
+	Hit          string                `gorm:"column:Hit" json:"Hit"`
+	Label        string                `gorm:"column:Label" json:"Label"`
+	Origin       int64                 `gorm:"column:Origin" json:"Origin"`
+	OriginPID    string                `gorm:"column:OriginPID" json:"OriginPID"`
+	ContentType  int64                 `gorm:"column:ContentType" json:"ContentType"`
+	Visible      int                   `gorm:"column:Visible" json:"Visible"`
+	Sort         int                   `gorm:"column:Sort"`
 }
 
 type List struct {

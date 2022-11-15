@@ -28,6 +28,9 @@ func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
 	if !models.ChekckProblemType(c, req.PType) {
 		return response.CreateResponse(constanct.Problem_ADD_PTYPEERR_CODE), nil
 	}
+	if req.PType == "" {
+		req.PType = constanct.LOCALTYPE
+	}
 	if req.PType == constanct.LOCALTYPE {
 		nextPID, err = models.GetNextProblemPID(c)
 		if err != nil {
