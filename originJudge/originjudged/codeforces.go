@@ -79,21 +79,22 @@ type CodeForceJudge struct {
 
 func (p CodeForceJudge) Judge(ctx context.Context, submit dao.Submit, PID string) error {
 	err := p.InitCodeForceJudge()
-	defer p.retRangeUser()
-	defer p.commitToDB()
-	p.Submit = submit
 	p.PID = PID
 	if err != nil {
 		logger.Errorf("Call InitCodeForceJudge failed,err=%v", err.Error())
 		return fmt.Errorf("call InitCodeForceJudge failed,err=%v", err.Error())
 	}
+	defer p.retRangeUser()
+	defer p.commitToDB()
+	p.Submit = submit
 	err = p.Login()
 	if err != nil {
-		logger.Errorf("Call login failed,err=%v", err.Error())
+		logger.Errorf("Codeforces Call login failed,err=%v, JdugedID:%v", err.Error(), p.JudgeUser.OriginJudgeUser.ID)
 		return fmt.Errorf("call login failed,err=%v", err.Error())
 	}
+	p.SetJudeID(ctx)
 	if !p.submit() {
-		logger.Errorf("Call submit failed,submit=%v", submit.SID)
+		logger.Errorf("Call submit failed,submit=%v, JudgeID:%v", submit.SID, p.JudgeUser.OriginJudgeUser.ID)
 		return fmt.Errorf("call submit failed,submit=%v", submit.SID)
 	}
 	err = p.getResult()
@@ -153,16 +154,24 @@ func (p *CodeForceJudge) getCsrfToekn() (string, error) {
 func getRangeUser() (*CFJudgeUser, error) {
 	cfLock.Lock()
 	defer cfLock.Unlock()
+	pos := rand.Int() % len(JudgeUsers)
 	for idx := range JudgeUsers {
-		user := &JudgeUsers[idx]
+		user := &JudgeUsers[(pos+idx)%len(JudgeUsers)]
 		if user.Status == JUDGE_FREE {
 			user.Status = JUDGE_BUSY
 			return user, nil
 		}
 	}
-	return nil, nil
+	return nil, fmt.Errorf("not find free judgedUser")
 }
 
+func (p *CodeForceJudge) SetJudeID(ctx context.Context) {
+	for idx, judge := range JudgeUsers {
+		if judge.ID == p.JudgeUser.ID {
+			p.Submit.JudgeID = int64(idx + 1)
+		}
+	}
+}
 func (p *CodeForceJudge) retRangeUser() {
 	if p.JudgeUser == nil {
 		return
@@ -230,10 +239,10 @@ func (p *CodeForceJudge) Login() error {
 	}
 	userCount := p.JudgeUser
 	logger.Debugf("use user:%+v:", utils.Sdump(userCount))
-	SetCookies(nil, &p.JudgeUser.OriginJudgeUser)
 	if p.checkLoginSuccess() {
 		return nil
 	}
+	SetCookies(nil, &p.JudgeUser.OriginJudgeUser)
 	/*没有登录的情况下  需要重新做一次登录*/
 	p.JudgeUser.CsrfToken, _ = p.getCsrfToekn()
 	ftaa := getFtaa()
@@ -271,10 +280,16 @@ func (p *CodeForceJudge) ParsePID() (string, string, error) {
 
 func checkCFSubmitResp(resp *http.Response, CID string) bool {
 	if resp.StatusCode != 302 {
+		logger.Errorf("submit failed,should Status code 302 but now statuscode:%v", resp.StatusCode)
 		return false
 	}
 	Nexturl := "https://codeforces.com/" + GetContest(CID) + "/" + CID + "/my"
-	return Nexturl == resp.Header.Get("Location")
+	Location := resp.Header.Get("Location")
+	if Nexturl != Location {
+		logger.Errorf("submit failed,execpt NextURL:%v but now URL:%v", Nexturl, Location)
+		return false
+	}
+	return true
 }
 
 func GetContest(CID string) string {
@@ -306,7 +321,7 @@ func (p *CodeForceJudge) submit() bool {
 	data := MapToFormStrings(dataMap, "&")
 	resp, err := DoRequest(POST, url, p.Headers, p.JudgeUser.Cookies, &data, false)
 	if err != nil {
-		logger.Errorf("Call DoRequest failed,err=%v", err.Error())
+		logger.Errorf("Call DoRequest failed,err=%v, data:%v", err.Error(), data)
 		return false
 	}
 	return checkCFSubmitResp(resp, CID)

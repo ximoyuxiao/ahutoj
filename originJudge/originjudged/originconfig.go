@@ -6,6 +6,7 @@ import (
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
 	"context"
+	"math/rand"
 	"time"
 )
 
@@ -38,6 +39,7 @@ func GetOriginJudgeFunc(oj OJPlatform) OriginFunc {
 }
 
 func InitOriginThread() {
+	rand.Seed(time.Now().Unix())
 	logger := utils.GetLogInstance()
 	for {
 		/*1、从数据库 当中 提取外部判题*/
