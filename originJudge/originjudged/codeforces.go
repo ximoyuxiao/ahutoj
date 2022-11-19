@@ -61,13 +61,13 @@ var CFResultMap = map[string]constanct.OJResult{
 }
 
 var CfHeaders = map[string]string{
-	"User-Agent":      "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:105.0) Gecko/20100101 Firefox/105.0",
-	"Accept":          "*/*",
-	"Accept-Encoding": "gzip, deflate, br",
-	"Origin":          "https://codeforces.com",
-	"Connection":      "keep-alive",
-	"Content-Type":    "application/x-www-form-urlencoded",
-	"Host":            "www.codeforces.com",
+	"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:105.0) Gecko/20100101 Firefox/105.0",
+	"Accept":     "*/*",
+	// "Accept-Encoding": "gzip, deflate, br",
+	"Origin":       "https://codeforces.com",
+	"Connection":   "keep-alive",
+	"Content-Type": "application/x-www-form-urlencoded",
+	"Host":         "www.codeforces.com",
 }
 
 type CodeForceJudge struct {
@@ -130,7 +130,8 @@ func (p *CodeForceJudge) initCodeforceHead() {
 
 func (p *CodeForceJudge) getCsrfToekn() (string, error) {
 	url := "https://codeforces.com"
-	resp, err := DoRequest(GET, url, nil, nil, nil, true)
+	p.JudgeUser.Cookies["RCPC"] = "cb8d001c7d179c2536d275752653bc56"
+	resp, err := DoRequest(GET, url, p.Headers, p.JudgeUser.Cookies, nil, true)
 	if err != nil {
 		logger.Errorf("call DoRequest failed,url:%v,err=%v", url, err.Error())
 		return "", err
@@ -369,9 +370,6 @@ func (p *CodeForceJudge) getResult() error {
 	if err != nil {
 		logger.Errorf("call GetSubmitID failed")
 		return err
-	}
-	if GetContest(CID) != "gym" {
-		p.retRangeUser()
 	}
 
 	url := cfurl + "/" + GetContest(CID) + "/" + CID + "/submission/" + submissionID
