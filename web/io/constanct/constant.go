@@ -28,6 +28,7 @@ const (
 	InvalidParamCode   ResCode = 100002
 	PageNotFoundCode   ResCode = 100003
 	NotimplementedCode ResCode = 100004
+	ServerBusyCode     ResCode = 100005
 )
 
 /*auth 11*/
@@ -168,6 +169,7 @@ var codeMsgMap = map[ResCode]string{
 	ServerErrorCode:                  "服务器错误",
 	PageNotFoundCode:                 "页面不存在",
 	NotimplementedCode:               "接口未实现",
+	ServerBusyCode:                   "服务器繁忙",
 	AUTH_Token_EmptyCode:             "用户未登录",
 	AUTH_Token_InvalidCode:           "用户登录信息过期",
 	AUTH_Token_URLVerifyCode:         "用户没有权限访问",

@@ -9,7 +9,9 @@ import (
 var config = new(AppConfig)
 
 type AppConfig struct {
+	Host            string  `mapstructure:"host"`
 	Port            string  `mapstructure:"port"`
+	GatWayHost      string  `mapstructure:"gatWayHost"`
 	Mode            string  `mapstructure:"mode"`
 	Sign            string  `mapstructure:"sign"`
 	Version         string  `mapstructure:"version"`
@@ -80,6 +82,21 @@ func ConfigInit(configPath string) error {
 		return err
 	}
 	fmt.Println(Sdump(config))
+	return nil
+
+}
+func InitAppConfig(configPath string, Myconfig interface{}) error {
+	viper.SetConfigFile(configPath)
+	err := viper.ReadInConfig()
+	if err != nil {
+		fmt.Printf("call ReadConfig Failed, err=%s\n", err.Error())
+		return err
+	}
+	if err := viper.Unmarshal(Myconfig); err != nil {
+		fmt.Printf("call Unmarshal Failed, err=%s\n", err.Error())
+		return err
+	}
+	fmt.Println(Sdump(Myconfig))
 	return nil
 
 }

@@ -1,7 +1,9 @@
 package routers
 
 import (
+	originJudged "ahutoj/originJudge/originjudged"
 	"ahutoj/web/io/constanct"
+	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
 	"ahutoj/web/middlewares"
 	"ahutoj/web/service"
@@ -11,6 +13,7 @@ import (
 
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
+	"github.com/goccy/go-json"
 )
 
 func InitServer() {
@@ -32,6 +35,7 @@ func InitServer() {
 		pprof.Register(router)
 	}
 
+	InitRouters(router)
 	// 404
 	router.NoRoute(NotFindRegister)
 
@@ -46,7 +50,7 @@ func regeisterRouters(router *gin.Engine) {
 		apiRouter.GET("/ping", PingTest) // 测试网络连通性
 		apiRouter.GET("/now", serverTime)
 		// 相当于接口/api/Auth/ 的这组路径
-		authRouter := apiRouter.Group("/auth")
+		authRouter := apiRouter.Group("/auth").Use(middlewares.JwtVerify)
 		{
 			// 相当于接口 /api/Auth/login
 			authRouter.POST("/login/", service.Login)
@@ -152,4 +156,24 @@ func serverTime(ctx *gin.Context) {
 		"messgae": "success",
 		"time":    time.Now().UnixMilli(),
 	})
+}
+
+func InitRouters(router *gin.Engine) {
+	conf := utils.GetConfInstance()
+	for _, router := range router.Routes() {
+		url := router.Path
+		Method := router.Method
+		req := request.AddRouterReq{
+			FromURL:     url,
+			Method:      Method,
+			ToHost:      conf.Host + conf.Port,
+			Weight:      10,
+			VerfiyLevel: middlewares.GetVerifyUrl(url),
+		}
+		Header := make(map[string]string)
+		Header["Content-Typp"] = "application/json"
+		dataByte, _ := json.Marshal(req)
+		data := string(dataByte)
+		originJudged.DoRequest(originJudged.POST, conf.GatWayHost+"inner/addrouter", Header, nil, &data, true)
+	}
 }

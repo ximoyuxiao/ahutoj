@@ -3,9 +3,7 @@ package middlewares
 import (
 	mysqldao "ahutoj/web/dao/mysqlDao"
 	"ahutoj/web/io/constanct"
-	"ahutoj/web/io/response"
 	"ahutoj/web/mapping"
-	"ahutoj/web/models"
 	"ahutoj/web/utils"
 	"errors"
 	"time"
@@ -21,47 +19,35 @@ var (
 	ExpTime time.Duration
 )
 
-// map所需要的的权限 第x为为1表示  如果用户权限为第X位则具备权限
-const (
-	UNLOGIN       VerfiyLevel = 0xff // 1111 1111
-	CommomUser    VerfiyLevel = 0xfe // 1111 1110
-	Administrator VerfiyLevel = 0xfc // 1111 1100
-	ProblemAdmin  VerfiyLevel = 0x88 // 1000 1000
-	ContestAdmin  VerfiyLevel = 0x90 // 1001 0000
-	SourceBorwser VerfiyLevel = 0xa0 // 1010 0000
-	ListAdmin     VerfiyLevel = 0xc0 // 1100 0000
-	SuperAdmin    VerfiyLevel = 0x80 // 1000 0000
-)
-
 // 需要的权限等级
-var verifyMap = map[string]VerfiyLevel{
-	"/api/logout/":                  CommomUser,
-	"/api/user/edit/":               CommomUser,
-	"/api/user/edit/pass/":          CommomUser,
-	"/api/user/vjudgeBind":          CommomUser,
-	"/api/admin/permission/edit/":   SuperAdmin,
-	"/api/admin/permission/delete/": SuperAdmin,
-	"/api/admin/permission/add/":    SuperAdmin,
-	"/api/admin/permission/list/":   SuperAdmin,
-	"/api/admin/permission/:id":     CommomUser,
-	"/api/problem/add/":             ProblemAdmin,
-	"/api/problem/edit/":            ProblemAdmin,
-	"/api/problem/delete/":          ProblemAdmin,
-	"/api/contest/add/ ":            ContestAdmin,
-	"/api/contest/edit/":            ContestAdmin,
-	"/api/contest/delete/":          ContestAdmin,
-	"/api/file/add/:pid":            CommomUser,
-	"/api/file/delete/:pid":         ProblemAdmin,
-	"/api/file/unzip/:pid":          ProblemAdmin,
-	"/api/submit/rejudge/":          SuperAdmin,
-	"/api/submit/commit/":           CommomUser,
-	"/api/training/add/":            ListAdmin,
-	"/api/training/edit/":           ListAdmin,
-	"/api/training/delete/":         ListAdmin,
-	"/api/admin/users":              SuperAdmin,
-	"/api/submit/:id":               CommomUser,
-	"/api/user/editHead/":           CommomUser,
-	"/api/file/image/":              ProblemAdmin,
+var VerifyMap = map[string]constanct.VerfiyLevel{
+	"/api/auth/logout/":             constanct.CommomUser,
+	"/api/user/edit/":               constanct.CommomUser,
+	"/api/user/edit/pass/":          constanct.CommomUser,
+	"/api/user/vjudgeBind":          constanct.CommomUser,
+	"/api/admin/permission/edit/":   constanct.SuperAdmin,
+	"/api/admin/permission/delete/": constanct.SuperAdmin,
+	"/api/admin/permission/add/":    constanct.SuperAdmin,
+	"/api/admin/permission/list/":   constanct.SuperAdmin,
+	"/api/admin/permission/:id":     constanct.CommomUser,
+	"/api/problem/add/":             constanct.ProblemAdmin,
+	"/api/problem/edit/":            constanct.ProblemAdmin,
+	"/api/problem/delete/":          constanct.ProblemAdmin,
+	"/api/contest/add/ ":            constanct.ContestAdmin,
+	"/api/contest/edit/":            constanct.ContestAdmin,
+	"/api/contest/delete/":          constanct.ContestAdmin,
+	"/api/file/add/:pid":            constanct.CommomUser,
+	"/api/file/delete/:pid":         constanct.ProblemAdmin,
+	"/api/file/unzip/:pid":          constanct.ProblemAdmin,
+	"/api/submit/rejudge/":          constanct.SuperAdmin,
+	"/api/submit/commit/":           constanct.CommomUser,
+	"/api/training/add/":            constanct.ListAdmin,
+	"/api/training/edit/":           constanct.ListAdmin,
+	"/api/training/delete/":         constanct.ListAdmin,
+	"/api/admin/users":              constanct.SuperAdmin,
+	"/api/submit/:id":               constanct.CommomUser,
+	"/api/user/editHead/":           constanct.CommomUser,
+	"/api/file/image/":              constanct.ProblemAdmin,
 }
 
 const JwtTokenCtxKey = "user"
@@ -129,6 +115,7 @@ func GetUid(ctx *gin.Context) string {
 	}
 	return myClaims.UserID
 }
+
 func GetAdmin(ctx *gin.Context) mapping.PermissionBit {
 	a, _ := ctx.Get(JwtTokenCtxKey)
 	MyClaims, ok := a.(*MyClaims)
@@ -137,64 +124,27 @@ func GetAdmin(ctx *gin.Context) mapping.PermissionBit {
 	}
 	return mapping.PermissionBit(MyClaims.PermissionMap)
 }
-func CheckUserHasPermission(ctx *gin.Context, needVerfiyLevel VerfiyLevel) bool {
-	return VerfiyLevel(GetAdmin(ctx))&needVerfiyLevel != 0
+
+func CheckUserHasPermission(ctx *gin.Context, needVerfiyLevel constanct.VerfiyLevel) bool {
+	return constanct.VerfiyLevel(GetAdmin(ctx))&needVerfiyLevel != 0
 }
 
 // 验证token
 func JwtVerify(c *gin.Context) {
-	logger := utils.GetLogInstance()
-	// 获得当前的url
-	url := c.FullPath()
-
 	token := c.GetHeader("Authorization")
 	if token == "" {
-		if GetVerifyUrl(url) == UNLOGIN {
-			c.Next()
-			return
-		}
-		logger.Errorf("token is empty")
-		response.ResponseError(c, constanct.AUTH_Token_EmptyCode)
-		c.Abort()
 		return
 	}
 	// 验证token，并存储在请求中
-	claims, err := ParseToken(token)
-	if err != nil {
-		logger.Errorf("token parse error, token=%s, err = %s", token, err.Error())
-		response.ResponseError(c, constanct.AUTH_Token_InvalidCode)
-		c.Abort()
-		return
-	}
-	/*判断是否拥有访问权限*/
-	if HasUrlVerify(c, url, claims) {
-		c.Set(JwtTokenCtxKey, claims)
-		c.Next()
-		return
-	}
-	response.ResponseError(c, constanct.AUTH_Token_URLVerifyCode)
-	logger.Infof("the Url(%s) need Verify", url)
-	c.Abort()
+	claims, _ := ParseToken(token)
+	c.Set(JwtTokenCtxKey, claims)
+	c.Next()
 }
 
-func HasUrlVerify(ctx *gin.Context, url string, claims *MyClaims) bool {
-	/*此处需要大于普通用户的权限*/
-	UserPermission := mapping.UNLOGINBit
-	NeedPermission := GetVerifyUrl(url)
-	if claims != nil {
-		mapping.AddPermissionBit(&UserPermission, mapping.CommomUserBit)
-		permission, err := models.GetPermission(ctx, claims.UserID)
-		if err == nil {
-			mapping.AddPermissionBit(&UserPermission, mapping.PermissionBit(mapping.PermissionToBitMap(permission)))
-		}
-	}
-	return (NeedPermission & VerfiyLevel(UserPermission)) != 0
-}
-
-func GetVerifyUrl(url string) VerfiyLevel {
-	level, ok := verifyMap[url]
+func GetVerifyUrl(url string) constanct.VerfiyLevel {
+	level, ok := VerifyMap[url]
 	if !ok {
-		return UNLOGIN
+		return constanct.UNLOGIN
 	}
 	return level
 }

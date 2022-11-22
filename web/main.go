@@ -47,6 +47,7 @@ func initAPP(ConfigPath string) error {
 	middlewares.InitJwt()
 
 	middlewares.InitSnowflake(utils.GetConfInstance().StartTime, utils.GetConfInstance().MachineID)
+
 	routers.InitServer()
 	return nil
 }

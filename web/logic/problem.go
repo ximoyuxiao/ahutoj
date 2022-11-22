@@ -87,7 +87,7 @@ func DeleteProblem(ctx *gin.Context, req *request.DeleteProblemReq) (interface{}
 func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{}, error) {
 	var ret response.ProblemListResp
 	offset, size := utils.GetPageInfo(req.Page, req.Limit)
-	admin := middlewares.CheckUserHasPermission(ctx, middlewares.ProblemAdmin)
+	admin := middlewares.CheckUserHasPermission(ctx, constanct.ProblemAdmin)
 	problem := dao.Problem{}
 	if !admin {
 		problem.Visible = 1
@@ -122,7 +122,7 @@ func GetProblemInfo(ctx *gin.Context, PID string) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	admin := middlewares.CheckUserHasPermission(ctx, middlewares.ProblemAdmin)
+	admin := middlewares.CheckUserHasPermission(ctx, constanct.ProblemAdmin)
 	/*1 可视 -1 不可见*/
 	if problem.Visible == -1 && !admin {
 		return response.CreateResponse(constanct.PROBLEM_GET_PIDNotExistCode), nil
