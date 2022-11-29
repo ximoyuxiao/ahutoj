@@ -292,7 +292,7 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
 bool judgeClient::getFiles()
 {
     char path[MAXBUFF];
-    sprintf(path,"%s/%d/",DATAPATH,solve->Pid());
+    sprintf(path,"%s/%s/",DATAPATH,solve->Pid().c_str());
     ILOG("%s",path);
     inputFiles.clear();
     DIR *dir = opendir(path);

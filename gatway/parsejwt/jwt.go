@@ -4,7 +4,9 @@ import (
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/response"
 	"ahutoj/web/mapping"
+	"ahutoj/web/utils"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -80,9 +82,9 @@ func JwtVerify(c *gin.Context) (interface{}, bool) {
 	if err != nil {
 		return response.CreateResponse(constanct.AUTH_Token_InvalidCode), false
 	}
+	c.Set(JwtTokenCtxKey, claims)
 	/*判断是否拥有访问权限*/
 	if HasUrlVerify(c, url, claims) {
-		c.Set(JwtTokenCtxKey, claims)
 		return nil, true
 	}
 	return response.CreateResponse(constanct.AUTH_Token_URLVerifyCode), false
@@ -92,10 +94,12 @@ func HasUrlVerify(ctx *gin.Context, url string, claims *MyClaims) bool {
 	/*此处需要大于普通用户的权限*/
 	UserPermission := mapping.UNLOGINBit
 	NeedPermission := GetVerifyUrl(url)
+	fmt.Println(utils.Sdump(claims))
 	if claims != nil {
 		mapping.AddPermissionBit(&UserPermission, mapping.CommomUserBit)
-		UserPermission = mapping.PermissionBit(claims.PermissionMap)
+		mapping.AddPermissionBit(&UserPermission, mapping.PermissionBit(claims.PermissionMap))
 	}
+	fmt.Printf("need permission:%v, UserPermission:%v\n", NeedPermission, UserPermission)
 	return (NeedPermission & constanct.VerfiyLevel(UserPermission)) != 0
 }
 

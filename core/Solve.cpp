@@ -4,7 +4,7 @@
 
 #include"Solve.h"
 #include"readConfig.h"
-Solve::Solve(int problemID,int solutionID,const char *source,int limitTime,int limitMeory,lanuage lang){
+Solve::Solve(string problemID,int solutionID,const char *source,int limitTime,int limitMeory,lanuage lang){
     this->problemID = problemID;
     this->solutionID = solutionID;
     this->source = source;
@@ -57,7 +57,7 @@ void Solve::getargs(char* args[8])
 {
 //Solve(int problemID, int solutionID, const char *source, int limitTime, int limitMeory, int lang)
     strcpy(args[0],"judgeclient"); 
-    intTostr(args[1],problemID);
+    strcpy(args[1],problemID.c_str());
     intTostr(args[2],solutionID);
     strcpy(args[3],source.c_str());
     intTostr(args[4],limitTime);
@@ -75,10 +75,10 @@ void Solve::intTostr(char*args,int num)
     return ;
 }
 
-int  Solve::Pid(){
+string  Solve::Pid(){
     return problemID;
 }
-void Solve::Pid(int pid){
+void Solve::Pid(string pid){
     this->problemID = pid;
 }
 int  Solve::Sid(){

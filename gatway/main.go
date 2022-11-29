@@ -181,6 +181,7 @@ func AddRouter(ctx *gin.Context) {
 	key := strings.ToUpper(req.Method) + " " + req.FromURL
 	_, ok := PrefixAndRouter[key]
 	// 如果不存在这个key
+	fmt.Printf("url:%v level:%v\n", req.FromURL, req.VerfiyLevel)
 	if !ok {
 		PrefixAndRouter[key] = &Router{
 			From:       req.FromURL,
@@ -196,6 +197,7 @@ func AddRouter(ctx *gin.Context) {
 		if PrefixAndRouter[key].To[idx].Host == req.ToHost {
 			PrefixAndRouter[key].To[idx].Weight = req.Weight
 			PrefixAndRouter[key].To[idx].Connection = true
+			parsejwt.VerifyMap[req.FromURL] = req.VerfiyLevel
 			response.ResponseOK(ctx, constanct.SuccessCode)
 			return
 		}

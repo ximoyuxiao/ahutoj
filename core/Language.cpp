@@ -62,10 +62,10 @@ void Java_Language::init_syscalls_limits(int call_counter[]){
     
 }
 
-void C_Language::compile(char *dir, int pid,const char *src){
+void C_Language::compile(char *dir, string pid,const char *src){
     char comp[MAXBUFF];
     char sourceFile[128];
-    sprintf(sourceFile,"%s/%d.c",dir, pid);
+    sprintf(sourceFile,"%s/%s.c",dir, pid.c_str());
     FILE* fp = fopen(sourceFile,"w");
     fprintf(fp,"%s",src);
     fclose(fp);
@@ -73,10 +73,10 @@ void C_Language::compile(char *dir, int pid,const char *src){
     system(comp);
 }
 
-void Cpp_Language::compile(char *dir, int pid,const char *src){
+void Cpp_Language::compile(char *dir, string pid,const char *src){
     char comp[MAXBUFF];
     char sourceFile[128];
-    sprintf(sourceFile, "%s/%d.cpp", dir, pid);
+    sprintf(sourceFile, "%s/%s.cpp", dir, pid.c_str());
     FILE* fp = fopen(sourceFile,"w");
     fprintf(fp,"%s", src);
     fclose(fp);
@@ -84,7 +84,7 @@ void Cpp_Language::compile(char *dir, int pid,const char *src){
     system(comp);
 }
 
-void Python3_Language::compile(char *dir, int pid,const char *src){
+void Python3_Language::compile(char *dir, string pid,const char *src){
     //Python是及时解释性语言，但是要产生错误文件，防止上层判断报错
     char errFile[MAXBUFF];
     char sourceFile[128];
@@ -98,7 +98,7 @@ void Python3_Language::compile(char *dir, int pid,const char *src){
     fclose(errfp);
 }
 
-void Java_Language::compile(char *dir, int pid,const char *src){
+void Java_Language::compile(char *dir, string pid,const char *src){
     char comp[MAXBUFF];
     char sourceFile[128];
     sprintf(sourceFile,"%s/Main.java",dir);

@@ -8,7 +8,7 @@ using std::string;
 class Solve
 {
 private:
-    int           problemID;      //问题编号
+    string        problemID;      //问题编号
     int           solutionID;     //提交编号
     int           UserID;         //用户ID
     int           CompleteID;     //竞赛ID 
@@ -23,13 +23,13 @@ private:
     string        ceinfo;         //错误信息
     void intTostr(char* args,int num);
 public:
-    Solve(int problemID=0,int solutionID=0,const char *source="",int limitTime=0,int limitMeory=0,lanuage lang=C);
+    Solve(string problemID="",int solutionID=0,const char *source="",int limitTime=0,int limitMeory=0,lanuage lang=C);
     Solve(Solve &solve);
     ~Solve();
     bool operator<(const Solve& b) const;
     Solve& operator=(const Solve &s);
-    int  Pid();
-    void Pid(int pid);
+    string  Pid();
+    void Pid(string pid);
     int  Sid();
     void Sid(int sid);
     int  Uid();

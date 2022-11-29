@@ -46,11 +46,14 @@ static vector<string> splite(string key,char sp){
     }
     return ret;
 }
+
 void SolutionDb::GetSolveLimit(Solve* solve){
-    auto value = redis->getString(to_string(solve->Pid()));
+    auto value = redis->getString(solve->Pid());
+    ILOG("value:%s",value.c_str());
     if (value == ""){
         char sql[256]="";
-        sprintf(sql,"select LimitTime,LimitMemory from Problem where PID=%d",solve->Pid());
+        sprintf(sql,"select LimitTime,LimitMemory from Problem where PID=\'%s\'",solve->Pid().c_str());
+        ILOG(sql);
         auto db = mysqlDB::getInstance();
         MYSQL mysql;
         db->getDatabase(&mysql);
@@ -72,13 +75,14 @@ void SolutionDb::GetSolveLimit(Solve* solve){
             solve->LimitMemory(atoll(row[1]));
             char temp[128];
             sprintf(temp,"%s,%s",row[0],row[1]);
-            redis->setString(to_string(solve->Pid()),temp);
+            redis->setString(solve->Pid(),temp);
         }
     }else{
         auto values = splite(value,',');
         solve->LimitTime(atoll(values[0].c_str()));
         solve->LimitMemory(atoll(values[1].c_str()));
     }
+    ILOG("ltime:%lld,memory:%lld",solve->LimitTime(),solve->LimitMemory());
    
 }
 vector<Solve*> SolutionDb::getSolve(){
@@ -105,7 +109,7 @@ vector<Solve*> SolutionDb::getSolve(){
     {
        Solve* solve = new  Solve();
        solve->Sid(atoi(row[0]));
-       solve->Pid(atoi(row[1]));
+       solve->Pid(row[1]);
        solve->Uid(atoi(row[2]));
        solve->Cid(atoi(row[3]));
        solve->Source(row[4]);
