@@ -199,7 +199,13 @@ func initRankItem(rank *response.RankItem, user dao.User, problemSize int) {
 	}
 }
 
-func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface{}, error) {
+const (
+	ACM int = 1
+	OI  int = 2
+)
+
+func GetRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface{}, error) {
+
 	logger := utils.GetLogInstance()
 	contest, err := models.GetContestFromDB(ctx, req.CID)
 	if err != nil {
@@ -233,9 +239,12 @@ func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface
 	userMap := make(map[string]int, 0)
 	ranks := make(response.RankItems, 0)
 	idx := 0
+
 	for _, submit := range submits {
+		// 获取竞赛排行榜用户
 		rid, ok := userMap[submit.UID]
 		if !ok {
+			// 添加一个排行榜用户
 			rid = idx
 			idx += 1
 			userMap[submit.UID] = rid
@@ -244,6 +253,7 @@ func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface
 			ranks = append(ranks, response.RankItem{})
 			initRankItem(&ranks[rid], user, len(problems))
 		}
+		// 获取用户的排行信息
 		rank := &ranks[rid]
 		problem := &rank.Problems[problemIdxMap[submit.PID]]
 		problem.PID = submit.PID
@@ -254,6 +264,11 @@ func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface
 			problem.Time = submit.SubmitTime - contest.Begin_time
 			rank.AllSubmit++
 			problem.SubmitNumber++
+			if submit.Result == constanct.OJ_DENIAL || submit.Result == constanct.OJ_TIMEOUT ||
+				submit.Result == constanct.OJ_FAILED || submit.Result == constanct.OJ_JUDGE {
+				rank.JudgeErrorNumber++
+			}
+
 			if submit.Result == constanct.OJ_AC {
 				rank.ACNumber++
 			}
@@ -262,6 +277,7 @@ func GteRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface
 			}
 		}
 	}
+
 	return response.ConntestRankResp{
 		Response: response.CreateResponse(constanct.SuccessCode),
 		Size:     ranks.Len(),

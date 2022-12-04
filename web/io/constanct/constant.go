@@ -133,12 +133,14 @@ const (
 	CONTEST_GET_CIDPassWordErrorCode ResCode = 160504
 
 	CONTEST_RANK_FAILED ResCode = 160601
+	CONTEST_RANK_NOSHOW ResCode = 160602
 )
 
 /*submit 17*/
 const (
-	SUBMIT_ADD_FAILEDCode    ResCode = 170101
-	SUBMIT_ADD_DUPLICATECODE ResCode = 170102
+	SUBMIT_ADD_FAILEDCode           ResCode = 170101
+	SUBMIT_ADD_DUPLICATECODE        ResCode = 170102
+	SUBMIT_ADD_CONTESTNOTSTART_CODE ResCode = 170103
 
 	SUBMIT_REJUDG_FAILEDCode ResCode = 170201
 
@@ -238,6 +240,8 @@ var codeMsgMap = map[ResCode]string{
 	FILE_UPIMAGE_FAILED:              "上传图片失败",
 	USER_EDITIMAG_SAVECODE:           "上传图片失败",
 	USER_EDITIMAG_TPYECODE:           "错误的图片类型",
+	CONTEST_RANK_NOSHOW:              "OI竞赛期间不可见",
+	SUBMIT_ADD_CONTESTNOTSTART_CODE:  "竞赛未开始，不可提交代码",
 }
 var HttpCodeMap = map[ResCode]int{
 	SuccessCode:        http.StatusOK,

@@ -136,7 +136,7 @@ func GteRankContest(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := logic.GteRankContest(ctx, req)
+	resp, err := logic.GetRankContest(ctx, req)
 	if err != nil {
 		logger.Errorf("call AddContest failed, err = %s", err.Error())
 		response.ResponseError(ctx, constanct.ServerErrorCode)

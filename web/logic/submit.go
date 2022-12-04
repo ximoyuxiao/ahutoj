@@ -42,6 +42,22 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 		submit.IsOriginJudge = true
 		submit.OriginPID = problem.OriginPID
 	}
+
+	if req.CID != 0 && req.CID > 0 {
+		contest, err := models.GetContestFromDB(ctx, req.CID)
+		if err != nil {
+			logger.Errorf("call GetContestFromDB failed,pid=%v, err=%s", req.PID, err.Error())
+			return response.CreateResponse(constanct.SUBMIT_ADD_FAILEDCode), err
+		}
+		// 比赛未开始 不能提交代码
+		if contest.Begin_time > time.Now().UnixMilli() {
+			return response.CreateResponse(constanct.SUBMIT_ADD_CONTESTNOTSTART_CODE), nil
+		}
+		if contest.Ctype == OI && contest.End_time > time.Now().UnixMilli() {
+			submit.Result = constanct.OJ_JUDGE
+		}
+	}
+	/*提交代码*/
 	err = models.CreateSubmit(ctx, submit)
 	if err != nil {
 		logger.Errorf("call CreateSubmit failed, submit=%v, err=%s", submit, err.Error())

@@ -43,13 +43,14 @@ type ProblemItem struct {
 	Status       constanct.OJResult `json:"Status"`       // 最终状态
 }
 type RankItem struct {
-	UserID    string        `json:"UserID"`
-	Uname     string        `json:"Uname"`
-	Uclass    string        `json:"Uclass"`
-	AllSubmit int64         `json:"AllSubmit"`
-	ACNumber  int64         `json:"ACNumber"`
-	CENumber  int64         `json:"CENumber"`
-	Problems  []ProblemItem `json:"Problems"`
+	UserID           string        `json:"UserID"`
+	Uname            string        `json:"Uname"`
+	Uclass           string        `json:"Uclass"`
+	AllSubmit        int64         `json:"AllSubmit"`
+	ACNumber         int64         `json:"ACNumber"`
+	CENumber         int64         `json:"CENumber"`
+	JudgeErrorNumber int64         `json:"JudgeErrorNumber"`
+	Problems         []ProblemItem `json:"Problems"`
 }
 type ConntestRankResp struct {
 	Response
