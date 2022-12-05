@@ -1,4 +1,6 @@
 # 端口号
+host: "127.0.0.1"
+gatWayHost: "http://127.0.0.1:4433/"
 port: ":4212"
 mode: "debug"
 # 签名
@@ -39,6 +41,10 @@ log:
     filename: "ahutoj.log"
     max_size: 4194304
 
+originLog:
+    level: "debug"
+    filename: "originjudge.log"
+    max_size: 4194304
 useOriginJudge: true
 # 注册一个AtCoder判题机，首先配置ID前缀，配置公共密码 ID:prefix + 数字(最多支持 1-100) 
 atCoderJudges:
@@ -55,3 +61,7 @@ luoguJudge:
     count: 20 
     prefix: "AOJjudge"
     password: "AhutAcm@108"
+gatWay:
+    port: ":4433"
+    maxqps: 100
+    blackReq: 
