@@ -21,7 +21,7 @@ func main() {
 		fmt.Printf("call ConfigInit failed, config:%v\n", config)
 	}
 	utils.LogInit()
-	err = mysqldao.InitMysql()
+	err = mysqldao.InitMysql(nil)
 	if err != nil {
 		fmt.Printf("call ConfigInit failed, config:%v\n", utils.GetConfInstance().MySQLConfig)
 	}

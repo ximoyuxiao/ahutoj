@@ -30,7 +30,7 @@ func initAPP(ConfigPath string) error {
 	utils.LogInit()
 
 	//初始化MySQL数据库
-	err = mysqldao.InitMysql()
+	err = mysqldao.InitMysql(nil)
 	logger := utils.GetLogInstance()
 	if err != nil {
 		logger.Errorf("init mysql error mysqlConf:%+v, err=%s", utils.Sdump(utils.GetConfInstance().MySQLConfig), err.Error())

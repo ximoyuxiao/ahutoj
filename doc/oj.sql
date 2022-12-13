@@ -16,6 +16,7 @@ drop table IF EXISTS List;
 drop table IF EXISTS Problem;
 drop table IF EXISTS Permission;
 drop table IF EXISTS User;
+# 此处存储用户的基本信息
 create table User(
     UID varchar(20)   primary key,
     UserName  varchar(20),
@@ -28,7 +29,8 @@ create table User(
     Vjpwd  varchar(128),
     CodeForceUser Text,
     Email varchar(20),
-    HeadUrl Text
+    HeadUrl Text,
+    Rating int,  # 此处用户的扩展信息
 )DEFAULT CHARSET=utf8mb4;
 
 create table Permission(

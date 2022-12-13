@@ -35,7 +35,7 @@ func TestSubmitAndGetResult(t *testing.T) {
 func TestAtcoderLogin(t *testing.T) {
 	utils.ConfigInit("../../config.yaml")
 	utils.GetConfInstance().MySQLConfig.Host = "116.205.190.37"
-	mysqldao.InitMysql()
+	mysqldao.InitMysql(nil)
 	utils.LogInit()
 	submit, _ := mysqldao.SelectSubmitBySID(context.Background(), 1024)
 	submit.Result = constanct.OJ_JUDGE

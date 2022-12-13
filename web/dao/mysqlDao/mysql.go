@@ -16,8 +16,10 @@ var (
 	err            error
 )
 
-func InitMysql() error {
-	cfg := utils.GetConfInstance().MySQLConfig
+func InitMysql(cfg *utils.MySQLConfig) error {
+	if cfg == nil {
+		cfg = utils.GetConfInstance().MySQLConfig
+	}
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
 		cfg.UserName, cfg.Password, cfg.Host, cfg.Port, cfg.Dbname,
