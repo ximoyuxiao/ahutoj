@@ -18,6 +18,7 @@ type AppConfig struct {
 	StartTime       string  `mapstructure:"startTime"`
 	MachineID       int64   `mapstructure:"machineID "`
 	DataPath        string  `mapstructure:"dataPath"`
+	JsonPath        string  `mapstructure:"jsonPath"`
 	Terminal        float64 `mapstructure:"terminal"`
 	OpenTime        float64 `mapstructure:"openTime"`
 	ImagePath       string  `mapstructure:"imagePath"`
