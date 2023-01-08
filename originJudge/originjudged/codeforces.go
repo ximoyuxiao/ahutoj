@@ -48,6 +48,7 @@ var cflang = map[constanct.LANG]string{
 
 var CFResultMap = map[string]constanct.OJResult{
 	"Accepted":                   constanct.OJ_AC,
+	"Happy New Year!":            constanct.OJ_AC,
 	"Compilation error(.*?)":     constanct.OJ_CE,
 	"Memory limit exceeded(.*?)": constanct.OJ_MLE,
 	"O(.*?)":                     constanct.OJ_OLE,
