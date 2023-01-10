@@ -61,6 +61,10 @@ type List struct {
 	StartTime int64  `gorm:"column:StartTime"`
 }
 
+func (p List) TableName() string {
+	return "List"
+}
+
 type ListProblem struct {
 	LID   int64  `gorm:"column:LID"`
 	PID   string `gorm:"column:PID"`

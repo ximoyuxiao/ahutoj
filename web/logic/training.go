@@ -106,14 +106,14 @@ func GetTrainingList(ctx *gin.Context, req *request.TrainingListReq) (interface{
 		logger.Errorf("call GetTrainingListFromDb failed,err=%s", err.Error())
 		return nil, err
 	}
-	respData := make([]response.TrainingListItem, 0, len(TrainingList))
-	for i, training := range TrainingList {
-		respData[i] = response.TrainingListItem{
+	respData := make([]response.TrainingListItem, 0)
+	for _, training := range TrainingList {
+		respData = append(respData, response.TrainingListItem{
 			LID:       training.LID,
 			UID:       training.UID,
 			Title:     training.Title,
 			StartTime: training.StartTime,
-		}
+		})
 	}
 	return response.TrainingListResp{
 		Response: response.CreateResponse(constanct.SuccessCode),
