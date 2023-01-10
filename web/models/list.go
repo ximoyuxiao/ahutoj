@@ -68,3 +68,7 @@ func GetTrainingList(ctx *gin.Context, offset, pagesize int) ([]dao.List, error)
 func GetCurrentLID(ctx *gin.Context, list dao.List) (int64, error) {
 	return mysqldao.SelectListByUID(ctx, list.UID)
 }
+
+func GetTrainingListSize(ctx *gin.Context) (int64, error) {
+	return mysqldao.SelectTraningListCount(ctx)
+}

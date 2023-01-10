@@ -115,9 +115,15 @@ func GetTrainingList(ctx *gin.Context, req *request.TrainingListReq) (interface{
 			StartTime: training.StartTime,
 		})
 	}
+	count, err := models.GetTrainingListSize(ctx)
+	if err != nil {
+		logger.Errorf("call GetTrainingListSize failed")
+		return nil, err
+	}
+
 	return response.TrainingListResp{
 		Response: response.CreateResponse(constanct.SuccessCode),
-		Size:     int64(len(TrainingList)),
+		Size:     count,
 		Data:     respData,
 	}, err
 

@@ -67,3 +67,9 @@ func SelectListByUID(ctx context.Context, UID string) (int64, error) {
 	err := db.Where("UID=?", UID).Last(&ret).Error
 	return ret.LID, err
 }
+func SelectTraningListCount(ctx context.Context) (int64, error) {
+	db := GetDB(ctx)
+	var ret int64
+	err := db.Count(&ret).Error
+	return ret, err
+}
