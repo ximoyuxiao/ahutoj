@@ -15,6 +15,12 @@ type User struct {
 	Email         string `gorm:"column:Email"`
 	CodeForceUser string `gorm:"column:CodeForceUser"`
 	HeadURL       string `gorm:"column:HeadUrl"`
+	Rating        int    `gorm:"column:Rating"`
+	LoginIP       string `gorm:"column:LoginIP"`
+	RegisterTime  int64  `gorm:"column:RegisterTime"`
+	Submited      int64  `gorm:"column:Submited"`
+	Solved        uint32 `gorm:"column:Solved"`
+	Defaulted     string `gorm:"column:Defaulted"`
 }
 
 func (u User) TableName() string {
@@ -50,15 +56,21 @@ type Problem struct {
 	Origin       int64                 `gorm:"column:Origin" json:"Origin" xml:"Origin"`
 	OriginPID    string                `gorm:"column:OriginPID" json:"OriginPID" xml:"OriginPID"`
 	ContentType  int64                 `gorm:"column:ContentType" json:"ContentType" xml:"ContentType"`
-	Visible      int                   `gorm:"column:Visible" json:"Visible" xml:"Visible"`
-	Sort         int                   `gorm:"column:Sort"`
+	/*1:可见  -1:不可见*/
+	Visible  int    `gorm:"column:Visible" json:"Visible" xml:"Visible"`
+	Accepted uint32 `gorm:"column:Accepted" json:"Accepted"`
+	Submited uint32 `gorm:"column:Submited" json:"Submited" xml:"Submited"`
+	SpjJudge int    `gorm:"column:SpjJudge" json:"SpjJudge" xml:"SpjJudge"`
+	Source   string `gorm:"column:Source" json:"Source" xml:"Source"`
 }
 
 type List struct {
-	LID       int64  `gorm:"column:LID"`
-	UID       string `gorm:"column:UID"`
-	Title     string `gorm:"column:Title"`
-	StartTime int64  `gorm:"column:StartTime"`
+	LID         int64  `gorm:"column:LID"`
+	UID         string `gorm:"column:UID"`
+	Title       string `gorm:"column:Title"`
+	StartTime   int64  `gorm:"column:StartTime"`
+	Problems    string `gorm:"column:Problems"`
+	Description string `gorm:"column:Description"`
 }
 
 func (p List) TableName() string {
@@ -66,16 +78,18 @@ func (p List) TableName() string {
 }
 
 type ListProblem struct {
-	LID   int64  `gorm:"column:LID"`
-	PID   string `gorm:"column:PID"`
-	Title string `gorm:"column:Title"`
+	LID      int64  `gorm:"column:LID"`
+	PID      string `gorm:"column:PID"`
+	Title    string `gorm:"column:Title"`
+	Submited uint32 `gorm:"column:Submited"`
+	Solved   uint32 `gorm:"column:Solved"`
 }
 
 type ListUser struct {
-	LID       int64  `gorm:"column:lid"`
-	UID       string `gorm:"column:uid"`
-	SubmitNum int    `gorm:"column:SubmitNum"`
-	ACNum     int    `gorm:"column:AcNum"`
+	LID      int64  `gorm:"column:lid"`
+	UID      string `gorm:"column:uid"`
+	Submited int    `gorm:"column:Submited"`
+	Solved   int    `gorm:"column:Solved"`
 }
 
 type Contest struct {
@@ -89,6 +103,8 @@ type Contest struct {
 	Ispublic    int    `gorm:"column:IsPublic"`
 	Problems    string `gorm:"column:Problems"`
 	Pass        string `gorm:"column:Pass"`
+	LangMask    string `gorm:"column:LangMask"`
+	Defaulted   string `gorm:"column:Defaulted"`
 }
 
 func (p Contest) TableName() string {
@@ -96,11 +112,11 @@ func (p Contest) TableName() string {
 }
 
 type ConPro struct {
-	CID        int64  `gorm:"column:CID"`
-	PID        string `gorm:"column:PID"`
-	Ptitle     string `gorm:"column:Title"`
-	Submit_num int    `gorm:"column:SubmitNum"`
-	Ac_num     int    `gorm:"column:ACNum"`
+	CID      int64  `gorm:"column:CID"`
+	PID      string `gorm:"column:PID"`
+	Ptitle   string `gorm:"column:Title"`
+	Submited int    `gorm:"column:Submited"`
+	Solved   int    `gorm:"column:Solved"`
 }
 
 func (p ConPro) TableName() string {
@@ -115,7 +131,9 @@ type Submit struct {
 	JudgeID       int64              `gorm:"column:JudgeID"`
 	Source        string             `gorm:"column:Source"`
 	Lang          constanct.LANG     `gorm:"column:Lang"`
-	Result        constanct.OJResult `gorm:"column:Result"`
+	Result        constanct.OJResult `gorm:"column:ResultACM"`
+	PassSample    uint32             `grom:"column:PassSample"`
+	Sim           uint8              `grom:"column:Sim"`
 	Usetime       int64              `gorm:"column:UseTime"`
 	UseMemory     int64              `gorm:"column:UseMemory"`
 	SubmitTime    int64              `gorm:"column:SubmitTime"`

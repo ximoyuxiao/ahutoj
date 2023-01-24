@@ -32,11 +32,11 @@ func AddConproblems(ctx context.Context, PIDs string, CID int64) error {
 			continue
 		}
 		conPro := dao.ConPro{
-			CID:        CID,
-			PID:        problem.PID,
-			Ptitle:     problem.Title,
-			Submit_num: 0,
-			Ac_num:     0,
+			CID:      CID,
+			PID:      problem.PID,
+			Ptitle:   problem.Title,
+			Submited: 0,
+			Solved:   0,
 		}
 		err := AddConProblemToDb(ctx, conPro)
 		if err != nil {

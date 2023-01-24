@@ -164,8 +164,8 @@ func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, erro
 		temp := response.ConProItem{
 			PID:        problem.PID,
 			Ptitle:     problem.Ptitle,
-			Submit_num: problem.Submit_num,
-			Ac_num:     problem.Ac_num,
+			Submit_num: problem.Submited,
+			Ac_num:     problem.Solved,
 		}
 		respData = append(respData, temp)
 	}
