@@ -73,3 +73,16 @@ func SelectTraningListCount(ctx context.Context) (int64, error) {
 	err := db.Count(&ret).Error
 	return ret, err
 }
+func GetTraining(ctx context.Context, LID int64) (*dao.List, error) {
+	db := GetDB(ctx)
+	ret := new(dao.List)
+	err := db.Table(ret.TableName()).Where("LID=?", LID).Find(ret).Error
+	return ret, err
+}
+
+func SelectTrainProblemByLID(ctx context.Context, LID int64) ([]dao.ListProblem, error) {
+	db := GetDB(ctx)
+	ret := make([]dao.ListProblem, 0)
+	err := db.Select(&ret, "SELECT * FROM ListProblem WHERE LID=?", LID).Error
+	return ret, err
+}

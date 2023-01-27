@@ -4,11 +4,10 @@ import (
 	"ahutoj/web/dao"
 	mysqldao "ahutoj/web/dao/mysqlDao"
 	"ahutoj/web/utils"
-
-	"github.com/gin-gonic/gin"
+	"context"
 )
 
-func IsListExistByLID(ctx *gin.Context, list *dao.List) bool {
+func IsListExistByLID(ctx context.Context, list *dao.List) bool {
 	count, err := mysqldao.SelectListCountByLID(ctx, list.LID)
 	if err != nil {
 		return false
@@ -16,7 +15,7 @@ func IsListExistByLID(ctx *gin.Context, list *dao.List) bool {
 	return count > 0
 }
 
-func CreateList(ctx *gin.Context, list *dao.List) error {
+func CreateList(ctx context.Context, list *dao.List) error {
 	logger := utils.GetLogInstance()
 	if IsListExistByLID(ctx, list) {
 		return nil
@@ -28,7 +27,7 @@ func CreateList(ctx *gin.Context, list *dao.List) error {
 	return err
 }
 
-func CreateListProblem(ctx *gin.Context, listproblem *dao.ListProblem) error {
+func CreateListProblem(ctx context.Context, listproblem *dao.ListProblem) error {
 	logger := utils.GetLogInstance()
 	err := mysqldao.InsertListProblem(ctx, *listproblem)
 	if err != nil {
@@ -37,7 +36,7 @@ func CreateListProblem(ctx *gin.Context, listproblem *dao.ListProblem) error {
 	return err
 }
 
-func EditList(ctx *gin.Context, list *dao.List) error {
+func EditList(ctx context.Context, list *dao.List) error {
 	logger := utils.GetLogInstance()
 	err := mysqldao.UpdateTraning(ctx, *list)
 	if err != nil {
@@ -45,7 +44,7 @@ func EditList(ctx *gin.Context, list *dao.List) error {
 	}
 	return err
 }
-func EditListProblem(ctx *gin.Context, listproblem *dao.ListProblem) error {
+func EditListProblem(ctx context.Context, listproblem *dao.ListProblem) error {
 	logger := utils.GetLogInstance()
 	err := mysqldao.UpdateListProblem(ctx, *listproblem)
 	if err != nil {
@@ -53,7 +52,7 @@ func EditListProblem(ctx *gin.Context, listproblem *dao.ListProblem) error {
 	}
 	return err
 }
-func DeleteTraining(ctx *gin.Context, list *dao.List) error {
+func DeleteTraining(ctx context.Context, list *dao.List) error {
 	logger := utils.GetLogInstance()
 	err := mysqldao.DeleteTraning(ctx, list.LID)
 	if err != nil {
@@ -61,14 +60,16 @@ func DeleteTraining(ctx *gin.Context, list *dao.List) error {
 	}
 	return err
 }
-func GetTrainingList(ctx *gin.Context, offset, pagesize int) ([]dao.List, error) {
+func GetTrainingList(ctx context.Context, offset, pagesize int) ([]dao.List, error) {
 	return mysqldao.GetTrainingList(ctx, offset, pagesize)
 }
 
-func GetCurrentLID(ctx *gin.Context, list dao.List) (int64, error) {
+func GetCurrentLID(ctx context.Context, list dao.List) (int64, error) {
 	return mysqldao.SelectListByUID(ctx, list.UID)
 }
-
-func GetTrainingListSize(ctx *gin.Context) (int64, error) {
-	return mysqldao.SelectTraningListCount(ctx)
+func GetTraining(ctx context.Context, LID int64) (*dao.List, error) {
+	return mysqldao.GetTraining(ctx, LID)
+}
+func GetTrainingProblem(ctx context.Context, LID int64) ([]dao.ListProblem, error) {
+	return mysqldao.SelectTrainProblemByLID(ctx, LID)
 }
