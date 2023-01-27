@@ -368,7 +368,7 @@ bool judgeClient::judgeOutFile(SubRes &result,const char *myfile,const char* sou
         return false;
     if(solve->getSpjJudge() == 1){
         char cmd[256];
-        sprintf(cmd, "./spj/%lld %s %s %s > spj.log", atoll(solve->Pid().c_str()), infile, sourceFile, myfile);
+        sprintf(cmd, "./spj/%s %s %s %s > spj.log", solve->Pid().c_str(), infile, sourceFile, myfile);
         int ret = system(cmd);
         if(WIFEXITED(ret) != 1 || WEXITSTATUS(ret) != 0){
             result = OJ_WA;

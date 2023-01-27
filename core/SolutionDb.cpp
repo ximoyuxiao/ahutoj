@@ -47,7 +47,7 @@ static vector<string> splite(string key,char sp){
     return ret;
 }
 
-void SolutionDb::GetSolveLimitSpj(Solve* solve){
+void SolutionDb::GetProblemInfo(Solve* solve){
     auto value = redis->getString(solve->Pid());
     ILOG("value:%s",value.c_str());
     if (value == ""){
@@ -82,7 +82,9 @@ void SolutionDb::GetSolveLimitSpj(Solve* solve){
         auto values = splite(value,',');
         solve->LimitTime(atoll(values[0].c_str()));
         solve->LimitMemory(atoll(values[1].c_str()));
-        solve->setSpjJudge(atoi(values[2].c_str()));
+        solve->setSpjJudge(-1);
+        if(values.size() != 2)
+            solve->setSpjJudge(atoi(values[2].c_str()));
     }
     ILOG("ltime:%lld,memory:%lld,spj:%d",solve->LimitTime(),solve->LimitMemory(),solve->getSpjJudge());
 }
@@ -117,7 +119,7 @@ vector<Solve*> SolutionDb::getSolve(){
        solve->Sres(OJ_JUDGE);
        solve->Lang((lanuage)atoi(row[5]));
        ret.push_back(solve);
-       GetSolveLimitSpj(solve);
+       GetProblemInfo(solve);
        commitSolveToDb(solve);
     }
     db->CloseDatabase(&mysql,res);
