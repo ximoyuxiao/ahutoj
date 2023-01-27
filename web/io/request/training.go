@@ -20,3 +20,12 @@ type ListAll struct {
 	StartTime int64  `json:"StartTime"`
 }
 type TrainingListReq GetListReq
+type TrainingReq struct {
+	LID int64 `param:"LID"`
+	// Pass *string `query:"Pass"`
+}
+
+type GetTrainingRankReq struct {
+	TrainingListReq
+	TrainingReq
+}

@@ -13,7 +13,9 @@ import (
 func GetSubmitByCIDFromDB(ctx context.Context, CID, fb int64) ([]dao.Submit, error) {
 	return mysqldao.SelectSubmitByCID(ctx, CID, fb)
 }
-
+func GetSubmitByLIDFromDB(ctx context.Context, LID, fb int64) ([]dao.Submit, error) {
+	return mysqldao.SelectSubmitByCID(ctx, LID, fb)
+}
 func CreateSubmit(ctx context.Context, submit dao.Submit) error {
 	return mysqldao.InsertSubmit(ctx, submit)
 }

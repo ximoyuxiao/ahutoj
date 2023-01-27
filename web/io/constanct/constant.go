@@ -114,7 +114,10 @@ const (
 
 	TRAIN_LIST_FAILED ResCode = 150401
 
-	TRAIN_GET_FAILED ResCode = 150501
+	TRAIN_GET_FAILED          ResCode = 150501
+	TRAIN_GET_LIDNotExistCode ResCode = 150502
+
+	TRAIN_RANK_FAILED ResCode = 150601
 )
 
 /*contest 16*/
