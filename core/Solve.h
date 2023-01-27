@@ -12,7 +12,10 @@ private:
     int           solutionID;     //提交编号
     int           UserID;         //用户ID
     int           CompleteID;     //竞赛ID 
+    int           JudgeID;        //判题机ID
     string        source;         //代码
+    long long     PassSample;     //样例通过数
+    int           Sim;            //相似度检测结果
     long long     limitTime;      //极限运行时间
     long long     limitMemory;    //极限运行内存
     lanuage       lang;           //使用语言
@@ -21,9 +24,10 @@ private:
     long long     usetime;        //运行时间
     long long     usememory;      //运行内存
     string        ceinfo;         //错误信息
+    int           SpjJudge;      //是否开启特判(1:on/-1:off)
     void intTostr(char* args,int num);
 public:
-    Solve(string problemID="",int solutionID=0,const char *source="",int limitTime=0,int limitMeory=0,lanuage lang=C);
+    Solve(string problemID="",int solutionID=0,const char *source="",int limitTime=0,int limitMeory=0,lanuage lang=C, int spj = -1);
     Solve(Solve &solve);
     ~Solve();
     bool operator<(const Solve& b) const;
@@ -57,6 +61,7 @@ public:
     string ceInfo();
     void ceInfo(string ceinfo);
     void getargs(char *args[8]);
-    
+    int getSpjJudge();
+    void setSpjJudge(int spjJudge);
 };
 #endif

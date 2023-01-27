@@ -11,7 +11,7 @@ class SolutionDb
 private:
     MyRedis* redis;
     mysqlDB* mydb;
-    void GetSolveLimit(Solve*);
+    void GetProblemInfo(Solve*);
 public:
     SolutionDb();
     ~SolutionDb();
