@@ -47,12 +47,12 @@ static vector<string> splite(string key,char sp){
     return ret;
 }
 
-void SolutionDb::GetSolveLimit(Solve* solve){
+void SolutionDb::GetSolveLimitSpj(Solve* solve){
     auto value = redis->getString(solve->Pid());
     ILOG("value:%s",value.c_str());
     if (value == ""){
         char sql[256]="";
-        sprintf(sql,"select LimitTime,LimitMemory from Problem where PID=\'%s\'",solve->Pid().c_str());
+        sprintf(sql,"select LimitTime,LimitMemory,SpjJudege from Problem where PID=\'%s\'",solve->Pid().c_str());
         ILOG(sql);
         auto db = mysqlDB::getInstance();
         MYSQL mysql;
@@ -73,17 +73,18 @@ void SolutionDb::GetSolveLimit(Solve* solve){
         if((row = mysql_fetch_row(res))){
             solve->LimitTime(atoll(row[0]));
             solve->LimitMemory(atoll(row[1]));
+            solve->setSpjJudge(atoi(row[2]));
             char temp[128];
-            sprintf(temp,"%s,%s",row[0],row[1]);
+            sprintf(temp,"%s,%s,%s",row[0],row[1],row[2]);
             redis->setString(solve->Pid(),temp);
         }
     }else{
         auto values = splite(value,',');
         solve->LimitTime(atoll(values[0].c_str()));
         solve->LimitMemory(atoll(values[1].c_str()));
+        solve->setSpjJudge(atoi(values[2].c_str()));
     }
-    ILOG("ltime:%lld,memory:%lld",solve->LimitTime(),solve->LimitMemory());
-   
+    ILOG("ltime:%lld,memory:%lld,spj:%d",solve->LimitTime(),solve->LimitMemory(),solve->getSpjJudge());
 }
 vector<Solve*> SolutionDb::getSolve(){
     vector<Solve*> ret;
@@ -116,7 +117,7 @@ vector<Solve*> SolutionDb::getSolve(){
        solve->Sres(OJ_JUDGE);
        solve->Lang((lanuage)atoi(row[5]));
        ret.push_back(solve);
-       GetSolveLimit(solve);
+       GetSolveLimitSpj(solve);
        commitSolveToDb(solve);
     }
     db->CloseDatabase(&mysql,res);

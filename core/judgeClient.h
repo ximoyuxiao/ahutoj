@@ -35,7 +35,7 @@ private:
     bool running(SubRes &result,const char * runFile,const char *resFile,long long &useMemory,long long &useTime);
     bool getFiles();
     bool judgePE(FILE*source,FILE *res);
-    bool cmpFIle(SubRes &result,const char *myfile,const char* sourceFile);
+    bool judgeOutFile(SubRes &result,const char *myfile,const char* sourceFile, const char *infile);
     void init_syscalls_limits(lanuage lang);
 public:
     bool judge();

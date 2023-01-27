@@ -362,10 +362,21 @@ bool judgeClient::judgePE(FILE*source,FILE *res)
     return sourcech == resch;
 }
 
-bool judgeClient::cmpFIle(SubRes &result,const char *myfile,const char* sourceFile)
+bool judgeClient::judgeOutFile(SubRes &result,const char *myfile,const char* sourceFile, const char *infile)
 {
     if(result !=OJ_AC)
         return false;
+    if(solve->getSpjJudge() == 1){
+        char cmd[256];
+        sprintf(cmd, "./spj/%lld %s %s %s > spj.log", atoll(solve->Pid().c_str()), infile, sourceFile, myfile);
+        int ret = system(cmd);
+        if(WIFEXITED(ret) != 1 || WEXITSTATUS(ret) != 0){
+            result = OJ_WA;
+        }
+        return false;
+    }
+
+    
     char diffFile[128];
     sprintf(diffFile,"%s/diff",dir);
     char cmd[128];
@@ -451,7 +462,7 @@ bool judgeClient::judge()
                     DLOG("runned:%s",outputFiles[i].c_str());
                     if(res != OJ_AC)
                         break;
-                    cmpFIle(res,resoutfile,outputFiles[i].c_str());
+                    judgeOutFile(res,resoutfile,outputFiles[i].c_str(), inputFiles[i].c_str());
                     if(res != OJ_AC)
                         break;
                     char cmd[1024] ={0};

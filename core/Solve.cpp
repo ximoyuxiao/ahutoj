@@ -4,7 +4,7 @@
 
 #include"Solve.h"
 #include"readConfig.h"
-Solve::Solve(string problemID,int solutionID,const char *source,int limitTime,int limitMeory,lanuage lang){
+Solve::Solve(string problemID,int solutionID,const char *source,int limitTime,int limitMeory,lanuage lang, int spj){
     this->problemID = problemID;
     this->solutionID = solutionID;
     this->source = source;
@@ -12,6 +12,7 @@ Solve::Solve(string problemID,int solutionID,const char *source,int limitTime,in
     this->limitMemory = limitMeory;
     this->lang = lang;
     this->res = OJ_JUDGE;
+    this->SpjJudge = spj;
     judgeID = 0;        //JudgeID
     usetime = 0;        //运行时间
     usememory = 0;      //运行内存
@@ -156,4 +157,9 @@ void Solve::ceInfo(string ceinfo)
 {
     this->ceinfo = ceinfo;
 }
-
+int Solve::getSpjJudge(){
+    return this->SpjJudge;
+}
+void Solve::setSpjJudge(int spjJudge){
+    this->SpjJudge = spjJudge;
+}
