@@ -1,10 +1,7 @@
 package request
 
-type List struct {
-	LID       int64  `json:"LID"`
-	UID       string `json:"UID"`
-	Title     string `json:"Title"`
-	StartTime int64  `json:"StartTime"`
+type DelListReq struct {
+	LID []int64 `json:"LID"`
 }
 
 type ListProblem struct {
@@ -13,11 +10,15 @@ type ListProblem struct {
 }
 
 type ListAll struct {
-	LID       int64  `json:"LID"`
-	UID       string `json:"UID"`
-	PID       string `json:"PID"`
-	Title     string `json:"Title"`
-	StartTime int64  `json:"StartTime"`
+	Problems    string `json:"Problems"`
+	Title       string `json:"Title"`
+	Description string `json:"Description"`
+}
+type EditListReq struct {
+	LID         int64  `json:"LID"`
+	Description string `json:"Description"`
+	Title       string `json:"Title"`
+	Problems    string `json:"Problems"`
 }
 type TrainingListReq GetListReq
 type TrainingReq struct {

@@ -21,6 +21,12 @@ type GetTrainResp struct {
 	ProblemData []TrainingProblemItem `json:"Data"`
 }
 type TrainingProblemItem struct {
+	Sort   int    `json:"Sort"`
 	PID    string `json:"PID"`
 	Ptitle string `json:"Ptitle"`
+}
+
+type AddTrainResp struct {
+	Response
+	LID int64 `json:"LID"`
 }

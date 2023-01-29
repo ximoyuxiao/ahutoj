@@ -27,15 +27,16 @@ func AddTraining(ctx *gin.Context) {
 
 	resp, err := logic.AddTraining(req, ctx)
 	if err != nil {
-		logger.Errorf("call DoResiger failed,req=%+v,err=%s", *req, err.Error())
+		logger.Errorf("call AddTraining failed,req=%+v,err=%s", *req, err.Error())
 		response.ResponseError(ctx, constanct.ServerErrorCode)
+		return
 	}
 	response.ResponseOK(ctx, resp)
 }
 
 func EditTraining(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
-	req := new(request.ListAll)
+	req := new(request.EditListReq)
 	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
 		// 请求参数有误 直接返回响应
@@ -55,7 +56,7 @@ func EditTraining(ctx *gin.Context) {
 
 func DeleteTraining(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
-	req := new(request.List)
+	req := new(request.DelListReq)
 	err := ctx.ShouldBindWith(req, binding.JSON)
 	if err != nil {
 		// 请求参数有误 直接返回响应

@@ -67,10 +67,10 @@ type Problem struct {
 type List struct {
 	LID         int64  `gorm:"column:LID"`
 	UID         string `gorm:"column:UID"`
+	Description string `gorm:"column:Description"`
 	Title       string `gorm:"column:Title"`
 	StartTime   int64  `gorm:"column:StartTime"`
 	Problems    string `gorm:"column:Problems"`
-	Description string `gorm:"column:Description"`
 }
 
 func (p List) TableName() string {
@@ -85,11 +85,19 @@ type ListProblem struct {
 	Solved   uint32 `gorm:"column:Solved"`
 }
 
+func (p ListProblem) TableName() string {
+	return "ListProblem"
+}
+
 type ListUser struct {
 	LID      int64  `gorm:"column:lid"`
 	UID      string `gorm:"column:uid"`
 	Submited int    `gorm:"column:Submited"`
 	Solved   int    `gorm:"column:Solved"`
+}
+
+func (p ListUser) TableName() string {
+	return "ListUser"
 }
 
 type Contest struct {

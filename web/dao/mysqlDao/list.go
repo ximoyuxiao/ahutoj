@@ -49,6 +49,15 @@ func InsertListProblem(ctx context.Context, training dao.ListProblem) error {
 	db := GetDB(ctx)
 	return db.Table("ListProblem").Create(&training).Error
 }
+func IsExistListProblem(ctx context.Context, LID int64, PID string) (bool, error) {
+	db := GetDB(ctx)
+	var cnt int64
+	err := db.Table("ListProblem").Where("LID=? and PID=?", LID, PID).Count(&cnt).Error
+	if err != nil {
+		return false, err
+	}
+	return cnt > 0, nil
+}
 func UpdateListProblem(ctx context.Context, training dao.ListProblem) error {
 	db := GetDB(ctx)
 	return db.Table("ListProblem").Where("LID=?", training.LID).Updates(training).Error
@@ -57,7 +66,7 @@ func GetTrainingList(ctx context.Context, offset, limit int) ([]dao.List, error)
 	db := GetDB(ctx)
 	tp := dao.List{}
 	ret := make([]dao.List, 0)
-	err := db.Table(tp.Title).Offset(offset).Limit(limit).Find(&ret).Error
+	err := db.Table(tp.TableName()).Offset(offset).Limit(limit).Find(&ret).Error
 	return ret, err
 }
 
@@ -83,6 +92,13 @@ func GetTraining(ctx context.Context, LID int64) (*dao.List, error) {
 func SelectTrainProblemByLID(ctx context.Context, LID int64) ([]dao.ListProblem, error) {
 	db := GetDB(ctx)
 	ret := make([]dao.ListProblem, 0)
-	err := db.Select(&ret, "SELECT * FROM ListProblem WHERE LID=?", LID).Error
+	err := db.Table(dao.ListProblem{}.TableName()).Where("LID=?", LID).Find(&ret).Error
+	return ret, err
+}
+
+func SelectListCountByList(ctx context.Context, list dao.List) (int64, error) {
+	db := GetDB(ctx)
+	ret := int64(0)
+	err := db.Table(list.TableName()).Where(list).Count(&ret).Error
 	return ret, err
 }

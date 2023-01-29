@@ -8,7 +8,9 @@ import (
 	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
+	"fmt"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,14 +18,13 @@ import (
 
 func AddTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 	list := dao.List{
-		UID:       middlewares.GetUid(c),
-		Title:     req.Title,
-		StartTime: req.StartTime,
+		UID:         middlewares.GetUid(c),
+		Title:       req.Title,
+		StartTime:   time.Now().UnixMilli(),
+		Description: req.Description,
+		Problems:    req.Problems,
 	}
-	listproblem := dao.ListProblem{
-		LID: req.LID,
-		PID: req.PID,
-	}
+
 	//添加题单
 	err := models.CreateList(c, &list)
 	if err != nil {
@@ -37,27 +38,32 @@ func AddTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 		utils.GetLogInstance().Errorf("call GetLID in CreateList failed,err=%s", err.Error())
 		return response.CreateResponse(constanct.TRAIN_ADD_FAILED), err
 	}
-
-	//添加提单题目
-	err = models.CreateListProblem(c, &listproblem)
-	if err != nil {
-		//日志报错
-		utils.GetLogInstance().Errorf("call CreateListProblem failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.TRAIN_ADD_FAILED), err
+	PIDs := strings.Split(req.Problems, ",")
+	for _, PID := range PIDs {
+		listproblem := dao.ListProblem{
+			LID: list.LID,
+			PID: PID,
+		}
+		err = models.CreateListProblem(c, &listproblem)
+		if err != nil {
+			//日志报错
+			utils.GetLogInstance().Errorf("call CreateListProblem failed,err=%s", err.Error())
+			return response.CreateResponse(constanct.TRAIN_ADD_FAILED), err
+		}
 	}
-	return response.CreateResponse(constanct.SuccessCode), nil
+	//添加提单题目
+	return response.AddTrainResp{
+		Response: response.CreateResponse(constanct.SuccessCode),
+		LID:      list.LID,
+	}, nil
 }
 
-func EditTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
+func EditTraining(req *request.EditListReq, c *gin.Context) (interface{}, error) {
 	list := dao.List{
-		LID:       req.LID,
-		UID:       req.UID,
-		Title:     req.Title,
-		StartTime: req.StartTime,
-	}
-	listproblem := dao.ListProblem{
-		LID: req.LID,
-		PID: req.PID,
+		LID:         req.LID,
+		Title:       req.Title,
+		Description: req.Description,
+		Problems:    req.Problems,
 	}
 	//编辑题单
 	err := models.EditList(c, &list)
@@ -67,7 +73,7 @@ func EditTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 		return response.CreateResponse(constanct.TRAIN_EDIT_FAILED), err
 	}
 	//编辑提单题目
-	err2 := models.EditListProblem(c, &listproblem)
+	err2 := models.EditListProblem(c, req.LID, req.Problems)
 	if err2 != nil {
 		//日志报错
 		utils.GetLogInstance().Errorf("call EditListProblem failed,err=%s", err2.Error())
@@ -76,19 +82,17 @@ func EditTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
 
-func DeleteTraining(req *request.List, c *gin.Context) (interface{}, error) {
-	list := dao.List{
-		LID:       req.LID,
-		UID:       req.UID,
-		Title:     req.Title,
-		StartTime: req.StartTime,
-	}
-	//删除题单
-	err := models.DeleteTraining(c, &list)
-	if err != nil {
-		//日志报错
-		utils.GetLogInstance().Errorf("call DeleteList failed,err=%s", err.Error())
-		return response.CreateResponse(constanct.TRAIN_DELETE_FAILED), err
+func DeleteTraining(req *request.DelListReq, c *gin.Context) (interface{}, error) {
+	for _, LID := range req.LID {
+		//删除题单
+		err := models.DeleteTraining(c, &dao.List{
+			LID: LID,
+		})
+		if err != nil {
+			//日志报错
+			utils.GetLogInstance().Errorf("call DeleteList failed,err=%s", err.Error())
+			return response.CreateResponse(constanct.TRAIN_DELETE_FAILED), err
+		}
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
@@ -108,21 +112,30 @@ func GetTrainingList(ctx *gin.Context, req *request.TrainingListReq) (interface{
 		logger.Errorf("call GetTrainingListFromDb failed,err=%s", err.Error())
 		return nil, err
 	}
+	fmt.Println(TrainingList)
 	respData := make([]response.TrainingListItem, 0, len(TrainingList))
-	for i, training := range TrainingList {
-		respData[i] = response.TrainingListItem{
+	fmt.Println(respData)
+	for _, training := range TrainingList {
+		respData = append(respData, response.TrainingListItem{
 			LID:       training.LID,
 			UID:       training.UID,
 			Title:     training.Title,
 			StartTime: training.StartTime,
-		}
+		})
+	}
+	list := dao.List{}
+	count, err := models.SelectListCountByList(ctx, list)
+	if err != nil {
+		logger.Errorf("call SelectListCountByList failed,err=%s", err.Error())
+		return nil, err
 	}
 	return response.TrainingListResp{
 		Response: response.CreateResponse(constanct.SuccessCode),
-		Size:     int64(len(TrainingList)),
+		Size:     count,
 		Data:     respData,
 	}, err
 }
+
 func GetTraining(ctx *gin.Context, req *request.TrainingReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	training, err := models.GetTraining(ctx, req.LID)
@@ -132,7 +145,7 @@ func GetTraining(ctx *gin.Context, req *request.TrainingReq) (interface{}, error
 	}
 	if training.LID != req.LID {
 		logger.Errorf("Training not exist req=%+v", utils.Sdump(req))
-		return response.CreateResponse(constanct.TRAIN_GET_LIDNotExistCode), err
+		return response.CreateResponse(constanct.TRAIN_GET_LIDNotExistCode), nil
 	}
 
 	TrainPros, err := models.GetTrainingProblem(ctx, req.LID)
@@ -140,9 +153,19 @@ func GetTraining(ctx *gin.Context, req *request.TrainingReq) (interface{}, error
 		logger.Errorf("call GetTraProblemFromDB failed, LID=%s, err=%s", req.LID, err.Error())
 		return response.CreateResponse(constanct.TRAIN_GET_FAILED), err
 	}
+	PIDs := strings.Split(training.Problems, ",")
+	PIDmap := make(map[string]int, 0)
+	for i, v := range PIDs {
+		PIDmap[v] = i
+	}
 	respData := make([]response.TrainingProblemItem, 0)
 	for _, listproblem := range TrainPros {
+		value, ok := PIDmap[listproblem.PID]
+		if !ok {
+			continue
+		}
 		temp := response.TrainingProblemItem{
+			Sort:   value,
 			PID:    listproblem.PID,
 			Ptitle: listproblem.Title,
 		}
@@ -157,6 +180,7 @@ func GetTraining(ctx *gin.Context, req *request.TrainingReq) (interface{}, error
 		ProblemData: respData,
 	}, nil
 }
+
 func GetRankTraining(ctx *gin.Context, req *request.GetTrainingRankReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	training, err := models.GetTraining(ctx, req.LID)
