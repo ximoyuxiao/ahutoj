@@ -23,6 +23,7 @@ type AppConfig struct {
 	OpenTime        float64 `mapstructure:"openTime"`
 	ImagePath       string  `mapstructure:"imagePath"`
 	HeadPath        string  `mapstructure:"headPath"`
+	SpjPath         string  `mapstructure:"spjPath"`
 	OpenRegisiter   bool    `mapstructure:"openRegisiter"`
 	*MySQLConfig    `mapstructure:"mysql"`
 	*RedisConfig    `mapstructure:"redis"`

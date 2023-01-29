@@ -65,6 +65,14 @@ func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
 			logger.Errorf("call UpdateNextPID failed,err:%v", err.Error())
 		}
 	}
+	// 创建题目成功之后，需要支持特判
+	if req.SpjJudge != nil && *req.SpjJudge == "Y" {
+		err = models.SaveSpjSource(problem, req.SpjSource)
+		if err != nil {
+			logger.Errorf("call AddSpjSource failed,PID=%v,req.SpjSource=%v", problem.PID, req.SpjSource)
+			return nil, err
+		}
+	}
 	//成功返回
 	return response.AddProblemResp{
 		Response: response.CreateResponse(constanct.SuccessCode),
@@ -82,6 +90,9 @@ func EditProblem(req *request.EditProblemReq, c *gin.Context) (interface{}, erro
 		//日志报错
 		utils.GetLogInstance().Errorf("call EditProblem failed,err=%s", err.Error())
 		return response.CreateResponse(constanct.PROBLEM_EDIT_FAILED), err
+	}
+	if req.SpjSource != nil && *req.SpjSource != "" {
+		models.SaveSpjSource(problem, req.SpjSource)
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }

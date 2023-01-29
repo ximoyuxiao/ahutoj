@@ -19,6 +19,9 @@ type Problem struct {
 	OriginPID     *string               `json:"OriginPID"`
 	ContentType   int64                 `json:"ContentType"`
 	Visible       int                   `json:"Visible"`
+	SpjJudge      *string               `json:"SpjJudge"`
+	SpjSource     *string               `json:"SpjSource"`
+	Source        *string               `json:"Source"`
 }
 type EditProblemReq Problem
 type AddProblemReq Problem

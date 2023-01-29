@@ -120,6 +120,12 @@ func ProblemReqToDao(req request.Problem) dao.Problem {
 	problem.PType = req.PType
 	problem.ContentType = req.ContentType
 	problem.Visible = req.Visible
+	if req.SpjJudge != nil {
+		problem.SpjJudge = *req.SpjJudge
+	}
+	if req.Source != nil {
+		problem.Source = *req.Source
+	}
 	return problem
 }
 

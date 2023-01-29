@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"os/exec"
 
 	"github.com/sanity-io/litter"
 )
@@ -66,4 +67,10 @@ func MaxInt64(a, b int64) int64 {
 
 func CheckNum(ch int8) bool {
 	return ch <= '9' && ch >= '0'
+}
+
+func ExecuteCommand(name string, args ...string) error {
+	cmd := exec.Command(name, args...)
+	err := cmd.Start()
+	return err
 }

@@ -16,6 +16,7 @@ terminal: 0.8
 # 图片存放路径
 imagePath: "./image/"
 headPath: "./image/head/"
+spjPath: "./core/spj/"
 # 是否开放注册
 openRegisiters: true
 # 外部判题相关配置

@@ -285,3 +285,27 @@ func ImageStringToImgItem(ctx context.Context, imgSrc [][]string) []mapping.ImgI
 	}
 	return ret
 }
+
+func SaveSpjSource(problem dao.Problem, spjSource *string) error {
+	logger := utils.GetLogInstance()
+	if spjSource == nil {
+		logger.Debugf("请添加spj源码")
+		return nil
+	}
+	spjPath := utils.GetConfInstance().SpjPath
+	ok, _ := utils.CheckPathExists(spjPath)
+	if !ok {
+		err := os.Mkdir(spjPath, 0777)
+		if err != nil {
+			return err
+		}
+	}
+	spjFile := spjPath + problem.PID + ".cpp"
+	err := os.WriteFile(spjFile, []byte(*spjSource), 0666) // 写入spj文件
+	if err != nil {
+		return err
+	}
+	// g++ ***.cpp -o ***
+	err = utils.ExecuteCommand("g++", spjFile, "-o", spjPath+problem.PID)
+	return err
+}
