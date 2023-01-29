@@ -135,6 +135,10 @@ func regeisterRouters(router *gin.Engine) {
 			fileRouter.POST("/unzip/:pid", service.UnzipFile)
 			// 上传并解析题目
 			fileRouter.POST("/problem", service.UpProblemFile)
+			// 下载题目
+			fileRouter.GET("/json/download", service.DownloadProblemFromJson)
+			// 上传题目
+			fileRouter.POST("/problem/upfile/", service.UpProblemFile)
 		}
 	}
 }

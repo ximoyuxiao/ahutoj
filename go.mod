@@ -3,7 +3,6 @@ module ahutoj
 go 1.18
 
 require (
-	github.com/PuerkitoBio/goquery v1.8.0
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/bytedance/gopkg v0.0.0-20220531084716-665b4f21126f
 	github.com/gin-contrib/pprof v1.3.0
@@ -19,7 +18,6 @@ require (
 )
 
 require (
-	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect

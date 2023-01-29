@@ -4,11 +4,13 @@ import (
 	"ahutoj/web/dao"
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/response"
+	"ahutoj/web/logic"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
 	"fmt"
 	"io/ioutil"
 	"mime/multipart"
+	"net/http"
 	"os"
 	"os/exec"
 	"strings"
@@ -123,17 +125,13 @@ func UnzipFile(ctx *gin.Context) {
 	response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
 }
 
-func UpProblemFile(ctx *gin.Context) {
-	response.ResponseOK(ctx, response.CreateResponse(constanct.NotimplementedCode))
-}
-
 func CheckAndCreatDir(ctx *gin.Context, filepath string) error {
 	ok, err := pathExists(filepath)
 	if err != nil {
 		logger.Errorf("call pathExists failed,filepath:%s, err=%v", filepath, err.Error())
 	}
 	if !ok {
-		err = os.Mkdir(filepath, os.ModeDir)
+		err = os.Mkdir(filepath, 0777)
 		if err != nil {
 			logger.Errorf("call Mkdir failed,filepath:%s, err=%v", filepath, err.Error())
 			return err
@@ -206,10 +204,12 @@ func checkImageFile(filename string) bool {
 	}
 	return false
 }
+
 func getFileSuffix(filename string) string {
 	strs := strings.Split(filename, ".")
 	return strs[len(strs)-1]
 }
+
 func buildFileName(file *multipart.FileHeader) string {
 	now := time.Now().UnixNano()
 	strs := strings.Split(file.Filename, ".")
@@ -256,4 +256,48 @@ func UpImagefile(ctx *gin.Context) {
 		ImageURL: "image/" + name,
 	},
 	)
+}
+
+// 下载题目数据到JSON
+func DownloadProblemFromJson(ctx *gin.Context) {
+	logger := utils.GetLogInstance()
+	req := ctx.Query("PIDs")
+	if req == "" {
+		logger.Errorf("call Param failed")
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
+	}
+
+	resp, err := logic.DownloadProblemFromJson(ctx, req)
+	if err != nil {
+		logger.Errorf("call DownloadProblemFromJson failed, req=%+v, err=%v", utils.Sdump(req), err.Error())
+		response.ResponseError(ctx, constanct.ServerErrorCode)
+		return
+	}
+	/*返回先下载文件*/
+	if str, ok := resp.(string); ok {
+		fileName := fmt.Sprintf("%v.json", time.Now().Unix())
+		ctx.Header("Content-Type", "application/octet-stream")
+		ctx.Header("Content-Disposition", "attachment; filename="+fileName) // 用来指定下载下来的文件名
+		ctx.Header("Content-Transfer-Encoding", "binary")
+		ctx.String(http.StatusOK, str)
+	} else {
+		response.ResponseOK(ctx, resp)
+	}
+}
+
+func UpProblemFile(ctx *gin.Context) {
+	file, err := ctx.FormFile("file")
+	if err != nil {
+		logger.Errorf("call FormFile filed, err=%s", err.Error())
+		response.ResponseError(ctx, constanct.FILE_UP_UNSUPPORTCode)
+		return
+	}
+	resp, err := logic.UpProblemFile(ctx, file)
+	if err != nil {
+		logger.Errorf("call UpProblemFile failed, req=%+v, err=%v", utils.Sdump(file.Filename), err.Error())
+		response.ResponseError(ctx, constanct.ServerErrorCode)
+		return
+	}
+	response.ResponseOK(ctx, resp)
 }

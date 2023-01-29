@@ -60,7 +60,7 @@ type Problem struct {
 	Visible  int    `gorm:"column:Visible" json:"Visible" xml:"Visible"`
 	Accepted uint32 `gorm:"column:Accepted" json:"Accepted"`
 	Submited uint32 `gorm:"column:Submited" json:"Submited" xml:"Submited"`
-	SpjJudge int    `gorm:"column:SpjJudge" json:"SpjJudge" xml:"SpjJudge"`
+	SpjJudge string `gorm:"column:SpjJudge" json:"SpjJudge" xml:"SpjJudge"`
 	Source   string `gorm:"column:Source" json:"Source" xml:"Source"`
 }
 

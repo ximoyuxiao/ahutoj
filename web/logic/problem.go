@@ -10,10 +10,23 @@ import (
 	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
+	"context"
+	"fmt"
+	"io/ioutil"
+	"mime/multipart"
+	"strings"
 	"sync"
 
+	"github.com/bytedance/gopkg/util/logger"
 	"github.com/gin-gonic/gin"
 )
+
+type ParseProblemHandlerFunc func(ctx context.Context, fileText string) (mapping.JsonProblems, error)
+
+var ParseProblemFuncMap = map[string]ParseProblemHandlerFunc{
+	"XML":  models.ParseXmlToproblem,
+	"JSON": models.ParseJsonToProblem,
+}
 
 var AddProblemLock sync.Mutex
 
@@ -58,6 +71,7 @@ func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
 		PID:      problem.PID,
 	}, nil
 }
+
 func EditProblem(req *request.EditProblemReq, c *gin.Context) (interface{}, error) {
 	problem := mapping.ProblemReqToDao(request.Problem(*req))
 	if req.PID == nil || *req.PID == "" {
@@ -131,4 +145,76 @@ func GetProblemInfo(ctx *gin.Context, PID string) (interface{}, error) {
 		Response:    response.CreateResponse(constanct.SuccessCode),
 		ProblemResp: response.ProblemResp(problem),
 	}, nil
+}
+
+func DownloadProblemFromJson(ctx *gin.Context, PIDs string) (interface{}, error) {
+	logger := utils.GetLogInstance()
+	PIDArray := strings.Split(PIDs, ",")
+	problems := make(mapping.JsonProblems, 0)
+	for _, PID := range PIDArray {
+		ok := models.IsProblemExistByPID(ctx, &dao.Problem{PID: PID})
+		if !ok {
+			logger.Errorf("the problem not exist, PID:%v", PID)
+			return response.CreateResponse(constanct.PROBLEM_DOWNLOADPROBLE_PIDNoteExistCode), nil
+		}
+		Jproblem, err := models.ParseProblemToJsonProblem(ctx, PID)
+		if err != nil {
+			logger.Errorf("call ParseDBToJson failed, req=%+v, err=%s", utils.Sdump(PID), err)
+			response.ResponseError(ctx, constanct.PROBLEM_DOWNLOADPROBLE_FAILEDCode)
+			return nil, err
+		}
+		problems = append(problems, Jproblem)
+	}
+	str, err := models.ParseJsonProblemToJson(ctx, problems)
+	if err != nil {
+		logger.Errorf("call ParseJsonProblemToJson failed, req=%+v, err=%s", utils.Sdump(PIDs), err)
+		response.ResponseError(ctx, constanct.PROBLEM_DOWNLOADPROBLE_FAILEDCode)
+	}
+	return str, nil
+}
+
+func UpProblemFile(ctx *gin.Context, file *multipart.FileHeader) (interface{}, error) {
+	suffix := strings.ToUpper(utils.GetFileSuffix(file.Filename))
+	fd, _ := file.Open()
+	reader, _ := ioutil.ReadAll(fd)
+
+	data := string(reader)
+	parseProblemFunc, ok := ParseProblemFuncMap[suffix]
+	if !ok {
+		logger.Errorf("Uploading %v files is prohibited", suffix)
+		return response.CreateResponseStr(constanct.AUTH_LOGIN_PassEmptyCode, fmt.Sprintf("Uploading %v files is prohibited", suffix), response.ERROR), nil
+	}
+	JsonProblems, err := parseProblemFunc(ctx, data)
+	if err != nil {
+		logger.Errorf("call parseProblemFunc failed err=%v", err.Error())
+		return nil, err
+	}
+	for _, jsonProblem := range JsonProblems {
+		err = mapping.SaveJproblemImage(&jsonProblem)
+		if err != nil {
+			return nil, err
+		}
+		problem := mapping.JsonProblemToProblem(jsonProblem)
+		idx, err := models.GetNextProblemPID(ctx)
+		PID := "P" + idx
+		if err != nil {
+			return nil, err
+		}
+		problem.PID = PID
+		err = models.CreateProblem(ctx, &problem)
+		if err != nil {
+			return nil, err
+		}
+		if PID != "" {
+			err = redisdao.UpdateNextPID(ctx, PID)
+			if err != nil {
+				logger.Errorf("call UpdateNextPID failed,err:%v", err.Error())
+			}
+		}
+		err = models.CreateTestFile(ctx, PID, jsonProblem.Data)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return response.CreateResponse(constanct.SuccessCode), nil
 }

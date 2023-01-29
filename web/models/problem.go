@@ -5,13 +5,17 @@ import (
 	mysqldao "ahutoj/web/dao/mysqlDao"
 	redisdao "ahutoj/web/dao/redisDao"
 	"ahutoj/web/io/constanct"
+	"ahutoj/web/mapping"
 	"ahutoj/web/utils"
-	"bufio"
 	"bytes"
 	"context"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"regexp"
+	"strings"
 
 	"github.com/bytedance/gopkg/util/logger"
 )
@@ -104,6 +108,7 @@ func ChekckProblemType(ctx context.Context, PType constanct.ProblemType) bool {
 	}
 	return false
 }
+
 func GetNextProblemPID(ctx context.Context) (string, error) {
 	logger := utils.GetLogInstance()
 	PID, err := redisdao.GetLastANDPID(ctx)
@@ -120,54 +125,163 @@ func GetNextProblemPID(ctx context.Context) (string, error) {
 }
 
 // 解析json
-func ParseJsonToDB(ctx context.Context, fileText string) error {
+func ParseJsonToProblem(ctx context.Context, fileText string) (mapping.JsonProblems, error) {
 	jsonData := []byte(fileText)
-	var problems dao.Problem
-	err := json.Unmarshal(jsonData, &problems)
+	var jproblem mapping.JsonProblems
+	err := json.Unmarshal(jsonData, &jproblem)
 	if err != nil {
 		logger.Errorf("call ParseJsonToDB failed, err:%v", err.Error())
-		return err
+		return jproblem, err
 	}
-	CreateProblem(ctx, &problems)
-	return err
+	return jproblem, nil
 }
 
-// 生成json
-func ParseDBToJson(ctx context.Context, PID string) error {
-	problems, err := GetProblemByPID(ctx, PID)
+// 解析xml
+func ParseXmlToproblem(ctx context.Context, fileText string) (mapping.JsonProblems, error) {
+	logger := utils.GetLogInstance()
+	xmlData := []byte(fileText)
+	var xmlProblems mapping.XMLProblems
+	var problems mapping.JsonProblems
+	err := xml.Unmarshal(xmlData, &xmlProblems)
+	problems = mapping.XMLToJsonProblem(xmlProblems)
+	if err != nil {
+		logger.Errorf("call ParseXmlToDB failed, err:%v", err.Error())
+		return problems, err
+	}
+	return problems, err
+}
+
+// 下载json数据
+func ParseProblemToJsonProblem(ctx context.Context, PID string) (mapping.JsonProblem, error) {
+	var result mapping.JsonProblem
+	problem, err := GetProblemByPID(ctx, PID)
 	if err != nil {
 		logger.Errorf("call ParseDBToJson failed, err:%v", err.Error())
+		return result, err
+	}
+	result = mapping.ProblemToJsonProblem(problem)
+	getProblemSampleFile(ctx, &result, PID)
+	result.ImgList = GetProblemImageByProblem(ctx, problem)
+	return result, nil
+}
+
+// 获取样例文件
+func getProblemSampleFile(ctx context.Context, problem *mapping.JsonProblem, PID string) error {
+	filepath := utils.GetConfInstance().DataPath + "/" + PID
+	ok, err := utils.CheckPathExists(filepath)
+	if err != nil {
+		logger.Errorf("call CheckPathExists faile,filepath=%s err=%s", filepath, err.Error())
 		return err
 	}
+	if !ok {
+		return nil
+	}
+
+	files, err := ioutil.ReadDir(filepath)
+	if err != nil {
+		logger.Errorf("call ReadDir faile,filepath=%s err=%s", filepath, err.Error())
+		return err
+	}
+	problem.DataSize = len(files)
+	problem.Data = make([]mapping.DataFile, 0)
+	for _, finfo := range files {
+		datafile := mapping.DataFile{}
+		if utils.ChekfileHashSuffix(finfo.Name(), "in", "out") {
+			datafile.FileName = finfo.Name()
+			filename := filepath + "/" + finfo.Name()
+			content, err := os.ReadFile(filename)
+			if err != nil {
+				logger.Errorf("call ReadFile faile,fileName=%s, err=%s", filename, err.Error())
+				return err
+			}
+			datafile.Data = string(content)
+			problem.Data = append(problem.Data, datafile)
+		}
+	}
+	return nil
+}
+
+// 生成json代码
+func ParseJsonProblemToJson(ctx context.Context, problems mapping.JsonProblems) (string, error) {
 	buf, err := json.Marshal(problems) //结构体对象生成json字符串
 	if err != nil {
 		logger.Errorf("call ParseDBToJson failed, err:%v", err.Error())
-		return err
+		return "", err
 	}
 	var str bytes.Buffer //格式化json字符串
-	err = json.Indent(&str, buf, "", "    ")
+	err = json.Indent(&str, buf, "", "\t")
 	if err != nil {
 		logger.Errorf("call ParseDBToJson failed, err:%v", err.Error())
-		return err
+		return "", err
 	}
+	return str.String(), nil
+}
 
-	jsonPath := utils.GetConfInstance().JsonPath //判断并生成./json目录
-	_, err = os.Stat(jsonPath)
-	if err != nil {
-		if os.IsNotExist(err) {
-			os.Mkdir(jsonPath, 0666)
+// 创建测试文件
+func CreateTestFile(ctx context.Context, PID string, datas []mapping.DataFile) error {
+	var passSuffix = []string{"in", "out", "zip"}
+	path := utils.GetConfInstance().DataPath + "/" + PID
+	if len(datas) == 0 {
+		return nil
+	}
+	os.Mkdir(path, 0777)
+	for _, data := range datas {
+		if !utils.ChekfileHashSuffix(data.FileName, passSuffix...) {
+			return fmt.Errorf("file type %v is not supported", utils.GetFileSuffix(data.FileName))
 		}
+		ioutil.WriteFile(path+"/"+data.FileName, []byte(data.Data), 0666)
 	}
+	return nil
+}
+func GetProblemImageByProblem(ctx context.Context, problem dao.Problem) []mapping.ImgItem {
+	ret := GetProblemImgByProblemByHTML(ctx, problem)
+	retMarkDown := GetProblemImgByProblemByMarkDown(ctx, problem)
+	ret = append(ret, retMarkDown...)
+	return ret
+}
 
-	Jpath := jsonPath + problems.PID + ".json" //json文本生成json文件
-	file, err := os.OpenFile(Jpath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
-	if err != nil {
-		logger.Errorf("call ParseDBToJson failed, err:%v", err.Error())
-		return err
+// 获得题目的图片HTML
+func GetProblemImgByProblemByHTML(ctx context.Context, problem dao.Problem) []mapping.ImgItem {
+	re := regexp.MustCompile("<[iI][mM][gG][^<>]+[sS][rR][cC]=\"?([^ \">]+)/?>")
+	descprtionImg := re.FindAllStringSubmatch(problem.Description, -1)
+	inputImg := re.FindAllStringSubmatch(problem.Input, -1)
+	outputImg := re.FindAllStringSubmatch(problem.Output, -1)
+	hitImg := re.FindAllStringSubmatch(problem.Hit, -1)
+
+	result := make([]mapping.ImgItem, 0)
+	result = append(result, ImageStringToImgItem(ctx, descprtionImg)...)
+	result = append(result, ImageStringToImgItem(ctx, inputImg)...)
+	result = append(result, ImageStringToImgItem(ctx, outputImg)...)
+	result = append(result, ImageStringToImgItem(ctx, hitImg)...)
+	return result
+}
+
+// 获得题目的图片MarkDown
+func GetProblemImgByProblemByMarkDown(ctx context.Context, problem dao.Problem) []mapping.ImgItem {
+	re := regexp.MustCompile(`!\[\]\((.*?)\)`)
+	descprtionImg := re.FindAllStringSubmatch(problem.Description, -1)
+	inputImg := re.FindAllStringSubmatch(problem.Input, -1)
+	outputImg := re.FindAllStringSubmatch(problem.Output, -1)
+	hitImg := re.FindAllStringSubmatch(problem.Hit, -1)
+
+	result := make([]mapping.ImgItem, 0)
+	result = append(result, ImageStringToImgItem(ctx, descprtionImg)...)
+	result = append(result, ImageStringToImgItem(ctx, inputImg)...)
+	result = append(result, ImageStringToImgItem(ctx, outputImg)...)
+	result = append(result, ImageStringToImgItem(ctx, hitImg)...)
+	return result
+}
+func ImageStringToImgItem(ctx context.Context, imgSrc [][]string) []mapping.ImgItem {
+	ret := make([]mapping.ImgItem, 0)
+	for _, img := range imgSrc {
+		temp := mapping.ImgItem{
+			ImageSrc: img[1],
+		}
+		Strs := strings.Split(temp.ImageSrc, "/")
+		temp.ImageName = Strs[len(Strs)-1]
+		imageData, _ := os.ReadFile(utils.GetConfInstance().ImagePath + temp.ImageName)
+		temp.ImageData = utils.EncodeBase64FromByte(imageData)
+		ret = append(ret, temp)
 	}
-	defer file.Close()
-	write := bufio.NewWriter(file)
-	write.WriteString(str.String())
-	write.Flush()
-	return err
+	return ret
 }

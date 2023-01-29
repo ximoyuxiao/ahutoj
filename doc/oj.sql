@@ -27,7 +27,7 @@ create table User(
     RegisterTime long comment '注册时间',
     Submited int(11) comment '提交次数',
     Solved int(11) comment 'AC次数',
-    Defaulted char(1) comment '删除用户标志'
+    Defaulted varchar(3) comment '删除用户标志'
 )DEFAULT CHARSET=utf8mb4;
 
 create table Permission(
@@ -58,7 +58,7 @@ create table Problem(
     Accepted    int comment '总AC数量',
     Submited   int comment      '总提交数量',
     Visible  int comment '题目是否可见' ,
-    SpjJudege int comment '是否开启特判(-1:不开启|1、开启)',
+    SpjJudege varchar(3) comment '是否开启特判(N:不开启|Y:开启)',
     Source Text  comment '题目信息'
 )DEFAULT CHARSET=utf8mb4;
 ALTER TABLE Problem AUTO_INCREMENT = 1000;
@@ -146,7 +146,7 @@ CREATE table Submit(
     Source Text comment '提交代码',
     Lang int comment '提交语言',
     ResultACM varchar(30) comment 'ACM判题结果',
-    PassSample int(11) comment '样例通过数',
+    PassSample int(11) comment '分数: 样例通过 / 样例总数 *  100',
     Sim   int(5) comment '相似度检测结果（0 -100）',
     UseTime long comment '使用时间',
     UseMemory long comment '使用内存',

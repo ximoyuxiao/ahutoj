@@ -16,8 +16,6 @@ terminal: 0.8
 # 图片存放路径
 imagePath: "./image/"
 headPath: "./image/head/"
-#json文件路径
-jsonPATH = "./json/"
 # 是否开放注册
 openRegisiters: true
 # 外部判题相关配置

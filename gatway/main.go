@@ -9,7 +9,6 @@ import (
 	"ahutoj/web/io/response"
 	"ahutoj/web/middlewares"
 	"ahutoj/web/utils"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"math/rand"
@@ -89,6 +88,7 @@ func initGatWay(config string) error {
 func HandleRouter(ctx *gin.Context) {
 	url := ctx.FullPath()
 	host := ctx.ClientIP()
+	//  gatway  /api/xxx/xxx
 	// 保证不再黑名单当中
 	for _, blackhost := range conf.GatWay.BlackHost {
 		if blackhost == host {
@@ -128,10 +128,13 @@ func HandleRouter(ctx *gin.Context) {
 		return
 	}
 	defer resp.Body.Close()
+	for k, v := range resp.Header {
+		for _, val := range v {
+			ctx.Header(k, val)
+		}
+	}
 	body, _ := ioutil.ReadAll(resp.Body)
-	var data1 map[string]interface{}
-	json.Unmarshal(body, &data1)
-	ctx.JSON(resp.StatusCode, data1)
+	ctx.Data(resp.StatusCode, resp.Header.Get("Content-Type"), body)
 }
 
 // 负载均衡 策略
