@@ -52,7 +52,7 @@ void SolutionDb::GetProblemInfo(Solve* solve){
     ILOG("value:%s",value.c_str());
     if (value == ""){
         char sql[256]="";
-        sprintf(sql,"select LimitTime,LimitMemory,SpjJudege from Problem where PID=\'%s\'",solve->Pid().c_str());
+        sprintf(sql,"select LimitTime,LimitMemory,SpjJudge from Problem where PID=\'%s\'",solve->Pid().c_str());
         ILOG(sql);
         auto db = mysqlDB::getInstance();
         MYSQL mysql;
@@ -91,7 +91,7 @@ void SolutionDb::GetProblemInfo(Solve* solve){
 vector<Solve*> SolutionDb::getSolve(){
     vector<Solve*> ret;
     char sql[256] = "";
-    sprintf(sql,"select SID,PID,UID,CID,Source,Lang From Submit where IsOriginJudge = 0 and (Result='PENDING' or Result = 'REJUDGING')");
+    sprintf(sql,"select SID,PID,UID,CID,Source,Lang From Submit where IsOriginJudge = 0 and (ResultACM='PENDING' or ResultACM = 'REJUDGING')");
     auto db = mysqlDB::getInstance();
     MYSQL mysql;
     db->getDatabase(&mysql);
@@ -132,7 +132,7 @@ locker sqlLock;
 bool SolutionDb::commitSolveToDb(Solve* solve){
     // insert into Submit values (null,#{pid},#{uid},#{cid},#{judgeid},#{source},#{lang},'Judgeing',0,0,#{submitTime})
     sqlLock.lock();
-    sprintf(sql,"update Submit set JudgeID=%d,Result='%s',UseTime=%lld,UseMemory=%lld where SID=%d",
+    sprintf(sql,"update Submit set JudgeID=%d,ResultACM='%s',UseTime=%lld,UseMemory=%lld where SID=%d",
         solve->getjudgeID(),
         runningres[solve->Sres()],
         solve->getUsetime(),
