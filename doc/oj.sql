@@ -58,7 +58,7 @@ create table Problem(
     Accepted    int comment '总AC数量',
     Submited   int comment      '总提交数量',
     Visible  int comment '题目是否可见' ,
-    SpjJudege varchar(3) comment '是否开启特判(N:不开启|Y:开启)',
+    SpjJudge varchar(3) comment '是否开启特判(N:不开启|Y:开启)',
     Source Text  comment '题目信息'
 )DEFAULT CHARSET=utf8mb4;
 ALTER TABLE Problem AUTO_INCREMENT = 1000;
