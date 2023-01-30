@@ -13,6 +13,7 @@ Solve::Solve(string problemID,int solutionID,const char *source,int limitTime,in
     this->lang = lang;
     this->res = OJ_JUDGE;
     this->SpjJudge = spj;
+    PassSample = 0;     //样例通过数
     judgeID = 0;        //JudgeID
     usetime = 0;        //运行时间
     usememory = 0;      //运行内存
@@ -31,6 +32,7 @@ Solve::Solve(Solve &solve)
     this->usetime = solve.usetime;
     this->ceinfo = solve.ceinfo;
     this->res  =  res;
+    this->PassSample = solve.PassSample;
 }
 Solve::~Solve()
 {
@@ -52,6 +54,7 @@ Solve& Solve::operator=(const Solve &solve)
     this->usetime = solve.usetime;
     this->ceinfo = solve.ceinfo;
     this->res  =  res;
+    this->PassSample = solve.PassSample;
     return *this;
 }
 void Solve::getargs(char* args[8])
@@ -162,4 +165,10 @@ int Solve::getSpjJudge(){
 }
 void Solve::setSpjJudge(int spjJudge){
     this->SpjJudge = spjJudge;
+}
+long long Solve::getPassSample(){
+    return this->PassSample;
+}
+void Solve::incPassSample(){
+    this->PassSample++;
 }
