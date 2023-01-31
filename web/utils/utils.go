@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os/exec"
+	"time"
 
 	"github.com/sanity-io/litter"
 )
@@ -73,4 +74,7 @@ func ExecuteCommand(name string, args ...string) error {
 	cmd := exec.Command(name, args...)
 	err := cmd.Start()
 	return err
+}
+func GetNow() int64 {
+	return time.Now().UnixMilli()
 }

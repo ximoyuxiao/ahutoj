@@ -12,8 +12,25 @@ func AddConProblemToDb(ctx context.Context, conPro dao.ConPro) error {
 	return mysqldao.InsertConProblem(ctx, conPro)
 }
 
-func GetConProblemFromDB(ctx context.Context, CID int64) ([]dao.ConPro, error) {
-	return mysqldao.SelectConProblemByCID(ctx, CID)
+func GetConProblemFromDB(ctx context.Context, contest dao.Contest) ([]dao.ConPro, error) {
+	ret := make([]dao.ConPro, 0)
+	conPros, err := mysqldao.SelectConProblemByCID(ctx, contest.CID)
+	if err != nil {
+		return ret, err
+	}
+	PIDs := strings.Split(contest.Problems, ",")
+	PIDMap := make(map[string]int, 0)
+	for i, PID := range PIDs {
+		PIDMap[PID] = i
+	}
+	for _, conPro := range conPros {
+		_, ok := PIDMap[conPro.PID]
+		if !ok {
+			continue
+		}
+		ret = append(ret, conPro)
+	}
+	return ret, nil
 }
 func CheckHasConProInContest(ctx context.Context, PID string, CID int64) bool {
 	return mysqldao.SelectCountConProInContestByProblem(ctx, CID, PID) > 0

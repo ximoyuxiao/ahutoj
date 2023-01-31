@@ -36,30 +36,55 @@ type ContestListResp struct {
 	Size int64             `json:"Size"`
 	Data []ContestListItem `json:"Data"`
 }
-type ProblemItem struct {
+type ProblemItemWithACM struct {
 	PID          string             `json:"PID"`          // 题目ID 其实我觉得这个可以不写的
 	Time         int64              `json:"Time"`         // 最后一次提交时间
 	SubmitNumber int64              `json:"SubmitNumber"` // 题目总的提交次数
 	Status       constanct.OJResult `json:"Status"`       // 最终状态
 }
-type RankItem struct {
-	UserID           string        `json:"UserID"`
-	Uname            string        `json:"Uname"`
-	Uclass           string        `json:"Uclass"`
-	AllSubmit        int64         `json:"AllSubmit"`
-	ACNumber         int64         `json:"ACNumber"`
-	CENumber         int64         `json:"CENumber"`
-	JudgeErrorNumber int64         `json:"JudgeErrorNumber"`
-	Problems         []ProblemItem `json:"Problems"`
+type ProblemItemWithOI struct {
+	PID        string `json:"PID"`      // 题目ID 其实我觉得这个可以不写的
+	Time       int64  `json:"Time"`     // 提交使用时间
+	Submited   bool   `json:"Submited"` //是否提交过
+	PassSample int64  `json:"Score"`    // 最终状态
 }
-type ConntestRankResp struct {
-	Response
-	Size int        `json:"Size"`
-	Data []RankItem `json:"Data"`
+type RankItemWithAcm struct {
+	UserID           string               `json:"UserID"`
+	Uname            string               `json:"Uname"`
+	Uclass           string               `json:"Uclass"`
+	AllSubmit        int64                `json:"AllSubmit"`
+	ACNumber         int64                `json:"ACNumber"`
+	CENumber         int64                `json:"CENumber"`
+	JudgeErrorNumber int64                `json:"JudgeErrorNumber"`
+	Problems         []ProblemItemWithACM `json:"Problems"`
 }
-type RankItems []RankItem
 
-func (r RankItems) Len() int {
+type RankItemWithOI struct {
+	UserID   string              `json:"UserID"`
+	Uname    string              `json:"Uname"`
+	Uclass   string              `json:"Uclass"`
+	ACNumber int64               `json:"ACNumber"`
+	Problems []ProblemItemWithOI `json:"Problems"`
+}
+
+type ConntestRankRespWithAcm struct {
+	Response
+	Size int               `json:"Size"`
+	Data []RankItemWithAcm `json:"Data"`
+}
+
+type ConntestRankRespWithOI struct {
+	Response
+	Size int              `json:"Size"`
+	Data []RankItemWithOI `json:"Data"`
+}
+type RankItemsWithAcm []RankItemWithAcm
+type RankItemsWithOI []RankItemWithOI
+
+func (r RankItemsWithAcm) Len() int {
+	return len(r)
+}
+func (r RankItemsWithOI) Len() int {
 	return len(r)
 }
 

@@ -53,9 +53,6 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 		if contest.Begin_time > time.Now().UnixMilli() {
 			return response.CreateResponse(constanct.SUBMIT_ADD_CONTESTNOTSTART_CODE), nil
 		}
-		if contest.Ctype == OI && contest.End_time > time.Now().UnixMilli() {
-			submit.Result = constanct.OJ_JUDGE
-		}
 	}
 	/*提交代码*/
 	err = models.CreateSubmit(ctx, submit)

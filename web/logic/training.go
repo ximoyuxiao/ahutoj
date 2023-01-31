@@ -213,7 +213,7 @@ func GetRankTraining(ctx *gin.Context, req *request.GetTrainingRankReq) (interfa
 		return response.CreateResponse(constanct.TRAIN_RANK_FAILED), err
 	}
 	userMap := make(map[string]int, 0)
-	ranks := make(response.RankItems, 0)
+	ranks := make(response.RankItemsWithAcm, 0)
 	idx := 0
 	for _, submit := range submits {
 		rid, ok := userMap[submit.UID]
@@ -223,7 +223,7 @@ func GetRankTraining(ctx *gin.Context, req *request.GetTrainingRankReq) (interfa
 			userMap[submit.UID] = rid
 			user := dao.User{UID: submit.UID}
 			models.FindUserByUID(ctx, &user)
-			ranks = append(ranks, response.RankItem{})
+			ranks = append(ranks, response.RankItemWithAcm{})
 			initRankItem(&ranks[rid], user, len(problems))
 		}
 		rank := &ranks[rid]
@@ -244,7 +244,7 @@ func GetRankTraining(ctx *gin.Context, req *request.GetTrainingRankReq) (interfa
 			}
 		}
 	}
-	return response.ConntestRankResp{
+	return response.ConntestRankRespWithAcm{
 		Response: response.CreateResponse(constanct.SuccessCode),
 		Size:     ranks.Len(),
 		Data:     ranks,
