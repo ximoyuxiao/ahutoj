@@ -219,6 +219,8 @@ var codeMsgMap = map[ResCode]string{
 	TRAIN_DELETE_FAILED:              "删除题单失败",
 	TRAIN_LIST_FAILED:                "获取提单列表失败",
 	TRAIN_GET_FAILED:                 "获取题单信息失败",
+	TRAIN_GET_LIDNotExistCode:        "该题单不存在",
+	TRAIN_RANK_FAILED:                "获取题单排名失败",
 	CONTEST_ADD_FAILED:               "添加竞赛失败",
 	CONTEST_EDIT_FAILED:              "编辑竞赛失败",
 	CONTEST_DELETE_FAILED:            "删除竞赛失败",
