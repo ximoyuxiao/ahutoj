@@ -12,10 +12,11 @@ static void judgeClient_AC(){
     all++;
     printf("Test AC:");
     Solve* solve = nullptr;
-    solve =  new Solve("1",1,"#include<iostream>\nusing namespace std;\nint main(){\n\tint a;\n\tint b;\n\tcin >> a >> b;\n\tcout<<(a / (float)b + 0.001);\n\texit(0);\n}",1000,128,CPP11, 1);
+    solve =  new Solve("1",1,"#include<iostream>\nusing namespace std;\nint main(){\n\tint a;\n\tint b;\n\tcin >> a >> b;\n\tcout<< a + b;\n\texit(0);\n}",1000,128,CPP11, 0);
     judgeClient juc(solve);
     status = OJ_JUDGE;
     juc.judge();
+    printf("[PassSample:%lld]", solve->getPassSample());
     if(solve->Sres() != OJ_AC){
         printf("Failed res=%s\n",runningres[solve->Sres()]);
         return ;

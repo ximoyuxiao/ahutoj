@@ -465,6 +465,7 @@ bool judgeClient::judge()
                     judgeOutFile(res,resoutfile,outputFiles[i].c_str(), inputFiles[i].c_str());
                     if(res != OJ_AC)
                         break;
+                    solve->incPassSample();
                     char cmd[1024] ={0};
                     sprintf(cmd,"rm %s",resoutfile);
                     system(cmd);

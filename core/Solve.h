@@ -63,5 +63,7 @@ public:
     void getargs(char *args[8]);
     int getSpjJudge();
     void setSpjJudge(int spjJudge);
+    long long getPassSample();
+    void incPassSample();
 };
 #endif
