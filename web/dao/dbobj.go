@@ -155,8 +155,8 @@ func (p Submit) TableName() string {
 }
 
 type CeInfo struct {
-	SID  int64
-	Info string
+	SID  int64  `gorm:"column:SID"`
+	Info string `gorm:"column:Info"`
 }
 
 func (p CeInfo) TableName() string {

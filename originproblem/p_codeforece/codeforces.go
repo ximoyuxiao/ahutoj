@@ -122,6 +122,7 @@ func GetCurrentPageProblems() ([]string, error) {
 	page++
 	return ansstring, nil
 }
+
 func CFproblemToMyProblem(CFproblem CFProblemObj) dao.Problem {
 	ret := dao.Problem{}
 	ret.PID = CFproblem.CurrentData.Problem.Pid
@@ -157,6 +158,7 @@ func CFproblemToMyProblem(CFproblem CFProblemObj) dao.Problem {
 	)
 	return ret
 }
+
 func ParseCodeForceProblemURL(PID string) (dao.Problem, error) {
 	Purl := fmt.Sprintf("%v%v", problemURL, PID)
 	resp, err := originJudged.DoRequest(originJudged.GET, Purl, nil, nil, nil, false)
