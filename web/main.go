@@ -1,8 +1,8 @@
 package main
 
 import (
+	rediscache "ahutoj/web/cache/redis"
 	mysqldao "ahutoj/web/dao/mysqlDao"
-	redisdao "ahutoj/web/dao/redisDao"
 	"ahutoj/web/middlewares"
 	"ahutoj/web/routers"
 	"ahutoj/web/utils"
@@ -38,7 +38,7 @@ func initAPP(ConfigPath string) error {
 	}
 
 	//初始化Redis数据库
-	err = redisdao.InitRedisPool()
+	err = rediscache.InitRedisPool()
 	if err != nil {
 		logger.Errorf("init redis error redisConf=%+v, err=%s", utils.Sdump(utils.GetConfInstance().RedisConfig), err.Error())
 		os.Exit(1)

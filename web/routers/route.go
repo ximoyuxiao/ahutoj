@@ -57,7 +57,6 @@ func regeisterRouters(router *gin.Engine) {
 			authRouter.POST("/register/", service.Register)
 			authRouter.POST("/logout/", service.Logout)
 		}
-
 		userRouter := apiRouter.Group("/user").Use(middlewares.JwtVerify)
 		{
 			userRouter.GET("/info", service.UserInfo)

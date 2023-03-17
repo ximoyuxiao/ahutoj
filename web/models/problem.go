@@ -1,9 +1,9 @@
 package models
 
 import (
+	rediscache "ahutoj/web/cache/redis"
 	"ahutoj/web/dao"
 	mysqldao "ahutoj/web/dao/mysqlDao"
-	redisdao "ahutoj/web/dao/redisDao"
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/mapping"
 	"ahutoj/web/utils"
@@ -111,7 +111,7 @@ func ChekckProblemType(ctx context.Context, PType constanct.ProblemType) bool {
 
 func GetNextProblemPID(ctx context.Context) (string, error) {
 	logger := utils.GetLogInstance()
-	PID, err := redisdao.GetLastANDPID(ctx)
+	PID, err := rediscache.GetLastANDPID(ctx)
 	if err != nil || PID == 0 {
 		PID, err = mysqldao.SelectProblemLastPID(ctx)
 		logger.Debugf("PID:%v", PID)

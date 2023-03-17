@@ -1,8 +1,8 @@
 package logic
 
 import (
+	rediscache "ahutoj/web/cache/redis"
 	"ahutoj/web/dao"
-	redisdao "ahutoj/web/dao/redisDao"
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
@@ -60,7 +60,7 @@ func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
 		return response.CreateResponse(constanct.PROBLEM_ADD_FAILED), err
 	}
 	if nextPID != "" {
-		err = redisdao.UpdateNextPID(c, nextPID)
+		err = rediscache.UpdateNextPID(c, nextPID)
 		if err != nil {
 			logger.Errorf("call UpdateNextPID failed,err:%v", err.Error())
 		}
@@ -217,7 +217,7 @@ func UpProblemFile(ctx *gin.Context, file *multipart.FileHeader) (interface{}, e
 			return nil, err
 		}
 		if PID != "" {
-			err = redisdao.UpdateNextPID(ctx, PID)
+			err = rediscache.UpdateNextPID(ctx, PID)
 			if err != nil {
 				logger.Errorf("call UpdateNextPID failed,err:%v", err.Error())
 			}

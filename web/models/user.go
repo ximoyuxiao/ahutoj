@@ -32,7 +32,7 @@ func EqualPassWord(ctx context.Context, user *dao.User, password string) bool {
 
 func CreateUser(ctx context.Context, user *dao.User) error {
 	logger := utils.GetLogInstance()
-	// 2、密码加密处理（MD5)
+	// 2、密码加密处理（MD5)  字符串  --->  MD5序列
 	user.Pass, _ = utils.MD5EnCode(user.UID, user.Pass)
 	err := mysqldao.InsertUserTable(ctx, *user)
 	if err != nil {

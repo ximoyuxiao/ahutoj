@@ -1,9 +1,9 @@
 package models
 
 import (
+	rediscache "ahutoj/web/cache/redis"
 	"ahutoj/web/dao"
 	mysqldao "ahutoj/web/dao/mysqlDao"
-	redisdao "ahutoj/web/dao/redisDao"
 	"ahutoj/web/utils"
 	"context"
 	"time"
@@ -24,14 +24,14 @@ func SaveContestDB(ctx context.Context, contest dao.Contest) error {
 		return err
 	}
 	/*去redis获取缓存 查看有没有缓存*/
-	contestTmp, err := redisdao.GetContestFromDB(ctx, contest.CID)
+	contestTmp, err := rediscache.GetContestFromDB(ctx, contest.CID)
 	if err != nil {
-		logger.Errorf("call redisdao.GetContestFromDB faile,contest=%v ,err=%s", utils.Sdump(contest), err.Error())
+		logger.Errorf("call rediscache.GetContestFromDB faile,contest=%v ,err=%s", utils.Sdump(contest), err.Error())
 		return err
 	}
 	/*redis更新数据库内容*/
 	if contestTmp != nil {
-		return redisdao.SaveContestToRDB(ctx, contest)
+		return rediscache.SaveContestToRDB(ctx, contest)
 	}
 	return nil
 }
@@ -50,13 +50,14 @@ func GetContestListFromDb(ctx context.Context, offset, pagesize int) ([]dao.Cont
 那我们就对这个竞赛的访问做一层缓存 到redis数据库当中
 中间 有人去修改了 竞赛信息
 redis的数据 和mysql 数据  要保持一致性
+
 	先 改mysql  我查看redis数据库 当中 是否有缓存  有的话 我就把缓存改掉。。
 */
 func GetContestFromDB(ctx context.Context, CID int64) (dao.Contest, error) {
 	/*比赛，进行中一般不会修改*/
 	logger := utils.GetLogInstance()
 	/* 从redis当中尝试获取一个缓存*/
-	contest, err := redisdao.GetContestFromDB(ctx, CID)
+	contest, err := rediscache.GetContestFromDB(ctx, CID)
 	if err != nil || contest == nil {
 		/*从mysql当中获取*/
 		contest, err = mysqldao.SelectContestByCID(ctx, CID)
@@ -68,7 +69,7 @@ func GetContestFromDB(ctx context.Context, CID int64) (dao.Contest, error) {
 		now := time.Now().UnixMilli()
 		if contest.End_time >= now && contest.Begin_time <= now {
 			logger.Debugf("now=%v begin=%v endtime=%v", now, contest.Begin_time, contest.End_time)
-			err = redisdao.SaveContestToRDB(ctx, *contest)
+			err = rediscache.SaveContestToRDB(ctx, *contest)
 		}
 	}
 	return *contest, err

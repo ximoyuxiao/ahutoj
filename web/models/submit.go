@@ -1,9 +1,9 @@
 package models
 
 import (
+	rediscache "ahutoj/web/cache/redis"
 	"ahutoj/web/dao"
 	mysqldao "ahutoj/web/dao/mysqlDao"
-	redisdao "ahutoj/web/dao/redisDao"
 	"ahutoj/web/utils"
 	"context"
 
@@ -53,10 +53,10 @@ func EqualLastSource(ctx context.Context, UID string, PID string, Source string)
 		logger.Errorf("call MD5EnCodeStr failed. Source:%s", Source)
 		return false
 	}
-	Lastsource := redisdao.GetLastSource(ctx, UID, PID)
+	Lastsource := rediscache.GetLastSource(ctx, UID, PID)
 	if Lastsource == SourceMD5 {
 		return true
 	}
-	redisdao.SetLastSource(ctx, UID, PID, SourceMD5)
+	rediscache.SetLastSource(ctx, UID, PID, SourceMD5)
 	return false
 }
