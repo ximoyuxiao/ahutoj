@@ -26,6 +26,8 @@ type UserResp struct {
 	Email         string `json:"Email"`
 	CodeForceUser string `json:"CodeForceUser"`
 	HeadURL       string `json:"HeadURL"`
+	Submited      int64  `json:"Submited"`
+	Solved        uint32 `json:"Solved"`
 }
 type UsersItem struct {
 	UID      string `json:"UID"`
@@ -62,5 +64,7 @@ func CreateUserResp(user *dao.User) UserResp {
 		Email:         user.Email,
 		CodeForceUser: user.CodeForceUser,
 		HeadURL:       user.HeadURL,
+		Submited:      user.Submited,
+		Solved:        user.Solved,
 	}
 }
