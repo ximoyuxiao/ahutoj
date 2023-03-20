@@ -16,6 +16,7 @@ import (
 
 func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
+	// 提交代码
 	submit := dao.Submit{
 		PID:           req.PID,
 		CID:           req.CID,
@@ -64,6 +65,36 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 	if err != nil {
 		logger.Errorf("call FindLastSIDByUID failed, UID=%v, err=%s", submit.UID, err.Error())
 		return response.CreateResponse(constanct.SUBMIT_ADD_FAILEDCode), err
+	}
+	// 更新用户提交代码
+	err = mysqldao.IncUserSubmited(ctx, submit.UID)
+	if err != nil {
+		logger.Errorf("call IncUserSubmited failed, submit=%v, err=%s", submit, err.Error())
+		return response.CreateResponse(constanct.SUBMIT_ADD_FAILEDCode), err
+	}
+
+	// 更新题目提交代码
+	if req.CID > 0 {
+		err = mysqldao.IncConProSubmit(ctx, req.CID, submit.PID)
+		if err != nil {
+			logger.Errorf("call IncConProSubmit failed, submit=%v, err=%s", submit, err.Error())
+			return response.CreateResponse(constanct.SUBMIT_ADD_FAILEDCode), err
+		}
+	}
+	rabitmq := middlewares.GetRabbitMq()
+	produce := middlewares.NewProducer(rabitmq)
+	if submit.IsOriginJudge {
+		err := produce.SendMessage(constanct.ORIGINJUDGE, submit)
+		if err != nil {
+			logger.Errorf("call SendMessage(%s) failed, submit=%v, err=%s", constanct.ORIGINJUDGE, submit, err.Error())
+			return response.CreateResponse(constanct.SUBMIT_ADD_FAILEDCode), err
+		}
+	} else {
+		err := produce.SendMessage(constanct.INNERJUDGE, submit)
+		if err != nil {
+			logger.Errorf("call SendMessage(%s) failed, submit=%v, err=%s", constanct.INNERJUDGE, submit, err.Error())
+			return response.CreateResponse(constanct.SUBMIT_ADD_FAILEDCode), err
+		}
 	}
 	return response.AddSubmitResp{
 		Response: response.CreateResponse(constanct.SuccessCode),

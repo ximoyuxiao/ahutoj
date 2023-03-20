@@ -253,12 +253,12 @@ func GetRankContestWithACM(ctx *gin.Context, contest dao.Contest, current int64)
 		logger.Errorf("call GetConProblemFromDB Failed, CID=%d, err=%s", contest.CID, err.Error())
 		return response.CreateResponse(constanct.CONTEST_RANK_FAILED), err
 	}
+	// problem对应的一个下标 PID ---> idx;
 	problemIdxMap := make(map[string]int, 0)
 	PIDs := strings.Split(contest.Problems, ",")
 	for idx, PID := range PIDs {
 		problemIdxMap[PID] = idx
 	}
-
 	currentTime := time.Now().UnixMilli()
 	fb := int64(utils.GetConfInstance().Terminal*(float64(contest.End_time)-float64(contest.Begin_time)) + float64(contest.Begin_time))
 	if currentTime-contest.End_time > int64(utils.GetConfInstance().OpenTime*float64(time.Hour)) {
@@ -296,22 +296,21 @@ func GetRankContestWithACM(ctx *gin.Context, contest dao.Contest, current int64)
 		problem.PID = submit.PID
 		if problem.Status == constanct.OJ_AC {
 			continue
-		} else {
-			problem.Status = submit.Result
-			problem.Time = submit.SubmitTime - contest.Begin_time
-			rank.AllSubmit++
-			problem.SubmitNumber++
-			if submit.Result == constanct.OJ_DENIAL || submit.Result == constanct.OJ_TIMEOUT ||
-				submit.Result == constanct.OJ_FAILED || submit.Result == constanct.OJ_JUDGE {
-				rank.JudgeErrorNumber++
-			}
+		}
+		problem.Status = submit.Result
+		problem.Time = submit.SubmitTime - contest.Begin_time
+		rank.AllSubmit++
+		problem.SubmitNumber++
+		if submit.Result == constanct.OJ_DENIAL || submit.Result == constanct.OJ_TIMEOUT ||
+			submit.Result == constanct.OJ_FAILED || submit.Result == constanct.OJ_JUDGE {
+			rank.JudgeErrorNumber++
+		}
 
-			if submit.Result == constanct.OJ_AC {
-				rank.ACNumber++
-			}
-			if submit.Result == constanct.OJ_CE {
-				rank.CENumber++
-			}
+		if submit.Result == constanct.OJ_AC {
+			rank.ACNumber++
+		}
+		if submit.Result == constanct.OJ_CE {
+			rank.CENumber++
 		}
 	}
 

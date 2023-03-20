@@ -18,45 +18,16 @@
 #include "Solve.h"
 #include "judgeClient.h"
 #include "mydb.h"
-#include "SolutionDb.h"
+#include "Solution.h"
+#include "rabbitmq/rabbitmq.h"
 using std::vector;
 using std::cout;
 using std::cin;
 using std::endl;
 using namespace my;
-SolutionDb solutionDB;
-
-class soulution_run:public worker
-{
-private:
-    judgeClient* jc;
-    Solve* solve;
-public:
-    soulution_run(Solve* solve){
-        this->jc =new judgeClient(solve);
-        this->solve = solve;
-        this->solve->setjudgeID(this->solve->Sid());
-    };
-    virtual void run(){
-        jc->judge();
-        DLOG("judge complete Result:%s",runningres[solve->Sres()]);
-        if(solve->Sres() == OJ_JUDGE){
-            solve->Sres(OJ_FAILED);
-        }
-        solutionDB.commitSolveToDb(solve);
-        solutionDB.ReleaseSolve(solve);
-    }
-    judgeClient* getJudgeClient(){
-        return jc;
-    }
-    virtual ~soulution_run(){
-        if(jc != nullptr)
-            delete jc;
-    };
-};
 
 static int init_daemon();
-static bool init_db(readConfig *rcf,MyRedis* redis);
+static bool init_db(readConfig *rcf);
 static bool init_Solve_pool(readConfig *rcf,threadpool **tp);/*此处实际上是创建一个解决*/
 int main(int argc, char **argv)
 {
@@ -72,15 +43,15 @@ int main(int argc, char **argv)
     {
         mlog::init(LOGPATH);
         /*初始化数据库*/
-        if(!init_db(rcf,&redis))
+        if(!init_db(rcf))
         {
             ELOG("db init error");
             mlog::destory();
             delete rcf;
             exit(-2);
         }
-        
-        if(!solutionDB.initDB(rcf))
+        auto solution = Solution::GetInstance();
+        if(!solution->init(rcf))
         {
             ELOG("solution db init error");
             mlog::destory();
@@ -96,27 +67,29 @@ int main(int argc, char **argv)
             mlog::destory();
             exit(-3);
         }
-        
-        /*判题线程*/
-        /*这一块后期优化就考虑采用redis*/
-        while(true)
-        {
-            vector<Solve*> solution = solutionDB.getSolve();
-            while(!solution.empty())
+        solution->LoopSolve();
+        /*
+            判题线程
+            这一块后期优化就考虑采用redis
+            while(true)
             {
-                Solve* last = solution.back();
-                pool->excute(
-                    shared_ptr<soulution_run>(
-                        new soulution_run(
-                            last
-                            )
-                    )
-                );
-                solution.pop_back();
-            }
-            //  信号量做处理 消息队列
-            sleep(3);
-        }   
+                vector<Solve*> solution = solutionDB.getSolve();
+                while(!solution.empty())
+                {
+                    Solve* last = solution.back();
+                    pool->excute(
+                        shared_ptr<soulution_run>(
+                            new soulution_run(
+                                last
+                                )
+                        )
+                    );
+                    solution.pop_back();
+                }
+                //  信号量做处理 消息队列
+                sleep(3);
+            }   
+        */
     } 
     else
     {
@@ -151,7 +124,7 @@ int init_daemon(void)
     return 0;
 }
 
-bool init_db(readConfig *rcf,MyRedis *redis)
+bool init_db(readConfig *rcf)
 {
     char host[128],user[128],pwd[128],dbase[128];
     int port;

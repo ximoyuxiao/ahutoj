@@ -3,6 +3,7 @@ package main
 import (
 	originJudged "ahutoj/originJudge/originjudged"
 	mysqldao "ahutoj/web/dao/mysqlDao"
+	"ahutoj/web/middlewares"
 	"ahutoj/web/utils"
 	"fmt"
 	"os"
@@ -33,13 +34,12 @@ func InitOriginJudged(ConfigPath string) error {
 		logger.Errorf("init mysql error mysqlConf:%+v, err=%s", utils.Sdump(utils.GetConfInstance().MySQLConfig), err.Error())
 		os.Exit(1)
 	}
-
-	// //初始化Redis数据库
-	// err = rediscache.InitRedisPool()
-	// if err != nil {
-	// 	logger.Errorf("init redis error redisConf=%+v, err=%s", utils.Sdump(utils.GetConfInstance().RedisConfig), err.Error())
-	// 	os.Exit(1)
-	// }
+	rbtcfg := utils.GetConfInstance().RabbitMQ
+	_, err = middlewares.NewRabbitMQ(rbtcfg.Host, rbtcfg.Port, rbtcfg.Username, rbtcfg.Password, 1)
+	if err != nil {
+		logger.Errorf("init RabbitMQ error mysqlConf:%+v, err=%s", utils.Sdump(utils.GetConfInstance().RabbitMQ), err.Error())
+		os.Exit(1)
+	}
 	if utils.GetConfInstance().UseOriginJudge {
 		originJudged.InitOriginThread()
 	}

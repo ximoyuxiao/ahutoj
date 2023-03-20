@@ -174,7 +174,7 @@ func InitRouters(router *gin.Engine) {
 			VerfiyLevel: middlewares.GetVerifyUrl(url),
 		}
 		Header := make(map[string]string)
-		Header["Content-Typp"] = "application/json"
+		Header["Content-Type"] = "application/json"
 		dataByte, _ := json.Marshal(req)
 		data := string(dataByte)
 		originJudged.DoRequest(originJudged.POST, conf.GatWayHost+"inner/addrouter", Header, nil, &data, true)

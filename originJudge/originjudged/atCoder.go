@@ -3,7 +3,6 @@ package originJudged
 import (
 	"ahutoj/web/dao"
 	"ahutoj/web/io/constanct"
-	"ahutoj/web/models"
 	"ahutoj/web/utils"
 	"context"
 	"errors"
@@ -82,7 +81,7 @@ func (p AtCoderJudge) Judge(ctx context.Context, submit dao.Submit, PID string) 
 		return fmt.Errorf("call InitAtcoderJudge failed,err=%v", err.Error())
 	}
 	defer p.RetJudgeUser(ctx)
-	defer p.commitToDB(ctx)
+	defer p.CommitResult()
 	defer logger.Infof("judge complete judgeing:SID:%v result:%v", p.Submit.SID, submit.Result)
 	p.Submit = submit
 	p.PID = PID
@@ -365,11 +364,4 @@ func (p *AtCoderJudge) getResult(ctx context.Context) error {
 	}
 	p.Submit.Result = constanct.OJ_TIMEOUT
 	return fmt.Errorf("atcoder judge timeout submissionID:%v", p.SubmissionID)
-}
-
-func (p *AtCoderJudge) commitToDB(ctx context.Context) error {
-	if p.Submit.Result == constanct.OJ_JUDGE {
-		p.Submit.Result = constanct.OJ_FAILED
-	}
-	return models.UpdateSubmit(context.Background(), p.Submit)
 }

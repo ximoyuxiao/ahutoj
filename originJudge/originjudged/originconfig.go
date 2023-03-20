@@ -3,9 +3,12 @@ package originJudged
 import (
 	"ahutoj/web/dao"
 	"ahutoj/web/io/constanct"
+	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
 	"context"
+	"encoding/json"
+	"fmt"
 	"math/rand"
 	"time"
 )
@@ -23,6 +26,26 @@ type OriginJudgeUser struct {
 type OriginJudge struct {
 	PID    string     // 平台的题目ID
 	Submit dao.Submit // 用户提交代码
+	CEInfo string     // CE信息
+}
+
+func (p *OriginJudge) CommitResult() error {
+	rmq := middlewares.GetRabbitMq()
+	pro := middlewares.NewProducer(rmq)
+	if p.Submit.Result == constanct.OJ_JUDGE {
+		p.Submit.Result = constanct.OJ_FAILED
+	}
+	err := pro.SendMessage(constanct.JUDGERESULT, p.Submit)
+	if err != nil {
+		return err
+	}
+	if p.CEInfo != "" && p.Submit.Result == constanct.OJ_CE {
+		return pro.SendMessage(constanct.JUDGECE, dao.CeInfo{
+			SID:  p.Submit.SID,
+			Info: p.CEInfo,
+		})
+	}
+	return nil
 }
 
 var ojMap = map[OJPlatform]OriginFunc{
@@ -41,12 +64,24 @@ func GetOriginJudgeFunc(oj OJPlatform) OriginFunc {
 func InitOriginThread() {
 	rand.Seed(time.Now().Unix())
 	logger := utils.GetLogInstance()
+	rabbit := middlewares.GetRabbitMq()
+	if rabbit == nil {
+		return
+	}
+	comm := middlewares.NewConsumer(rabbit, constanct.ORIGINJUDGE)
 	for {
 		/*1、从数据库 当中 提取外部判题*/
-		submits, _ := models.GetOriginJudgeSubmit(context.Background())
+
+		msgs, err := comm.ConsumeMessage()
+		if err != nil {
+			logger.Errorf("call ConsumeMessage failed, err=%v", err.Error())
+			return
+		}
 		/*2、得到后批量更新状态*/
-		for _, submit := range submits {
-			logger.Errorf("submit size:%d", len(submits))
+		logger.Errorf("submit size:%d", len(msgs))
+		for msg := range msgs {
+			submit := dao.Submit{}
+			json.Unmarshal(msg.Body, &submit)
 			submit.Result = constanct.OJ_JUDGE
 			models.UpdateSubmit(context.Background(), submit)
 			originJudge := GetOriginJudgeFunc(OJPlatform(submit.OJPlatform))
@@ -54,6 +89,7 @@ func InitOriginThread() {
 				logger.Errorf("not existe plateform,OJPlatform:%d", submit.OJPlatform)
 				continue
 			}
+			fmt.Println(submit)
 			// 执行一个协程。
 			go originJudge.Judge(context.Background(), submit, submit.OriginPID)
 		}

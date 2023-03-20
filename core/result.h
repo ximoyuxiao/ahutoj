@@ -1,6 +1,6 @@
 #ifndef __RESULT_H__
 #define __RESULT_H__
-#define DEV_DEBUG 0
+#define DEV_DEBUG 1
 typedef enum
 {
     OJ_AC = 1,
@@ -30,8 +30,14 @@ typedef enum
 #define DATAPATH "./Data/" /*测试样例目录*/
 #define DEC ".des"
 #define LOGPATH "./log"
-#define CONF "/etc/ahutoj/config.conf" /*配置文件目录*/
+#define CONF "./config.conf" /*配置文件目录*/
 #define COMPDIR "./run%d"
 #define IPC_PATH "./judge"
-
+#define INNERJUDGE "InnerJudge"
+#define JUDGERESULT  "JudgeResult"
+#define JUDGECE     "JudgeCE"
+#define RMQ_HOST  "127.0.0.1"
+#define RMQ_PORT  "5672"
+#define RMQ_USER "ahutoj"
+#define RMQ_PASS "2019ahut"
 #endif

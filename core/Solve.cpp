@@ -91,10 +91,10 @@ int  Solve::Sid(){
 void Solve::Sid(int sid){
     this->solutionID = sid;
 }
-int  Solve::Uid(){
+string  Solve::Uid(){
     return this->UserID;
 }
-void Solve::Uid(int uid){
+void Solve::Uid(string uid){
     this->UserID = uid;
 }
 int Solve::Cid(){
@@ -171,4 +171,42 @@ long long Solve::getPassSample(){
 }
 void Solve::incPassSample(){
     this->PassSample++;
+}
+void Solve::to_json(nlohmann::json& j){
+    j = nlohmann::json
+    {
+        {"SID", Sid()}, 
+        {"PID", Pid()},
+        {"UID",Uid()},
+        {"CID",Cid()},
+        {"JudgeID",getjudgeID()},
+        {"Source",Source()},
+        {"Lang",Lang()},
+        {"ResultACM",runningres[Sres()]},
+        {"PassSample",getPassSample()},
+        {"Sim",Sim},
+        {"UseTime",usetime},
+        {"UseMemory",usememory},
+    };
+}
+
+void Solve::to_ceJson(nlohmann::json &j){
+    j = nlohmann::json
+    {
+        {"SID", Sid()}, 
+        {"info",ceinfo},
+    };
+}
+
+void Solve::from_json(nlohmann::json& j){
+    j.at("SID").get_to(solutionID);
+    j.at("PID").get_to(problemID);
+    j.at("UID").get_to(UserID);
+    j.at("CID").get_to(CompleteID);
+    j.at("JudgeID").get_to(JudgeID);
+    j.at("Source").get_to(source);
+    j.at("Lang").get_to(lang);
+    Sres(OJ_JUDGE);
+    PassSample = 0;
+    Sim = 0;
 }

@@ -3,6 +3,9 @@ package mysqldao
 import (
 	"ahutoj/web/dao"
 	"context"
+	"fmt"
+
+	"gorm.io/gorm"
 )
 
 func SelectUserByUID(ctx context.Context, user *dao.User) error {
@@ -35,4 +38,17 @@ func SelectUserList(ctx context.Context) ([]dao.User, error) {
 	users := make([]dao.User, 0)
 	err := db.Table(dao.User{}.TableName()).Where("CodeForceUser!=''").Select(&users).Error
 	return users, err
+}
+
+func IncUserSubmited(ctx context.Context, UID string) error {
+	db := GetDB(ctx)
+	user := dao.User{}
+	return db.Table(user.TableName()).Where("UID=?", UID).UpdateColumn("Submited", gorm.Expr("Submited+1")).Error
+}
+
+func IncUserSolved(ctx context.Context, UID string) error {
+	db := GetDB(ctx)
+	user := dao.User{}
+	fmt.Println(UID)
+	return db.Table(user.TableName()).Where("UID=?", UID).UpdateColumn("Solved", gorm.Expr("Solved+1")).Error
 }

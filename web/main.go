@@ -47,7 +47,8 @@ func initAPP(ConfigPath string) error {
 	middlewares.InitJwt()
 
 	middlewares.InitSnowflake(utils.GetConfInstance().StartTime, utils.GetConfInstance().MachineID)
-
+	rbtcfg := utils.GetConfInstance().RabbitMQ
+	middlewares.NewRabbitMQ(rbtcfg.Host, rbtcfg.Port, rbtcfg.Username, rbtcfg.Password, 10)
 	routers.InitServer()
 	return nil
 }

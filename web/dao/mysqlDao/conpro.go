@@ -3,6 +3,8 @@ package mysqldao
 import (
 	"ahutoj/web/dao"
 	"context"
+
+	"gorm.io/gorm"
 )
 
 func InsertConProblem(ctx context.Context, conPro dao.ConPro) error {
@@ -23,4 +25,16 @@ func SelectCountConProInContestByProblem(ctx context.Context, CID int64, PID str
 	var ret int64
 	db.Table(dao.ConPro{}.TableName()).Where("CID=? and PID=?", CID, PID).Count(&ret)
 	return ret
+}
+
+func IncConProSubmit(ctx context.Context, CID int64, PID string) error {
+	db := GetDB(ctx)
+	conpor := dao.ConPro{}
+	return db.Table(conpor.TableName()).Where("CID=? and PID=?", CID, PID).UpdateColumn("Submited", gorm.Expr("Submited+1")).Error
+}
+
+func IncConProSolved(ctx context.Context, CID int64, PID string) error {
+	db := GetDB(ctx)
+	conpor := dao.ConPro{}
+	return db.Table(conpor.TableName()).Where("CID=? and PID=?", CID, PID).UpdateColumn("Solved", gorm.Expr("Solved+1")).Error
 }

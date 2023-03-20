@@ -2,9 +2,7 @@ package originJudged
 
 import (
 	"ahutoj/web/dao"
-	mysqldao "ahutoj/web/dao/mysqlDao"
 	"ahutoj/web/io/constanct"
-	"ahutoj/web/models"
 	"ahutoj/web/utils"
 	"context"
 	"encoding/json"
@@ -75,13 +73,13 @@ var CfHeaders = map[string]string{
 
 type CodeForceJudge struct {
 	Headers      map[string]string
-	CeInfo       string
 	JudgeUser    *CFJudgeUser
 	loginSuccess bool
 	OriginJudge
 }
 
 func (p CodeForceJudge) Judge(ctx context.Context, submit dao.Submit, PID string) error {
+	fmt.Println("开始判题" + utils.Sdump(submit))
 	err := p.InitCodeForceJudge()
 	p.PID = PID
 	if err != nil {
@@ -89,7 +87,7 @@ func (p CodeForceJudge) Judge(ctx context.Context, submit dao.Submit, PID string
 		return fmt.Errorf("call InitCodeForceJudge failed,err=%v", err.Error())
 	}
 	defer p.retRangeUser()
-	defer p.commitToDB()
+	defer p.CommitResult()
 	p.Submit = submit
 	err = p.Login()
 	if err != nil {
@@ -105,6 +103,7 @@ func (p CodeForceJudge) Judge(ctx context.Context, submit dao.Submit, PID string
 	if err != nil {
 		logger.Errorf("Call getResult failed,submit:%v, err:%v", submit.SID, err.Error())
 	}
+	fmt.Println("判题结束:结果为" + utils.Sdump(p.Submit))
 	return nil
 }
 
@@ -392,7 +391,7 @@ func (p *CodeForceJudge) getCEinfo(submissionID string) error {
 	var result = new(ResultObj)
 	json.Unmarshal(ret, result)
 	if result.CheckerStdoutAndStderr != "" {
-		p.CeInfo = result.CheckerStdoutAndStderr
+		p.CEInfo = result.CheckerStdoutAndStderr
 	}
 	fmt.Println(result)
 	return nil
@@ -474,25 +473,31 @@ func (p *CodeForceJudge) getResult() error {
 	return fmt.Errorf("codeforeces judge timeout submissionID:%v", submissionID)
 }
 
-func (p *CodeForceJudge) commitToDB() error {
-	if p.Submit.Result == constanct.OJ_JUDGE {
-		p.Submit.Result = constanct.OJ_FAILED
-	}
-	err := models.UpdateSubmit(context.Background(), p.Submit)
-	if err != nil {
-		logger.Errorf("call UpdateSubmit failed,submit=%v, err=%v", utils.Sdump(p.Submit), err.Error())
-		return err
-	}
-	if p.Submit.Result == constanct.OJ_CE {
-		ceinfo := dao.CeInfo{
-			SID:  p.Submit.SID,
-			Info: p.CeInfo,
-		}
-		err := mysqldao.InsertCeInfo(context.Background(), ceinfo)
-		if err != nil {
-			logger.Errorf("call InsertCEinfo failed,submit=%v, err=%v", utils.Sdump(p.Submit), err.Error())
-		}
-		return err
-	}
-	return nil
-}
+// func (p *CodeForceJudge) commitToDB() error {
+// 	if p.Submit.Result == constanct.OJ_JUDGE {
+// 		p.Submit.Result = constanct.OJ_FAILED
+// 	}
+// 	err := models.UpdateSubmit(context.Background(), p.Submit)
+// 	if err != nil {
+// 		logger.Errorf("call UpdateSubmit failed,submit=%v, err=%v", utils.Sdump(p.Submit), err.Error())
+// 		return err
+// 	}
+// 	if p.Submit.Result == constanct.OJ_AC {
+// 		mysqldao.IncUserSolved(context.Background(), p.Submit.UID)
+// 		if p.Submit.CID > 0 {
+// 			mysqldao.IncConProSolved(context.Background(), p.Submit.CID, p.Submit.PID)
+// 		}
+// 	}
+// 	if p.Submit.Result == constanct.OJ_CE {
+// 		ceinfo := dao.CeInfo{
+// 			SID:  p.Submit.SID,
+// 			Info: p.CEInfo,
+// 		}
+// 		err := mysqldao.InsertCeInfo(context.Background(), ceinfo)
+// 		if err != nil {
+// 			logger.Errorf("call InsertCEinfo failed,submit=%v, err=%v", utils.Sdump(p.Submit), err.Error())
+// 		}
+// 		return err
+// 	}
+// 	return nil
+// }

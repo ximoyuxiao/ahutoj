@@ -32,3 +32,10 @@ const (
 	ISPRIVATE int64 = -1
 	ISPUBLIC  int64 = 1
 )
+
+const (
+	INNERJUDGE  string = "InnerJudge"
+	ORIGINJUDGE string = "OriginJudge"
+	JUDGERESULT string = "JudgeResult"
+	JUDGECE     string = "JudgeCE"
+)

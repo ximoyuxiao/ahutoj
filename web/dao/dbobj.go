@@ -132,22 +132,22 @@ func (p ConPro) TableName() string {
 }
 
 type Submit struct {
-	SID           int64              `gorm:"column:SID"`
-	PID           string             `gorm:"column:PID"`
-	UID           string             `gorm:"column:UID"`
-	CID           int64              `gorm:"column:CID"`
-	JudgeID       int64              `gorm:"column:JudgeID"`
-	Source        string             `gorm:"column:Source"`
-	Lang          constanct.LANG     `gorm:"column:Lang"`
-	Result        constanct.OJResult `gorm:"column:ResultACM"`
-	PassSample    uint32             `gorm:"column:PassSample"`
-	Sim           uint8              `gorm:"column:Sim"`
-	Usetime       int64              `gorm:"column:UseTime"`
-	UseMemory     int64              `gorm:"column:UseMemory"`
-	SubmitTime    int64              `gorm:"column:SubmitTime"`
-	IsOriginJudge bool               `gorm:"column:IsOriginJudge"`
-	OriginPID     string             `gorm:"column:OriginPID"`
-	OJPlatform    int64              `gorm:"column:OJPlatform"`
+	SID           int64              `gorm:"column:SID" json:"SID"`
+	PID           string             `gorm:"column:PID" json:"PID"`
+	UID           string             `gorm:"column:UID" json:"UID"`
+	CID           int64              `gorm:"column:CID" json:"CID"`
+	JudgeID       int64              `gorm:"column:JudgeID" json:"JudgeID"`
+	Source        string             `gorm:"column:Source" json:"Source"`
+	Lang          constanct.LANG     `gorm:"column:Lang" json:"Lang"`
+	Result        constanct.OJResult `gorm:"column:ResultACM" json:"ResultACM"`
+	PassSample    uint32             `gorm:"column:PassSample" json:"PassSample"`
+	Sim           uint8              `gorm:"column:Sim" json:"Sim"`
+	Usetime       int64              `gorm:"column:UseTime" json:"Usetime"`
+	UseMemory     int64              `gorm:"column:UseMemory" json:"UseMemory"`
+	SubmitTime    int64              `gorm:"column:SubmitTime" json:"SubmitTime"`
+	IsOriginJudge bool               `gorm:"column:IsOriginJudge" json:"IsOriginJudge"`
+	OriginPID     string             `gorm:"column:OriginPID" json:"OriginPID"`
+	OJPlatform    int64              `gorm:"column:OJPlatform" json:"OJPlatform"`
 }
 
 func (p Submit) TableName() string {

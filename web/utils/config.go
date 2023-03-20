@@ -32,6 +32,7 @@ type AppConfig struct {
 	*AtCoderJudges  `mapstructure:"atCoderJudges"`
 	*CodeForceJudge `mapstructure:"codeForceJudge"`
 	*LuoguJudge     `mapstructure:"luoguJudge"`
+	*RabbitMQ       `mapstructure:"rabbitmq"`
 }
 
 type MySQLConfig struct {
@@ -69,6 +70,12 @@ type CodeForceJudge struct {
 type LuoguJudge struct {
 	Count    int64  `mapstructure:"count"`
 	Prefix   string `mapstructure:"prefix"`
+	Password string `mapstructure:"password"`
+}
+type RabbitMQ struct {
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	Username string `mapstructure:"username"`
 	Password string `mapstructure:"password"`
 }
 

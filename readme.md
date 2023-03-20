@@ -14,6 +14,10 @@ ubuntu18.06
 
 3、执行make run 既可以跑起来项目
 
+### 相关依赖:
+    C/C++:rabbitMQ\libamqp-dev,hiredis,libmysql
+    Go:gorm、gin、air
+
 ### 项目结构图
     .
     ├── doc             项目文档

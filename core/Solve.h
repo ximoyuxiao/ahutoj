@@ -4,13 +4,14 @@
 #include<mysql/mysql.h>
 #include<string>
 #include "result.h"
+#include <nlohmann/json.hpp>
 using std::string;
 class Solve
 {
 private:
     string        problemID;      //问题编号
     int           solutionID;     //提交编号
-    int           UserID;         //用户ID
+    string        UserID;         //用户ID
     int           CompleteID;     //竞赛ID 
     int           JudgeID;        //判题机ID
     string        source;         //代码
@@ -27,6 +28,9 @@ private:
     int           SpjJudge;      //是否开启特判(1:on/-1:off)
     void intTostr(char* args,int num);
 public:
+    void to_json(nlohmann::json& j);
+    void to_ceJson(nlohmann::json &j);
+    void from_json(nlohmann::json& j);
     Solve(string problemID="",int solutionID=0,const char *source="",int limitTime=0,int limitMeory=0,lanuage lang=C, int spj = -1);
     Solve(Solve &solve);
     ~Solve();
@@ -36,8 +40,8 @@ public:
     void Pid(string pid);
     int  Sid();
     void Sid(int sid);
-    int  Uid();
-    void Uid(int uid);
+    string  Uid();
+    void Uid(string uid);
     int Cid();
     void Cid(int cid);
     long SubmitTime();
@@ -66,4 +70,5 @@ public:
     long long getPassSample();
     void incPassSample();
 };
+
 #endif
