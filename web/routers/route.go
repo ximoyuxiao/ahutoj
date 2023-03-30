@@ -1,12 +1,11 @@
 package routers
 
 import (
-	originJudged "ahutoj/originJudge/originjudged"
+	"ahutoj/web/controller"
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
 	"ahutoj/web/middlewares"
-	"ahutoj/web/service"
 	"ahutoj/web/utils"
 	"net/http"
 	"time"
@@ -53,91 +52,91 @@ func regeisterRouters(router *gin.Engine) {
 		authRouter := apiRouter.Group("/auth").Use(middlewares.JwtVerify)
 		{
 			// 相当于接口 /api/Auth/login
-			authRouter.POST("/login/", service.Login)
-			authRouter.POST("/register/", service.Register)
-			authRouter.POST("/logout/", service.Logout)
+			authRouter.POST("/login/", controller.Login)
+			authRouter.POST("/register/", controller.Register)
+			authRouter.POST("/logout/", controller.Logout)
 		}
 		userRouter := apiRouter.Group("/user").Use(middlewares.JwtVerify)
 		{
-			userRouter.GET("/info", service.UserInfo)
-			userRouter.GET("/info/status", service.UserStatusInfo)
-			userRouter.POST("/edit/", service.EditUserInfo)
-			userRouter.POST("/edit/pass/", service.EditUserPass)
-			userRouter.POST("/vjudgeBind", service.VjudgeBind)
-			userRouter.POST("/CodeForceBind/", service.CodeForceBind)
-			userRouter.POST("/editHead/", service.EditImage)
+			userRouter.GET("/info", controller.UserInfo)
+			userRouter.GET("/info/status", controller.UserStatusInfo)
+			userRouter.POST("/edit/", controller.EditUserInfo)
+			userRouter.POST("/edit/pass/", controller.EditUserPass)
+			userRouter.POST("/vjudgeBind", controller.VjudgeBind)
+			userRouter.POST("/CodeForceBind/", controller.CodeForceBind)
+			userRouter.POST("/editHead/", controller.EditImage)
 		}
 
 		adminRouter := apiRouter.Group("/admin").Use(middlewares.JwtVerify)
 		{
-			adminRouter.POST("/permission/edit/", service.EditPermission)
-			adminRouter.POST("/permission/delete/", service.DeletePermission)
-			adminRouter.POST("/permission/add/", service.AddPermission)
-			adminRouter.GET("/permission/list/", service.GetListPermission)
-			adminRouter.GET("/permission/:id", service.GetPermission)
-			adminRouter.POST("/users/Range", service.AddUsersRange)
-			adminRouter.POST("/users", service.AddUsers)
+			adminRouter.POST("/permission/edit/", controller.EditPermission)
+			adminRouter.POST("/permission/delete/", controller.DeletePermission)
+			adminRouter.POST("/permission/add/", controller.AddPermission)
+			adminRouter.GET("/permission/list/", controller.GetListPermission)
+			adminRouter.GET("/permission/:id", controller.GetPermission)
+			adminRouter.POST("/users/Range", controller.AddUsersRange)
+			adminRouter.POST("/users", controller.AddUsers)
 
 		}
 
 		problemRouter := apiRouter.Group("/problem").Use(middlewares.JwtVerify)
 		{
 			// ->  /api/problems/add/'
-			problemRouter.POST("/add/", service.AddProblem)       // 添加题目
-			problemRouter.POST("/edit/", service.EditProblem)     // 编辑题目
-			problemRouter.POST("/delete/", service.DeleteProblem) // 删除题目
-			problemRouter.GET("/list", service.GetProblemList)    // 获取题目列表
+			problemRouter.POST("/add/", controller.AddProblem)       // 添加题目
+			problemRouter.POST("/edit/", controller.EditProblem)     // 编辑题目
+			problemRouter.POST("/delete/", controller.DeleteProblem) // 删除题目
+			problemRouter.GET("/list", controller.GetProblemList)    // 获取题目列表
 			// param 可以获取id
-			problemRouter.GET("/:id", service.GetProblem) // 获取题目
+			problemRouter.GET("/:id", controller.GetProblem) // 获取题目
 		}
 
 		trainingRouter := apiRouter.Group("/training").Use(middlewares.JwtVerify)
 		{
-			trainingRouter.POST("/add/", service.AddTraining)
-			trainingRouter.POST("/edit/", service.EditTraining)
+			trainingRouter.POST("/add/", controller.AddTraining)
+			trainingRouter.POST("/edit/", controller.EditTraining)
 
-			trainingRouter.POST("/delete/", service.DeleteTraining) // Lids []
-			trainingRouter.GET("/list", service.GetListTraining)
-			trainingRouter.GET("/:id", service.GetTraining)
-			trainingRouter.GET("/:id/rank", service.GetRankTraining)
+			trainingRouter.POST("/delete/", controller.DeleteTraining) // Lids []
+			trainingRouter.GET("/list", controller.GetListTraining)
+			trainingRouter.GET("/:id", controller.GetTraining)
+			trainingRouter.GET("/:id/rank", controller.GetRankTraining)
 		}
 
 		contestRouter := apiRouter.Group("/contest").Use(middlewares.JwtVerify)
 		{
-			contestRouter.POST("/add/", service.AddContest)
-			contestRouter.POST("/edit/", service.EditContest)
-			contestRouter.POST("/delete/", service.DeleteContest)
+			contestRouter.POST("/add/", controller.AddContest)
+			contestRouter.POST("/edit/", controller.EditContest)
+			contestRouter.POST("/delete/", controller.DeleteContest)
 
-			contestRouter.GET("/list", service.GetListContest)
-			contestRouter.GET("/:id", service.GetContest)
-			contestRouter.GET("/:id/rank", service.GteRankContest)
+			contestRouter.GET("/list", controller.GetListContest)
+			contestRouter.GET("/:id", controller.GetContest)
+			contestRouter.GET("/:id/rank", controller.GteRankContest)
 		}
 
 		SubmitRouter := apiRouter.Group("/submit").Use(middlewares.JwtVerify)
 		{
-			SubmitRouter.POST("/commit/", service.AddCommit)
-			SubmitRouter.POST("/rejudge/", service.RejudgeCommit)
-			SubmitRouter.GET("/status", service.StatusList)
-			SubmitRouter.GET("/:id", service.GetCommit)
+			SubmitRouter.POST("/commit/", controller.AddCommit)
+			SubmitRouter.POST("/rejudge/", controller.RejudgeCommit)
+			SubmitRouter.GET("/status", controller.StatusList)
+			SubmitRouter.GET("/:id", controller.GetCommit)
 		}
 
 		fileRouter := apiRouter.Group("/file").Use(middlewares.JwtVerify)
 		{
 			// 上传判题文件
-			fileRouter.POST("/:pid", service.UpFile)
+			fileRouter.POST("/:pid", controller.UpFile)
 			// 获取判题文件列表
-			fileRouter.GET("/:pid", service.GetFileList)
-			fileRouter.POST("/image/", service.UpImagefile)
+			fileRouter.GET("/:pid", controller.GetFileList)
+			fileRouter.POST("/image/", controller.UpImagefile)
 			// 删除文件
-			fileRouter.DELETE("/:pid", service.RemoveFile)
+			fileRouter.DELETE("/:pid", controller.RemoveFile)
 			// 解压文件
-			fileRouter.POST("/unzip/:pid", service.UnzipFile)
+			fileRouter.POST("/unzip/:pid", controller.UnzipFile)
 			// 上传并解析题目
-			fileRouter.POST("/problem", service.UpProblemFile)
+			fileRouter.POST("/problem", controller.UpProblemFile)
 			// 下载题目
-			fileRouter.GET("/json/download", service.DownloadProblemFromJson)
+			fileRouter.GET("/json/download", controller.DownloadProblemFromJson)
 			// 上传题目
-			fileRouter.POST("/problem/upfile/", service.UpProblemFile)
+			fileRouter.POST("/problem/upfile/", controller.UpProblemFile)
 		}
 	}
 }
@@ -177,6 +176,6 @@ func InitRouters(router *gin.Engine) {
 		Header["Content-Type"] = "application/json"
 		dataByte, _ := json.Marshal(req)
 		data := string(dataByte)
-		originJudged.DoRequest(originJudged.POST, conf.GatWayHost+"inner/addrouter", Header, nil, &data, true)
+		utils.DoRequest(utils.POST, conf.GatWayHost+"inner/addrouter", Header, nil, &data, true)
 	}
 }

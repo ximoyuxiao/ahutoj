@@ -1,0 +1,75 @@
+package originjudge
+
+type OriginJudgeUser struct {
+	Status    UserStatus
+	Cookies   map[string]string
+	CsrfToken string
+	ID        string
+	Password  string
+}
+
+var Originlock sync.Mutex
+
+type OriginJudgeUsers []OriginJudgeUser
+
+var OriginJudgeUsers []OriginJudgeUser = nil
+
+const Originoj OJPlatform = idx
+
+var aturl = ""
+
+var originLang = map[constanct.LANG]string{}
+
+var originResultMap = map[string]constanct.OJResult{}
+
+var orginHeaders = map[string]string{}
+
+type originCodeJudge struct {
+	Headers      map[string]string
+	JudgeUser    *AtJudgeUser
+	LoginSuccess bool
+	OriginJudge
+}
+
+func (p *originCodeJudge) Judge(ctx context.Context, submit dao.Submit, PID string) error {
+	err := p.InitAtcoderJudge(ctx)
+	p.Submit = submit
+	p.PID = PID
+	if err != nil {
+		logger.Errorf("Call InitAtcoderJudge failed,err=%s", err.Error())
+		return fmt.Errorf("call InitAtcoderJudge failed,err=%s", err.Error())
+	}
+	err = p.login(ctx)
+	if err != nil {
+		logger.Errorf("Call login failed,err=%s", err.Error())
+		return fmt.Errorf("call login failed,err=%s", err.Error())
+	}
+	if err = p.submit(ctx); err != nil {
+		logger.Errorf("Call submit failed,submit=%s", utils.Sdump(submit))
+		return fmt.Errorf("call submit failed,submit=%s", utils.Sdump(submit))
+	}
+	p.getResult(ctx)
+	p.commitToDB(ctx)
+	return nil
+}
+func (p *originCodeJudge) InitOriginJudge(ctx context.Context) error { 
+    // logger := utils.GetLogInstance()
+	if JudgeUsers == nil {
+		initUserCount()
+	}
+	// 必须得到一个运行中的判题机
+	for {
+		p.judgeUser, _ = getRangeUser()
+		if p.judgeUser != nil {
+			break
+		}
+		time.Sleep(time.Second)
+	}
+	p.loginSuccess = false
+	p.initCodeforceHead()
+	return nil
+}
+func (p *originCodeJudge) login(ctx context.Context) error            { return nil }
+func (p *originCodeJudge) submit(ctx context.Context) error           { return nil }
+func (p *originCodeJudge) getResult(ctx context.Context) error        { return nil }
+func (p *originCodeJudge) commitToDB(ctx context.Context) error       { return nil }

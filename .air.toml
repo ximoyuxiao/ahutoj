@@ -11,7 +11,7 @@ cmd = "make build"
 # 由`cmd`命令得到的二进制文件名
 bin = "tmp/bin/main"
 # 自定义的二进制，可以添加额外的编译标识例如添加 GIN_MODE=release
-full_bin = "./tmp/bin/main ./config.yaml"
+full_bin = "./tmp/bin/main ./tmp/config/config.yaml"
 # 监听以下文件扩展名的文件.
 include_ext = ["go", "yaml"]
 # 忽略这些文件扩展名或目录

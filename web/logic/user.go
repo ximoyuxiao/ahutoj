@@ -1,7 +1,6 @@
 package logic
 
 import (
-	originJudged "ahutoj/originJudge/originjudged"
 	"ahutoj/web/dao"
 	mysqldao "ahutoj/web/dao/mysqlDao"
 	"ahutoj/web/io/constanct"
@@ -10,6 +9,7 @@ import (
 	"ahutoj/web/mapping"
 	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
+	originJudged "ahutoj/web/service/originJudge/originjudged"
 	"ahutoj/web/utils"
 	"fmt"
 	"strings"

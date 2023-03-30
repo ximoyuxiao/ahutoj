@@ -1,0 +1,5 @@
+package origininfo
+
+func GetCodeForecesInfo() {
+
+}
