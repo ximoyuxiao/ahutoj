@@ -120,7 +120,17 @@ func RejudgeSubmit(ctx *gin.Context, req *request.RejudgeSubmitReq) (interface{}
 	if err != nil {
 		return response.CreateResponse(constanct.SUBMIT_REJUDG_FAILEDCode), err
 	}
-	return response.CreateResponse(constanct.SuccessCode), nil
+	submits, err := models.GetSubmitList(ctx, submit, 0, 100000)
+	if err != nil {
+		return nil, err
+	}
+	for _, submit := range submits {
+		err := models.CommitRabitMQ(ctx, submit)
+		if err != nil {
+			return response.CreateResponse(constanct.SUBMIT_ADD_FAILEDCode), nil
+		}
+	}
+	return nil, err
 }
 
 func GetSubmits(ctx *gin.Context, req *request.SubmitListReq) (interface{}, error) {

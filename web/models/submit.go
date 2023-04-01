@@ -4,6 +4,8 @@ import (
 	rediscache "ahutoj/web/cache/redis"
 	"ahutoj/web/dao"
 	mysqldao "ahutoj/web/dao/mysqlDao"
+	"ahutoj/web/io/constanct"
+	"ahutoj/web/middlewares"
 	"ahutoj/web/utils"
 	"context"
 
@@ -59,4 +61,26 @@ func EqualLastSource(ctx context.Context, UID string, PID string, Source string)
 	}
 	rediscache.SetLastSource(ctx, UID, PID, SourceMD5)
 	return false
+}
+
+func CommitRabitMQ(ctx context.Context, submit dao.Submit) error {
+	if submit.SID == 0 {
+		return nil
+	}
+	rabitmq := middlewares.GetRabbitMq()
+	produce := middlewares.NewProducer(rabitmq)
+	if submit.IsOriginJudge {
+		err := produce.SendMessage(constanct.ORIGINJUDGE, submit)
+		if err != nil {
+			logger.Errorf("call SendMessage(%s) failed, submit=%v, err=%s", constanct.ORIGINJUDGE, submit, err.Error())
+			return err
+		}
+	} else {
+		err := produce.SendMessage(constanct.INNERJUDGE, submit)
+		if err != nil {
+			logger.Errorf("call SendMessage(%s) failed, submit=%v, err=%s", constanct.INNERJUDGE, submit, err.Error())
+			return err
+		}
+	}
+	return nil
 }

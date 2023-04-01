@@ -4,6 +4,7 @@ TARGETCONFIGPATH=${TARGETPATH}/config
 TARGETBINPATH=${TARGETPATH}/bin
 COREPATH=./core/
 SERVICETARGET=./web/service/
+INSTALLPATH=/usr/bin/ahutoj/
 BUILDBINS=ahutoj originJudge originproblem persistence useranalytics gatway
 
 all:init build
@@ -29,7 +30,12 @@ build:${TARGETBINPATH} ${BUILDBINS} judged
 	cp -r ${CONFIGPATH} ${TARGETCONFIGPATH}
 
 install:
-
+	if [ ! -d ${INSTALLPATH} ]; then \
+		mkdir -p ${INSTALLPATH}; \
+	fi
+	
+	cp -r ${TARGETBINPATH}/* ${INSTALLPATH}
+	cp -r ${CONFIGPATH}/* ${INSTALLPATH}
 clean:
 	cd ${COREPATH} && make clean
 	rm -rf ${TARGETPATH}

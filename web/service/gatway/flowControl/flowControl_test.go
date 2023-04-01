@@ -1,7 +1,7 @@
 package flowcontrol_test
 
 import (
-	flowcontrol "ahutoj/web/gatway/flowControl"
+	flowcontrol "ahutoj/web/service/gatway/flowControl"
 	"context"
 	"fmt"
 	"math/rand"
@@ -13,7 +13,7 @@ type Mwork struct {
 	Idx int
 }
 
-func (mwork *Mwork) run(ctx context.Context) {
+func (mwork *Mwork) Run(ctx context.Context) {
 	fmt.Println(mwork.Idx)
 }
 

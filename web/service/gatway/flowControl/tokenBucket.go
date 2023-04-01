@@ -7,7 +7,7 @@ import (
 )
 
 type TokenBucketWork interface {
-	run(ctx context.Context)
+	Run(ctx context.Context)
 }
 type TokenBucket struct {
 	TokenNumber int64

@@ -7,7 +7,7 @@ tmp_dir = "tmp"
  
 [build]
 # 只需要写你平常编译使用的shell命令。你也可以使用 `make`
-cmd = "make build"
+cmd = ""
 # 由`cmd`命令得到的二进制文件名
 bin = "tmp/bin/main"
 # 自定义的二进制，可以添加额外的编译标识例如添加 GIN_MODE=release

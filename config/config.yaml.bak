@@ -10,13 +10,13 @@ version: "1.0.0"
 startTime: "2022-01-15"
 machineID: 1
 # 判题数据
-dataPath: "./core/Data"
+dataPath: "./resource/Data/"
 #封榜时间
 terminal: 0.8  
 # 图片存放路径
-imagePath: "./image/"
-headPath: "./image/head/"
-spjPath: "./core/spj/"
+imagePath: "./resource/image/"
+headPath: "./resource/image/head/"
+spjPath: "./resource/spj/"
 # 是否开放注册
 openRegisiters: true
 # 外部判题相关配置
@@ -66,3 +66,17 @@ gatWay:
     port: ":4433"
     maxqps: 100
     blackReq: 
+useranalytics:
+    port: ":4435"
+    mysql:  
+        driver: "mysql"
+        host: "127.0.0.1"
+        port: 3306
+        username: "AHUTOnlinejudge"
+        dbname: "ahutoj"
+        password: "2019ahut"
+rabbitmq:
+    host: "127.0.0.1"
+    port: 5672
+    username: "ahutoj"
+    password: "2019ahut"
