@@ -58,6 +58,28 @@ func AddTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 	}, nil
 }
 
+func RegisterTraining(ctx *gin.Context, req *request.RegisterTrainingReq) (interface{}, error) {
+	listUser := dao.ListUser{
+		LID: req.LID,
+		UID: req.UID,
+	}
+	if listUser.UID != middlewares.GetUid(ctx) {
+		return response.CreateResponse(constanct.TRAIN_ADD_USER_USER_FAILED), nil
+	}
+	list, err := models.GetTraining(ctx, listUser.LID)
+	if err != nil {
+		return nil, err
+	}
+	if list.LID != listUser.LID {
+		return response.CreateResponse(constanct.TRAIN_ADD_USER_LID_NOT_EXITIES), nil
+	}
+	err = models.SaveTraningUser(ctx, listUser)
+	if err != nil {
+		return nil, err
+	}
+	return response.CreateResponse(constanct.SuccessCode), nil
+}
+
 func EditTraining(req *request.EditListReq, c *gin.Context) (interface{}, error) {
 	list := dao.List{
 		LID:         req.LID,

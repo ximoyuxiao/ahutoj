@@ -20,6 +20,11 @@ type EditListReq struct {
 	Title       string `json:"Title"`
 	Problems    string `json:"Problems"`
 }
+type RegisterTrainingReq struct {
+	LID int64  `json:"LID"`
+	UID string `json:"UID"`
+}
+
 type TrainingListReq GetListReq
 type TrainingReq struct {
 	LID int64 `param:"LID"`

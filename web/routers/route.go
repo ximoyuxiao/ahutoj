@@ -94,7 +94,7 @@ func regeisterRouters(router *gin.Engine) {
 		{
 			trainingRouter.POST("/add/", controller.AddTraining)
 			trainingRouter.POST("/edit/", controller.EditTraining)
-
+			trainingRouter.POST("/user/", controller.RegisterTraining)
 			trainingRouter.POST("/delete/", controller.DeleteTraining) // Lids []
 			trainingRouter.GET("/list", controller.GetListTraining)
 			trainingRouter.GET("/:id", controller.GetTraining)
