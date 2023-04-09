@@ -130,7 +130,7 @@ func RejudgeSubmit(ctx *gin.Context, req *request.RejudgeSubmitReq) (interface{}
 			return response.CreateResponse(constanct.SUBMIT_ADD_FAILEDCode), nil
 		}
 	}
-	return nil, err
+	return response.CreateResponse(constanct.SuccessCode), err
 }
 
 func GetSubmits(ctx *gin.Context, req *request.SubmitListReq) (interface{}, error) {

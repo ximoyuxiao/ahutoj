@@ -77,6 +77,12 @@ bool Producer::sendMessage(std::string queueName, void* messageBody, size_t mess
 
     auto ok = amqp_channel_open(conn,channel);
     amqp_queue_declare_ok_t* queue = amqp_queue_declare(conn, channel, amqp_cstring_bytes(queueName.c_str()), false, false, false, false, amqp_empty_table);
+    if(queue == nullptr){
+        amqp_bytes_free(messageBytes);
+        amqp_channel_close(conn, channel, AMQP_REPLY_SUCCESS);
+        m_rmq.releaseConnection(conn);
+        return false;
+    }
     amqp_bytes_t queueBytes = amqp_bytes_malloc_dup(queue->queue);
     if (queueBytes.bytes == nullptr) {
         amqp_bytes_free(messageBytes);
@@ -108,7 +114,6 @@ int Consumer::consumeMessage(void (*callback)(amqp_envelope_t)) {
     if (conn == nullptr) {
         return 1;
     }
-
     amqp_channel_t channel = 1; // initialize channel to a non-zero value
     int ret = 0;
 
@@ -159,7 +164,7 @@ int Consumer::consumeMessage(void (*callback)(amqp_envelope_t)) {
         if (m_callback != nullptr) {
             m_callback(envelope);
         }
-
+        amqp_basic_ack(conn, channel, envelope.delivery_tag, /*multiple=*/false);
         amqp_destroy_envelope(&envelope);
     }
 

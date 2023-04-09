@@ -116,6 +116,8 @@ private:
     judgeClient* jc;
     Solve* solve;
 public:
+    sem wait;
+public:
     soulution_run(Solve* solve){
         this->jc =new judgeClient(solve);
         this->solve = solve;
@@ -130,6 +132,7 @@ public:
         auto solution = Solution::GetInstance();
         solution->commitSolveToQueue(solve);
         solution->ReleaseSolve(solve);
+        wait.post();
     }
     judgeClient* getJudgeClient(){
         return jc;
@@ -143,24 +146,22 @@ public:
 using json = nlohmann::json;
 void Solution::Process(amqp_envelope_t amqp){
     string data = (char*)(amqp.message.body.bytes);
+    data[amqp.message.body.len] = '\0';
     std::cout<<data<<std::endl;
     json j = nlohmann::json::parse(data);
     Solve* solve = new Solve();
     solve->from_json(j);
     solution->GetProblemInfo(solve);
     solution->commitSolveToQueue(solve);
+    auto excute = shared_ptr<soulution_run>(new soulution_run(solve));
     auto pool =  threadpool::getPool();
-        pool->excute(
-            shared_ptr<soulution_run>(
-                new soulution_run(solve)
-            )
-    );
+    pool->excute(excute);
+    excute->wait.wait();
 }
 void Solution::LoopSolve(){
     while(true){
         Consumer consumer = mq->createConsumer(INNERJUDGE);
         consumer.consumeMessage(Process);
-
     }
 }
 
