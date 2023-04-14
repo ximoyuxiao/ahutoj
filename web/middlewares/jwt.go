@@ -44,6 +44,7 @@ var VerifyMap = map[string]constanct.VerfiyLevel{
 	"/api/training/add/":            constanct.ListAdmin,
 	"/api/training/edit/":           constanct.ListAdmin,
 	"/api/training/delete/":         constanct.ListAdmin,
+	"/api/training/user/":           constanct.CommomUser,
 	"/api/admin/users":              constanct.SuperAdmin,
 	"/api/submit/:id":               constanct.CommomUser,
 	"/api/user/editHead/":           constanct.CommomUser,

@@ -8,7 +8,9 @@ type ListProblem struct {
 	LID int64  `json:"LID"`
 	PID string `json:"PID"`
 }
-
+type ListUserReq struct {
+	LID int64 `query:"LID"`
+}
 type ListAll struct {
 	Problems    string `json:"Problems"`
 	Title       string `json:"Title"`
@@ -27,7 +29,7 @@ type RegisterTrainingReq struct {
 
 type TrainingListReq GetListReq
 type TrainingReq struct {
-	LID int64 `param:"LID"`
+	LID int64 `query:"LID"`
 	// Pass *string `query:"Pass"`
 }
 

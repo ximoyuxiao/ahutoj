@@ -25,8 +25,14 @@ type TrainingProblemItem struct {
 	PID    string `json:"PID"`
 	Ptitle string `json:"Ptitle"`
 }
-
 type AddTrainResp struct {
 	Response
 	LID int64 `json:"LID"`
+}
+
+type TrainingUserResp struct {
+	Response
+	Solved    int      `json:"Solved"`
+	Submited  int      `json:"Submited"`
+	SolvedPID []string `json:"SolvedPID"`
 }

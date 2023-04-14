@@ -80,6 +80,57 @@ func RegisterTraining(ctx *gin.Context, req *request.RegisterTrainingReq) (inter
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
 
+func GetTrainUserInfo(ctx *gin.Context, req *request.ListUserReq) (interface{}, error) {
+	logger := utils.GetLogInstance()
+	training, err := models.GetTraining(ctx, req.LID)
+	if err != nil {
+		logger.Errorf("call GetTrainingFromDB failed, CID=%s, err=%s", req.LID, err.Error())
+		return response.CreateResponse(constanct.TRAIN_GET_FAILED), err
+	}
+	if training.LID != req.LID {
+		logger.Errorf("Training not exist req=%+v", utils.Sdump(req))
+		return response.CreateResponse(constanct.TRAIN_GET_LIDNotExistCode), nil
+	}
+	listuser := dao.ListUser{
+		LID: req.LID,
+		UID: middlewares.GetUid(ctx),
+	}
+	tinfo, err := models.FindTrainUserInfo(ctx, listuser)
+	if err != nil {
+		return nil, err
+	}
+	if tinfo.LID != listuser.LID || tinfo.UID != listuser.UID {
+		return response.CreateResponse(constanct.TRAIN_GET_USER_NOT_FOUND_CODE), nil
+	}
+	PIDs := strings.Split(training.Problems, ",")
+	SolvedPID := make([]string, 0)
+	for _, PID := range PIDs {
+		if PID == "" {
+			continue
+		}
+		solved, err := models.GetSubmitListCount(ctx, dao.Submit{
+			PID:    PID,
+			Result: constanct.OJ_AC,
+			UID:    listuser.UID,
+		})
+		if err != nil {
+			return nil, err
+		}
+		if solved > 0 {
+			SolvedPID = append(SolvedPID, PID)
+			fmt.Println(SolvedPID)
+			fmt.Println(PID)
+			tinfo.Solved++
+		}
+	}
+	return response.TrainingUserResp{
+		Response:  response.CreateResponse(constanct.SuccessCode),
+		Solved:    tinfo.Solved,
+		Submited:  tinfo.Submited,
+		SolvedPID: SolvedPID,
+	}, nil
+}
+
 func EditTraining(req *request.EditListReq, c *gin.Context) (interface{}, error) {
 	list := dao.List{
 		LID:         req.LID,

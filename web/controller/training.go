@@ -5,6 +5,7 @@ import (
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
 	"ahutoj/web/logic"
+	"ahutoj/web/middlewares"
 	"ahutoj/web/utils"
 	"fmt"
 	"strconv"
@@ -44,6 +45,10 @@ func RegisterTraining(ctx *gin.Context) {
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
+	req.UID = middlewares.GetUid(ctx)
+	if req.UID == "" {
+		response.ResponseError(ctx, constanct.AUTH_Token_EmptyCode)
+	}
 	fmt.Printf("req:%+v\n", req)
 
 	resp, err := logic.RegisterTraining(ctx, req)
@@ -53,6 +58,7 @@ func RegisterTraining(ctx *gin.Context) {
 	}
 	response.ResponseOK(ctx, resp)
 }
+
 func EditTraining(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := new(request.EditListReq)
@@ -171,6 +177,27 @@ func GetRankTraining(ctx *gin.Context) {
 	if err != nil {
 		logger.Errorf("call GetRankTraining failed, err = %s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
+	}
+	response.ResponseOK(ctx, resp)
+}
+
+func GetTrainUserInfo(ctx *gin.Context) {
+	logger := utils.GetLogInstance()
+	req := new(request.ListUserReq)
+	err := ctx.ShouldBindWith(req, binding.Query)
+	if err != nil {
+		// 请求参数有误 直接返回响应
+		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
+	}
+	fmt.Printf("req:%+v\n", req)
+
+	resp, err := logic.GetTrainUserInfo(ctx, req)
+	if err != nil {
+		logger.Errorf("call GetTrainUserInfo failed,req=%+v,err=%s", *req, err.Error())
+		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}
 	response.ResponseOK(ctx, resp)
