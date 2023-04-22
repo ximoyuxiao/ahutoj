@@ -121,6 +121,13 @@ const (
 	TRAIN_GET_LIDNotExistCode ResCode = 150502
 
 	TRAIN_RANK_FAILED ResCode = 150601
+
+	TRAIN_ADD_USER_FAILED          ResCode = 150701
+	TRAIN_ADD_USER_LID_NOT_EXITIES ResCode = 150702
+	TRAIN_ADD_USER_USER_FAILED     ResCode = 150703
+
+	TRAIN_GET_USER_FAILED_CODE    ResCode = 150801
+	TRAIN_GET_USER_NOT_FOUND_CODE ResCode = 150802
 )
 
 /*contest 16*/
@@ -222,6 +229,12 @@ var codeMsgMap = map[ResCode]string{
 	TRAIN_DELETE_FAILED:                     "删除题单失败",
 	TRAIN_LIST_FAILED:                       "获取提单列表失败",
 	TRAIN_GET_FAILED:                        "获取题单信息失败",
+	TRAIN_GET_LIDNotExistCode:               "该题单不存在",
+	TRAIN_ADD_USER_FAILED:                   "添加题单用户失败",
+	TRAIN_ADD_USER_LID_NOT_EXITIES:          "题单号不存在",
+	TRAIN_ADD_USER_USER_FAILED:              "用户错误",
+	TRAIN_GET_USER_FAILED_CODE:              "获取题单用户信息失败",
+	TRAIN_GET_USER_NOT_FOUND_CODE:           "用户未加入题单\\info",
 	CONTEST_ADD_FAILED:                      "添加竞赛失败",
 	CONTEST_EDIT_FAILED:                     "编辑竞赛失败",
 	CONTEST_DELETE_FAILED:                   "删除竞赛失败",

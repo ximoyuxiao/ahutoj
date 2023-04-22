@@ -29,7 +29,7 @@ func DeleteTraning(ctx context.Context, LID int64) error {
 	ret := dao.List{
 		LID: LID,
 	}
-	return db.Table("List").Delete(&ret).Error
+	return db.Table("List").Where(ret).Delete(&ret).Error
 }
 
 func UpdateTraning(ctx context.Context, traning dao.List) error {

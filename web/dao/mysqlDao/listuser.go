@@ -10,9 +10,9 @@ func InsertListUser(ctx context.Context, listUser dao.ListUser) error {
 	return db.Create(listUser).Error
 }
 
-func SelectListUser(ctx context.Context, listUser dao.ListUser) (dao.ListUser, error) {
+func SelectListUser(ctx context.Context, listUser dao.ListUser) ([]dao.ListUser, error) {
 	db := GetDB(ctx)
-	ret := dao.ListUser{}
+	ret := make([]dao.ListUser, 0)
 	err := db.Where(listUser).Find(&ret).Error
 	return ret, err
 }

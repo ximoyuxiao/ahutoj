@@ -187,7 +187,7 @@ func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, erro
 	}, nil
 }
 
-func initRankItem(rank *response.RankItemWithAcm, user dao.User, problemSize int) {
+func initContestRankItem(rank *response.RankItemWithAcm, user dao.User, problemSize int) {
 	rank.Uname = user.Uname
 	rank.UserID = user.UID
 	rank.Uclass = user.Classes
@@ -288,7 +288,7 @@ func GetRankContestWithACM(ctx *gin.Context, contest dao.Contest, current int64)
 			user := dao.User{UID: submit.UID}
 			models.FindUserByUID(ctx, &user)
 			ranks = append(ranks, response.RankItemWithAcm{})
-			initRankItem(&ranks[rid], user, len(problems))
+			initContestRankItem(&ranks[rid], user, len(problems))
 		}
 		// 获取用户的排行信息
 		rank := &ranks[rid]

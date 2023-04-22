@@ -4,6 +4,7 @@ type PermissionReq struct {
 	UID             string `json:"UID"`
 	Administrator   bool   `json:"SuperAdmin"`
 	Problem_edit    bool   `json:"ProbelmAdmin"`
+	ListAdmin       bool   `json:"ListAdmin"`
 	Source_browser  bool   `json:"SourceAdmin"`
 	Contest_creator bool   `json:"ContestAdmin"`
 }

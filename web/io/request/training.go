@@ -30,7 +30,6 @@ type RegisterTrainingReq struct {
 type TrainingListReq GetListReq
 type TrainingReq struct {
 	LID int64 `query:"LID"`
-	// Pass *string `query:"Pass"`
 }
 
 type GetTrainingRankReq struct {

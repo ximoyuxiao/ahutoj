@@ -10,6 +10,6 @@ func SaveTraningUser(ctx context.Context, listUser dao.ListUser) error {
 	return mysqldao.InsertListUser(ctx, listUser)
 }
 
-func FindTrainUserInfo(ctx context.Context, listUser dao.ListUser) (dao.ListUser, error) {
+func FindTrainUserInfo(ctx context.Context, listUser dao.ListUser) ([]dao.ListUser, error) {
 	return mysqldao.SelectListUser(ctx, listUser)
 }

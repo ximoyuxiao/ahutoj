@@ -9,7 +9,6 @@ import (
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
 	"fmt"
-	"sort"
 	"strings"
 	"time"
 
@@ -95,10 +94,14 @@ func GetTrainUserInfo(ctx *gin.Context, req *request.ListUserReq) (interface{}, 
 		LID: req.LID,
 		UID: middlewares.GetUid(ctx),
 	}
-	tinfo, err := models.FindTrainUserInfo(ctx, listuser)
+	tinfos, err := models.FindTrainUserInfo(ctx, listuser)
 	if err != nil {
 		return nil, err
 	}
+	if len(tinfos) <= 0 {
+		return response.CreateResponse(constanct.TRAIN_GET_USER_NOT_FOUND_CODE), nil
+	}
+	tinfo := tinfos[0]
 	if tinfo.LID != listuser.LID || tinfo.UID != listuser.UID {
 		return response.CreateResponse(constanct.TRAIN_GET_USER_NOT_FOUND_CODE), nil
 	}
@@ -248,47 +251,57 @@ func GetTraining(ctx *gin.Context, req *request.TrainingReq) (interface{}, error
 		Response:    response.CreateResponse(constanct.SuccessCode),
 		LID:         training.LID,
 		UID:         training.UID,
+		Description: training.Description,
 		Title:       training.Title,
 		StartTime:   training.StartTime,
 		ProblemData: respData,
+		Problems:    training.Problems,
 	}, nil
 }
-
+func initListRankItem(rank *response.TraininngRankItem, user dao.User, problemSize int) {
+	rank.Uname = user.Uname
+	rank.UID = user.UID
+	rank.Uclass = user.Classes
+	rank.Solved = 0
+	rank.Problems = make(response.TrainingRankProblemItems, problemSize)
+	for idx := range rank.Problems {
+		problem := &rank.Problems[idx]
+		problem.PID = ""
+		problem.Time = 0
+		problem.Status = constanct.OJ_JUDGE
+	}
+}
 func GetRankTraining(ctx *gin.Context, req *request.GetTrainingRankReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
+	// 获取题单信息
 	training, err := models.GetTraining(ctx, req.LID)
 	if err != nil {
 		logger.Errorf("call GetTraining Failed, LID=%d, err=%s", req.LID, err.Error())
 		return response.CreateResponse(constanct.TRAIN_RANK_FAILED), err
 	}
-	problems, err := models.GetTrainingProblem(ctx, req.LID) //获得竞赛的题目
-	if err != nil {
-		logger.Errorf("call GetConProblemFromDB Failed, CID=%d, err=%s", req.LID, err.Error())
-		return response.CreateResponse(constanct.TRAIN_RANK_FAILED), err
-	}
-
+	problems := strings.Split(training.Problems, ",")
 	problemIdxMap := make(map[string]int, 0)
 	for idx, problem := range problems {
-		problemIdxMap[problem.PID] = idx
+		problemIdxMap[problem] = idx
 	}
-	currentTime := time.Now().UnixMilli()
-	fb := int64(utils.GetConfInstance().Terminal*(float64(currentTime)-float64(training.StartTime)) + float64(training.StartTime))
-	if currentTime > int64(utils.GetConfInstance().OpenTime*float64(time.Hour)) {
-		fb = 0
-	}
-	//封榜时间
-	submits, err := models.GetSubmitByLIDFromDB(ctx, req.LID, fb) //获取使用这个竞赛的所有提交
-	sort.Slice(submits, func(i, j int) bool {
-		return submits[i].SubmitTime < submits[j].SubmitTime
-	})
+
+	//获取题单用户
+	listUsers, err := models.FindTrainUserInfo(ctx, dao.ListUser{LID: req.LID})
 	if err != nil {
-		logger.Errorf("call GetTraining Failed, LID=%d, err=%s", req.LID, err.Error())
+		logger.Errorf("call FindTrainUserInfo Failed, LID=%d, err=%s", req.LID, err.Error())
+		return nil, err
+	}
+	// 获取信息
+	submits, err := models.FindListSubmitInfo(ctx, listUsers)
+	if err != nil {
+		logger.Errorf("call FindListSubmitInfo Failed, LID=%d, err=%s", req.LID, err.Error())
 		return response.CreateResponse(constanct.TRAIN_RANK_FAILED), err
 	}
 	userMap := make(map[string]int, 0)
-	ranks := make(response.RankItemsWithAcm, 0)
+	ranks := make(response.TraininngRankItems, 0)
 	idx := 0
 	for _, submit := range submits {
+		fmt.Printf("SID:%v PID:%v\n", submit.SID, submit.PID)
 		rid, ok := userMap[submit.UID]
 		if !ok {
 			rid = idx
@@ -296,30 +309,27 @@ func GetRankTraining(ctx *gin.Context, req *request.GetTrainingRankReq) (interfa
 			userMap[submit.UID] = rid
 			user := dao.User{UID: submit.UID}
 			models.FindUserByUID(ctx, &user)
-			ranks = append(ranks, response.RankItemWithAcm{})
-			initRankItem(&ranks[rid], user, len(problems))
+			ranks = append(ranks, response.TraininngRankItem{})
+			initListRankItem(&ranks[rid], user, len(problems))
 		}
 		rank := &ranks[rid]
 		problem := &rank.Problems[problemIdxMap[submit.PID]]
 		problem.PID = submit.PID
+		fmt.Println(utils.Sdump(problem))
 		if problem.Status == constanct.OJ_AC {
 			continue
 		} else {
 			problem.Status = submit.Result
-			problem.Time = submit.SubmitTime - training.StartTime
-			rank.AllSubmit++
+			problem.Time = uint64(submit.SubmitTime - training.StartTime)
 			problem.SubmitNumber++
 			if submit.Result == constanct.OJ_AC {
-				rank.ACNumber++
-			}
-			if submit.Result == constanct.OJ_CE {
-				rank.CENumber++
+				rank.Solved++
 			}
 		}
 	}
-	return response.ConntestRankRespWithAcm{
+	return response.TrainingRankResp{
 		Response: response.CreateResponse(constanct.SuccessCode),
-		Size:     ranks.Len(),
+		Size:     int64(len(ranks)),
 		Data:     ranks,
 	}, nil
 }

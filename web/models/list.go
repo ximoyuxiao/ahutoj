@@ -102,3 +102,17 @@ func GetTrainingProblem(ctx context.Context, LID int64) ([]dao.ListProblem, erro
 func SelectListCountByList(ctx context.Context, list dao.List) (int64, error) {
 	return mysqldao.SelectListCountByList(ctx, list)
 }
+
+func FindListSubmitInfo(ctx context.Context, listusers []dao.ListUser) ([]dao.Submit, error) {
+	db := mysqldao.GetDB(ctx)
+	ret := make([]dao.Submit, 0)
+	var submits []dao.Submit
+	for _, lu := range listusers {
+		err := db.Where("UID = ? AND PID IN (?)", lu.UID, db.Table(dao.ListProblem{}.TableName()).Select("PID").Where("LID=?", lu.LID)).Find(&submits).Error
+		if err != nil {
+			return nil, err
+		}
+		ret = append(ret, submits...)
+	}
+	return ret, nil
+}
