@@ -42,7 +42,7 @@ public:
     Solve* GetSolve();
     void SetSolve(Solve* solve);
     judgeClient(Solve *solve);
-    ~judgeClient();
+    virtual ~judgeClient();
 };
 
 

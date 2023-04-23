@@ -421,15 +421,18 @@ bool judgeClient::judge()
         {
             case J_CHECK:{
                 ILOG("J_CHECK");
+                if(!this->language){
+                    Jstat  = J_FAILED;
+                    this->solve->Sres(OJ_FAILED);
+                    ILOG("语言不支持,%d",solve->Lang());
+                    break;
+                }
                 if(checkSource()){
                     Jstat = J_GETFILE;
+                    break;
                 }
-                else
-                {
-                    solve->Sres(OJ_RE);
-                    Jstat = J_FAILED;
-                }
-                break;
+                solve->Sres(OJ_RE);
+                Jstat = J_FAILED;
             }          
             case J_GETFILE:{
                 ILOG("J_GETFILE");

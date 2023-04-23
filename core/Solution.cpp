@@ -93,9 +93,17 @@ void Solution::GetProblemInfo(Solve* solve){
         }    
         MYSQL_ROW row;
         if((row = mysql_fetch_row(res))){
-            solve->LimitTime(atoll(row[0]));
-            solve->LimitMemory(atoll(row[1]));
-            solve->setSpjJudge(atoi(row[2]));
+            if(row[0]){
+                solve->LimitTime(atoll(row[0]));
+            }
+            if(row[1]){
+                solve->LimitMemory(atoll(row[1]));
+            }
+            if(row[2]){
+                solve->setSpjJudge(atoi(row[2]));
+            }else{
+                solve->setSpjJudge(-1);
+            }
             char temp[128];
             sprintf(temp,"%s,%s,%s",row[0],row[1],row[2]);
             redis->setString(solve->Pid(),temp);
