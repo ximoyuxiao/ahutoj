@@ -168,6 +168,16 @@ create table CEINFO(
 )DEFAULT CHARSET=utf8mb4;
 
 ALTER TABLE Submit AUTO_INCREMENT = 1000;
+
+CREATE TABLE Notice (
+  NID INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY comment '公告ID',
+  UID varchar(20) comment '创建用户ID',
+  Title VARCHAR(255) NOT NULL comment '公告标题',
+  Content TEXT NOT NULL comment '公告内容',
+  CreateTime long NOT NULL comment '创建时间',
+  UpdateTime long NOT NULL comment '更新时间',
+  IsDelete int(1) comment '删除标志'
+)DEFAULT CHARSET=utf8mb4;
 #5.添加数据
 insert into User values('199094212','admin','',)
 insert into Permission values('admin','Y','Y','Y','Y','Y');

@@ -140,6 +140,12 @@ func regeisterRouters(router *gin.Engine) {
 			// 上传题目
 			fileRouter.POST("/problem/upfile/", controller.UpProblemFile)
 		}
+		apiRouter.Use(middlewares.JwtVerify)
+		apiRouter.GET("/notice/:id", controller.GetNotice)
+		apiRouter.POST("/notice/", controller.CreateNotice)
+		apiRouter.DELETE("/notice/:id", controller.DeleteNotice)
+		apiRouter.PUT("/notice/:id", controller.UpdateNotice)
+		apiRouter.GET("/notices", controller.GetNoticeList)
 	}
 }
 

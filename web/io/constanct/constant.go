@@ -178,6 +178,12 @@ const (
 	FILE_UPIMAGE_FAILED ResCode = 180501
 )
 
+/*notice 19*/
+const (
+	NOTICE_GETNOTICE_FAILED       ResCode = 190101
+	NOTICE_GETNOTICE_NOTEXISTCODE ResCode = 190102
+)
+
 var codeMsgMap = map[ResCode]string{
 	SuccessCode:                             "",
 	InvalidParamCode:                        "请求参数错误",
@@ -262,6 +268,8 @@ var codeMsgMap = map[ResCode]string{
 	CONTEST_RANK_NOSHOW:                     "OI竞赛期间不可见",
 	SUBMIT_ADD_CONTESTNOTSTART_CODE:         "竞赛未开始，不可提交代码",
 	PROBLEM_DOWNLOADPROBLE_PIDNoteExistCode: "题目不存在",
+	NOTICE_GETNOTICE_FAILED:                 "获取公告信息失败",
+	NOTICE_GETNOTICE_NOTEXISTCODE:           "这个公告被删除或者不存在",
 }
 var HttpCodeMap = map[ResCode]int{
 	SuccessCode:        http.StatusOK,

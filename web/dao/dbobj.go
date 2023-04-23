@@ -162,3 +162,17 @@ type CeInfo struct {
 func (p CeInfo) TableName() string {
 	return "CEINFO"
 }
+
+type Notice struct {
+	NID        int    `gorm:"column:NID;primaryKey;comment:公告ID"`
+	UID        string `gorm:"column:UID;comment:创建用户ID"`
+	Title      string `gorm:"column:Title;not null;comment:公告标题"`
+	Content    string `gorm:"column:Content;type:text;not null;comment:公告内容"`
+	CreateTime int64  `gorm:"column:CreateTime;not null;comment:创建时间"`
+	UpdateTime int64  `gorm:"column:UpdateTime;not null;comment:更新时间"`
+	IsDelete   bool   `gorm:"column:IsDelete;default:false;not null;comment:删除标志"`
+}
+
+func (p Notice) TableName() string {
+	return "Notice"
+}
