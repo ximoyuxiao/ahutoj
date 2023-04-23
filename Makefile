@@ -14,6 +14,7 @@ init:
 
 judged:
 	cd ${COREPATH} && make
+	cp ${COREPATH}/judged ../tmp/bin/judged
 
 $(foreach BIN,$(BUILDBINS),$(eval $(BIN): $(BIN).go))
 

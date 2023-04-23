@@ -8,7 +8,6 @@ import (
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
 	"fmt"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -166,7 +165,7 @@ func GetFileList(ctx *gin.Context) {
 		response.ResponseError(ctx, constanct.FILE_UP_FAILEDCode)
 		return
 	}
-	files, err := ioutil.ReadDir(filepath)
+	files, err := os.ReadDir(filepath)
 	if err != nil {
 		logger.Errorf("call ReadDir faile,filepath=%s err=%s", filepath, err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
@@ -175,9 +174,10 @@ func GetFileList(ctx *gin.Context) {
 	resp := response.GetFileListResp{}
 	resp.Data = make([]response.FileItem, 0)
 	for _, file := range files {
+		fileinfo, _ := file.Info()
 		resp.Data = append(resp.Data, response.FileItem{
 			Filename: file.Name(),
-			FileSize: file.Size(),
+			FileSize: fileinfo.Size(),
 			FileType: GetFileType(file.Name()),
 		})
 	}

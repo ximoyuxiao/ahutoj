@@ -276,8 +276,19 @@ func PassWordForget(ctx *gin.Context, req *request.PasswordForgetReq) (interface
 
 func ResetPassword(ctx *gin.Context, req *request.PasswordResetReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
+	if req.UID == "" {
+		return response.CreateResponse(constanct.ADMIN_ADD_UIDEmpty), nil
+	}
+	if req.Password == "" {
+		return response.CreateResponse(constanct.AUTH_LOGIN_PassEmptyCode), nil
+	}
 	user := dao.User{
 		UID: req.UID,
+	}
+	ok := models.IsUserExistByUID(ctx, &user)
+	if !ok {
+		logger.Debugf("不存在得用户ID,UID=%v", req.UID)
+		return response.CreateResponse(constanct.USER_INFO_UIDNotExistCode), nil
 	}
 	err := models.FindUserByUID(ctx, &user)
 	if err != nil {

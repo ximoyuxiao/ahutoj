@@ -110,7 +110,7 @@ create table Contest(
     Description Text comment '描述',
     BeginTime long comment '开始时间',
     EndTime long comment '结束时间',
-    # 2 acm 1 oi	
+    # 1 acm 2 oi	
     Type int comment '竞赛类型',  
     IsPublic int comment '是否公开',
     Problems Text comment '题目 + 顺序',

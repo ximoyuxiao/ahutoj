@@ -2,7 +2,7 @@
 sed -i 's/tencentyun/aliyun/g' /etc/apt/sources.list
 sudo apt update
 # 安装一系列工具
-for pkg in net-tools make flex g++ clang libmysqlclient-dev libmysql++-dev nginx mysql-server pkg-config redis libhiredis-dev cmake
+for pkg in net-tools make flex g++ clang libmysqlclient-dev libmysql++-dev nginx mysql-server pkg-config redis libhiredis-dev cmake erlang-nox
 do
     echo "正在为您安装$pkg..."
 	if ! apt-get install -y $pkg
@@ -11,7 +11,19 @@ do
         exit 1
 	fi
 done
-
+which rabbitmq-server
+if [$? -eq 1]
+    then
+        echo "正在为您安装rabbitMQ"
+        wget -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | sudo apt-key add -
+        sudo apt-get update
+        sudo apt-get install -y rabbitmq-server  #安装成功自动启动    
+        rabbitmq-plugins enable rabbitmq_management   # 启用插件
+        service rabbitmq-server restart    # 重启
+        rabbitmqctl add_user ahutoj 2019ahut   # 增加普通用户
+        rabbitmqctl set_user_tags ahutoj administrator    # 给普通用户分配管理员角色
+    else
+        echo "rabbitMQ已经安装"
 # 安装go环境
 which go
 if [ $? -eq 1 ]
