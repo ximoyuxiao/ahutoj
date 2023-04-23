@@ -269,3 +269,7 @@ func CodeForceBind(ctx *gin.Context, req request.CodeForceBindReq) (interface{},
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
+
+func PassWordForget(ctx *gin.Context, req *request.PasswordForgetReq) (interface{}, error) {
+	return response.CreateResponse(constanct.NotimplementedCode), nil
+}

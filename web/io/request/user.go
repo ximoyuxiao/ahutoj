@@ -82,3 +82,8 @@ type CodeForceBindReq struct {
 	CodeForceUser string `json:"CodeForceUser"`
 	CodeForcePass string `json:"CodeForcePass"`
 }
+
+type PasswordForgetReq struct {
+	Email string `json:"Email"`
+	UID   string `json:"UID"`
+}

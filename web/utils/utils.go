@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"math/rand"
 	"os/exec"
 	"time"
 
@@ -77,4 +78,14 @@ func ExecuteCommand(name string, args ...string) error {
 }
 func GetNow() int64 {
 	return time.Now().UnixMilli()
+}
+
+func GenVeriey(size int) string {
+	data := "1234567890qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"
+	res := ""
+	for i := 0; i < size; i++ {
+		number := rand.Int() % len(data)
+		res += string(data[number])
+	}
+	return res
 }

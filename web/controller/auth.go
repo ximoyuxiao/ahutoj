@@ -50,7 +50,26 @@ func Register(ctx *gin.Context) {
 	// 3、 构建响应值，将处理结果返回
 	response.ResponseOK(ctx, resp)
 }
+func PasswordForget(ctx *gin.Context) {
+	logger := utils.GetLogInstance()
+	req := new(request.PasswordForgetReq)
+	// 1、 获取参数
+	err := ctx.ShouldBindWith(req, binding.JSON)
+	if err != nil {
+		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
+	}
+	logger.Infof("req:%+v\n", req)
 
+	resp, err := logic.PassWordForget(ctx, req)
+	if err != nil {
+		logger.Errorf("call PassWordForget failed,req=%+v,err=%s", *req, err.Error())
+		response.ResponseError(ctx, constanct.ServerErrorCode)
+		return
+	}
+	response.ResponseOK(ctx, resp)
+}
 func Logout(ctx *gin.Context) {
 	response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
 }
