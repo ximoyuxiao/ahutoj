@@ -36,7 +36,7 @@ func UpdateUserByUID(ctx context.Context, user *dao.User) error {
 func SelectUserList(ctx context.Context) ([]dao.User, error) {
 	db := GetDB(ctx)
 	users := make([]dao.User, 0)
-	err := db.Table(dao.User{}.TableName()).Where("CodeForceUser!=''").Select(&users).Error
+	err := db.Table(dao.User{}.TableName()).Select(&users).Error
 	return users, err
 }
 

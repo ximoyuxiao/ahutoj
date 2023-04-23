@@ -87,3 +87,8 @@ type PasswordForgetReq struct {
 	Email string `json:"Email"`
 	UID   string `json:"UID"`
 }
+
+type PasswordResetReq struct {
+	UID      string `json:"UID"`
+	Password string `json:"Password"`
+}

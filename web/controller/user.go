@@ -254,3 +254,21 @@ func EditImage(ctx *gin.Context) {
 	},
 	)
 }
+
+func AdminChangePassWord(ctx *gin.Context) {
+	logger := utils.GetLogInstance()
+	req := new(request.PasswordResetReq)
+	err := ctx.ShouldBindWith(req, binding.JSON)
+	if err != nil {
+		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
+	}
+	resp, err := logic.ResetPassword(ctx, req)
+	if err != nil {
+		logger.Errorf("call ResetPassword err=%s, req=%+v", err.Error(), utils.Sdump(req))
+		response.ResponseError(ctx, constanct.ServerErrorCode)
+		return
+	}
+	response.ResponseOK(ctx, resp)
+}

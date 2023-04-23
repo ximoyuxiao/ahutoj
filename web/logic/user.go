@@ -273,3 +273,30 @@ func CodeForceBind(ctx *gin.Context, req request.CodeForceBindReq) (interface{},
 func PassWordForget(ctx *gin.Context, req *request.PasswordForgetReq) (interface{}, error) {
 	return response.CreateResponse(constanct.NotimplementedCode), nil
 }
+
+func ResetPassword(ctx *gin.Context, req *request.PasswordResetReq) (interface{}, error) {
+	logger := utils.GetLogInstance()
+	user := dao.User{
+		UID: req.UID,
+	}
+	err := models.FindUserByUID(ctx, &user)
+	if err != nil {
+		logger.Errorf("call FindUserByUID failed,UID=%v err=%v", req.UID, err.Error())
+		return nil, err
+	}
+	if user.UID != req.UID {
+		logger.Debugf("不存在得用户ID,UID=%v", req.UID)
+		return response.CreateResponse(constanct.USER_INFO_UIDNotExistCode), nil
+	}
+	user.Pass, err = utils.MD5EnCode(user.UID, req.Password)
+	if err != nil {
+		logger.Errorf("call MD5EnCode failed,param=%v err=%v", utils.Sdump(req), err.Error())
+		return nil, err
+	}
+	err = mysqldao.UpdateUserByUID(ctx, &user)
+	if err != nil {
+		logger.Errorf("call UpdateUserByUID failed,param=%v err=%v", utils.Sdump(user), err.Error())
+		return nil, err
+	}
+	return response.CreateResponse(constanct.SuccessCode), nil
+}
