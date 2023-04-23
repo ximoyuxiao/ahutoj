@@ -16,7 +16,7 @@ func SelectContests(ctx context.Context, offset, limit int) ([]dao.Contest, erro
 	db := GetDB(ctx)
 	tp := dao.Contest{}
 	ret := make([]dao.Contest, 0)
-	err := db.Table(tp.TableName()).Offset(offset).Limit(limit).Find(&ret).Error
+	err := db.Table(tp.TableName()).Order("EndTime desc").Offset(offset).Limit(limit).Find(&ret).Error
 	return ret, err
 }
 
@@ -52,4 +52,11 @@ func SelectContestCount(ctx context.Context) (int64, error) {
 	count := int64(0)
 	err := db.Table(contest.TableName()).Count(&count).Error
 	return count, err
+}
+
+func SelectContestRecently(ctx context.Context, Recently int64) (contests []dao.Contest, err error) {
+	db := GetDB(ctx)
+	contest := dao.Contest{}
+	err = db.Table(contest.TableName()).Where("EndTime>?", Recently).Find(&contests).Error
+	return contests, err
 }
