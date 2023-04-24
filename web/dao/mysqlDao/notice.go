@@ -40,7 +40,7 @@ func GetNotice(ctx context.Context, NID int) (*dao.Notice, error) {
 func GetAllNotices(ctx context.Context) ([]dao.Notice, error) {
 	db := GetDB(ctx)
 	notices := make([]dao.Notice, 0)
-	err := db.Where("IsDelete=0").Find(&notices).Error
+	err := db.Order("NID desc").Where("IsDelete=0").Find(&notices).Error
 	if err != nil {
 		return nil, err
 	}
