@@ -58,6 +58,10 @@ var CFResultMap = map[string]constanct.OJResult{
 	"Running":                    constanct.OJ_JUDGE,
 	"Inqueue(.*?)":               constanct.OJ_JUDGE,
 	"Denial of judgement":        constanct.OJ_DENIAL,
+	"In queue":                   constanct.OJ_JUDGE,
+	"Running on test (.*?)":      constanct.OJ_JUDGE,
+	"Pretests passed":            constanct.OJ_AC,
+	"Pendding":                   constanct.OJ_JUDGE,
 }
 
 var CfHeaders = map[string]string{
@@ -78,7 +82,6 @@ type CodeForceJudge struct {
 }
 
 func (p CodeForceJudge) Judge(ctx context.Context, submit dao.Submit, PID string) error {
-	fmt.Println("开始判题" + utils.Sdump(submit))
 	err := p.InitCodeForceJudge()
 	p.PID = PID
 	if err != nil {
@@ -358,7 +361,7 @@ func CheckResult(result string) constanct.OJResult {
 			return WStatus
 		}
 	}
-	return constanct.OJ_JUDGE
+	return constanct.OJ_TIMEOUT
 }
 
 type ResultObj struct {
@@ -408,11 +411,11 @@ func (p *CodeForceJudge) getResult() error {
 		logger.Errorf("call GetSubmitID failed")
 		return err
 	}
-
+	p.Submit.JudgeID, _ = strconv.ParseInt(fmt.Sprintf("%v%v", p.Submit.JudgeID, submissionID), 10, 64)
 	url := cfurl + "/" + GetContest(CID) + "/" + CID + "/submission/" + submissionID
 	var resp *http.Response
-	// 120次大概就是两分钟时间给出结果
-	for i := 0; i < 120; i++ {
+	// 死循环去获取 最后肯定有一个结果的
+	for {
 		if p.JudgeUser != nil {
 			resp, err = utils.DoRequest(utils.GET, url, p.Headers, p.JudgeUser.Cookies, nil, false)
 		} else {
@@ -471,32 +474,3 @@ func (p *CodeForceJudge) getResult() error {
 	}
 	return fmt.Errorf("codeforeces judge timeout submissionID:%v", submissionID)
 }
-
-// func (p *CodeForceJudge) commitToDB() error {
-// 	if p.Submit.Result == constanct.OJ_JUDGE {
-// 		p.Submit.Result = constanct.OJ_FAILED
-// 	}
-// 	err := models.UpdateSubmit(context.Background(), p.Submit)
-// 	if err != nil {
-// 		logger.Errorf("call UpdateSubmit failed,submit=%v, err=%v", utils.Sdump(p.Submit), err.Error())
-// 		return err
-// 	}
-// 	if p.Submit.Result == constanct.OJ_AC {
-// 		mysqldao.IncUserSolved(context.Background(), p.Submit.UID)
-// 		if p.Submit.CID > 0 {
-// 			mysqldao.IncConProSolved(context.Background(), p.Submit.CID, p.Submit.PID)
-// 		}
-// 	}
-// 	if p.Submit.Result == constanct.OJ_CE {
-// 		ceinfo := dao.CeInfo{
-// 			SID:  p.Submit.SID,
-// 			Info: p.CEInfo,
-// 		}
-// 		err := mysqldao.InsertCeInfo(context.Background(), ceinfo)
-// 		if err != nil {
-// 			logger.Errorf("call InsertCEinfo failed,submit=%v, err=%v", utils.Sdump(p.Submit), err.Error())
-// 		}
-// 		return err
-// 	}
-// 	return nil
-// }
