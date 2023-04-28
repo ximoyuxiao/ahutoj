@@ -228,7 +228,7 @@ func EditImage(ctx *gin.Context) {
 	}
 	suffix := getFileSuffix(file.Filename)
 	name := middlewares.GetUid(ctx)
-	headURL := headPath + "UID_" + name + "." + suffix
+	headURL := "./image/head/" + "UID_" + name + "." + suffix
 	//更新用户信息
 	user := dao.User{
 		UID:     middlewares.GetUid(ctx),
@@ -250,7 +250,7 @@ func EditImage(ctx *gin.Context) {
 		ImageURL string `json:"ImageURL"`
 	}{
 		Response: response.CreateResponse(constanct.SuccessCode),
-		ImageURL: "image/head/" + "UID_" + name + "." + suffix,
+		ImageURL: user.HeadURL,
 	},
 	)
 }

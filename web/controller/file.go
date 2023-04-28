@@ -253,7 +253,7 @@ func UpImagefile(ctx *gin.Context) {
 		ImageURL string `json:"ImageURL"`
 	}{
 		Response: response.CreateResponse(constanct.SuccessCode),
-		ImageURL: "image/" + name,
+		ImageURL: "./image/" + name,
 	},
 	)
 }
