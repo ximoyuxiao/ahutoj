@@ -1,6 +1,6 @@
 #ifndef __RESULT_H__
 #define __RESULT_H__
-#define DEV_DEBUG 1
+#define DEV_DEBUG 0
 typedef enum
 {
     OJ_AC = 1,
@@ -27,7 +27,7 @@ typedef enum
     JAVA,
     PYTHON3
 } lanuage;
-#define DATAPATH "./Data/" /*测试样例目录*/
+#define DATAPATH "../resource/Data/" /*测试样例目录*/
 #define DEC ".des"
 #define LOGPATH "./log"
 #define CONF "./config.conf" /*配置文件目录*/

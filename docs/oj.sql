@@ -142,7 +142,7 @@ CREATE table Submit(
     PID varchar(40) comment '题目ID',
     UID varchar(20) comment '提交用户ID',
     CID int comment '提交竞赛ID，-1表示为提交',
-    JudgeID int	 comment '判题机ID',
+    JudgeID long	 comment '判题机ID',
     Source Text comment '提交代码',
     Lang int comment '提交语言',
     ResultACM varchar(30) comment 'ACM判题结果',

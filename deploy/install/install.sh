@@ -51,7 +51,31 @@ else
     go install github.com/cosmtrek/air@latest
 fi
 
+echo "正在安装nlohmannjson-dev"
+wget https://github.com/nlohmann/json/archive/refs/tags/v3.11.2.tar.gz
+tar -zxvf v3.11.2.tar.gz
+cd json-3.11.2
+mkdir build && cd build
+cmake ..
+make
+make install
+cd ..
+cd ..
+
+echo "正在安装libamqp-dev"
+wget https://github.com/alanxz/rabbitmq-c/archive/refs/tags/v0.9.0.tar.gz
+tar -zxvf v0.9.0.tar.gz
+cd rabbitmq-c-0.9.0
+mkdir build && cd build
+cmkae ..
+make 
+make install
+
+cd ..
+cd ..
 # 安装所有软件
+ldconfig
+make
 make install
 # 建立数据库
 USER=`sudo cat /etc/mysql/debian.cnf |grep user|head -1|awk  '{print $3}'`
