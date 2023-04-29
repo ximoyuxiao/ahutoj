@@ -104,6 +104,7 @@ func (p CodeForceJudge) Judge(ctx context.Context, submit dao.Submit, PID string
 	err = p.getResult()
 	if err != nil {
 		logger.Errorf("Call getResult failed,submit:%v, err:%v", submit.SID, err.Error())
+		return err
 	}
 	fmt.Println("判题结束:结果为" + utils.Sdump(p.Submit))
 	return nil
@@ -471,6 +472,7 @@ func (p *CodeForceJudge) getResult() error {
 	}
 	if p.Submit.Result == constanct.OJ_JUDGE {
 		p.Submit.Result = constanct.OJ_TIMEOUT // 判题超时
+		return fmt.Errorf("codeforeces judge timeout submissionID:%v", submissionID)
 	}
-	return fmt.Errorf("codeforeces judge timeout submissionID:%v", submissionID)
+	return nil
 }
