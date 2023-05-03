@@ -14,7 +14,8 @@ init:
 
 judged:
 	cd ${COREPATH} && make
-	cp ${COREPATH}/judged ../tmp/bin/judged
+	cd ..
+	mv ${COREPATH}judged ${TARGETBINPATH}/judged
 
 $(foreach BIN,$(BUILDBINS),$(eval $(BIN): $(BIN).go))
 
