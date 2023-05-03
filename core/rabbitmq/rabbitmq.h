@@ -6,17 +6,19 @@
 #include <amqp.h>
 #include <amqp_framing.h>
 #include <cstring>
+#include "../Tpool/locker.h"
 class Producer;
 class Consumer;
 class RabbitMQ {
 public:
     RabbitMQ(std::string host, int port, std::string user, std::string password);
     ~RabbitMQ();
+    locker poolLocker;
     Producer createProducer();
     Consumer createConsumer(std::string queueName);
     amqp_connection_state_t getConnection();
     void releaseConnection(amqp_connection_state_t conn);
-private:
+public:
     std::string m_host;
     int m_port;
     std::string m_user;
@@ -27,19 +29,19 @@ private:
 
 class Producer {
 public:
-    Producer(RabbitMQ& rmq);
+    Producer(RabbitMQ* rmq);
 
     bool sendMessage(std::string queueName, void* messageBody, size_t messageSize);
 private:
-    RabbitMQ& m_rmq;
+    RabbitMQ* m_rmq;
 };
 
 class Consumer {
 public:
-    Consumer(RabbitMQ& rmq, std::string queueName);
+    Consumer(RabbitMQ* rmq, std::string queueName);
     int consumeMessage(void (*callback)(amqp_envelope_t));
 private:
-    RabbitMQ& m_rmq;
+    RabbitMQ* m_rmq;
     std::string m_queueName;
     void (*m_callback)(amqp_envelope_t);
 };
