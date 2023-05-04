@@ -27,7 +27,7 @@ mysql:
     port: 3306
     username: "AHUTOnlinejudge"
     dbname: "ahutoj"
-    password: "2019ahut"
+    password: "123456"
 
 redis:
     host: "localhost"
@@ -51,17 +51,17 @@ useOriginJudge: true
 atCoderJudges:
     count: 20 
     prefix: "AOJjudge"
-    password: "AhutAcm@108"
+    password: "123456"
 # 外部判题使用codeforce
 codeForceJudge:   
     count: 20 
     prefix: "AOJjudge"
-    password: "AhutAcm@108"
+    password: "123456"
 # 外部判题使用洛谷
 luoguJudge:      
     count: 20 
     prefix: "AOJjudge"
-    password: "AhutAcm@108"
+    password: "123456"
 gatWay:
     port: ":4433"
     maxqps: 100
@@ -74,9 +74,9 @@ useranalytics:
         port: 3306
         username: "AHUTOnlinejudge"
         dbname: "ahutoj"
-        password: "2019ahut"
+        password: "123456"
 rabbitmq:
     host: "127.0.0.1"
     port: 5672
     username: "ahutoj"
-    password: "2019ahut"
+    password: "123456"
