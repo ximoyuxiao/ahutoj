@@ -205,7 +205,9 @@ func AddRouter(ctx *gin.Context) {
 		}
 	}
 	PrefixAndRouter[key].To = append(PrefixAndRouter[key].To, Target{
-		Host:       req.ToHost,
+		// Host:       req.ToHost,
+		Host: ctx.RemoteIP() + ":4212",
+
 		Weight:     req.Weight,
 		Use:        0,
 		Connection: true,
