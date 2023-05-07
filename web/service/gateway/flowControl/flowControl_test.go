@@ -1,7 +1,7 @@
 package flowcontrol_test
 
 import (
-	flowcontrol "ahutoj/web/service/gatway/flowControl"
+	flowcontrol "ahutoj/web/service/gateway/flowControl"
 	"context"
 	"fmt"
 	"math/rand"

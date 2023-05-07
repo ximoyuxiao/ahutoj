@@ -19,9 +19,9 @@ judged)
     PID=/run/judged.pid
     ;;
 
-gatway)
-    DAEMON=/etc/bin/gatway
-    PID=/run/gatway.pid
+gateway)
+    DAEMON=/etc/bin/gateway
+    PID=/run/gateway.pid
     ;;
 
 originjudged)
@@ -30,7 +30,7 @@ originjudged)
     ;;
 
 *)
-    echo "Usage: $NAME {ahutoj | judged | gatway | originjudged}" >&2
+    echo "Usage: $NAME {ahutoj | judged | gateway | originjudged}" >&2
     exit 3
     ;;
 esac
