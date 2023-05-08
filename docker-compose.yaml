@@ -1,0 +1,123 @@
+version: '3.5'
+services:
+  judged:
+    image: oj/judged:local
+    restart: always
+    build:
+      context: .
+      dockerfile: deploy/docker/core.Dockerfile
+    volumes:
+      - ${DIR:-.}/judged:/app
+    environment:
+      TZ:
+      TERM:
+    networks:
+      - oj
+  gateway:
+    image: oj/gateway:local
+    container_name: oj-gateway
+    restart: always
+    build:
+      context: .
+      dockerfile: deploy/docker/gateway.Dockerfile
+    volumes:
+      - ${DIR:-.}/config.yaml:/app/config.yaml
+      - ${DIR:-.}/resource:/app/resource
+      - ${DIR:-.}/gateway/log:/app/log
+    ports:
+      - 4433:4433
+    environment:
+      TZ:
+      TERM:
+    networks:
+      - oj
+  origin:
+    image: oj/origin:local
+    restart: always
+    depends_on:
+      - gateway
+    build:
+      context: .
+      dockerfile: deploy/docker/origin.Dockerfile
+    volumes:
+      - ${DIR:-.}/config.yaml:/app/config.yaml
+      - ${DIR:-.}/resource:/app/resource
+      - ${DIR:-.}/origin/log/:/app/log
+    environment:
+      TZ:
+      TERM:
+    networks:
+      - oj
+  persistence:
+    image: oj/persistence:local
+    restart: always
+    depends_on:
+      - gateway
+    build:
+      context: .
+      dockerfile: deploy/docker/persistence.Dockerfile
+    volumes:
+      - ${DIR:-.}/config.yaml:/app/config.yaml
+      - ${DIR:-.}/resource:/app/resource
+      - ${DIR:-.}/persistence/log/:/app/log
+    environment:
+      TZ:
+      TERM:
+    networks:
+      - oj
+  oj:
+    image: oj/oj:local
+    restart: always
+    depends_on:
+      - gateway
+    build:
+      context: .
+      dockerfile: deploy/docker/oj.Dockerfile
+    volumes:
+      - ${DIR:-.}/config.yaml:/app/config.yaml
+      - ${DIR:-.}/resource:/app/resource
+      - ${DIR:-.}/oj/log:/app/log
+    environment:
+      TZ:
+      TERM:
+    networks:
+      - oj
+  problem:
+    image: oj/oj-problem:local
+    restart: always
+    depends_on:
+      - gateway
+    build:
+      context: .
+      dockerfile: deploy/docker/problem.Dockerfile
+    volumes:
+      - ${DIR:-.}/config.yaml:/app/config.yaml
+      - ${DIR:-.}/resource:/app/resource
+      - ${DIR:-.}/problem/log:/app/log
+    environment:
+      TZ:
+      TERM:
+    networks:
+      - oj
+  user:
+    image: oj/user:local
+    restart: always
+    depends_on:
+      - gateway
+    build:
+      context: .
+      dockerfile: deploy/docker/user.Dockerfile
+    volumes:
+      - ${DIR:-.}/config.yaml:/app/config.yaml
+      - ${DIR:-.}/resource:/app/resource
+      - ${DIR:-.}/user/log:/app/log
+    environment:
+      TZ:
+      TERM:
+    networks:
+      - oj
+networks:
+  oj:
+    driver: bridge
+    name: local
+    external: true
