@@ -5,8 +5,8 @@ import (
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
 	"ahutoj/web/middlewares"
-	flowcontrol "ahutoj/web/service/gatway/flowControl"
-	"ahutoj/web/service/gatway/parsejwt"
+	flowcontrol "ahutoj/web/service/gateway/flowControl"
+	"ahutoj/web/service/gateway/parsejwt"
 	"ahutoj/web/utils"
 	"fmt"
 	"io/ioutil"
@@ -87,7 +87,7 @@ func initGatWay(config string) error {
 func HandleRouter(ctx *gin.Context) {
 	url := ctx.FullPath()
 	host := ctx.ClientIP()
-	//  gatway  /api/xxx/xxx
+	//  gateway  /api/xxx/xxx
 	// 保证不再黑名单当中
 	for _, blackhost := range conf.GatWay.BlackHost {
 		if blackhost == host {
@@ -205,7 +205,9 @@ func AddRouter(ctx *gin.Context) {
 		}
 	}
 	PrefixAndRouter[key].To = append(PrefixAndRouter[key].To, Target{
-		Host:       req.ToHost,
+		// Host:       req.ToHost,
+		Host: ctx.RemoteIP() + ":4212",
+
 		Weight:     req.Weight,
 		Use:        0,
 		Connection: true,

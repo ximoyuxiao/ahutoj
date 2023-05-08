@@ -9,9 +9,15 @@ import (
 var config = new(AppConfig)
 
 type AppConfig struct {
-	Host            string  `mapstructure:"host"`
-	Port            string  `mapstructure:"port"`
-	GatWayHost      string  `mapstructure:"gatWayHost"`
+	Host       string `mapstructure:"host"`
+	Port       string `mapstructure:"port"`
+	GatWayHost string `mapstructure:"gatWayHost"`
+	GatWay     struct {
+		Port   string `mapstructure:"port"`
+		MaxQPS int    `mapstructure:"maxQPS"`
+
+		BlackHost []string `mapstructure:"blackReq"`
+	} `mapstructure:"GatWay"`
 	Mode            string  `mapstructure:"mode"`
 	Sign            string  `mapstructure:"sign"`
 	Version         string  `mapstructure:"version"`

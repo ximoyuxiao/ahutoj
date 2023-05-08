@@ -36,7 +36,7 @@ ubuntu18.06
         ├── cache                          缓存层
         ├── controller                     控制层
         ├── dao                            DAO数据库层
-        ├── gatway                         网关层
+        ├── gateway                         网关层
         ├── io                             请求与相应
         ├── logic                          逻辑层
         ├── mapping                        模型映射层
