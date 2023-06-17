@@ -274,7 +274,8 @@ var codeMsgMap = map[ResCode]string{
 var HttpCodeMap = map[ResCode]int{
 	SuccessCode:        http.StatusOK,
 	InvalidParamCode:   http.StatusBadRequest,
-	ServerErrorCode:    http.StatusServiceUnavailable,
+	ServerErrorCode:    http.StatusBadGateway,
+	ServerBusyCode:     http.StatusServiceUnavailable,
 	PageNotFoundCode:   http.StatusNotFound,
 	NotimplementedCode: http.StatusForbidden,
 }
