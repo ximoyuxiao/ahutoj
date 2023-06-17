@@ -121,7 +121,7 @@ func GetTraining(ctx *gin.Context) {
 	req := new(request.TrainingReq)
 	err := ctx.ShouldBindWith(req, binding.Query)
 	if err != nil {
-		logger.Error("call ShouldBindwith failed,err = %s", err.Error())
+		logger.Errorf("call ShouldBindwith failed,err = %s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}

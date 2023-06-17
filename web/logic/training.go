@@ -83,7 +83,7 @@ func GetTrainUserInfo(ctx *gin.Context, req *request.ListUserReq) (interface{}, 
 	logger := utils.GetLogInstance()
 	training, err := models.GetTraining(ctx, req.LID)
 	if err != nil {
-		logger.Errorf("call GetTrainingFromDB failed, CID=%s, err=%s", req.LID, err.Error())
+		logger.Errorf("call GetTrainingFromDB failed, LID=%d, err=%s", req.LID, err.Error())
 		return response.CreateResponse(constanct.TRAIN_GET_FAILED), err
 	}
 	if training.LID != req.LID {
@@ -216,7 +216,7 @@ func GetTraining(ctx *gin.Context, req *request.TrainingReq) (interface{}, error
 	logger := utils.GetLogInstance()
 	training, err := models.GetTraining(ctx, req.LID)
 	if err != nil {
-		logger.Errorf("call GetTrainingFromDB failed, CID=%s, err=%s", req.LID, err.Error())
+		logger.Errorf("call GetTrainingFromDB failed, LID=%d, err=%s", req.LID, err.Error())
 		return response.CreateResponse(constanct.TRAIN_GET_FAILED), err
 	}
 	if training.LID != req.LID {
@@ -226,7 +226,7 @@ func GetTraining(ctx *gin.Context, req *request.TrainingReq) (interface{}, error
 
 	TrainPros, err := models.GetTrainingProblem(ctx, req.LID)
 	if err != nil {
-		logger.Errorf("call GetTraProblemFromDB failed, LID=%s, err=%s", req.LID, err.Error())
+		logger.Errorf("call GetTraProblemFromDB failed, LID=%d, err=%s", req.LID, err.Error())
 		return response.CreateResponse(constanct.TRAIN_GET_FAILED), err
 	}
 	PIDs := strings.Split(training.Problems, ",")
