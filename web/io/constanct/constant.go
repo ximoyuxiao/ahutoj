@@ -10,6 +10,13 @@ const (
 	DefaultOffset int = 0
 )
 
+type DataType uint8
+
+const (
+	FILE DataType = 0
+	DIR  DataType = 1
+)
+
 func GetDefaultLimit() int {
 	return DefaultLimit
 }
