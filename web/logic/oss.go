@@ -84,7 +84,10 @@ func CreateObject(ctx *gin.Context, req *request.UpObjectReq) (interface{}, erro
 	}
 	if !ok {
 		logger.Errorf("not exist path %v ", req.TargetBucket)
-		return nil, err
+		err := os.Mkdir(root+req.TargetBucket, os.ModeDir)
+		if err != nil {
+			return nil, err
+		}
 	}
 	err = os.WriteFile(req.TargetBucket+req.TargetFileName, req.Data, 0666)
 	if err != nil {
