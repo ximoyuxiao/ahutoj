@@ -29,7 +29,6 @@ func BuildGetObjectsRespnse(path string, Data *response.FileData) error {
 			FileName: fileInfo.Name(),
 			Data:     make([]response.FileData, 0),
 		}
-		fmt.Println(files)
 		for _, file := range files {
 			filePath := path + "/" + file.Name()
 			fmt.Println(filePath)

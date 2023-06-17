@@ -5,6 +5,7 @@ import (
 	"ahutoj/web/middlewares"
 	"ahutoj/web/utils"
 	"fmt"
+	"io/ioutil"
 
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
@@ -34,9 +35,17 @@ func InitOssServer() {
 	router.NoRoute(NotFindRegister)
 	router.Run(fmt.Sprintf(":%v", conf.OssConfig.Port))
 }
-
+func SwitchStaticFile(router *gin.Engine, path string) {
+	files, _ := ioutil.ReadDir(path)
+	for _, file := range files {
+		if file.IsDir() {
+			router.Static("/"+file.Name(), path+file.Name())
+		}
+	}
+}
 func regeisterOSSRouters(router *gin.Engine) {
-	router.Static("/resource", utils.GetConfInstance().OssConfig.BasePath)
+	SwitchStaticFile(router, utils.GetConfInstance().OssConfig.BasePath)
+
 	apiRouter := router.Group("api")
 	{
 		// 对象存储
