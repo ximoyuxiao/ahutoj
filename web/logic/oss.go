@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 
 	"github.com/gin-gonic/gin"
 )
@@ -94,5 +95,26 @@ func CreateObject(ctx *gin.Context, req *request.UpObjectReq) (interface{}, erro
 		logger.Errorf("call WriteFile failed,param %v,err:%v ", utils.Sdump(req), err.Error())
 		return nil, err
 	}
+	return response.CreateResponse(constanct.SuccessCode), nil
+}
+
+func GetBucket(ctx *gin.Context, req *request.GetBucketReq) (interface{}, error) {
+	root := utils.GetConfInstance().OssConfig.BasePath
+	return BuildFilePathResp(ctx, root+req.BucketPath)
+}
+
+func CreateBucket(ctx *gin.Context, req *request.CreateBucketreq) (interface{}, error) {
+	root := utils.GetConfInstance().OssConfig.BasePath
+	err := os.Mkdir(root+req.BucketName+"/"+"/"+req.BucketName, 0777)
+	if err != nil {
+		return nil, err
+	}
+	return response.CreateResponse(constanct.SuccessCode), nil
+}
+
+func UnzipObject(ctx *gin.Context, req *request.UnzipReq) (interface{}, error) {
+	cmd := exec.Command("unzip", req.ObjectPath, "-d", req.TargetFilePath)
+	cmd.Start()
+	response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
 	return response.CreateResponse(constanct.SuccessCode), nil
 }

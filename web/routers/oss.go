@@ -56,5 +56,9 @@ func regeisterOSSRouters(router *gin.Engine) {
 		apiRouter.PUT("/object/", controller.ModifyObject)
 		apiRouter.DELETE("/object", controller.DeleteObject)
 		apiRouter.HEAD("/object", controller.GetObjectInfo)
+		apiRouter.POST("/object/unzip", controller.UnzipObject)
+
+		apiRouter.GET("/buckets", controller.GetBucket)
+		apiRouter.POST("/buckets/", controller.CreateBucket)
 	}
 }
