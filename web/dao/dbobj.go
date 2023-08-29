@@ -67,6 +67,7 @@ type Problem struct {
 type List struct {
 	LID         int64  `gorm:"column:LID"`
 	UID         string `gorm:"column:UID"`
+	FromLID     int64  `gorm:"column:FromLID"`
 	Description string `gorm:"column:Description"`
 	Title       string `gorm:"column:Title"`
 	StartTime   int64  `gorm:"column:StartTime"`

@@ -101,6 +101,7 @@ func regeisterRouters(router *gin.Engine) {
 			trainingRouter.GET("/list", controller.GetListTraining)
 			trainingRouter.GET("/:id", controller.GetTraining)
 			trainingRouter.GET("/:id/rank", controller.GetRankTraining)
+			trainingRouter.POST("/clone/", controller.CloneTranining)
 		}
 
 		contestRouter := apiRouter.Group("/contest").Use(middlewares.JwtVerify)

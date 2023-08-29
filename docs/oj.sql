@@ -65,6 +65,7 @@ ALTER TABLE Problem AUTO_INCREMENT = 1000;
 
 create table List(
     LID int primary key AUTO_INCREMENT comment '题单ID',
+    FromLID int comment '若是克隆题单,则需要一个来源的克隆题单ID'
     UID varchar(20) comment '创建用户',
     Description Text comment '题单描述',
     Title Text comment '题单标题',

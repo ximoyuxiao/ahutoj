@@ -202,3 +202,24 @@ func GetTrainUserInfo(ctx *gin.Context) {
 	}
 	response.ResponseOK(ctx, resp)
 }
+
+func CloneTranining(ctx *gin.Context) {
+	logger := utils.GetLogInstance()
+	req := new(request.CloneTraniningReq)
+	err := ctx.ShouldBindWith(req, binding.JSON)
+	if err != nil {
+		// 请求参数有误 直接返回响应CloneTrainUser
+		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
+	}
+	fmt.Printf("req:%+v\n", req)
+
+	resp, err := logic.CloneTrainUser(ctx, req)
+	if err != nil {
+		logger.Errorf("call CloneTrainUser failed,req=%+v,err=%s", *req, err.Error())
+		response.ResponseError(ctx, constanct.ServerErrorCode)
+		return
+	}
+	response.ResponseOK(ctx, resp)
+}
