@@ -82,3 +82,8 @@ func GetFileName(filename string, bytes []byte) string {
 	imageName := fmt.Sprintf("%v%v.%v", md5str, now, suffix)
 	return imageName
 }
+
+func GetFileType(filename string) string {
+	s := strings.Split(filename, ".")
+	return s[len(s)-1]
+}
