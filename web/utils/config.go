@@ -33,8 +33,13 @@ type AppConfig struct {
 	*CodeForceJudge `mapstructure:"codeForceJudge"`
 	*LuoguJudge     `mapstructure:"luoguJudge"`
 	*RabbitMQ       `mapstructure:"rabbitmq"`
+	*OssConfig      `mapstructure:"oss"`
 }
-
+type OssConfig struct {
+	Host     string `mapstructure:"host"`
+	Port     uint16 `mapstructure:"port"`
+	BasePath string `mapstructure:"basepath"`
+}
 type MySQLConfig struct {
 	Driver   string `mapstructure:"driver"`
 	Host     string `mapstructure:"host"`

@@ -14,20 +14,23 @@ dataPath: "./resource/Data/"
 #封榜时间
 terminal: 0.8  
 # 图片存放路径
-imagePath: "./resource/image/"
-headPath: "./resource/image/head/"
-spjPath: "./resource/spj/"
+imagePath: "http://127.0.01:4379/image"
+headPath:  "http://127.0.01:4379/image/head/"
+spjPath:   "http://127.0.01:4379/spj/"
 # 是否开放注册
 openRegisiters: true
 # 外部判题相关配置
-
+oss:
+    host: "127.0.0.1"
+    port: 4379
+    basepath: "./resource/"
 mysql:  
     driver: "mysql"
     host: "127.0.0.1"
     port: 3306
     username: "AHUTOnlinejudge"
     dbname: "ahutoj"
-    password: "2019ahut"
+    password: "123456"
 
 redis:
     host: "localhost"
@@ -51,17 +54,17 @@ useOriginJudge: true
 atCoderJudges:
     count: 20 
     prefix: "AOJjudge"
-    password: "AhutAcm@108"
+    password: "123456"
 # 外部判题使用codeforce
 codeForceJudge:   
     count: 20 
     prefix: "AOJjudge"
-    password: "AhutAcm@108"
+    password: "123456"
 # 外部判题使用洛谷
 luoguJudge:      
     count: 20 
     prefix: "AOJjudge"
-    password: "AhutAcm@108"
+    password: "123456"
 gatWay:
     port: ":4433"
     maxqps: 100
@@ -74,9 +77,9 @@ useranalytics:
         port: 3306
         username: "AHUTOnlinejudge"
         dbname: "ahutoj"
-        password: "2019ahut"
+        password: "123456"
 rabbitmq:
     host: "127.0.0.1"
     port: 5672
     username: "ahutoj"
-    password: "2019ahut"
+    password: "123456"

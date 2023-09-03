@@ -19,15 +19,18 @@ RabbitMQ::~RabbitMQ() {
         if (conn != nullptr) {
             amqp_destroy_connection(conn);
             conn = nullptr;
+            conn = nullptr;
         }
     }
 }
 
 Producer RabbitMQ::createProducer() {
     return Producer(this);
+    return Producer(this);
 }
 
 Consumer RabbitMQ::createConsumer(std::string queueName) {
+    return Consumer(this, queueName);
     return Consumer(this, queueName);
 }
 
@@ -59,13 +62,13 @@ amqp_connection_state_t RabbitMQ::getConnection() {
 void RabbitMQ::releaseConnection(amqp_connection_state_t conn) {
     bool ret = false;
     poolLocker.lock();
-    for (int i = 0; i < m_poolSize; i++) {
-        if (m_connectionPool[i] == nullptr) {
-            m_connectionPool[i] = conn;
-            ret  = true;
-            break;
-        }
-    }
+    // for (int i = 0; i < m_poolSize; i++) {
+    //     if (m_connectionPool[i] == nullptr) {
+    //         m_connectionPool[i] = conn;
+    //         ret  = true;
+    //         break;
+    //     }
+    // }
     poolLocker.unlock();
     if(!ret){
         amqp_destroy_connection(conn);

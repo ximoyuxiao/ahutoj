@@ -10,6 +10,13 @@ const (
 	DefaultOffset int = 0
 )
 
+type DataType uint8
+
+const (
+	FILE DataType = 0
+	DIR  DataType = 1
+)
+
 func GetDefaultLimit() int {
 	return DefaultLimit
 }
@@ -274,7 +281,8 @@ var codeMsgMap = map[ResCode]string{
 var HttpCodeMap = map[ResCode]int{
 	SuccessCode:        http.StatusOK,
 	InvalidParamCode:   http.StatusBadRequest,
-	ServerErrorCode:    http.StatusServiceUnavailable,
+	ServerErrorCode:    http.StatusBadGateway,
+	ServerBusyCode:     http.StatusServiceUnavailable,
 	PageNotFoundCode:   http.StatusNotFound,
 	NotimplementedCode: http.StatusForbidden,
 }

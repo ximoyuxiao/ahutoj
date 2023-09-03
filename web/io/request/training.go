@@ -36,3 +36,8 @@ type GetTrainingRankReq struct {
 	TrainingListReq
 	TrainingReq
 }
+
+type CloneTraniningReq struct {
+	UID string `json:"UID"`
+	LID int64  `json:"LID"`
+}

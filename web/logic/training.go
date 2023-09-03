@@ -38,6 +38,7 @@ func AddTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 		return response.CreateResponse(constanct.TRAIN_ADD_FAILED), err
 	}
 	PIDs := strings.Split(req.Problems, ",")
+	//添加提单题目
 	for _, PID := range PIDs {
 		listproblem := dao.ListProblem{
 			LID: list.LID,
@@ -50,7 +51,7 @@ func AddTraining(req *request.ListAll, c *gin.Context) (interface{}, error) {
 			return response.CreateResponse(constanct.TRAIN_ADD_FAILED), err
 		}
 	}
-	//添加提单题目
+
 	return response.AddTrainResp{
 		Response: response.CreateResponse(constanct.SuccessCode),
 		LID:      list.LID,
@@ -76,6 +77,13 @@ func RegisterTraining(ctx *gin.Context, req *request.RegisterTrainingReq) (inter
 	if err != nil {
 		return nil, err
 	}
+	if list.FromLID != 0 {
+		listUser.LID = list.FromLID
+		list, _ := models.GetTraining(ctx, listUser.LID)
+		if list.LID == listUser.LID {
+			models.SaveTraningUser(ctx, listUser)
+		}
+	}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
 
@@ -83,7 +91,7 @@ func GetTrainUserInfo(ctx *gin.Context, req *request.ListUserReq) (interface{}, 
 	logger := utils.GetLogInstance()
 	training, err := models.GetTraining(ctx, req.LID)
 	if err != nil {
-		logger.Errorf("call GetTrainingFromDB failed, CID=%s, err=%s", req.LID, err.Error())
+		logger.Errorf("call GetTrainingFromDB failed, LID=%d, err=%s", req.LID, err.Error())
 		return response.CreateResponse(constanct.TRAIN_GET_FAILED), err
 	}
 	if training.LID != req.LID {
@@ -216,7 +224,7 @@ func GetTraining(ctx *gin.Context, req *request.TrainingReq) (interface{}, error
 	logger := utils.GetLogInstance()
 	training, err := models.GetTraining(ctx, req.LID)
 	if err != nil {
-		logger.Errorf("call GetTrainingFromDB failed, CID=%s, err=%s", req.LID, err.Error())
+		logger.Errorf("call GetTrainingFromDB failed, LID=%d, err=%s", req.LID, err.Error())
 		return response.CreateResponse(constanct.TRAIN_GET_FAILED), err
 	}
 	if training.LID != req.LID {
@@ -226,7 +234,7 @@ func GetTraining(ctx *gin.Context, req *request.TrainingReq) (interface{}, error
 
 	TrainPros, err := models.GetTrainingProblem(ctx, req.LID)
 	if err != nil {
-		logger.Errorf("call GetTraProblemFromDB failed, LID=%s, err=%s", req.LID, err.Error())
+		logger.Errorf("call GetTraProblemFromDB failed, LID=%d, err=%s", req.LID, err.Error())
 		return response.CreateResponse(constanct.TRAIN_GET_FAILED), err
 	}
 	PIDs := strings.Split(training.Problems, ",")
@@ -331,5 +339,55 @@ func GetRankTraining(ctx *gin.Context, req *request.GetTrainingRankReq) (interfa
 		Response: response.CreateResponse(constanct.SuccessCode),
 		Size:     int64(len(ranks)),
 		Data:     ranks,
+	}, nil
+}
+
+func CloneTrainUser(ctx *gin.Context, req *request.CloneTraniningReq) (interface{}, error) {
+	uid := middlewares.GetUid(ctx)
+	if uid != req.UID {
+		return response.CreateResponse(constanct.ADMIN_ADD_UIDEmpty), nil
+	}
+	ok := models.IsListExistByLID(ctx, &dao.List{
+		LID: req.LID,
+	})
+	if !ok {
+		return response.CreateResponse(constanct.TRAIN_GET_LIDNotExistCode), nil
+	}
+	list, _ := models.GetTraining(ctx, req.LID)
+	list.FromLID = req.LID
+	list.LID = 0
+	list.UID = req.UID
+	list.StartTime = utils.GetNow()
+	// 添加题单
+	err := models.CreateList(ctx, list)
+	if err != nil {
+		//日志报错
+		utils.GetLogInstance().Errorf("call CreateList failed,err=%s", err.Error())
+		return response.CreateResponse(constanct.TRAIN_ADD_FAILED), err
+	}
+	list.LID, err = models.GetCurrentLID(ctx, *list)
+	if err != nil {
+		//日志报错
+		utils.GetLogInstance().Errorf("call GetLID in CreateList failed,err=%s", err.Error())
+		return response.CreateResponse(constanct.TRAIN_ADD_FAILED), err
+	}
+	problems, _ := models.GetTrainingProblem(ctx, req.LID)
+	// 添加提单题目
+	for _, PID := range problems {
+		listproblem := dao.ListProblem{
+			LID: list.LID,
+			PID: PID.PID,
+		}
+		err = models.CreateListProblem(ctx, &listproblem)
+		if err != nil {
+			//日志报错
+			utils.GetLogInstance().Errorf("call CreateListProblem failed,err=%s", err.Error())
+			return response.CreateResponse(constanct.TRAIN_ADD_FAILED), err
+		}
+	}
+
+	return response.CloneTraniningResp{
+		Response: response.CreateResponse(constanct.SuccessCode),
+		LID:      list.LID,
 	}, nil
 }

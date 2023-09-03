@@ -15,7 +15,7 @@ func GetPermission(ctx *gin.Context, UID string) (interface{}, error) {
 	permission, err := models.GetPermission(ctx, UID)
 	permission.UID = UID
 	if err != nil {
-		logger.Errorf("call GetPermission failed , UID=%d, err=%s", UID, err.Error())
+		logger.Errorf("call GetPermission failed , UID=%s, err=%s", UID, err.Error())
 		return response.CreateResponse(constanct.ADMIN_GET_FAILED), err
 	}
 	return response.PermissionResp{

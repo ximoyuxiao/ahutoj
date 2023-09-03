@@ -60,3 +60,8 @@ type TrainingRankResp struct {
 	Size int64              `json:"Size"`
 	Data TraininngRankItems `json:"Data"`
 }
+
+type CloneTraniningResp struct {
+	Response
+	LID int64 `json:"LID"`
+}
