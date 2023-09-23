@@ -22,7 +22,20 @@ func GetProblemFromDB(ctx context.Context, PID string) (*dao.Problem, error) {
 	}
 	return ret, err
 }
-
+func DelProblem(ctx context.Context, PID string) (*dao.Problem, error) {
+	rdfd := GetRedis()
+	if rdfd == -1 {
+		return nil, errors.New("insufficient Redis connection resources")
+	}
+	defer CloseRDB(rdfd)
+	ret := new(dao.Problem)
+	key := PID
+	err := DelKey(ctx, rdfd, key)
+	if err != nil {
+		return nil, nil
+	}
+	return ret, err
+}
 func SaveProblemToRDB(ctx context.Context, problem dao.Problem) error {
 	rdfd := GetRedis()
 	if rdfd == -1 {

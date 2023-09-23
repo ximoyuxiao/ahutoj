@@ -46,6 +46,7 @@ func EditProblem(ctx context.Context, problem *dao.Problem) error {
 	if err != nil {
 		logger.Errorf("call EditProblemTable failed,problem= %+v, err=%s", utils.Sdump(problem), err.Error())
 	}
+	rediscache.DelProblem(ctx, problem.PID)
 	return err
 }
 
@@ -55,6 +56,7 @@ func DeleteProblem(ctx context.Context, PID string) error {
 	if err != nil {
 		logger.Errorf("call DeleteProblem failed,problem= %d, err=%s", PID, err.Error())
 	}
+	rediscache.DelProblem(ctx, PID)
 	return err
 }
 
