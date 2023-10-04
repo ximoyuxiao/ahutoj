@@ -32,10 +32,12 @@ func AddSoulution(ctx *gin.Context, req *request.SolutionReq) (*response.Solutio
 	db := mysqldao.GetDB(ctx)
 	tx := db.Begin()
 	newComment := dao.Solution{
-		UID:   req.Uid,
-		PID:   req.Pid,
-		Title: req.Title,
-		Text:  req.Text,
+		UID:        req.Uid,
+		PID:        req.Pid,
+		Title:      req.Title,
+		Text:       req.Text,
+		CreateTime: utils.GetNow(),
+		UpdateTime: utils.GetNow(),
 	}
 	var resp response.SolutionPublish
 	resp.Response = response.CreateResponse(constanct.SuccessCode)
@@ -52,6 +54,30 @@ func AddSoulution(ctx *gin.Context, req *request.SolutionReq) (*response.Solutio
 		return &resp, err
 	}
 	return &resp, nil
+}
+func EditSolution(ctx *gin.Context, req *request.SolutionReq) error {
+	db := mysqldao.GetDB(ctx)
+	tx := db.Begin()
+	var newSoution dao.Solution
+	err := tx.First(&newSoution, req.Sid).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	newSoution.Title = req.Title
+	newSoution.UpdateTime = utils.GetNow()
+	newSoution.Text = req.Text
+	err = tx.Save(&newSoution).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	err = tx.Commit().Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	return nil
 }
 
 func DeleteSolution(ctx *gin.Context, req *request.SolutionReq) error {
@@ -95,10 +121,16 @@ func SolutionOperator(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := new(request.SolutionReq)
 	err := ctx.ShouldBindWith(req, binding.JSON)
-	user, err := GetUserInfo(ctx, req.Uid)
 	if err != nil {
 		// 请求参数有误 直接返回响应
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
+	}
+	UID := ctx.Param("id")
+	user, err := GetUserInfo(ctx, UID)
+	if err != nil {
+		logger.Errorf("Failed to get user information, err = %s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
@@ -120,6 +152,14 @@ func SolutionOperator(ctx *gin.Context) {
 		response.ResponseOK(ctx, resp)
 
 	} else if req.ActionType == 2 {
+		err := EditSolution(ctx, req)
+		if err != nil {
+			logger.Errorf("call EditSolution failed, err = %s", err.Error())
+			response.ResponseError(ctx, constanct.ServerErrorCode)
+			return
+		}
+		response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
+	} else if req.ActionType == 3 {
 		// 检查id不为空
 		if req.Sid == "" {
 			logger.Errorf("user '%s' delete solution failed, because solutionIDStr is null.", user.Uname)
@@ -135,7 +175,6 @@ func SolutionOperator(ctx *gin.Context) {
 		}
 		//成功
 		response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
-		return
 	} else {
 		logger.Errorf("Unknown request parameters")
 		response.ResponseError(ctx, constanct.InvalidParamCode)
