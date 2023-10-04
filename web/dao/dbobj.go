@@ -1,6 +1,8 @@
 package dao
 
-import "ahutoj/web/io/constanct"
+import (
+	"ahutoj/web/io/constanct"
+)
 
 type User struct {
 	UID           string `gorm:"column:UID"`
@@ -176,4 +178,33 @@ type Notice struct {
 
 func (p Notice) TableName() string {
 	return "Notice"
+}
+
+type Solution struct {
+	SID        int64  `gorm:"column:SID"`
+	UID        string `gorm:"column:UID"`
+	PID        string `gorm:"column:PID"`
+	Title      string `gorm:"Title"`
+	Text       string `gorm:"column:Text"` //内容
+	CreateTime int64  `gorm:"column:CreateTime;not null;comment:创建时间"`
+	UpdateTime int64  `gorm:"column:UpdateTime;not null;comment:更新时间"`
+	IsDelete   bool   `gorm:"column:IsDelete;default:false;not null;comment:删除标志"`
+}
+
+func (p Solution) TableName() string {
+	return "Solution"
+}
+
+type Comment struct {
+	CID        int64  `gorm:"column:CID"`
+	UID        string `gorm:"column:UID"`
+	SID        int64  `gorm:"column:SID"`
+	Text       string `gorm:"column:Text"`
+	CreateTime int64  `gorm:"column:CreateTime;not null;comment:创建时间"`
+	UpdateTime int64  `gorm:"column:UpdateTime;not null;comment:更新时间"`
+	IsDelete   bool   `gorm:"column:IsDelete;default:false;not null;comment:删除标志"`
+}
+
+func (p Comment) TableName() string {
+	return "Comment"
 }
