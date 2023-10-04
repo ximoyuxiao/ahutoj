@@ -27,7 +27,7 @@ func InitServer() {
 
 	router := gin.Default()
 	router.Use(middlewares.Cors())
-	regeisterForumRouters(router)
+	regeisterRouters(router)
 
 	// 注册 pprof 监控 仅仅在 开发阶段可看
 	if conf.Mode == gin.DebugMode {
