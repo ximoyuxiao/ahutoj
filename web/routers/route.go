@@ -27,7 +27,7 @@ func InitServer() {
 
 	router := gin.Default()
 	router.Use(middlewares.Cors())
-	regeisterRouters(router)
+	regeisterForumRouters(router)
 
 	// 注册 pprof 监控 仅仅在 开发阶段可看
 	if conf.Mode == gin.DebugMode {
@@ -76,7 +76,7 @@ func regeisterRouters(router *gin.Engine) {
 			adminRouter.GET("/permission/:id", controller.GetPermission)
 			adminRouter.POST("/users/Range", controller.AddUsersRange)
 			adminRouter.POST("/users", controller.AddUsers)
-			adminRouter.POST("/user/edit/password/", controller.AdminChangePassWord)
+			adminRouter.POST("/user/edit/password/", controller.AddSoulution)
 
 		}
 

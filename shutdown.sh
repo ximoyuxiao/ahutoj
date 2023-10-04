@@ -12,7 +12,7 @@ shutdown(){
     fi
     rm -rf $1_dir
 }
-for exec in gatway ahutoj originJudge persistence judged oss;
+for exec in gatway ahutoj originJudge persistence judged oss forum;
 do
     if test -x $i;then
         shutdown $exec
