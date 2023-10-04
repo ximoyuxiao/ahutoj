@@ -15,18 +15,6 @@ func GetSoulutions(ctx *gin.Context) {
 	response.ResponseError(ctx, constanct.NotimplementedCode)
 }
 
-func AddSoulution(ctx *gin.Context) {
-	response.ResponseError(ctx, constanct.NotimplementedCode)
-}
-
-func EditSoulution(ctx *gin.Context) {
-	response.ResponseError(ctx, constanct.NotimplementedCode)
-}
-
-func DeleteSolution(ctx *gin.Context) {
-	response.ResponseError(ctx, constanct.NotimplementedCode)
-}
-
 func GetFaviroate(ctx *gin.Context) {
 	response.ResponseError(ctx, constanct.NotimplementedCode)
 }

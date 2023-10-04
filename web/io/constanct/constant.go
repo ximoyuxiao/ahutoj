@@ -191,6 +191,14 @@ const (
 	NOTICE_GETNOTICE_NOTEXISTCODE ResCode = 190102
 )
 
+/*solution 20*/
+const (
+	SOLUTION_ADD_FAILED    ResCode = 200101
+	SOLUTION_EDIT_FAILED   ResCode = 200201
+	SOLUTION_DELETE_FAILED ResCode = 200301
+	SOLUTION_LIST_FAILED   ResCode = 200401
+)
+
 var codeMsgMap = map[ResCode]string{
 	SuccessCode:                             "",
 	InvalidParamCode:                        "请求参数错误",
@@ -277,6 +285,10 @@ var codeMsgMap = map[ResCode]string{
 	PROBLEM_DOWNLOADPROBLE_PIDNoteExistCode: "题目不存在",
 	NOTICE_GETNOTICE_FAILED:                 "获取公告信息失败",
 	NOTICE_GETNOTICE_NOTEXISTCODE:           "这个公告被删除或者不存在",
+	SOLUTION_ADD_FAILED:                     "添加题解失败",
+	SOLUTION_EDIT_FAILED:                    "编辑题解失败",
+	SOLUTION_DELETE_FAILED:                  "删除题解失败",
+	SOLUTION_LIST_FAILED:                    "获取题解列表失败",
 }
 var HttpCodeMap = map[ResCode]int{
 	SuccessCode:        http.StatusOK,

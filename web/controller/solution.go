@@ -7,17 +7,17 @@ import (
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
 	"ahutoj/web/utils"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
 )
 
-func GetUserInfo(ctx *gin.Context, id string) (userInter dao.User, err error) {
+func GetUserInfo(ctx *gin.Context, id string) (*dao.User, error) {
 	// 根据id 检测用户是否存在数据库中
 	db := mysqldao.GetDB(ctx)
-	err = db.Where("ID = ?", id).First(&userInter).Error
+	var userInter *dao.User
+	err := db.Where("UID = ?", id).First(&userInter).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return userInter, errors.New("the user is not exist")
@@ -27,7 +27,7 @@ func GetUserInfo(ctx *gin.Context, id string) (userInter dao.User, err error) {
 	return userInter, err
 }
 
-func PublishSolution(ctx *gin.Context, req *request.SolutionReq) error {
+func AddSoulution(ctx *gin.Context, req *request.SolutionReq) (*response.SolutionPublish, error) {
 	// 新建数据库事务
 	db := mysqldao.GetDB(ctx)
 	tx := db.Begin()
@@ -37,22 +37,24 @@ func PublishSolution(ctx *gin.Context, req *request.SolutionReq) error {
 		Title: req.Title,
 		Text:  req.Text,
 	}
+	var resp response.SolutionPublish
+	resp.Response = response.CreateResponse(constanct.SuccessCode)
 	//新增一条记录
 	err := tx.Create(&newComment).Error
 	if err != nil {
 		tx.Rollback()
-		return err
+		return &resp, err
 	}
 	//提交事务
 	err = tx.Commit().Error
 	if err != nil {
 		tx.Rollback()
-		return err
+		return &resp, err
 	}
-	return nil
+	return &resp, nil
 }
 
-func Deletolution(ctx *gin.Context, req *request.SolutionReq) error {
+func DeleteSolution(ctx *gin.Context, req *request.SolutionReq) error {
 	//开启事务
 	db := mysqldao.GetDB(ctx)
 	tx := db.Begin()
@@ -60,6 +62,7 @@ func Deletolution(ctx *gin.Context, req *request.SolutionReq) error {
 	err := tx.First(&solution, req.Sid).Error
 	if err != nil {
 		tx.Rollback()
+		response.ResponseError(ctx, constanct.SOLUTION_DELETE_FAILED)
 		return err
 	}
 	err = tx.Delete(&solution).Error
@@ -72,7 +75,6 @@ func Deletolution(ctx *gin.Context, req *request.SolutionReq) error {
 		tx.Rollback()
 		return err
 	}
-
 	return nil
 }
 
@@ -80,11 +82,11 @@ func GetSolutiontList(ctx *gin.Context, req *request.SolutionListReq) (response.
 	db := mysqldao.GetDB(ctx)
 	var solutions []dao.Solution
 	var refsolutions response.SolutionList
-	if err := db.Where("video_id = ?", req.PID).Find(&solutions).Error; err != nil {
+	if err := db.Where("PID = ?", req.PID).Find(&solutions).Error; err != nil {
 		return refsolutions, err
 	}
 	for _, solution := range solutions {
-		_ = append(refsolutions.SolutionList, solution)
+		refsolutions.SolutionList = append(refsolutions.SolutionList, solution)
 	}
 	//没错误，返回
 	return refsolutions, nil
@@ -100,40 +102,42 @@ func SolutionOperator(ctx *gin.Context) {
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
-	fmt.Printf("req:%+v\n", req)
+	//fmt.Printf("req:%+v\n", req)
 	if req.ActionType == 1 {
 		//判断内容是否为空
 		if req.Text == "" {
-			logger.Errorf("delete comment failed, because text is null")
+			logger.Errorf("add solution failed, because text is null")
 			response.ResponseError(ctx, constanct.InvalidParamCode)
 			return
 		}
-		err = PublishSolution(ctx, req)
+		resp, err := AddSoulution(ctx, req)
 		if err != nil {
-			logger.Errorf("")
+			logger.Errorf("add solution failed")
 			response.ResponseError(ctx, constanct.InvalidParamCode)
 			return
 		}
 		//响应
-		response.ResponseOK(ctx, req)
+		response.ResponseOK(ctx, resp)
 
 	} else if req.ActionType == 2 {
 		// 检查id不为空
 		if req.Sid == "" {
-			logger.Errorf("user '%s' delete comment failed, because commentIDStr is null.", user.Uname)
+			logger.Errorf("user '%s' delete solution failed, because solutionIDStr is null.", user.Uname)
 			response.ResponseError(ctx, constanct.InvalidParamCode)
 			return
 		}
-		// 执行删除评论操作
-		err = Deletolution(ctx, req)
+		// 执行删除题解操作
+		err = DeleteSolution(ctx, req)
 		if err != nil {
-			logger.Errorf("user '%s' delete comment failed, because %s.", user.Uname, err.Error())
+			logger.Errorf("user '%s' delete solution failed.beceuse %v", user.Uname, err)
+			response.ResponseError(ctx, constanct.InvalidParamCode)
 			return
 		}
 		//成功
-		response.ResponseOK(ctx, req)
+		response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
 		return
 	} else {
+		logger.Errorf("Unknown request parameters")
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
