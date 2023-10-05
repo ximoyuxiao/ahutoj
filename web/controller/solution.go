@@ -110,7 +110,7 @@ func GetSolutiontList(ctx *gin.Context, req *request.SolutionListReq) (response.
 	db := mysqldao.GetDB(ctx)
 	var solutions []dao.Solution
 	var refsolutions response.SolutionList
-	if err := db.Where("PID = ?", req.PID).Find(&solutions).Error; err != nil {
+	if err := db.Where("PID = ? and isDelete = ?", req.PID, 0).Find(&solutions).Error; err != nil {
 		return refsolutions, err
 	}
 	refsolutions.Response = response.CreateResponse(constanct.SuccessCode)
