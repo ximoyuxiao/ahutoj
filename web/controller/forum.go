@@ -30,7 +30,7 @@ func GetSolution(ctx *gin.Context) {
 	resp := response.SoultionResp{
 		Response: response.CreateResponse(constanct.SuccessCode),
 		SolutionList: response.SolutionResponseElement{
-			Data:  GetCommentList(ctx, int64(req.SID)),
+			Data:  GetSubCommentList(ctx, int64(req.SID)),
 			Sid:   &solution.SID,
 			Text:  &solution.Text,
 			Title: &solution.Title,
@@ -82,7 +82,21 @@ func GetComment(ctx *gin.Context) {
 }
 
 func GetComments(ctx *gin.Context) {
-	response.ResponseError(ctx, constanct.NotimplementedCode)
+	// GetCommentList
+	logger := utils.GetLogInstance()
+	req := new(request.CommentListReq)
+	if err := ctx.ShouldBindWith(req, binding.Query); err != nil {
+		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
+	}
+	resp := GetCommentList(ctx, req.SID)
+	// if err != nil {
+	// 	logger.Errorf("call AddPermission failed,req=%+v, err=%s", *req, err.Error())
+	// 	response.ResponseError(ctx, constanct.ServerErrorCode)
+	// 	return
+	// }
+	response.ResponseOK(ctx, resp)
 }
 
 //func DeleteComment(ctx *gin.Context) {
