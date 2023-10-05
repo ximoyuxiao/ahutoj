@@ -69,6 +69,7 @@ func AddComment(ctx *gin.Context, req *request.CommentReq) error {
 	newComment := dao.Comment{
 		UID:        req.Uid,
 		SID:        req.Sid,
+		CUID:       req.Cuid,
 		Text:       req.Text,
 		CreateTime: utils.GetNow(),
 		UpdateTime: utils.GetNow(),

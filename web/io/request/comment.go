@@ -7,4 +7,5 @@ type CommentReq struct {
 	Title      string `json:"Title,omitempty"` // 标题
 	Uid        string `json:"UID,omitempty"`   // 用户ID
 	Cid        int64  `json:"Cid"`
+	Cuid       string `json:"Cuid"`
 }
