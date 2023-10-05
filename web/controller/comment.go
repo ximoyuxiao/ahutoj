@@ -14,13 +14,14 @@ import (
 	"github.com/gin-gonic/gin/binding"
 )
 
-func GetCommentList(ctx *gin.Context, sid int64) response.CommentListResp {
+func GetCommentList(ctx *gin.Context, req *request.CommentListReq) response.CommentListResp {
 	db := mysqldao.GetDB(ctx)
 	var (
 		comments    []dao.Comment
 		refcomments response.CommentListResp
 	)
-	if err := db.Where("SID = ? and isDelete = 0", sid).Find(&comments).Error; err != nil {
+	offset, limit := utils.GetPageInfo(req.Page, req.Limit)
+	if err := db.Where("SID = ? and isDelete = 0", req.SID).Offset(offset).Limit(limit).Find(&comments).Error; err != nil {
 		return response.CommentListResp{
 			Response: response.CreateResponse(constanct.ADMIN_ADD_FAILED),
 		}
@@ -29,9 +30,16 @@ func GetCommentList(ctx *gin.Context, sid int64) response.CommentListResp {
 	sort.Slice(comments, func(i, j int) bool {
 		return comments[i].UpdateTime > comments[j].UpdateTime
 	})
-	refcomments.Count = len(comments)
+	var count int64
+	if err := db.Model(dao.Comment{}).Where("SID = ? and isDelete = 0", req.SID).Count(&count).Error; err != nil {
+		return response.CommentListResp{
+			Response: response.CreateResponse(constanct.ADMIN_ADD_FAILED),
+		}
+	}
+	refcomments.Count = int(count)
 	refcomments.Response = response.CreateResponse(constanct.SuccessCode)
-	for _, item := range comments {
+	for idx := range comments {
+		item := comments[idx]
 		refcomments.Data = append(refcomments.Data, response.SubComment{
 			Cid:        &item.CID,
 			FCID:       &item.FCID,

@@ -98,7 +98,12 @@ func GetSolutiontList(ctx *gin.Context, req *request.GetSolutionListReq) (*respo
 	db := mysqldao.GetDB(ctx)
 	var solutions []dao.Solution
 	var refsolutions response.SoultionsResp
-	if err := db.Where("PID = ? and isDelete = ?", req.PID, 0).Find(&solutions).Error; err != nil {
+	offset, limit := utils.GetPageInfo(req.Page, req.Limit)
+	if err := db.Where("PID = ? and isDelete = ?", req.PID, 0).Offset(offset).Limit(limit).Find(&solutions).Error; err != nil {
+		return &refsolutions, err
+	}
+	var count int64
+	if err := db.Model(solutions[0]).Where("PID = ? and isDelete = ?", req.PID, 0).Count(&count).Error; err != nil {
 		return &refsolutions, err
 	}
 	refsolutions.Response = response.CreateResponse(constanct.SuccessCode)
@@ -115,7 +120,7 @@ func GetSolutiontList(ctx *gin.Context, req *request.GetSolutionListReq) (*respo
 			UpdateTime: item.UpdateTime,
 		})
 	}
-	refsolutions.Count = len(solutions)
+	refsolutions.Count = int(count)
 	//没错误，返回
 	return &refsolutions, nil
 }

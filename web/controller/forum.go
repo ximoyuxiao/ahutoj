@@ -90,7 +90,7 @@ func GetComments(ctx *gin.Context) {
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
-	resp := GetCommentList(ctx, req.SID)
+	resp := GetCommentList(ctx, req)
 	// if err != nil {
 	// 	logger.Errorf("call AddPermission failed,req=%+v, err=%s", *req, err.Error())
 	// 	response.ResponseError(ctx, constanct.ServerErrorCode)
