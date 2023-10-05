@@ -199,8 +199,8 @@ type Comment struct {
 	CID        int64  `gorm:"column:CID"`
 	UID        string `gorm:"column:UID"`
 	SID        int64  `gorm:"column:SID"`
-	CUID       string `gorm:"column:CUID"`
 	Text       string `gorm:"column:Text"`
+	FCID       int64  `gorm:"column:FCID;comment:回复了哪一个评论,如果是Solution返回-1"`
 	CreateTime int64  `gorm:"column:CreateTime;not null;comment:创建时间"`
 	UpdateTime int64  `gorm:"column:UpdateTime;not null;comment:更新时间"`
 	IsDelete   bool   `gorm:"column:IsDelete;default:false;not null;comment:删除标志"`

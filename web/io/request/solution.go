@@ -14,8 +14,8 @@ type GetSolutionReq struct {
 }
 
 type GetSolutionListReq struct {
-	PID int64  `json:"PID"`
-	UID string `json:"UID"`
+	PID string `query:"PID"`
+	UID string `query:"UID"`
 }
 
 type EditSolutionReq SolutionReq

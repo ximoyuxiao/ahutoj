@@ -185,7 +185,7 @@ create table Comment
     CID INT NOT NULL AUTO_INCREMENT PRIMARY KEY comment '评论ID',
     SID INT comment '题解ID',
     UID varchar(20) comment '提交用户ID',
-    CUID INT comment '回复者ID',
+    FCID INT comment '上层评论ID',
     Text Text NOT NULL comment '评论内容',
     CreateTime long NOT NULL comment '创建时间',
     UpdateTime long NOT NULL comment '更新时间',

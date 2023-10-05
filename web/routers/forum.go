@@ -54,8 +54,8 @@ func regeisterForumRouters(router *gin.Engine) {
 		commentGroup := apiRouter.Group("/comment").Use(middlewares.JwtVerify)
 		commentGroup.GET("/:id", controller.GetComment)
 		commentGroup.GET("/comments", controller.GetComments)
-		commentGroup.POST("/", controller.AddComment)
-		commentGroup.DELETE("/:id", controller.DeleteComment)
+		commentGroup.POST("/", controller.CommentOperator)
+		commentGroup.DELETE("/:id", controller.CommentOperator)
 	}
 
 }

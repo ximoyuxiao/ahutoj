@@ -8,30 +8,63 @@ import (
 	"ahutoj/web/io/response"
 	"ahutoj/web/middlewares"
 	"ahutoj/web/utils"
+	"sort"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"sort"
 )
 
-func GetCommentList(ctx *gin.Context, sid int64) []response.SubComment {
+func GetCommentList(ctx *gin.Context, sid int64) response.CommentListResp {
 	db := mysqldao.GetDB(ctx)
 	var (
 		comments    []dao.Comment
-		refcomments []response.SubComment
+		refcomments response.CommentListResp
 	)
-	if err := db.Where("SID = ?", sid).Find(&comments).Error; err != nil {
-		return refcomments
+	if err := db.Where("SID = ? and isDelete = 0", sid).Find(&comments).Error; err != nil {
+		return response.CommentListResp{
+			Response: response.CreateResponse(constanct.ADMIN_ADD_FAILED),
+		}
 	}
 	// 使用sort.Slice函数来排序comments切片
 	sort.Slice(comments, func(i, j int) bool {
 		return comments[i].UpdateTime > comments[j].UpdateTime
 	})
+	refcomments.Count = len(comments)
+	refcomments.Response = response.CreateResponse(constanct.SuccessCode)
 	for _, item := range comments {
+		refcomments.Data = append(refcomments.Data, response.SubComment{
+			Cid:        &item.CID,
+			FCID:       &item.FCID,
+			Text:       &item.Text,
+			Uid:        &item.UID,
+			UpdateTime: item.UpdateTime,
+		})
+	}
+	//没错误，返回
+	return refcomments
+}
+
+func GetSubCommentList(ctx *gin.Context, sid int64) []response.SubComment {
+	db := mysqldao.GetDB(ctx)
+	var (
+		comments    []dao.Comment
+		refcomments []response.SubComment
+	)
+	if err := db.Where("SID = ? and isDelete = 0", sid).Find(&comments).Error; err != nil {
+		return nil
+	}
+	// 使用sort.Slice函数来排序comments切片
+	sort.Slice(comments, func(i, j int) bool {
+		return comments[i].UpdateTime > comments[j].UpdateTime
+	})
+	for idx := range comments {
+		item := comments[idx]
 		refcomments = append(refcomments, response.SubComment{
-			Cid:  &item.CID,
-			Cuid: &item.CUID,
-			Text: &item.Text,
-			Uid:  &item.UID,
+			Cid:        &item.CID,
+			FCID:       &item.FCID,
+			Text:       &item.Text,
+			Uid:        &item.UID,
+			UpdateTime: item.UpdateTime,
 		})
 	}
 	//没错误，返回
@@ -43,7 +76,7 @@ func DeleteComment(ctx *gin.Context, req *request.CommentReq) error {
 	db := mysqldao.GetDB(ctx)
 	tx := db.Begin()
 	var comment dao.Comment
-	err := tx.First(&comment, req.Cid).Error
+	err := tx.First(&comment, req.CID).Error
 	if err != nil {
 		tx.Rollback()
 		response.ResponseError(ctx, constanct.SOLUTION_DELETE_FAILED)
@@ -69,7 +102,7 @@ func AddComment(ctx *gin.Context, req *request.CommentReq) error {
 	newComment := dao.Comment{
 		UID:        req.Uid,
 		SID:        req.Sid,
-		CUID:       req.Cuid,
+		FCID:       req.FCID,
 		Text:       req.Text,
 		CreateTime: utils.GetNow(),
 		UpdateTime: utils.GetNow(),
@@ -122,7 +155,7 @@ func CommentOperator(ctx *gin.Context) {
 
 	} else if req.ActionType == constanct.DELETECODE {
 		// 检查id不为空
-		if req.Cid == 0 {
+		if req.CID == 0 {
 			logger.Errorf("user '%s' delete solution failed, because solutionIDStr is null.", req)
 			response.ResponseError(ctx, constanct.InvalidParamCode)
 			return
