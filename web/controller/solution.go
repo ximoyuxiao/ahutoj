@@ -8,28 +8,13 @@ import (
 	"ahutoj/web/io/response"
 	"ahutoj/web/middlewares"
 	"ahutoj/web/utils"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/pkg/errors"
-	"gorm.io/gorm"
 )
 
-func GetUserInfo(ctx *gin.Context, id string) (*dao.User, error) {
-	// 根据id 检测用户是否存在数据库中
-	db := mysqldao.GetDB(ctx)
-	var userInter *dao.User
-	err := db.Where("UID = ?", id).First(&userInter).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return userInter, errors.New("the user is not exist")
-		}
-		return userInter, err
-	}
-	return userInter, err
-}
-
-func AddSoulution(ctx *gin.Context, req *request.SolutionReq) (*response.SolutionPublish, error) {
+func AddSoulution(ctx *gin.Context, req *request.SolutionReq) (*response.SolutionPublishResp, error) {
 	// 新建数据库事务
 	db := mysqldao.GetDB(ctx)
 	tx := db.Begin()
@@ -41,7 +26,7 @@ func AddSoulution(ctx *gin.Context, req *request.SolutionReq) (*response.Solutio
 		CreateTime: utils.GetNow(),
 		UpdateTime: utils.GetNow(),
 	}
-	var resp response.SolutionPublish
+	var resp response.SolutionPublishResp
 	resp.Response = response.CreateResponse(constanct.SuccessCode)
 	//新增一条记录
 	err := tx.Create(&newComment).Error
@@ -55,6 +40,7 @@ func AddSoulution(ctx *gin.Context, req *request.SolutionReq) (*response.Solutio
 		tx.Rollback()
 		return &resp, err
 	}
+	resp.SID = newComment.SID
 	return &resp, nil
 }
 func EditSolution(ctx *gin.Context, req *request.SolutionReq) error {
@@ -66,6 +52,8 @@ func EditSolution(ctx *gin.Context, req *request.SolutionReq) error {
 		tx.Rollback()
 		return err
 	}
+	//todo: 在这里加入原文文本
+	ctx.JSON(http.StatusOK, response.SolutionEditResp{Title: newSoution.Title, Text: newSoution.Text})
 	newSoution.Title = req.Title
 	newSoution.UpdateTime = utils.GetNow()
 	newSoution.Text = req.Text
@@ -106,18 +94,27 @@ func DeleteSolution(ctx *gin.Context, req *request.SolutionReq) error {
 	return nil
 }
 
-func GetSolutiontList(ctx *gin.Context, req *request.SolutionListReq) (response.SolutionList, error) {
+func GetSolutiontList(ctx *gin.Context, req *request.GetSolutionListReq) (*response.SoultionsResp, error) {
 	db := mysqldao.GetDB(ctx)
 	var solutions []dao.Solution
-	var refsolutions response.SolutionList
+	var refsolutions response.SoultionsResp
 	if err := db.Where("PID = ? and isDelete = ?", req.PID, 0).Find(&solutions).Error; err != nil {
-		return refsolutions, err
+		return &refsolutions, err
 	}
 	refsolutions.Response = response.CreateResponse(constanct.SuccessCode)
-	refsolutions.SolutionList = append(refsolutions.SolutionList, solutions...)
+	for _, item := range solutions {
+		refsolutions.SolutionList = append(refsolutions.SolutionList, response.SolutionResponseElement{
+			Data: GetCommentList(ctx, item.SID),
+			//todo:将一个题解的所有评论加入
+			Sid:   &item.SID,
+			Text:  &item.Text,
+			Title: &item.Title,
+			Uid:   &item.UID,
+		})
+	}
 	refsolutions.Count = len(solutions)
 	//没错误，返回
-	return refsolutions, nil
+	return &refsolutions, nil
 }
 func SolutionOperator(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
@@ -135,7 +132,7 @@ func SolutionOperator(ctx *gin.Context) {
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 	}
 	//fmt.Printf("req:%+v\n", req)
-	if req.ActionType == 1 {
+	if req.ActionType == constanct.ADDCODE {
 		//判断内容是否为空
 		if req.Text == "" {
 			logger.Errorf("add solution failed, because text is null")
@@ -151,7 +148,7 @@ func SolutionOperator(ctx *gin.Context) {
 		//响应
 		response.ResponseOK(ctx, resp)
 
-	} else if req.ActionType == 2 {
+	} else if req.ActionType == constanct.EDITCODE {
 		err := EditSolution(ctx, req)
 		if err != nil {
 			logger.Errorf("call EditSolution failed, err = %s", err.Error())
@@ -159,9 +156,9 @@ func SolutionOperator(ctx *gin.Context) {
 			return
 		}
 		response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
-	} else if req.ActionType == 3 {
+	} else if req.ActionType == constanct.DELETECODE {
 		// 检查id不为空
-		if req.Sid == "" {
+		if req.Sid == 0 {
 			logger.Errorf("user '%s' delete solution failed, because solutionIDStr is null.", req)
 			response.ResponseError(ctx, constanct.InvalidParamCode)
 			return
