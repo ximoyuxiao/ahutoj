@@ -12,4 +12,5 @@ type CommentReq struct {
 
 type CommentListReq struct {
 	SID int64 `query:"SID"`
+	GetListReq
 }
