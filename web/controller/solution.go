@@ -9,6 +9,7 @@ import (
 	"ahutoj/web/middlewares"
 	"ahutoj/web/utils"
 	"net/http"
+	"sort"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -102,6 +103,14 @@ func GetSolutiontList(ctx *gin.Context, req *request.GetSolutionListReq) (*respo
 		return &refsolutions, err
 	}
 	refsolutions.Response = response.CreateResponse(constanct.SuccessCode)
+	// 先按 FavoriteCount 降序排序，如果相同再按 UpdateTime 降序序排序
+	sort.Slice(solutions, func(i, j int) bool {
+		if solutions[i].FavoriteCount == solutions[j].FavoriteCount {
+			return solutions[i].UpdateTime > solutions[j].UpdateTime
+		}
+		return solutions[i].FavoriteCount > solutions[j].FavoriteCount
+	})
+
 	for idx := range solutions {
 		item := solutions[idx]
 		refsolutions.SolutionList = append(refsolutions.SolutionList, response.SolutionResponseElement{

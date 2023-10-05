@@ -181,14 +181,15 @@ func (p Notice) TableName() string {
 }
 
 type Solution struct {
-	SID        int64  `gorm:"column:SID"`
-	UID        string `gorm:"column:UID"`
-	PID        string `gorm:"column:PID"`
-	Title      string `gorm:"column:Title"`
-	Text       string `gorm:"column:Text"` //内容
-	CreateTime int64  `gorm:"column:CreateTime;not null;comment:创建时间"`
-	UpdateTime int64  `gorm:"column:UpdateTime;not null;comment:更新时间"`
-	IsDelete   bool   `gorm:"column:IsDelete;default:false;not null;comment:删除标志"`
+	SID           int64  `gorm:"column:SID"`
+	UID           string `gorm:"column:UID"`
+	PID           string `gorm:"column:PID"`
+	Title         string `gorm:"column:Title"`
+	Text          string `gorm:"column:Text"` //内容
+	FavoriteCount int64  `gorm:"column:FavoriteCount"`
+	CreateTime    int64  `gorm:"column:CreateTime;not null;comment:创建时间"`
+	UpdateTime    int64  `gorm:"column:UpdateTime;not null;comment:更新时间"`
+	IsDelete      bool   `gorm:"column:IsDelete;default:false;not null;comment:删除标志"`
 }
 
 func (p Solution) TableName() string {
@@ -208,4 +209,14 @@ type Comment struct {
 
 func (p Comment) TableName() string {
 	return "Comment"
+}
+
+type Favorite struct {
+	ID  int64  `gorm:"column:ID"`
+	UID string `gorm:"column:UID;index"`
+	SID int64  `gorm:"column:SID;index"`
+}
+
+func (Favorite) TableName() string {
+	return "Favorite"
 }
