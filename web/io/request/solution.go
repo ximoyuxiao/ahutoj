@@ -10,7 +10,7 @@ type SolutionReq struct {
 	Uid        string `json:"UID,omitempty"`   // 用户ID
 }
 type SolutionListReq struct {
-	PID string `json:"PID"` // 题目ID
+	PID string `query:"PID"` // 题目ID
 }
 
 type GetSolutionReq struct {

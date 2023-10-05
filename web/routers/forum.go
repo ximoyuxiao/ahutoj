@@ -40,18 +40,18 @@ func regeisterForumRouters(router *gin.Engine) {
 	// 1. 帖子
 	apiRouter := router.Group("/api")
 	{
-		forumGroup := apiRouter.Group("/solution")
+		forumGroup := apiRouter.Group("/solution").Use(middlewares.JwtVerify)
 		forumGroup.GET("/:id", controller.GetSolution)
 		forumGroup.GET("/solutions", controller.GetSoulutions)
 		forumGroup.POST("/", controller.SolutionOperator)
 		forumGroup.PUT("/:id", controller.SolutionOperator)
 		forumGroup.DELETE("/:id", controller.SolutionOperator)
 		// 2. 点赞
-		favoriteGropu := apiRouter.Group("/favorite")
+		favoriteGropu := apiRouter.Group("/favorite").Use(middlewares.JwtVerify)
 		favoriteGropu.GET("/:id", controller.GetFaviroate)
 		favoriteGropu.POST("/", controller.DoFaviroate)
 		// 3. 评论
-		commentGroup := apiRouter.Group("/comment")
+		commentGroup := apiRouter.Group("/comment").Use(middlewares.JwtVerify)
 		commentGroup.GET("/:id", controller.GetComment)
 		commentGroup.GET("/comments", controller.GetComments)
 		commentGroup.POST("/", controller.AddComment)

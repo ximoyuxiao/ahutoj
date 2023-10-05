@@ -12,7 +12,9 @@ ubuntu18.06
 
 2、配置config.yaml文件（具体可以参考config.yaml.bak）
 
-3、执行make run 既可以跑起来项目
+3、执行make编译项目
+
+4、执行./run.sh即可运行项目
 
 ### 相关依赖:
     C/C++:rabbitMQ\libamqp-dev,hiredis,libmysql

@@ -6,6 +6,7 @@ import (
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
+	"ahutoj/web/middlewares"
 	"ahutoj/web/utils"
 
 	"github.com/gin-gonic/gin"
@@ -114,6 +115,7 @@ func GetSolutiontList(ctx *gin.Context, req *request.SolutionListReq) (response.
 	}
 	refsolutions.Response = response.CreateResponse(constanct.SuccessCode)
 	refsolutions.SolutionList = append(refsolutions.SolutionList, solutions...)
+	refsolutions.Count = len(solutions)
 	//没错误，返回
 	return refsolutions, nil
 }
@@ -127,12 +129,10 @@ func SolutionOperator(ctx *gin.Context) {
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
-	UID := ctx.Param("id")
-	user, err := GetUserInfo(ctx, UID)
-	if err != nil {
+	UID := req.Uid
+	if UID != middlewares.GetUid(ctx) {
 		logger.Errorf("Failed to get user information, err = %s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
-		return
 	}
 	//fmt.Printf("req:%+v\n", req)
 	if req.ActionType == 1 {
@@ -162,14 +162,14 @@ func SolutionOperator(ctx *gin.Context) {
 	} else if req.ActionType == 3 {
 		// 检查id不为空
 		if req.Sid == "" {
-			logger.Errorf("user '%s' delete solution failed, because solutionIDStr is null.", user.Uname)
+			logger.Errorf("user '%s' delete solution failed, because solutionIDStr is null.", req)
 			response.ResponseError(ctx, constanct.InvalidParamCode)
 			return
 		}
 		// 执行删除题解操作
 		err = DeleteSolution(ctx, req)
 		if err != nil {
-			logger.Errorf("user '%s' delete solution failed.beceuse %v", user.Uname, err)
+			logger.Errorf("user '%s' delete solution failed.beceuse %v", req, err)
 			response.ResponseError(ctx, constanct.InvalidParamCode)
 			return
 		}

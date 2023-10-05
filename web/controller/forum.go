@@ -42,7 +42,7 @@ func GetSolution(ctx *gin.Context) {
 func GetSoulutions(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := new(request.SolutionListReq)
-	if err := ctx.ShouldBindWith(req, binding.JSON); err != nil {
+	if err := ctx.ShouldBindWith(req, binding.Query); err != nil {
 		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return

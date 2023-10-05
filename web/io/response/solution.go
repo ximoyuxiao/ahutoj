@@ -7,6 +7,7 @@ type SolutionPublish struct {
 }
 type SolutionList struct {
 	Response
+	Count        int            `json:"count"`
 	SolutionList []dao.Solution `json:"solution_list"`
 }
 type Solution struct {
