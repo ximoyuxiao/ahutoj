@@ -10,6 +10,12 @@ const (
 	DefaultOffset int = 0
 )
 
+const (
+	ADDCODE    int64 = 1
+	EDITCODE   int64 = 2
+	DELETECODE int64 = 3
+)
+
 type DataType uint8
 
 const (

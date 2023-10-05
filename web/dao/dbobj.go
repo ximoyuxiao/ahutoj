@@ -184,7 +184,7 @@ type Solution struct {
 	SID        int64  `gorm:"column:SID"`
 	UID        string `gorm:"column:UID"`
 	PID        string `gorm:"column:PID"`
-	Title      string `gorm:"Title"`
+	Title      string `gorm:"column:Title"`
 	Text       string `gorm:"column:Text"` //内容
 	CreateTime int64  `gorm:"column:CreateTime;not null;comment:创建时间"`
 	UpdateTime int64  `gorm:"column:UpdateTime;not null;comment:更新时间"`
@@ -199,6 +199,7 @@ type Comment struct {
 	CID        int64  `gorm:"column:CID"`
 	UID        string `gorm:"column:UID"`
 	SID        int64  `gorm:"column:SID"`
+	CUID       string `gorm:"column:CUID"`
 	Text       string `gorm:"column:Text"`
 	CreateTime int64  `gorm:"column:CreateTime;not null;comment:创建时间"`
 	UpdateTime int64  `gorm:"column:UpdateTime;not null;comment:更新时间"`
