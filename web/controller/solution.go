@@ -121,12 +121,13 @@ func GetSolutiontList(ctx *gin.Context, req *request.GetSolutionListReq) (*respo
 		refsolutions.SolutionList = append(refsolutions.SolutionList, response.SolutionResponseElement{
 			Data: GetSubCommentList(ctx, item.SID),
 			//todo:将一个题解的所有评论加入
-			Sid:        &item.SID,
-			Text:       &item.Text,
-			Title:      &item.Title,
-			Uid:        &item.UID,
-			CreateTime: item.CreateTime,
-			UpdateTime: item.UpdateTime,
+			Sid:           &item.SID,
+			Text:          &item.Text,
+			Title:         &item.Title,
+			Uid:           &item.UID,
+			CreateTime:    item.CreateTime,
+			UpdateTime:    item.UpdateTime,
+			FavoriteCount: &item.FavoriteCount,
 		})
 	}
 	refsolutions.Count = int(count)

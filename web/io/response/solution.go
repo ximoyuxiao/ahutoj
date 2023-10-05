@@ -16,13 +16,14 @@ type SoultionsResp struct {
 }
 
 type SolutionResponseElement struct {
-	Data       []SubComment `json:"data,omitempty"`
-	Sid        *int64       `json:"SID,omitempty"`
-	Text       *string      `json:"text,omitempty"`
-	Title      *string      `json:"Title,omitempty"`
-	Uid        *string      `json:"UID,omitempty"`
-	UpdateTime int64        `json:"UpdateTime"`
-	CreateTime int64        `json:"CreateTime"`
+	Data          []SubComment `json:"data,omitempty"`
+	Sid           *int64       `json:"SID,omitempty"`
+	Text          *string      `json:"text,omitempty"`
+	Title         *string      `json:"Title,omitempty"`
+	Uid           *string      `json:"UID,omitempty"`
+	FavoriteCount *int64       `json:"FavoriteCount,omitempty"`
+	UpdateTime    int64        `json:"UpdateTime"`
+	CreateTime    int64        `json:"CreateTime"`
 }
 type SolutionEditResp struct {
 	Title string `gorm:"column:Title"`
