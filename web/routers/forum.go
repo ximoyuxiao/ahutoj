@@ -43,9 +43,9 @@ func regeisterForumRouters(router *gin.Engine) {
 		forumGroup := apiRouter.Group("/solution")
 		forumGroup.GET("/:id", controller.GetSolution)
 		forumGroup.GET("/solutions", controller.GetSoulutions)
-		forumGroup.POST("/", controller.AddSoulution)
-		forumGroup.PUT("/:id", controller.EditSoulution)
-		forumGroup.DELETE("/:id", controller.DeleteSolution)
+		forumGroup.POST("/", controller.SolutionOperator)
+		forumGroup.PUT("/:id", controller.SolutionOperator)
+		forumGroup.DELETE("/:id", controller.SolutionOperator)
 		// 2. 点赞
 		favoriteGropu := apiRouter.Group("/favorite")
 		favoriteGropu.GET("/:id", controller.GetFaviroate)

@@ -7,6 +7,7 @@ import (
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
 	"ahutoj/web/utils"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/pkg/errors"
@@ -111,9 +112,8 @@ func GetSolutiontList(ctx *gin.Context, req *request.SolutionListReq) (response.
 	if err := db.Where("PID = ?", req.PID).Find(&solutions).Error; err != nil {
 		return refsolutions, err
 	}
-	for _, solution := range solutions {
-		refsolutions.SolutionList = append(refsolutions.SolutionList, solution)
-	}
+	refsolutions.Response = response.CreateResponse(constanct.SuccessCode)
+	refsolutions.SolutionList = append(refsolutions.SolutionList, solutions...)
 	//没错误，返回
 	return refsolutions, nil
 }

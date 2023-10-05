@@ -12,3 +12,15 @@ type SolutionReq struct {
 type SolutionListReq struct {
 	PID string `json:"PID"` // 题目ID
 }
+
+type GetSolutionReq struct {
+	SID int `json:"SID"`
+}
+
+type GetSolutionListReq struct {
+	PID string `json:"PID"`
+	UID string `json:"UID"`
+}
+
+type EditSolutionReq SolutionReq
+type CreateSolutionReq SolutionReq
