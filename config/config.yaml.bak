@@ -24,6 +24,9 @@ oss:
     host: "127.0.0.1"
     port: 4379
     basepath: "./resource/"
+forum:
+    host: "127.0.0.1"
+    port: 4498
 mysql:  
     driver: "mysql"
     host: "127.0.0.1"

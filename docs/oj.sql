@@ -179,6 +179,43 @@ CREATE TABLE Notice (
   UpdateTime long NOT NULL comment '更新时间',
   IsDelete int(1) comment '删除标志'
 )DEFAULT CHARSET=utf8mb4;
+
+create table Comment
+(
+    CID INT NOT NULL AUTO_INCREMENT PRIMARY KEY comment '评论ID',
+    SID INT comment '题解ID',
+    UID varchar(20) comment '提交用户ID',
+    FCID INT comment '上层评论ID',
+    Text Text NOT NULL comment '评论内容',
+    CreateTime long NOT NULL comment '创建时间',
+    UpdateTime long NOT NULL comment '更新时间',
+    IsDelete int(1) comment '删除标志'
+)DEFAULT CHARSET=utf8mb4;
+
+create table Solution
+(
+    SID INT NOT NULL AUTO_INCREMENT PRIMARY KEY comment '题解ID',
+    PID varchar(40) comment '题目ID',
+    UID varchar(20) comment '提交用户ID',
+    Text TEXT NOT NULL comment '评论内容',
+    Title TEXT NOT NULL comment '题目标题',
+    CreateTime long NOT NULL comment '创建时间',
+    UpdateTime long NOT NULL comment '更新时间',
+    IsDelete int(1) comment '删除标志'
+)DEFAULT CHARSET=utf8mb4;
+
+
+create table Favorite
+(
+    SID INT comment '题解ID',
+    UID varchar(20) comment '提交用户ID',
+    constraint fk_favorite_PIDs FOREIGN KEY (SID)
+    references Solution(SID) ON UPDATE CASCADE ON DELETE CASCADE,
+
+    constraint fk_favorite_UIDs FOREIGN KEY (UID)
+    references User(UID) ON UPDATE CASCADE ON DELETE CASCADE
+)DEFAULT CHARSET=utf8mb4;
+
 #5.添加数据
 insert into User values('199094212','admin','',)
 insert into Permission values('admin','Y','Y','Y','Y','Y');
