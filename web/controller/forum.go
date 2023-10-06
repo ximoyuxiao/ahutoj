@@ -6,6 +6,7 @@ import (
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/request"
 	"ahutoj/web/io/response"
+	"ahutoj/web/middlewares"
 	"ahutoj/web/utils"
 	"strconv"
 
@@ -27,14 +28,16 @@ func GetSolution(ctx *gin.Context) {
 	db := mysqldao.GetDB(ctx)
 	var solution dao.Solution
 	err = db.Where(req.SID).Find(&solution).Error
+	UID := middlewares.GetUid(ctx)
 	resp := response.SoultionResp{
 		Response: response.CreateResponse(constanct.SuccessCode),
 		SolutionList: response.SolutionResponseElement{
-			Data:  GetSubCommentList(ctx, int64(req.SID)),
-			Sid:   &solution.SID,
-			Text:  &solution.Text,
-			Title: &solution.Title,
-			Uid:   &solution.UID,
+			Data:       GetSubCommentList(ctx, int64(req.SID)),
+			Sid:        &solution.SID,
+			Text:       &solution.Text,
+			Title:      &solution.Title,
+			Uid:        &solution.UID,
+			IsFavorite: MyFavorite(ctx, int(req.SID), UID),
 		},
 	}
 	if err != nil {
@@ -55,7 +58,7 @@ func GetSoulutions(ctx *gin.Context) {
 	}
 	resp, err := GetSolutiontList(ctx, req)
 	if err != nil {
-		logger.Errorf("call AddPermission failed,req=%+v, err=%s", *req, err.Error())
+		logger.Errorf("call GetSoulutions failed,req=%+v, err=%s", *req, err.Error())
 		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}

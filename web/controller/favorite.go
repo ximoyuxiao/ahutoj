@@ -17,45 +17,43 @@ import (
 	"gorm.io/gorm"
 )
 
+func MyFavorite(ctx *gin.Context, SID int, UID string) bool {
+	if UID == "" {
+		return false
+	}
+	db := mysqldao.GetDB(ctx)
+	var count int64
+	db.Model(dao.Favorite{}).Where("SID = ? and UID = ?", SID, UID).Count(&count)
+	return count > 0
+}
 func Favorite(ctx *gin.Context, req *request.FavoriteReq) error {
 	db := mysqldao.GetDB(ctx)
 	var (
 		favorite dao.Favorite
-		solution dao.Solution
 	)
 	result := db.Where("SID = ? and UID = ?", req.SID, req.UID).First(&favorite)
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		// 查询成功，但没有找到数据
-		err := db.Save(&dao.Favorite{SID: req.SID, UID: req.UID})
+		err := db.Create(&dao.Favorite{SID: req.SID, UID: req.UID})
 		if err != nil {
 			return err.Error
 		}
-		//更新视频的FavoriteCount 获赞计数
-		err = db.Model(&solution).Where("SID = ?", req.SID).Update("FavoriteCount", gorm.Expr("FavoriteCount + ?", 1))
-		if err.Error != nil {
-			return err.Error
-		}
-		return nil
 	} else {
 		return result.Error
 	}
+	return nil
 }
 
 func UnFavorite(ctx *gin.Context, req *request.FavoriteReq) error {
 	db := mysqldao.GetDB(ctx)
 	var (
 		favorite dao.Favorite
-		solution dao.Solution
 	)
-	result := db.Where("SID = ? and UID = ?", req.SID, req.UID).First(&favorite)
+	result := db.Where("SID = ? and UID = ?", req.SID, req.UID).Find(&favorite)
+	fmt.Println(favorite)
 	if result.Error == nil {
 		// 删除
-		err := db.Delete(&favorite).Error
-		if err != nil {
-			return err
-		}
-		//更新视频的FavoriteCount 获赞计数
-		err = db.Model(&solution).Where("SID = ?", req.SID).Update("FavoriteCount", gorm.Expr("FavoriteCount + ?", -1)).Error
+		err := db.Where(favorite).Delete(favorite).Error
 		if err != nil {
 			return err
 		}
@@ -77,6 +75,8 @@ func FavoriteAction(ctx *gin.Context) {
 		return
 	}
 	actionType := req.ActionType
+	resp := response.FavoriteAction{}
+	fmt.Println(actionType)
 	// action_type 1-点赞，2-取消点赞
 	//点赞相关操作
 	if actionType == constanct.ADDCODE {
@@ -88,10 +88,10 @@ func FavoriteAction(ctx *gin.Context) {
 		}
 		//点赞成功 响应
 		logger.Errorf("User %s Favorite Solution %d success. ", req.UID, req.SID)
-		ctx.JSON(http.StatusOK, response.FavoriteAction{
-			StatusCode: 0,
-			StatusMsg:  "successful",
-		})
+		resp.Response = response.CreateResponse(constanct.SuccessCode)
+		resp.Count = int(GetFaviroateCount(ctx, int(req.SID)))
+		resp.IsFavorite = true
+		response.ResponseOK(ctx, resp)
 		return
 	}
 
@@ -106,10 +106,10 @@ func FavoriteAction(ctx *gin.Context) {
 		}
 		//取消点赞成功 响应
 		logger.Errorf("User %s UnFavorite %d success.", req.UID, req.SID)
-		ctx.JSON(http.StatusOK, response.FavoriteAction{
-			StatusCode: 0,
-			StatusMsg:  "successful",
-		})
+		resp.Response = response.CreateResponse(constanct.SuccessCode)
+		resp.IsFavorite = false
+		resp.Count = int(GetFaviroateCount(ctx, int(req.SID)))
+		response.ResponseOK(ctx, resp)
 		return
 	}
 	// 未知的actionType
@@ -118,7 +118,7 @@ func FavoriteAction(ctx *gin.Context) {
 	return
 }
 func favoriteActionRespErr(c *gin.Context, err string) {
-	c.JSON(http.StatusOK, response.FavoriteAction{
+	c.JSON(http.StatusOK, response.Response{
 		StatusCode: 1,
 		StatusMsg:  err,
 	})
@@ -138,12 +138,14 @@ func FavoriteToRedis(ctx *gin.Context, SID int) {
 func GetFavoriteKey(SID int) string {
 	return fmt.Sprintf("Solution_favorite_%v", SID)
 }
+
 func FavoriteGetByRedis(ctx *gin.Context, SID int) int {
 	rdfd := rediscache.GetRedis()
 	var count int
 	rediscache.GetKey(ctx, rdfd, GetFavoriteKey(SID), &count)
 	return count
 }
+
 func FavoriteAddToRedis(ctx *gin.Context, SID int) {
 	count := FavoriteGetByRedis(ctx, SID)
 	rdfd := rediscache.GetRedis()
@@ -154,4 +156,14 @@ func FavoriteSubToRedis(ctx *gin.Context, SID int) {
 	count := FavoriteGetByRedis(ctx, SID)
 	rdfd := rediscache.GetRedis()
 	rediscache.SetKey(ctx, rdfd, GetFavoriteKey(SID), count-1)
+}
+
+func GetFaviroateCount(ctx *gin.Context, SID int) int64 {
+	db := mysqldao.GetDB(ctx)
+	var count int64
+	err := db.Model(dao.Favorite{}).Where("SID = ?", SID).Count(&count).Error
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	return count
 }

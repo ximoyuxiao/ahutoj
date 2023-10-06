@@ -1,3 +1,7 @@
 package response
 
-type FavoriteAction Response
+type FavoriteAction struct {
+	Response
+	IsFavorite bool `json:"IsFavorite"`
+	Count      int  `json:"Count"`
+}

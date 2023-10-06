@@ -22,6 +22,7 @@ type SolutionResponseElement struct {
 	Title         *string      `json:"Title,omitempty"`
 	Uid           *string      `json:"UID,omitempty"`
 	FavoriteCount *int64       `json:"FavoriteCount,omitempty"`
+	IsFavorite    bool         `json:"isFavorite"`
 	UpdateTime    int64        `json:"UpdateTime"`
 	CreateTime    int64        `json:"CreateTime"`
 }

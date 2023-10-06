@@ -212,7 +212,6 @@ func (p Comment) TableName() string {
 }
 
 type Favorite struct {
-	ID  int64  `gorm:"column:ID"`
 	UID string `gorm:"column:UID;index"`
 	SID int64  `gorm:"column:SID;index"`
 }

@@ -199,7 +199,6 @@ create table Solution
     UID varchar(20) comment '提交用户ID',
     Text TEXT NOT NULL comment '评论内容',
     Title TEXT NOT NULL comment '题目标题',
-    FavoriteCount INT  comment '点赞数量'
     CreateTime long NOT NULL comment '创建时间',
     UpdateTime long NOT NULL comment '更新时间',
     IsDelete int(1) comment '删除标志'
@@ -208,9 +207,13 @@ create table Solution
 
 create table Favorite
 (
-    ID   INT NOT NULL AUTO_INCREMENT PRIMARY KEY comment '点赞ID',
     SID INT comment '题解ID',
     UID varchar(20) comment '提交用户ID',
+    constraint fk_favorite_PIDs FOREIGN KEY (SID)
+    references Solution(SID) ON UPDATE CASCADE ON DELETE CASCADE,
+
+    constraint fk_favorite_UIDs FOREIGN KEY (UID)
+    references User(UID) ON UPDATE CASCADE ON DELETE CASCADE
 )DEFAULT CHARSET=utf8mb4;
 
 #5.添加数据

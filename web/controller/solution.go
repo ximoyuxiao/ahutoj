@@ -99,15 +99,17 @@ func GetSolutiontList(ctx *gin.Context, req *request.GetSolutionListReq) (*respo
 	db := mysqldao.GetDB(ctx)
 	var solutions []dao.Solution
 	var refsolutions response.SoultionsResp
+	refsolutions.SolutionList = make([]response.SolutionResponseElement, 0)
 	offset, limit := utils.GetPageInfo(req.Page, req.Limit)
 	if err := db.Where("PID = ? and isDelete = ?", req.PID, 0).Offset(offset).Limit(limit).Find(&solutions).Error; err != nil {
-		return &refsolutions, err
+		return &refsolutions, nil
 	}
 	var count int64
-	if err := db.Model(solutions[0]).Where("PID = ? and isDelete = ?", req.PID, 0).Count(&count).Error; err != nil {
+	if err := db.Model(dao.Solution{}).Where("PID = ? and isDelete = ?", req.PID, 0).Count(&count).Error; err != nil {
 		return &refsolutions, err
 	}
 	refsolutions.Response = response.CreateResponse(constanct.SuccessCode)
+	UID := middlewares.GetUid(ctx)
 	// 先按 FavoriteCount 降序排序，如果相同再按 UpdateTime 降序序排序
 	sort.Slice(solutions, func(i, j int) bool {
 		if solutions[i].FavoriteCount == solutions[j].FavoriteCount {
@@ -115,9 +117,9 @@ func GetSolutiontList(ctx *gin.Context, req *request.GetSolutionListReq) (*respo
 		}
 		return solutions[i].FavoriteCount > solutions[j].FavoriteCount
 	})
-
 	for idx := range solutions {
 		item := solutions[idx]
+		count := GetFaviroateCount(ctx, int(item.SID))
 		refsolutions.SolutionList = append(refsolutions.SolutionList, response.SolutionResponseElement{
 			Data: GetSubCommentList(ctx, item.SID),
 			//todo:将一个题解的所有评论加入
@@ -127,7 +129,8 @@ func GetSolutiontList(ctx *gin.Context, req *request.GetSolutionListReq) (*respo
 			Uid:           &item.UID,
 			CreateTime:    item.CreateTime,
 			UpdateTime:    item.UpdateTime,
-			FavoriteCount: &item.FavoriteCount,
+			FavoriteCount: &count,
+			IsFavorite:    MyFavorite(ctx, int(item.SID), UID),
 		})
 	}
 	refsolutions.Count = int(count)
