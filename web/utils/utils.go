@@ -43,7 +43,7 @@ func Sdump(value ...interface{}) string {
 
 func GetPageInfo(page, limit int) (int, int) {
 	retSize := constanct.GetDefaultLimit()
-	if limit > retSize {
+	if limit != 0 {
 		retSize = limit
 	}
 	offset := constanct.GetDefaultOffset()

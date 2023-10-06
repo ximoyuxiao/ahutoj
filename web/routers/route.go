@@ -76,7 +76,7 @@ func regeisterRouters(router *gin.Engine) {
 			adminRouter.GET("/permission/:id", controller.GetPermission)
 			adminRouter.POST("/users/Range", controller.AddUsersRange)
 			adminRouter.POST("/users", controller.AddUsers)
-			adminRouter.POST("/user/edit/password/", controller.AdminChangePassWord)
+			adminRouter.POST("/user/edit/password/", controller.EditUserPass)
 
 		}
 

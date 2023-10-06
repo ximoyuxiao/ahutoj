@@ -5,7 +5,7 @@ TARGETBINPATH=${TARGETPATH}/bin
 COREPATH=./core/
 SERVICETARGET=./web/service/
 INSTALLPATH=/usr/bin/ahutoj/
-BUILDBINS=ahutoj originJudge originproblem persistence useranalytics gatway oss
+BUILDBINS=ahutoj originJudge originproblem persistence useranalytics gatway oss forum
 
 all:init build
 
