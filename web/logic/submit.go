@@ -29,7 +29,6 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 		OriginPID:     "",
 		OJPlatform:    -1,
 	}
-
 	if models.EqualLastSource(ctx, req.UID, req.PID, submit.Source) {
 		return response.CreateResponseStr(constanct.SUBMIT_ADD_DUPLICATECODE, "禁止频繁重复提交代码", response.WARNING), nil
 	}

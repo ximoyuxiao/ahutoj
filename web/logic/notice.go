@@ -67,6 +67,9 @@ func CreateNotice(ctx *gin.Context, req *request.CreateNoticeReq) (interface{}, 
 		UpdateTime: 0,
 		IsDelete:   false,
 	}
+	if models.NoticeEqualLastSource(ctx, req.Title, req.Content) {
+		return response.CreateResponseStr(constanct.NOTICE_GETNOTICE_FAILED, "禁止频繁发送重复公告", response.WARNING), nil
+	}
 	err := models.CreateNotice(ctx, notice)
 	if err != nil {
 		return nil, err

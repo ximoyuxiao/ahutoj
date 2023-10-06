@@ -189,6 +189,7 @@ const (
 const (
 	NOTICE_GETNOTICE_FAILED       ResCode = 190101
 	NOTICE_GETNOTICE_NOTEXISTCODE ResCode = 190102
+	NOTICE_ADD_DUPLICATECODE      ResCode = 190103
 )
 
 var codeMsgMap = map[ResCode]string{
@@ -277,6 +278,7 @@ var codeMsgMap = map[ResCode]string{
 	PROBLEM_DOWNLOADPROBLE_PIDNoteExistCode: "题目不存在",
 	NOTICE_GETNOTICE_FAILED:                 "获取公告信息失败",
 	NOTICE_GETNOTICE_NOTEXISTCODE:           "这个公告被删除或者不存在",
+	NOTICE_ADD_DUPLICATECODE:                "发送重复公告",
 }
 var HttpCodeMap = map[ResCode]int{
 	SuccessCode:        http.StatusOK,
