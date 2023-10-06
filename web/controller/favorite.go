@@ -1,6 +1,7 @@
 package controller
 
 import (
+	rediscache "ahutoj/web/cache/redis"
 	"ahutoj/web/dao"
 	mysqldao "ahutoj/web/dao/mysqlDao"
 	"ahutoj/web/io/constanct"
@@ -8,10 +9,12 @@ import (
 	"ahutoj/web/io/response"
 	"ahutoj/web/utils"
 	"errors"
+	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"gorm.io/gorm"
-	"net/http"
 )
 
 func Favorite(ctx *gin.Context, req *request.FavoriteReq) error {
@@ -120,4 +123,35 @@ func favoriteActionRespErr(c *gin.Context, err string) {
 		StatusMsg:  err,
 	})
 	return
+}
+
+func FavoriteToRedis(ctx *gin.Context, SID int) {
+	db := mysqldao.GetDB(ctx)
+	var count int64
+	err := db.Model(dao.Favorite{}).Where("SID=?", SID).Count(&count).Error
+	if err != nil {
+
+	}
+	rdfd := rediscache.GetRedis()
+	rediscache.SetKey(ctx, rdfd, fmt.Sprintf("Solution_favorite_%v", SID), count)
+}
+func GetFavoriteKey(SID int) string {
+	return fmt.Sprintf("Solution_favorite_%v", SID)
+}
+func FavoriteGetByRedis(ctx *gin.Context, SID int) int {
+	rdfd := rediscache.GetRedis()
+	var count int
+	rediscache.GetKey(ctx, rdfd, GetFavoriteKey(SID), &count)
+	return count
+}
+func FavoriteAddToRedis(ctx *gin.Context, SID int) {
+	count := FavoriteGetByRedis(ctx, SID)
+	rdfd := rediscache.GetRedis()
+	rediscache.SetKey(ctx, rdfd, GetFavoriteKey(SID), count+1)
+}
+
+func FavoriteSubToRedis(ctx *gin.Context, SID int) {
+	count := FavoriteGetByRedis(ctx, SID)
+	rdfd := rediscache.GetRedis()
+	rediscache.SetKey(ctx, rdfd, GetFavoriteKey(SID), count-1)
 }

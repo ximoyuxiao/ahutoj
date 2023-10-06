@@ -133,6 +133,7 @@ func GetSolutiontList(ctx *gin.Context, req *request.GetSolutionListReq) (*respo
 	//没错误，返回
 	return &refsolutions, nil
 }
+
 func SolutionOperator(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := new(request.SolutionReq)

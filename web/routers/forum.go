@@ -49,7 +49,7 @@ func regeisterForumRouters(router *gin.Engine) {
 		// 2. 点赞
 		favoriteGropu := apiRouter.Group("/favorite").Use(middlewares.JwtVerify)
 		favoriteGropu.GET("/:id", controller.GetFaviroate)
-		favoriteGropu.POST("/", controller.DoFaviroate)
+		favoriteGropu.POST("/", controller.FavoriteAction)
 		// 3. 评论
 		commentGroup := apiRouter.Group("/comment").Use(middlewares.JwtVerify)
 		commentGroup.GET("/:id", controller.GetComment)
