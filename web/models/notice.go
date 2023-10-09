@@ -1,9 +1,13 @@
 package models
 
 import (
+	rediscache "ahutoj/web/cache/redis"
 	"ahutoj/web/dao"
 	mysqldao "ahutoj/web/dao/mysqlDao"
+	"ahutoj/web/utils"
 	"context"
+	"github.com/bytedance/gopkg/util/logger"
+	"github.com/gin-gonic/gin"
 )
 
 func CreateNotice(ctx context.Context, notice dao.Notice) error {
@@ -13,6 +17,24 @@ func CreateNotice(ctx context.Context, notice dao.Notice) error {
 // 删除
 func DeleteNoticeByNID(ctx context.Context, NID int) error {
 	return mysqldao.DeleteNoticeByNID(ctx, NID)
+}
+func NoticeEqualLastSource(ctx *gin.Context, title string, content string) bool {
+	SourceMD5, err := utils.MD5EnCodeStr(title + content)
+	if err != nil {
+		logger.Errorf("call MD5EnCodeStr failed. Source:%s", title+content)
+		return false
+	}
+	rdfd := rediscache.GetRedis()
+	if rdfd == -1 {
+		return false
+	}
+	defer rediscache.CloseRDB(rdfd)
+	err = rediscache.GetKey(ctx, rdfd, SourceMD5, "")
+	if err != nil && err.Error() == rediscache.Nil {
+		return true
+	}
+	rediscache.SetKey2(ctx, rdfd, SourceMD5, "")
+	return false
 }
 
 // 更新

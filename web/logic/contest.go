@@ -134,7 +134,7 @@ func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, erro
 	contest, err := models.GetContestFromDB(ctx, req.CID)
 
 	if err != nil {
-		logger.Errorf("call GetContestFromDB failed, CID=%s, err=%s", req.CID, err.Error())
+		logger.Errorf("call GetContestFromDB failed, CID=%d, err=%s", req.CID, err.Error())
 		return response.CreateResponse(constanct.CONTEST_GET_FAILED), err
 	}
 	if contest.CID != req.CID {
@@ -158,7 +158,7 @@ func GetContest(ctx *gin.Context, req *request.GetContestReq) (interface{}, erro
 	}
 	conPros, err := models.GetConProblemFromDB(ctx, contest)
 	if err != nil {
-		logger.Errorf("call GetConProblemFromDB failed, CID=%s, err=%s", req.CID, err.Error())
+		logger.Errorf("call GetConProblemFromDB failed, CID=%d, err=%s", req.CID, err.Error())
 		return response.CreateResponse(constanct.CONTEST_GET_FAILED), err
 	}
 	respData := make([]response.ConProItem, 0)

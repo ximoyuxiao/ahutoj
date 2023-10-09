@@ -14,13 +14,19 @@ dataPath: "./resource/Data/"
 #封榜时间
 terminal: 0.8  
 # 图片存放路径
-imagePath: "./resource/image/"
-headPath: "./resource/image/head/"
-spjPath: "./resource/spj/"
+imagePath: "http://127.0.01:4379/image"
+headPath:  "http://127.0.01:4379/image/head/"
+spjPath:   "http://127.0.01:4379/spj/"
 # 是否开放注册
 openRegisiters: true
 # 外部判题相关配置
-
+oss:
+    host: "127.0.0.1"
+    port: 4379
+    basepath: "./resource/"
+forum:
+    host: "127.0.0.1"
+    port: 4498
 mysql:  
     driver: "mysql"
     host: "127.0.0.1"

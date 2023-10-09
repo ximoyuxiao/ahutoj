@@ -5,7 +5,7 @@ TARGETBINPATH=${TARGETPATH}/bin
 COREPATH=./core/
 SERVICETARGET=./web/service/
 INSTALLPATH=/usr/bin/ahutoj/
-BUILDBINS=ahutoj originJudge originproblem persistence useranalytics 
+BUILDBINS=ahutoj originJudge originproblem persistence useranalytics gatway oss forum
 
 all:init build
 
@@ -16,6 +16,8 @@ judged:
 	cd ${COREPATH} && make
 	cd ..
 	mv ${COREPATH}judged ${TARGETBINPATH}/judged
+	cd ..
+#	mv ${COREPATH}judged ${TARGETBINPATH}/judged
 
 $(foreach BIN,$(BUILDBINS),$(eval $(BIN): $(BIN).go))
 

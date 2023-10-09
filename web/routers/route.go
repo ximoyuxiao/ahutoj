@@ -34,7 +34,7 @@ func InitServer() {
 		pprof.Register(router)
 	}
 
-	InitRouters(router)
+	InitRouters(router, conf.Host+conf.Port)
 	// 404
 	router.NoRoute(NotFindRegister)
 
@@ -76,7 +76,7 @@ func regeisterRouters(router *gin.Engine) {
 			adminRouter.GET("/permission/:id", controller.GetPermission)
 			adminRouter.POST("/users/Range", controller.AddUsersRange)
 			adminRouter.POST("/users", controller.AddUsers)
-			adminRouter.POST("/user/edit/password/", controller.AdminChangePassWord)
+			adminRouter.POST("/user/edit/password/", controller.EditUserPass)
 
 		}
 
@@ -101,6 +101,7 @@ func regeisterRouters(router *gin.Engine) {
 			trainingRouter.GET("/list", controller.GetListTraining)
 			trainingRouter.GET("/:id", controller.GetTraining)
 			trainingRouter.GET("/:id/rank", controller.GetRankTraining)
+			trainingRouter.POST("/clone/", controller.CloneTranining)
 		}
 
 		contestRouter := apiRouter.Group("/contest").Use(middlewares.JwtVerify)
@@ -168,7 +169,7 @@ func serverTime(ctx *gin.Context) {
 	})
 }
 
-func InitRouters(router *gin.Engine) {
+func InitRouters(router *gin.Engine, host string) {
 	conf := utils.GetConfInstance()
 	for _, router := range router.Routes() {
 		url := router.Path
@@ -176,7 +177,7 @@ func InitRouters(router *gin.Engine) {
 		req := request.AddRouterReq{
 			FromURL:     url,
 			Method:      Method,
-			ToHost:      conf.Host + conf.Port,
+			ToHost:      host,
 			Weight:      10,
 			VerfiyLevel: middlewares.GetVerifyUrl(url),
 		}

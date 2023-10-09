@@ -19,15 +19,18 @@ RabbitMQ::~RabbitMQ() {
         if (conn != nullptr) {
             amqp_destroy_connection(conn);
             conn = nullptr;
+            conn = nullptr;
         }
     }
 }
 
 Producer RabbitMQ::createProducer() {
     return Producer(this);
+    return Producer(this);
 }
 
 Consumer RabbitMQ::createConsumer(std::string queueName) {
+    return Consumer(this, queueName);
     return Consumer(this, queueName);
 }
 

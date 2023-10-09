@@ -13,7 +13,7 @@ run(){
     cd ..
 }
 
-for exec in gateway ahutoj originJudge persistence;
+for exec in gatway ahutoj originJudge persistence oss forum;
 do
     if test -x $i;then
         run $exec

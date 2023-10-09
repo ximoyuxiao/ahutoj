@@ -10,6 +10,19 @@ const (
 	DefaultOffset int = 0
 )
 
+const (
+	ADDCODE    int64 = 1
+	EDITCODE   int64 = 2
+	DELETECODE int64 = 3
+)
+
+type DataType uint8
+
+const (
+	FILE DataType = 0
+	DIR  DataType = 1
+)
+
 func GetDefaultLimit() int {
 	return DefaultLimit
 }
@@ -182,6 +195,15 @@ const (
 const (
 	NOTICE_GETNOTICE_FAILED       ResCode = 190101
 	NOTICE_GETNOTICE_NOTEXISTCODE ResCode = 190102
+	NOTICE_ADD_DUPLICATECODE      ResCode = 190103
+)
+
+/*solution 20*/
+const (
+	SOLUTION_ADD_FAILED    ResCode = 200101
+	SOLUTION_EDIT_FAILED   ResCode = 200201
+	SOLUTION_DELETE_FAILED ResCode = 200301
+	SOLUTION_LIST_FAILED   ResCode = 200401
 )
 
 var codeMsgMap = map[ResCode]string{
@@ -270,11 +292,17 @@ var codeMsgMap = map[ResCode]string{
 	PROBLEM_DOWNLOADPROBLE_PIDNoteExistCode: "题目不存在",
 	NOTICE_GETNOTICE_FAILED:                 "获取公告信息失败",
 	NOTICE_GETNOTICE_NOTEXISTCODE:           "这个公告被删除或者不存在",
+	SOLUTION_ADD_FAILED:                     "添加题解失败",
+	SOLUTION_EDIT_FAILED:                    "编辑题解失败",
+	SOLUTION_DELETE_FAILED:                  "删除题解失败",
+	SOLUTION_LIST_FAILED:		 "获取题解列表失败",
+	NOTICE_ADD_DUPLICATECODE:                "发送重复公告",
 }
 var HttpCodeMap = map[ResCode]int{
 	SuccessCode:        http.StatusOK,
 	InvalidParamCode:   http.StatusBadRequest,
-	ServerErrorCode:    http.StatusServiceUnavailable,
+	ServerErrorCode:    http.StatusBadGateway,
+	ServerBusyCode:     http.StatusServiceUnavailable,
 	PageNotFoundCode:   http.StatusNotFound,
 	NotimplementedCode: http.StatusForbidden,
 }

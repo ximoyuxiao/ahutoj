@@ -27,7 +27,7 @@ typedef enum
     JAVA,
     PYTHON3
 } lanuage;
-#define DATAPATH "../resource/Data/" /*测试样例目录*/
+#define DATAPATH "/home/moyu/vscode/ahutoj/resource/Data/" /*测试样例目录*/
 #define DEC ".des"
 #define LOGPATH "./log"
 #define CONF "./config.conf" /*配置文件目录*/

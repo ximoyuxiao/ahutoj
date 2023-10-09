@@ -64,6 +64,7 @@ func initGatWay(config string) error {
 	err := utils.InitAppConfig(config, &conf)
 	if err != nil {
 		fmt.Println("call InitAppConfig failed")
+		return err
 	}
 	parsejwt.InitJwt(conf.Sign)
 
@@ -103,6 +104,7 @@ func HandleRouter(ctx *gin.Context) {
 	key := strings.ToUpper(ctx.Request.Method) + " " + url
 	Mrouter, ok := PrefixAndRouter[key]
 	if !ok {
+		fmt.Println(utils.Sdump(Mrouter))
 		response.ResponseError(ctx, constanct.PageNotFoundCode)
 		return
 	}

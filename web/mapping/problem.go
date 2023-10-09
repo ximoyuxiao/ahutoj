@@ -278,12 +278,12 @@ func SaveJproblemImage(jproblem *JsonProblem) error {
 		if err != nil {
 			return err
 		}
-		filename := utils.GetConfInstance().ImagePath + utils.GetFileName(image.ImageName, data)
-		err = os.WriteFile(filename, data, 0666)
+		filename := utils.GetFileName(image.ImageName, data)
+		err = os.WriteFile(utils.GetConfInstance().ImagePath+filename, data, 0666)
 		if err != nil {
 			return err
 		}
-		FixProblemURL(image.ImageSrc, filename, jproblem)
+		FixProblemURL(image.ImageSrc, "image/"+filename, jproblem)
 		if err != nil {
 			return err
 		}

@@ -5,13 +5,28 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 )
+
+const nDuration = 5 * 60 * 60 * time.Second
+const nDuration2 = 5 * time.Second
 
 func SetKey(ctx context.Context, rdbfd int, key string, value interface{}) error {
 	rdb := redisPool.rdbs[rdbfd].rdb
 	if rdb != nil {
 		jvalue, _ := json.Marshal(value)
-		cmd := rdb.Set(ctx, key, string(jvalue), 0)
+		cmd := rdb.Set(ctx, key, string(jvalue), nDuration)
+		res, _ := cmd.Result()
+		fmt.Println(res)
+		return cmd.Err()
+	}
+	return errors.New("rdbpool is not exits")
+}
+func SetKey2(ctx context.Context, rdbfd int, key string, value interface{}) error {
+	rdb := redisPool.rdbs[rdbfd].rdb
+	if rdb != nil {
+		jvalue, _ := json.Marshal(value)
+		cmd := rdb.Set(ctx, key, string(jvalue), nDuration2)
 		res, _ := cmd.Result()
 		fmt.Println(res)
 		return cmd.Err()
