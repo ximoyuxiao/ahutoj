@@ -13,7 +13,7 @@ RUN go env -w GOPROXY=goproxy.cn && go mod tidy
 
 COPY --link . .
 
-RUN go build -o ./oj web/service/ahutoj/ahutoj.go
+RUN go build -o ./originproblem web/service/originproblem/originproblem.go
 
 FROM alpine:3.16 as image
 
@@ -22,14 +22,12 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositorie
 
 WORKDIR /app
 
-COPY --link --from=build /build/oj /usr/bin/oj
+COPY --link --from=build /build/originproblem /usr/bin/originproblem
 
 COPY --link ./config/config.yaml.bak /app/config.yaml
 
-RUN chmod +x /usr/bin/oj
+RUN chmod +x /usr/bin/originproblem
 #ENTRYPOINT ["tail", "-f", "/dev/null"]
 
-EXPOSE 4212
-
-ENTRYPOINT ["/usr/bin/oj"]
+ENTRYPOINT ["/usr/bin/originproblem"]
 

@@ -5,12 +5,12 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: deploy/docker/core.Dockerfile
+      dockerfile: ./core.Dockerfile
     volumes:
-      - ${DIR:-.}/judged:/app
+      - ${DIR:-.}/judged/log:/app/log
     environment:
-      TZ:
-      TERM:
+      TZ: Asia/Shanghai
+      TEAM:
     networks:
       - oj
   gateway:
@@ -19,16 +19,16 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: deploy/docker/gateway.Dockerfile
+      dockerfile: ./gateway.Dockerfile
     volumes:
-      - ${DIR:-.}/config.yaml:/app/config.yaml
+      - ./config/config.yaml.bak:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
       - ${DIR:-.}/gateway/log:/app/log
     ports:
       - 4433:4433
     environment:
-      TZ:
-      TERM:
+      TZ: Asia/Shanghai
+      TEAM:
     networks:
       - oj
   origin:
@@ -38,14 +38,14 @@ services:
       - gateway
     build:
       context: .
-      dockerfile: deploy/docker/origin.Dockerfile
+      dockerfile: ./origin.Dockerfile
     volumes:
-      - ${DIR:-.}/config.yaml:/app/config.yaml
+      - ./config/config.yaml.bak:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
       - ${DIR:-.}/origin/log/:/app/log
     environment:
-      TZ:
-      TERM:
+      TZ: Asia/Shanghai
+      TEAM:
     networks:
       - oj
   persistence:
@@ -55,14 +55,14 @@ services:
       - gateway
     build:
       context: .
-      dockerfile: deploy/docker/persistence.Dockerfile
+      dockerfile: ./persistence.Dockerfile
     volumes:
-      - ${DIR:-.}/config.yaml:/app/config.yaml
+      - ./config/config.yaml.bak:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
       - ${DIR:-.}/persistence/log/:/app/log
     environment:
-      TZ:
-      TERM:
+      TZ: Asia/Shanghai
+      TEAM:
     networks:
       - oj
   oj:
@@ -72,14 +72,14 @@ services:
       - gateway
     build:
       context: .
-      dockerfile: deploy/docker/oj.Dockerfile
+      dockerfile: ./oj.Dockerfile
     volumes:
-      - ${DIR:-.}/config.yaml:/app/config.yaml
+      - ./config/config.yaml.bak:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
       - ${DIR:-.}/oj/log:/app/log
     environment:
-      TZ:
-      TERM:
+      TZ: Asia/Shanghai
+      TEAM:
     networks:
       - oj
   problem:
@@ -89,35 +89,99 @@ services:
       - gateway
     build:
       context: .
-      dockerfile: deploy/docker/problem.Dockerfile
+      dockerfile: ./problem.Dockerfile
     volumes:
-      - ${DIR:-.}/config.yaml:/app/config.yaml
+      - ./config/config.yaml.bak:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
       - ${DIR:-.}/problem/log:/app/log
     environment:
-      TZ:
-      TERM:
+      TZ: Asia/Shanghai
+      TEAM:
     networks:
       - oj
-  user:
-    image: oj/user:local
-    restart: always
-    depends_on:
-      - gateway
-    build:
-      context: .
-      dockerfile: deploy/docker/user.Dockerfile
-    volumes:
-      - ${DIR:-.}/config.yaml:/app/config.yaml
-      - ${DIR:-.}/resource:/app/resource
-      - ${DIR:-.}/user/log:/app/log
+  #user:
+    #image: oj/user:local
+    #restart: always
+    #depends_on:
+      #- gateway
+    #build:
+      #context: .
+      #dockerfile: ./user.Dockerfile
+    #volumes:
+     # - ./config/config.yaml.bak:/app/config.yaml
+     # - ${DIR:-.}/resource:/app/resource
+      #- ${DIR:-.}/user/log:/app/log
+    #environment:
+     # TZ: Asia/Shanghai
+      #TERM:
+    #networks:
+     # - oj
+      
+  mysql:
+    image: mysql:8.0.28
+    container_name: mysql
     environment:
-      TZ:
-      TERM:
+      # 时区上海 - Time zone Shanghai (Change if needed)
+     TZ: Asia/Shanghai
+      # root 密码 - root password
+     MYSQL_ROOT_PASSWORD: 123456
+     MYSQL_DATABASE: ahutoj
+     MYSQL_PASSWORD: 123456
+    ports:
+     - 33069:3306
+    volumes:
+       #数据挂载 - Data mounting
+      - ${DIR:-.}/mysql-data:/var/lib/mysql
+      - ${DIR:-.}/mysql-init:/docker-entrypoint-initdb.d
+      # 日志
+    command:
+      # 将mysql8.0默认密码策略 修改为 原先 策略 (mysql8.0对其默认策略做了更改 会导致密码无法匹配) 
+      # Modify the Mysql 8.0 default password strategy to the original strategy (MySQL8.0 to change its default strategy will cause the password to be unable to match)
+     --default-authentication-plugin=mysql_native_password
+     --character-set-server=utf8mb4
+     --collation-server=utf8mb4_general_ci
+     --explicit_defaults_for_timestamp=true
+     --lower_case_table_names=1
+    privileged: true
+    restart: always
     networks:
       - oj
+
+  #redis容器 - Redis container
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - 36379:6379
+    environment:
+      # 时区上海 - Time zone Shanghai (Change if needed)
+      TZ: Asia/Shanghai
+      TEAM:
+    volumes:
+      # 数据文件 - data files
+      - ${DIR:-.}/redis-data:/data:rw
+    command: "redis-server --requirepass 2019ahut  --appendonly yes"
+    privileged: true
+    restart: always
+    networks:
+      - oj
+  rabbitmq:  
+    container_name: rabbitmq
+    ports:
+      - 35672:5672
+    restart: always
+    volumes:
+      - ${DIR:-.}/rabbitmq-data/log:/var/log/rabbitmq/log
+      - ${DIR:-.}/rabbitmq-data:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=ahutoj
+      - RABBITMQ_DEFAULT_PASS=123456
+    image: rabbitmq
+    networks:
+      - oj
+      
 networks:
   oj:
     driver: bridge
     name: local
-    external: true
+    #external: true

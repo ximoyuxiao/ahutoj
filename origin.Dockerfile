@@ -9,9 +9,12 @@ WORKDIR /build
 
 COPY --link ./go.* .
 
-RUN go env -w GOPROXY=goproxy.cn && go mod tidyCOPY --link . .
+RUN go env -w GOPROXY=goproxy.cn && go mod tidy
 
-RUN go build -o ./persistence web/service/persistence/persistence.go
+COPY --link . .
+
+RUN go build -o ./originJudge web/service/originJudge/originJudge.go
+
 
 FROM alpine:3.16 as image
 
@@ -20,12 +23,12 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositorie
 
 WORKDIR /app
 
-COPY --link --from=build /build/persistence /usr/bin/persistence
+COPY --link --from=build /build/originJudge /usr/bin/originJudge
 
 COPY --link ./config/config.yaml.bak /app/config.yaml
 
-RUN chmod +x /usr/bin/persistence
+RUN chmod +x /usr/bin/originJudge
 #ENTRYPOINT ["tail", "-f", "/dev/null"]
 
-ENTRYPOINT ["/usr/bin/persistence"]
+ENTRYPOINT ["/usr/bin/originJudge"]
 

@@ -26,6 +26,7 @@ int readConfig::trim(char* res,const char* source)
         if(source[i]!=' ')
             res[j++] = source[i];
     }
+    
     res[j] =  '\0';
     return  j;
 }
@@ -43,6 +44,9 @@ int readConfig::readline(char* res,int MAXBUFF,FILE *cnf){
         int len = strlen(res);
         if(res[len-1] == '\n')
             res[len-1] = '\0';
+        if (len >= 2 && res[len -2] == '\r'){
+            res[len-2] = '\0';
+        }
         return len - 1;
     }
     return -1;

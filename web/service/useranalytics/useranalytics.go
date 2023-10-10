@@ -16,7 +16,9 @@ func main() {
 		configPath = os.Args[1]
 	}
 	err := initUserAnalytics(configPath)
-	panic(err)
+	if err != nil {
+		panic("load faild")
+	}
 }
 
 func initUserAnalytics(configPath string) error {
@@ -24,8 +26,13 @@ func initUserAnalytics(configPath string) error {
 	if err != nil {
 		return fmt.Errorf("call InitAppConfig failed")
 	}
-	mysqldao.InitMysql(nil)
 
+	err = mysqldao.InitMysql(nil)
+	logger := utils.GetLogInstance()
+	if err != nil {
+		logger.Errorf("init mysql error mysqlConf:%+v, err=%s", utils.Sdump(utils.GetConfInstance().MySQLConfig), err.Error())
+		os.Exit(1)
+	}
 	go GetInnerInfo()
 	go GetOriginInfo()
 	InitServer()
@@ -42,5 +49,4 @@ func GetOriginInfo() {
 }
 
 func InitServer() {
-
 }

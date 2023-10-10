@@ -1,5 +1,5 @@
 # 端口号
-host: "127.0.0.1"
+host: "gateway"
 gatWayHost: "http://oj-gateway:4433/"
 port: ":4212"
 mode: "debug"
@@ -29,14 +29,14 @@ forum:
     port: 4498
 mysql:  
     driver: "mysql"
-    host: "127.0.0.1"
+    host: "mysql"
     port: 3306
-    username: "AHUTOnlinejudge"
+    username: "root"
     dbname: "ahutoj"
     password: "123456"
 
 redis:
-    host: "localhost"
+    host: "redis"
     port: ":6379"
     db: 0
     pool_size: 100
@@ -76,13 +76,13 @@ useranalytics:
     port: ":4435"
     mysql:  
         driver: "mysql"
-        host: "127.0.0.1"
+        host: "mysql"
         port: 3306
-        username: "AHUTOnlinejudge"
+        username: "root"
         dbname: "ahutoj"
         password: "123456"
 rabbitmq:
-    host: "127.0.0.1"
+    host: "rabbitmq"
     port: 5672
     username: "ahutoj"
     password: "123456"

@@ -10,9 +10,11 @@ RUN --mount=type=cache,target=/var/cache/apk \
 
 WORKDIR /build
 
-COPY --link ../../core .
+COPY  --link ./core .
 
-RUN make all
+#COPY --link ./go/* .
+
+RUN make judged
 
 FROM alpine:3.16 as image
 
@@ -23,12 +25,12 @@ RUN --mount=type=cache,target=/var/cache/apk \
 
 WORKDIR /app
 
-COPY --link --from=build /build/judged /usr/bin/judged
+COPY --from=build /build/judged /app/judged
+COPY ./core/config.conf /app/config.conf
+#COPY --link ./config/config.conf /app/config.conf
 
-COPY --link ../../core/config.conf /app/config.conf
+RUN chmod +x /app/judged
+# ENTRYPOINT ["tail", "-f", "/dev/null"]
 
-RUN chmod +x /usr/bin/judged
-#ENTRYPOINT ["tail", "-f", "/dev/null"]
-
-ENTRYPOINT ["/usr/bin/judged"]
+ENTRYPOINT ["/app/judged"]
 
