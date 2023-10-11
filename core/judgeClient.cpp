@@ -436,7 +436,10 @@ bool judgeClient::judge()
             }          
             case J_GETFILE:{
                 ILOG("J_GETFILE");
-                getFiles();
+                if (!getFiles()) {
+                    Jstat = J_FAILED;
+                    solve->Sres(OJ_FAILED);
+                }// 默认不会失败
                 Jstat = J_COMPILE;
                 break;
             }
