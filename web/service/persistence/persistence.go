@@ -75,6 +75,7 @@ func DealSubmit() {
 func CEinfoToDataBase(ctx context.Context, ceinfo *dao.CeInfo) error {
 	logger := utils.GetLogInstance()
 	err := mysqldao.InsertCeInfo(ctx, *ceinfo)
+	logger.Infof(utils.Sdump(ceinfo))
 	if err != nil {
 		logger.Errorf("call InsertCEinfo failed,ceinfo=%v, err=%v", utils.Sdump(ceinfo), err.Error())
 	}

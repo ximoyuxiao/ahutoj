@@ -213,7 +213,7 @@ void Solution::commitSolveToQueue(Solve* solve){
     if(solve->Sres() == OJ_CE){
         solve->to_ceJson(j);
         data = j.dump();
-        pro.sendMessage(JUDGERESULT,(void*)data.c_str(),data.size());
+        pro.sendMessage(JUDGECE,(void*)data.c_str(),data.size());
     }
 }
 

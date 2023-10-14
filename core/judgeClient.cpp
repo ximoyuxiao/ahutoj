@@ -76,6 +76,8 @@ bool judgeClient::compile()
             ceinfo += buff;
             memset(buff,0,sizeof(buff));
         }
+        close(fd);
+        DLOG("SID:%d,CEINFO:%s",solve->Sid(),ceinfo.c_str());
         this->solve->ceInfo(ceinfo);
         return false;
     }
