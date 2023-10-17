@@ -111,12 +111,7 @@ func GetSolutiontList(ctx *gin.Context, req *request.GetSolutionListReq) (*respo
 	refsolutions.Response = response.CreateResponse(constanct.SuccessCode)
 	UID := middlewares.GetUid(ctx)
 	// 先按 FavoriteCount 降序排序，如果相同再按 UpdateTime 降序序排序
-	sort.Slice(solutions, func(i, j int) bool {
-		if solutions[i].FavoriteCount == solutions[j].FavoriteCount {
-			return solutions[i].UpdateTime > solutions[j].UpdateTime
-		}
-		return solutions[i].FavoriteCount > solutions[j].FavoriteCount
-	})
+
 	for idx := range solutions {
 		item := solutions[idx]
 		count := GetFaviroateCount(ctx, int(item.SID))
@@ -133,6 +128,12 @@ func GetSolutiontList(ctx *gin.Context, req *request.GetSolutionListReq) (*respo
 			IsFavorite:    MyFavorite(ctx, int(item.SID), UID),
 		})
 	}
+	sort.Slice(refsolutions.SolutionList, func(i, j int) bool {
+		if refsolutions.SolutionList[i].FavoriteCount == refsolutions.SolutionList[j].FavoriteCount {
+			return solutions[i].UpdateTime > solutions[j].UpdateTime
+		}
+		return *refsolutions.SolutionList[i].FavoriteCount > *refsolutions.SolutionList[j].FavoriteCount
+	})
 	refsolutions.Count = int(count)
 	//没错误，返回
 	return &refsolutions, nil

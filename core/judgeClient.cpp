@@ -76,6 +76,8 @@ bool judgeClient::compile()
             ceinfo += buff;
             memset(buff,0,sizeof(buff));
         }
+        close(fd);
+        DLOG("SID:%d,CEINFO:%s",solve->Sid(),ceinfo.c_str());
         this->solve->ceInfo(ceinfo);
         return false;
     }
@@ -436,7 +438,10 @@ bool judgeClient::judge()
             }          
             case J_GETFILE:{
                 ILOG("J_GETFILE");
-                getFiles();
+                if (!getFiles()) {
+                    Jstat = J_FAILED;
+                    solve->Sres(OJ_FAILED);
+                }// 默认不会失败
                 Jstat = J_COMPILE;
                 break;
             }

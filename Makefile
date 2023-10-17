@@ -15,7 +15,6 @@ init:
 judged:
 	cd ${COREPATH} && make
 	cd ..
-	mv ${COREPATH}judged ${TARGETBINPATH}/judged
 	cd ..
 #	mv ${COREPATH}judged ${TARGETBINPATH}/judged
 
