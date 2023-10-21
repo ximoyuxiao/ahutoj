@@ -6,6 +6,7 @@ import (
 	mysqldao "ahutoj/web/dao/mysqlDao"
 	"ahutoj/web/utils"
 	"context"
+
 	"github.com/bytedance/gopkg/util/logger"
 	"github.com/gin-gonic/gin"
 )
@@ -26,16 +27,16 @@ func NoticeEqualLastSource(ctx *gin.Context, title string, content string) bool 
 	}
 	rdfd := rediscache.GetRedis()
 	if rdfd == -1 {
-		return true
+		return false
 	}
 	defer rediscache.CloseRDB(rdfd)
 	var ret string
-	err = rediscache.GetKey(ctx, rdfd, SourceMD5, ret)
-	if ret != "1" {
-		return true
+	err = rediscache.GetKey(ctx, rdfd, SourceMD5, &ret)
+	if err != nil && err.Error() == rediscache.Nil {
+		rediscache.SetKey2(ctx, rdfd, SourceMD5, "1")
+		return false
 	}
-	rediscache.SetKey2(ctx, rdfd, SourceMD5, "1")
-	return false
+	return true
 }
 
 // 更新
