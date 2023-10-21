@@ -26,14 +26,15 @@ func NoticeEqualLastSource(ctx *gin.Context, title string, content string) bool 
 	}
 	rdfd := rediscache.GetRedis()
 	if rdfd == -1 {
-		return false
-	}
-	defer rediscache.CloseRDB(rdfd)
-	err = rediscache.GetKey(ctx, rdfd, SourceMD5, "")
-	if err != nil && err.Error() == rediscache.Nil {
 		return true
 	}
-	rediscache.SetKey2(ctx, rdfd, SourceMD5, "")
+	defer rediscache.CloseRDB(rdfd)
+	var ret string
+	err = rediscache.GetKey(ctx, rdfd, SourceMD5, ret)
+	if ret != "1" {
+		return true
+	}
+	rediscache.SetKey2(ctx, rdfd, SourceMD5, "1")
 	return false
 }
 
