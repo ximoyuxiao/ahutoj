@@ -4,7 +4,7 @@ import (
 	"context"
 )
 
-func SetLastSource(ctx context.Context, UID string, PID string, Source string) bool {
+func SetLastSource(ctx context.Context, UID string, PID string, SourceMD5 string) bool {
 	rdfd := GetRedis()
 	if rdfd == -1 {
 		return false
@@ -12,7 +12,7 @@ func SetLastSource(ctx context.Context, UID string, PID string, Source string) b
 	defer CloseRDB(rdfd)
 	/*source-PID-UID*/
 	key := "source-" + PID + "-" + UID
-	err := SetKey(ctx, rdfd, key, Source)
+	err := SetKey(ctx, rdfd, key, SourceMD5)
 	if err != nil && err.Error() == Nil {
 		return false
 	}
