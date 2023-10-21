@@ -19,7 +19,7 @@ var (
 	ExpTime time.Duration
 )
 
-// 需要的权限等级
+// 需要的权限等级 RESTFUL API (METHOD,API) --> 权限
 var VerifyMap = map[string]constanct.VerfiyLevel{
 	"/api/auth/logout/":              constanct.CommomUser,
 	"/api/user/edit/":                constanct.CommomUser,
