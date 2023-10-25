@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: ./core.Dockerfile
     volumes:
-      - ${DIR:-.}/judged/log:/app/log
+      - ${DIR:-.}/judged/log/:/app/log
     environment:
       TZ: Asia/Shanghai
       TEAM:
@@ -23,7 +23,7 @@ services:
     volumes:
       - ./config/config.yaml.bak:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
-      - ${DIR:-.}/gateway/log:/app/log
+      - ${DIR:-.}/gateway/log/:/app/log
     ports:
       - 4433:4433
     environment:
@@ -76,7 +76,7 @@ services:
     volumes:
       - ./config/config.yaml.bak:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
-      - ${DIR:-.}/oj/log:/app/log
+      - ${DIR:-.}/oj/log/:/app/log
     environment:
       TZ: Asia/Shanghai
       TEAM:
@@ -93,7 +93,7 @@ services:
     volumes:
       - ./config/config.yaml.bak:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
-      - ${DIR:-.}/problem/log:/app/log
+      - ${DIR:-.}/problem/log/ahutoj.log:/app/ahutoj.log
     environment:
       TZ: Asia/Shanghai
       TEAM:
@@ -179,7 +179,37 @@ services:
     image: rabbitmq
     networks:
       - oj
-      
+  nginx:  
+    container_name: oj-nginx
+    image: oj/nginx:local
+    build:
+      context: .
+      dockerfile: ./nginx.Dockerfile
+    ports:
+      - 8000:80
+    restart: on-failure:3
+    volumes:
+      - ${DIR:-.}/nginx/html/dist:/usr/share/nginx/html
+      - ${DIR:-.}/nginx/logs:/var/log/nginx
+      - ${DIR:-.}/nginx/resource:/home/ubuntu/ahutoj/resource/
+    networks:
+      - oj
+  minio:
+    image: quay.io/minio/minio
+    container_name: halo-minio
+    hostname: "minio"
+    ports:
+      - 9000:9000 # api 端口
+      - 9001:9001 # 控制台端口
+    environment:
+      MINIO_ROOT_USER: admin    #管理后台用户名
+      MINIO_ROOT_PASSWORD: admin123456 #管理后台密码，最小8个字符
+    volumes:
+      - ${DIR:-.}/oss:/data               #映射当前目录下的data目录至容器内/data目录
+      - ./config:/root/.minio/     #映射配置目录
+    command: server --console-address ':9001' /data  #指定容器中的目录 /data
+    privileged: true
+    restart: on-failure:3
 networks:
   oj:
     driver: bridge

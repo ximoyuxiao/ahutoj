@@ -17,7 +17,6 @@ import (
 
 func InitServer() {
 	conf := utils.GetConfInstance()
-
 	switch conf.Mode {
 	case gin.DebugMode:
 		gin.SetMode(gin.DebugMode)

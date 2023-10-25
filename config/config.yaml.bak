@@ -1,5 +1,5 @@
 # 端口号
-host: "gateway"
+host: "oj"
 gatWayHost: "http://oj-gateway:4433/"
 port: ":4212"
 mode: "debug"
@@ -37,7 +37,7 @@ mysql:
 
 redis:
     host: "redis"
-    port: ":6379"
+    port: "6379"
     db: 0
     pool_size: 100
     keepalive: 30
