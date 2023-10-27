@@ -24,8 +24,6 @@ services:
       - ./config/config.yaml.bak:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
       - ${DIR:-.}/gateway/log/:/app/log
-    ports:
-      - 4433:4433
     environment:
       TZ: Asia/Shanghai
       TEAM:
@@ -82,23 +80,23 @@ services:
       TEAM:
     networks:
       - oj
-  problem:
-    image: oj/oj-problem:local
-    restart: always
-    depends_on:
-      - gateway
-    build:
-      context: .
-      dockerfile: ./problem.Dockerfile
-    volumes:
-      - ./config/config.yaml.bak:/app/config.yaml
-      - ${DIR:-.}/resource:/app/resource
-      - ${DIR:-.}/problem/log/ahutoj.log:/app/ahutoj.log
-    environment:
-      TZ: Asia/Shanghai
-      TEAM:
-    networks:
-      - oj
+#  problem:
+#    image: oj/oj-problem:local
+#    restart: always
+#    depends_on:
+#      - gateway
+#    build:
+#      context: .
+#      dockerfile: ./problem.Dockerfile
+#    volumes:
+#      - ./config/config.yaml.bak:/app/config.yaml
+#      - ${DIR:-.}/resource:/app/resource
+#      - ${DIR:-.}/problem/log/ahutoj.log:/app/ahutoj.log
+#    environment:
+#      TZ: Asia/Shanghai
+#      TEAM:
+#    networks:
+#      - oj
   #user:
     #image: oj/user:local
     #restart: always

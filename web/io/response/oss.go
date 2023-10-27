@@ -1,19 +1,36 @@
 package response
 
-import "ahutoj/web/io/constanct"
+import (
+	"github.com/minio/minio-go/v7"
+)
 
 type GetObjectsResp struct {
-	Response
-	Data FileData `json:"Data"`
+	ObjectInfo []minio.ObjectInfo `json:"ObjectInfo"`
 }
-type FileData struct {
-	Type     constanct.DataType `json:"Type"`
-	FileName string             `json:"Filename"`
-	Data     []FileData         `json:"Data"`
-	Body     []byte             `json:"Body"`
+
+//	type ObjectData struct {
+//		Type     constanct.DataType `json:"Type"`
+//		FileName string             `json:"Filename"`
+//		Data     []FileData         `json:"Data"`
+//		Body     []byte             `json:"Body"`
+//	}
+
+type GetBucketsResp struct {
+	Buckets []minio.BucketInfo `json:"Buckets"`
 }
-type UpObjectResp struct {
-	TargetBucket   string `json:"TargetPath"`
-	TargetFileName string `json:"TargetFileName"`
-	Data           []byte `json:"Data"`
+
+type GetObjectResp struct {
+	ObjectData string `json:"ObjectData"`
+}
+
+type FPutObjectResp struct {
+	UpInfo minio.UploadInfo `json:"ObjectInfo"`
+}
+
+type CreateObjectResp struct {
+	UpInfo minio.UploadInfo `json:"ObjectInfo"`
+}
+
+type GetObjectInfoResp struct {
+	ObjectInfo minio.ObjectInfo `json:"ObjectInfo"`
 }

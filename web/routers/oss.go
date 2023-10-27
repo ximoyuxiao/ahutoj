@@ -48,17 +48,25 @@ func regeisterOSSRouters(router *gin.Engine) {
 
 	apiRouter := router.Group("api")
 	{
-		// 对象存储
-		apiRouter.GET("/object", controller.GetObject)
-		// 获取某个文件夹下面的所有文件
-		apiRouter.GET("/object/files", controller.GetObjects)
-		apiRouter.POST("/object/", controller.CreateObject)
-		apiRouter.PUT("/object/", controller.ModifyObject)
-		apiRouter.DELETE("/object", controller.DeleteObject)
-		apiRouter.HEAD("/object", controller.GetObjectInfo)
-		apiRouter.POST("/object/unzip", controller.UnzipObject)
+		//-----------对象操作--------------
 
-		apiRouter.GET("/buckets", controller.GetBucket)
+		apiRouter.GET("/object", controller.GetObject) //获取base64
+		// 获取某个桶下面的所有文件
+		apiRouter.GET("/object/files", controller.GetObjects)
+		//获取还未上传完成的列表
+		//apiRouter.GET("/object/files", controller.GetUpingObjects)
+		//从本地上传，暂时不需要上传其他来源数据，以后做(
+		//apiRouter.POST("/object/", controller.CreateObject)
+		apiRouter.POST("/object", controller.DeleteObject)
+		apiRouter.GET("/object/", controller.FGetObject)  //下载本地
+		apiRouter.POST("/object/", controller.FPutObject) //本地上传
+		//apiRouter.PUT("/object/", controller.ModifyObject)
+		apiRouter.POST("/object", controller.GetObjectInfo)
+		//apiRouter.POST("/object/unzip", controller.UnzipObject)
+		//-----------桶操作--------------
+		//获得所有桶的名称+创建日期
+		apiRouter.GET("/buckets", controller.GetBuckets)
 		apiRouter.POST("/buckets/", controller.CreateBucket)
+		apiRouter.POST("/buckets/", controller.RemoveBucket)
 	}
 }
