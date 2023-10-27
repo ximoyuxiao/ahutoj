@@ -6,7 +6,7 @@ typora-root-url: img
 ### 环境:
 
 在安装有docker，docker-compose的本地环境
-不会安装的看这里：![docker安装](https://blog.csdn.net/aaahuahua/article/details/122403354)
+不会安装的看这里：[docker安装](https://blog.csdn.net/aaahuahua/article/details/122403354)
 
 ### 在本机中跑起这个项目
 
