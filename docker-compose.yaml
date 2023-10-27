@@ -165,8 +165,6 @@ services:
       - oj
   rabbitmq:  
     container_name: rabbitmq
-    ports:
-      - 35672:5672
     restart: always
     volumes:
       - ${DIR:-.}/rabbitmq-data/log:/var/log/rabbitmq/log

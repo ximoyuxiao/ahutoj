@@ -31,17 +31,10 @@ func GetObject(ctx *gin.Context) {
 }
 func GetObjects(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
-	req := new(request.GetObjectsReq)
-	var err error
-	if err = ctx.ShouldBindWith(req, binding.JSON); err != nil {
-		// 请求参数有误，直接返回响应
-		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
-		response.ResponseError(ctx, constanct.InvalidParamCode)
-		return
-	}
-	resp, err := logic.GetObjects(ctx, req)
+	bucket := ctx.Param("bucket")
+	resp, err := logic.GetObjects(ctx, bucket)
 	if err != nil {
-		logger.Errorf("call GetObjects failed,req=%+v,err=%s", utils.Sdump(req), err.Error())
+		logger.Errorf("call GetObjects failed,req=%+v,err=%s", bucket, err.Error())
 		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}

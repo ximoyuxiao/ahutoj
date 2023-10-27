@@ -59,12 +59,12 @@ import (
 //	}
 //
 // --------------------对象------------------
-func GetObjects(ctx *gin.Context, req *request.GetObjectsReq) (interface{}, error) {
+func GetObjects(ctx *gin.Context, BucketName string) (interface{}, error) {
 	oss := middlewares.GetOss()
 	logger := utils.GetLogInstance()
 	c, cancel := context.WithCancel(ctx.Request.Context())
 	defer cancel() //这里不懂，研究一下
-	objectCh := oss.ListObjects(c, req.BucketName, minio.ListObjectsOptions{})
+	objectCh := oss.ListObjects(c, BucketName, minio.ListObjectsOptions{})
 	var (
 		objects []minio.ObjectInfo
 		err     error
@@ -72,7 +72,7 @@ func GetObjects(ctx *gin.Context, req *request.GetObjectsReq) (interface{}, erro
 	for object := range objectCh {
 		err = object.Err
 		if err != nil {
-			logger.Errorf("call ListObjects failed,param %v,err:%v", req.BucketName, object.Err)
+			logger.Errorf("call ListObjects failed,param %v,err:%v", BucketName, object.Err)
 		}
 		objects = append(objects, object)
 	}
@@ -129,7 +129,6 @@ func DeleteObject(ctx *gin.Context, req *request.DeleteObjectReq) (interface{}, 
 	if err != nil {
 		logger.Errorf("call RemoveObject failed,param bucketname %v objectname %v,err:%v", req.BucketName, req.ObjectName, err)
 	}
-
 	return response.CreateResponse(constanct.SuccessCode), err
 }
 
@@ -191,7 +190,7 @@ func CreateBucket(ctx *gin.Context, req *request.CreateBucketreq) (interface{}, 
 			logger.Errorf(fmt.Sprintf("%v", err))
 		}
 	} else {
-		logger.Info("Successfully created %s\n", req.BucketName)
+		logger.Info("Successfully created ", req.BucketName)
 	}
 	return response.CreateResponse(constanct.SuccessCode), err
 }
