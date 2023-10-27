@@ -19,7 +19,8 @@ services:
     restart: always
     build:
       context: .
-      dockerfile: ./gateway.Dockerfile
+      dockerfile: ./dev.Dockerfile
+      target: gateway
     volumes:
       - ./config/config.yaml.bak:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
@@ -36,7 +37,8 @@ services:
       - gateway
     build:
       context: .
-      dockerfile: ./origin.Dockerfile
+      dockerfile: ./dev.Dockerfile
+      target: origin
     volumes:
       - ./config/config.yaml.bak:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
@@ -53,7 +55,8 @@ services:
       - gateway
     build:
       context: .
-      dockerfile: ./persistence.Dockerfile
+      dockerfile: ./dev.Dockerfile
+      target: persistence
     volumes:
       - ./config/config.yaml.bak:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
@@ -70,7 +73,8 @@ services:
       - gateway
     build:
       context: .
-      dockerfile: ./oj.Dockerfile
+      dockerfile: ./dev.Dockerfile
+      target: oj
     volumes:
       - ./config/config.yaml.bak:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
@@ -80,41 +84,41 @@ services:
       TEAM:
     networks:
       - oj
-#  problem:
-#    image: oj/oj-problem:local
-#    restart: always
-#    depends_on:
-#      - gateway
-#    build:
-#      context: .
-#      dockerfile: ./problem.Dockerfile
-#    volumes:
-#      - ./config/config.yaml.bak:/app/config.yaml
-#      - ${DIR:-.}/resource:/app/resource
-#      - ${DIR:-.}/problem/log/ahutoj.log:/app/ahutoj.log
-#    environment:
-#      TZ: Asia/Shanghai
-#      TEAM:
-#    networks:
-#      - oj
-  #user:
-    #image: oj/user:local
-    #restart: always
-    #depends_on:
-      #- gateway
-    #build:
-      #context: .
-      #dockerfile: ./user.Dockerfile
-    #volumes:
-     # - ./config/config.yaml.bak:/app/config.yaml
-     # - ${DIR:-.}/resource:/app/resource
-      #- ${DIR:-.}/user/log:/app/log
-    #environment:
-     # TZ: Asia/Shanghai
-      #TERM:
-    #networks:
-     # - oj
-      
+        #  problem:
+        #    image: oj/oj-problem:local
+        #    restart: always
+        #    depends_on:
+        #      - gateway
+        #    build:
+        #      context: .
+        #      dockerfile: ./problem.Dockerfile
+        #    volumes:
+        #      - ./config/config.yaml.bak:/app/config.yaml
+        #      - ${DIR:-.}/resource:/app/resource
+        #      - ${DIR:-.}/problem/log/ahutoj.log:/app/ahutoj.log
+        #    environment:
+        #      TZ: Asia/Shanghai
+        #      TEAM:
+        #    networks:
+        #      - oj
+        #user:
+        #image: oj/user:local
+        #restart: always
+        #depends_on:
+        #- gateway
+        #build:
+        #context: .
+        #dockerfile: ./user.Dockerfile
+        #volumes:
+        # - ./config/config.yaml.bak:/app/config.yaml
+        # - ${DIR:-.}/resource:/app/resource
+        #- ${DIR:-.}/user/log:/app/log
+        #environment:
+        # TZ: Asia/Shanghai
+        #TERM:
+        #networks:
+        # - oj
+
   mysql:
     image: mysql:8.0.28
     container_name: mysql
@@ -126,7 +130,7 @@ services:
      MYSQL_DATABASE: ahutoj
      MYSQL_PASSWORD: 123456
     ports:
-     - 33069:3306
+     - "33069:3306"
     volumes:
        #数据挂载 - Data mounting
       - ${DIR:-.}/mysql-data:/var/lib/mysql
@@ -150,7 +154,7 @@ services:
     image: redis
     container_name: redis
     ports:
-      - 36379:6379
+      - "36379:6379"
     environment:
       # 时区上海 - Time zone Shanghai (Change if needed)
       TZ: Asia/Shanghai
@@ -158,7 +162,7 @@ services:
     volumes:
       # 数据文件 - data files
       - ${DIR:-.}/redis-data:/data:rw
-    command: "redis-server --requirepass 2019ahut  --appendonly yes"
+    command: "redis-server --requirepass 2019ahut --appendonly yes"
     privileged: true
     restart: always
     networks:
@@ -175,14 +179,15 @@ services:
     image: rabbitmq
     networks:
       - oj
-  nginx:  
+  nginx:
     container_name: oj-nginx
     image: oj/nginx:local
     build:
       context: .
       dockerfile: ./nginx.Dockerfile
     ports:
-      - 8000:80
+      - "8000:80"
+    privileged: true
     restart: on-failure:3
     volumes:
       - ${DIR:-.}/nginx/html/dist:/usr/share/nginx/html
@@ -195,8 +200,8 @@ services:
     container_name: halo-minio
     hostname: "minio"
     ports:
-      - 9000:9000 # api 端口
-      - 9001:9001 # 控制台端口
+      - "9000:9000" # api 端口
+      - "9001:9001" # 控制台端口
     environment:
       MINIO_ROOT_USER: admin    #管理后台用户名
       MINIO_ROOT_PASSWORD: admin123456 #管理后台密码，最小8个字符
@@ -206,6 +211,26 @@ services:
     command: server --console-address ':9001' /data  #指定容器中的目录 /data
     privileged: true
     restart: on-failure:3
+#  minio:
+#    image: oj/oss:local
+#    container_name: oj-minio
+#    build:
+#      context: .
+#      dockerfile: ./oss.Dockerfile
+#    ports:
+#      - "9000:9000" # api 端口
+#      - "9001:9001" # 控制台端口
+#    environment:
+#      MINIO_ROOT_USER: admin    #管理后台用户名
+#      MINIO_ROOT_PASSWORD: admin123456 #管理后台密码，最小8个字符
+#    volumes:
+#      - ${DIR:-.}/oss:/data               #映射当前目录下的data目录至容器内/data目录
+#      - ./config:/root/.minio/     #映射配置目录
+#    command: server --console-address ':9001' /data  #指定容器中的目录 /data
+#    privileged: true
+#    restart: on-failure:3
+
+
 networks:
   oj:
     driver: bridge

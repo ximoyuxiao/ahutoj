@@ -15,7 +15,6 @@ func BuildFilePathResp(ctx *gin.Context, filepath string) (interface{}, error) {
 	if err != nil {
 		logger.Errorf("call ReadDir faile,filepath=%s err=%s", filepath, err.Error())
 		return response.CreateResponse(constanct.InvalidParamCode), nil
-
 	}
 	resp := response.GetFileListResp{}
 	resp.Data = make([]response.FileItem, 0)

@@ -4,36 +4,43 @@ typora-root-url: img
 
 # AHUT在线判题系统
 ### 环境:
-go 1.18.3
 
-ubuntu18.06
+在安装有docker，docker-compose的本地环境
+不会安装的看这里：![docker安装](https://blog.csdn.net/aaahuahua/article/details/122403354)
+
 ### 在本机中跑起这个项目
-1、执行install.sh (其会自动下载Mysql、redis)，自动执行sql脚本建立数据库表）
 
-2、配置config.yaml文件（具体可以参考config.yaml.bak）
+在ahutoj文件夹加下运行`docker-compose up -d`
 
-3、执行make编译项目
-
-4、执行./run.sh即可运行项目
+如果拉取不成功，可以多拉几次
+国内docker镜像源：
+```
+"registry-mirrors": [
+    "https://registry.docker-cn.com",
+    "https://docker.mirrors.ustc.edu.cn",
+    "https://hubmirror.c.163.com",
+    "http://f1361db2.m.daocloud.io"
+  ]
+```
 
 ### 相关依赖:
+
     C/C++:rabbitMQ\libamqp-dev,hiredis,libmysql
 
     Go:gorm、gin、air
 
 ### 项目结构图
     .
+    ├── dockerfile                  构建本地docker镜像
+    ├── docker-compose              构建多容器运行环境
     ├── config                      配置文件
     ├── core                        内部判题程序
-    ├── deploy                      项目部署
-    │   ├── docker                      docker部署
-    │   └── install                     安装部署
     ├── docs                        各种文档资源
     ├── resource                    静态资源层
     │   ├── Data                           判题数据.in .out
     │   ├── image                          图片资源
     │   ├── spj                            特判
-    ├── tmp                         缓存各种二进制文件和配置文件
+    ├── tmp                         docker持久化卷，容器的log，data在这里
     └── web                         后端web
         ├── cache                          缓存层
         ├── controller                     控制层
