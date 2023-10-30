@@ -5,14 +5,15 @@ typora-root-url: img
 # AHUT在线判题系统
 ### 环境:
 
-在安装有docker，docker-compose的本地环境
+在安装有docker，docker-compose的本地环境\
+*ps*:这是两个东西\
 不会安装的看这里：[docker安装](https://blog.csdn.net/aaahuahua/article/details/122403354)
 
 ### 在本机中跑起这个项目
 
 在ahutoj文件夹加下运行`docker-compose up -d`
 
-如果拉取不成功，可以多拉几次
+如果拉取不成功，可以多拉几次或者添加docker镜像源
 国内docker镜像源：
 ```
 "registry-mirrors": [
@@ -54,6 +55,7 @@ typora-root-url: img
         ├── routers                        路由模块
         ├── service                        各种服务
         └── utils                          各种工具类
+
 ### 项目分层模型
     =====================
     |网关层             |
@@ -69,29 +71,29 @@ typora-root-url: img
 ### 实现模块
 
 #### 用户模块
-    1.用户注册模块 register
-    2.用户登录模块 login
-    3.用户注销模块 exit
-    4.用户管理模块 info
+>1.用户注册模块 register\
+    2.用户登录模块 login\
+    3.用户注销模块 exit\
+    4.用户管理模块 info\
     5.绑定Vjudge账户
 #### 管理员模块
-
-    1.用户权限管理模块 
-    2.题目管理模块
-    3.竞赛管理模块
+>1.用户权限管理模块  
+    2.题目管理模块\
+    3.竞赛管理模块\
     4.获取用户做题情况模块
 #### 题目模块
-    1.题目列表模块
-    2.题目展示模块
+>1.题目列表模块\
+    2.题目展示模块\
     3.用户题单模块
 #### 竞赛系统模块
-    1.添加竞赛模块
-    2.删除竞赛模块
-    3.获取竞赛信息模块
+>1.添加竞赛模块\
+    2.删除竞赛模块\
+    3.获取竞赛信息模块\
     4.修改竞赛模块
 #### 判题系统模块
-    1.内部判题模块     judged  (C++实现)
-    2.第三方判题模块   originJudge(go实现)
+>1.内部判题模块     judged  (C++实现)\
+2.第三方判题模块   originJudge(go实现)
+
 ## 三、数据库及其架构设计
 
 数据库设计

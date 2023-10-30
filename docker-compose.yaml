@@ -188,7 +188,7 @@ services:
     ports:
       - "8000:80"
     privileged: true
-    restart: on-failure:3
+    restart: always
     volumes:
       - ${DIR:-.}/nginx/html/dist:/usr/share/nginx/html
       - ${DIR:-.}/nginx/logs:/var/log/nginx
@@ -210,26 +210,7 @@ services:
       - ./config:/root/.minio/     #映射配置目录
     command: server --console-address ':9001' /data  #指定容器中的目录 /data
     privileged: true
-    restart: on-failure:3
-#  minio:
-#    image: oj/oss:local
-#    container_name: oj-minio
-#    build:
-#      context: .
-#      dockerfile: ./oss.Dockerfile
-#    ports:
-#      - "9000:9000" # api 端口
-#      - "9001:9001" # 控制台端口
-#    environment:
-#      MINIO_ROOT_USER: admin    #管理后台用户名
-#      MINIO_ROOT_PASSWORD: admin123456 #管理后台密码，最小8个字符
-#    volumes:
-#      - ${DIR:-.}/oss:/data               #映射当前目录下的data目录至容器内/data目录
-#      - ./config:/root/.minio/     #映射配置目录
-#    command: server --console-address ':9001' /data  #指定容器中的目录 /data
-#    privileged: true
-#    restart: on-failure:3
-
+    restart: always
 
 networks:
   oj:
