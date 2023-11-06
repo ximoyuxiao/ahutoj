@@ -11,10 +11,11 @@ test
 *.rdb
 push.sh
 test.go
-*.log
 image
 spj
 main
 tmp/*
 !tmp/mysql-init
-!tmp/nginx
+#数据库初始化
+!tmp/nginx/html
+#前端代码

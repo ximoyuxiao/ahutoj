@@ -132,6 +132,7 @@ COPY --link --from=build /build/oss /usr/bin/oss
 COPY --link ./config/config.yaml.bak /app/config.yaml
 
 RUN chmod +x /usr/bin/oss
-#ENTRYPOINT ["tail", "-f", "/dev/null"]
 
-ENTRYPOINT ["/usr/bin/useranalytics"]
+EXPOSE 4466
+
+ENTRYPOINT ["/usr/bin/oss"]
