@@ -143,7 +143,8 @@ type Submit struct {
 	Source        string             `gorm:"column:Source" json:"Source"`
 	Lang          constanct.LANG     `gorm:"column:Lang" json:"Lang"`
 	Result        constanct.OJResult `gorm:"column:ResultACM" json:"ResultACM"`
-	PassSample    uint32             `gorm:"column:PassSample" json:"PassSample"`
+	PassSample    int64              `gorm:"column:PassSample" json:"PassSample"`
+	SampleNmuber  int64              `gorm:"column:SampleNumber" json:"SampleNumber"`
 	Sim           uint8              `gorm:"column:Sim" json:"Sim"`
 	Usetime       int64              `gorm:"column:UseTime" json:"Usetime"`
 	UseMemory     int64              `gorm:"column:UseMemory" json:"UseMemory"`
