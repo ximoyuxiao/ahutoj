@@ -2,7 +2,7 @@
 drop database ahutoj if EXISTS ahutoj;
 create database ahutoj;
 #2.创建用户
-CREATE USER 'AHUTOnlinejudge'@'localhost' IDENTIFIED BY '123456';
+CREATE USER 'AHUTOnlinejudge'@'localhost' IDENTIFIED BY '2019ahut';
 #3.授予用户表空间的权限
 grant all privileges on ahutoj.* to 'AHUTOnlinejudge'@'%';
 #4.创建表
@@ -63,16 +63,19 @@ create table Problem(
 )DEFAULT CHARSET=utf8mb4;
 ALTER TABLE Problem AUTO_INCREMENT = 1000;
 
-CREATE TABLE List (
-  LID int NOT NULL AUTO_INCREMENT,
-  UID varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  Title text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-  StartTime mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-  Description text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-  Problems text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-  FromLID int DEFAULT NULL,
-  PRIMARY KEY (LID) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1009 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+create table List(
+    LID int primary key AUTO_INCREMENT comment '题单ID',
+    FromLID int comment '若是克隆题单,则需要一个来源的克隆题单ID'
+    UID varchar(20) comment '创建用户',
+    Description Text comment '题单描述',
+    Title Text comment '题单标题',
+    StartTime long comment '开始时间',
+    Submited int comment '提交次数'
+    Problems Text comment '题单题目序列',
+    constraint fk_lst_UID FOREIGN KEY (UID)
+    references User(UID) ON UPDATE CASCADE ON DELETE CASCADE
+)DEFAULT CHARSET=utf8mb4;
+ALTER TABLE List AUTO_INCREMENT = 1000;
 
 create table ListProblem(
     LID int comment '题单ID',
@@ -145,8 +148,7 @@ CREATE table Submit(
     Source Text comment '提交代码',
     Lang int comment '提交语言',
     ResultACM varchar(30) comment 'ACM判题结果',
-    PassSample int(11) comment 'WA on',
-    SampleNumber int(11) comment '样例总数',
+    PassSample int(11) comment '分数: 样例通过 / 样例总数 *  100',
     Sim   int(5) comment '相似度检测结果（0 -100）',
     UseTime long comment '使用时间',
     UseMemory long comment '使用内存',
