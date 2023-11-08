@@ -70,6 +70,8 @@ public:
     void setSpjJudge(int spjJudge);
     long long getPassSample();
     void incPassSample();
+    long long getSampleNumber();
+    void setSampleNumber();
 };
 
 #endif
