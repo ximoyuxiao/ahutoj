@@ -147,7 +147,7 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
             wait4(pid,&status,__WNOTHREAD,&ruse); //等待子进程切换内核态（调用系统API或者运行状态变化）
             // DLOG("Watch pid:%d run:%s/main",pid,dir);
             // 这一段也不知道干嘛的
-            if (f irst){
+            if (first){
                 ptrace(PTRACE_SETOPTIONS, pid, NULL, PTRACE_O_TRACESYSGOOD | PTRACE_O_TRACEEXIT
                         |PTRACE_O_EXITKILL|PTRACE_O_TRACECLONE|PTRACE_O_TRACEFORK|PTRACE_O_TRACEVFORK);
             }
