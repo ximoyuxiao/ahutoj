@@ -462,7 +462,7 @@ bool judgeClient::judge()
                 SubRes res  = OJ_AC;
                 char resoutfile[128];
                 sprintf(resoutfile,"%s/ans",dir);
-                this->solve->setSampleNumber = inputFiles.size();
+                this->solve->setSampleNumber(inputFiles.size());
                 for(std::size_t i = 0;i<inputFiles.size();i++){
                     init_syscalls_limits(this->solve->Lang());
                     DLOG("runnning:%s",inputFiles[i].c_str());
@@ -479,7 +479,7 @@ bool judgeClient::judge()
                     system(cmd);
                     solve->setUsetime(max(useTime,solve->getUsetime()));
                     solve->setUseMemory(max(useMemory,solve->getuseMemory()));
-                    this->solve->incPassSample;
+                    this->solve->incPassSample();
                 }
                 if(res != OJ_AC){
                     Jstat = J_FAILED;
