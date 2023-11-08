@@ -149,6 +149,7 @@ CREATE table Submit(
     Lang int comment '提交语言',
     ResultACM varchar(30) comment 'ACM判题结果',
     PassSample int(11) comment '分数: 样例通过 / 样例总数 *  100',
+    SampleNumber int(11) comment '样例总数',
     Sim   int(5) comment '相似度检测结果（0 -100）',
     UseTime long comment '使用时间',
     UseMemory long comment '使用内存',
