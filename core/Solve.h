@@ -15,7 +15,8 @@ private:
     int           CompleteID;     //竞赛ID 
     int           JudgeID;        //判题机ID
     string        source;         //代码
-    long long     PassSample;     //样例通过数
+    long long     PassSample;     //样例通过数<->样例WA on test
+    long long     SampleNumber;    //样例总数
     int           Sim;            //相似度检测结果
     long long     limitTime;      //极限运行时间
     long long     limitMemory;    //极限运行内存

@@ -184,7 +184,9 @@ bool Solution::commitSolveToDb(Solve* solve){
         runningres[solve->Sres()],
         solve->getUsetime(),
         solve->getuseMemory(),
-        solve->Sid()
+        solve->Sid(),
+        solve->getPassSample(),
+        solve->getSampleNumber()
     );
     ILOG("update mysql:%s",sql);
     auto db = mysqlDB::getInstance();

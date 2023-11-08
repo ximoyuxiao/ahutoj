@@ -14,6 +14,7 @@ Solve::Solve(string problemID,int solutionID,const char *source,int limitTime,in
     this->res = OJ_JUDGE;
     this->SpjJudge = spj;
     PassSample = 0;     //样例通过数
+    SampleNumber = 0;
     judgeID = 0;        //JudgeID
     usetime = 0;        //运行时间
     usememory = 0;      //运行内存

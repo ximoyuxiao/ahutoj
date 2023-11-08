@@ -196,16 +196,18 @@ func GetSubmit(ctx *gin.Context, req *request.GetSubmitReq) (interface{}, error)
 		*ceInfo = models.FindSubmitCeInfo(ctx, req.SID)
 	}
 	return response.GetSubmitResp{
-		Response:   response.CreateResponse(constanct.SuccessCode),
-		SID:        submit.SID,
-		UID:        submit.UID,
-		PID:        submit.PID,
-		Source:     submit.Source,
-		Lang:       submit.Lang,
-		Result:     submit.Result,
-		UseTime:    submit.Usetime,
-		UseMemory:  submit.UseMemory,
-		SubmitTime: submit.SubmitTime,
-		CeInfo:     ceInfo,
+		Response:     response.CreateResponse(constanct.SuccessCode),
+		SID:          submit.SID,
+		UID:          submit.UID,
+		PID:          submit.PID,
+		Source:       submit.Source,
+		Lang:         submit.Lang,
+		Result:       submit.Result,
+		PassSample:   submit.PassSample,
+		SampleNumber: submit.SampleNmuber,
+		UseTime:      submit.Usetime,
+		UseMemory:    submit.UseMemory,
+		SubmitTime:   submit.SubmitTime,
+		CeInfo:       ceInfo,
 	}, nil
 }
