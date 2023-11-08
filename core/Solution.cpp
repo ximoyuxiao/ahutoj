@@ -179,12 +179,14 @@ locker sqlLock;
 bool Solution::commitSolveToDb(Solve* solve){
     // insert into Submit values (null,#{pid},#{uid},#{cid},#{judgeid},#{source},#{lang},'Judgeing',0,0,#{submitTime})
     sqlLock.lock();
-    sprintf(sql,"update Submit set JudgeID=%d,ResultACM='%s',UseTime=%lld,UseMemory=%lld where SID=%d",
+    sprintf(sql,"update Submit set JudgeID=%d,ResultACM='%s',UseTime=%lld,UseMemory=%lld,PassSample=%lld,SampleNumber=%lld where SID=%d",
         solve->getjudgeID(),
         runningres[solve->Sres()],
         solve->getUsetime(),
         solve->getuseMemory(),
-        solve->Sid()
+        solve->Sid(),
+        solve->getPassSample(),
+        solve->getSampleNumber()
     );
     ILOG("update mysql:%s",sql);
     auto db = mysqlDB::getInstance();

@@ -147,7 +147,7 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
             wait4(pid,&status,__WNOTHREAD,&ruse); //等待子进程切换内核态（调用系统API或者运行状态变化）
             // DLOG("Watch pid:%d run:%s/main",pid,dir);
             // 这一段也不知道干嘛的
-            if (first){
+            if (f irst){
                 ptrace(PTRACE_SETOPTIONS, pid, NULL, PTRACE_O_TRACESYSGOOD | PTRACE_O_TRACEEXIT
                         |PTRACE_O_EXITKILL|PTRACE_O_TRACECLONE|PTRACE_O_TRACEFORK|PTRACE_O_TRACEVFORK);
             }
@@ -462,23 +462,24 @@ bool judgeClient::judge()
                 SubRes res  = OJ_AC;
                 char resoutfile[128];
                 sprintf(resoutfile,"%s/ans",dir);
+                this->solve->setSampleNumber = inputFiles.size();
                 for(std::size_t i = 0;i<inputFiles.size();i++){
                     init_syscalls_limits(this->solve->Lang());
                     DLOG("runnning:%s",inputFiles[i].c_str());
                     long long useTime = 0,useMemory = 0;
                     running(res,inputFiles[i].c_str(),resoutfile,useMemory,useTime);
                     DLOG("runned:%s",outputFiles[i].c_str());
-                    if(res != OJ_AC)
+                    if (res != OJ_AC)
                         break;
                     judgeOutFile(res,resoutfile,outputFiles[i].c_str(), inputFiles[i].c_str());
-                    if(res != OJ_AC)
+                    if (res != OJ_AC)
                         break;
-                    solve->incPassSample();
                     char cmd[1024] ={0};
                     sprintf(cmd,"rm %s",resoutfile);
                     system(cmd);
                     solve->setUsetime(max(useTime,solve->getUsetime()));
                     solve->setUseMemory(max(useMemory,solve->getuseMemory()));
+                    this->solve->incPassSample;
                 }
                 if(res != OJ_AC){
                     Jstat = J_FAILED;
