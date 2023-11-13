@@ -89,6 +89,7 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 			return response.CreateResponse(constanct.SUBMIT_ADD_FAILEDCode), err
 		}
 	} else {
+		logger.Debug("Submit", submit)
 		err := produce.SendMessage(constanct.INNERJUDGE, submit)
 		if err != nil {
 			logger.Errorf("call SendMessage(%s) failed, submit=%v, err=%s", constanct.INNERJUDGE, submit, err.Error())

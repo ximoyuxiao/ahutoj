@@ -1,6 +1,6 @@
 # 端口号
 host: "oj"
-gatWayHost: "http://oj-gateway:4433/"
+gatWayHost: "http://gateway:4433/"
 port: ":4212"
 mode: "debug"
 # 签名

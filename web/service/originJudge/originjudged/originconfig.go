@@ -78,7 +78,7 @@ func InitOriginThread() {
 			return
 		}
 		/*2、得到后批量更新状态*/
-		logger.Errorf("submit size:%d", len(msgs))
+		logger.Info("submit size:%d", len(msgs))
 		for msg := range msgs {
 			submit := dao.Submit{}
 			json.Unmarshal(msg.Body, &submit)
