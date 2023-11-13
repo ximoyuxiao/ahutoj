@@ -193,7 +193,7 @@ func GetSubmit(ctx *gin.Context, req *request.GetSubmitReq) (interface{}, error)
 	var ceInfo *string = nil
 	if submit.Result == constanct.OJ_CE {
 		ceInfo = new(string)
-		*ceInfo = models.FindSubmitCeInfo(ctx, req.SID)
+		*ceInfo = models.FindSubmitCeInfo(ctx, req.SID) //
 	}
 	return response.GetSubmitResp{
 		Response:     response.CreateResponse(constanct.SuccessCode),
