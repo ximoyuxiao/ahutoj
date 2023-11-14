@@ -34,6 +34,7 @@ Solve::Solve(Solve &solve)
     this->ceinfo = solve.ceinfo;
     this->res  =  res;
     this->PassSample = solve.PassSample;
+    this->SampleNumber = solve.SampleNumber;
 }
 Solve::~Solve()
 {
