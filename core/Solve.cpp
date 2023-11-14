@@ -56,6 +56,7 @@ Solve& Solve::operator=(const Solve &solve)
     this->ceinfo = solve.ceinfo;
     this->res  =  res;
     this->PassSample = solve.PassSample;
+    this->SampleNumber = solve.SampleNumber;
     return *this;
 }
 void Solve::getargs(char* args[8])
