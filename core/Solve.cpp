@@ -194,6 +194,7 @@ void Solve::to_json(nlohmann::json& j){
         {"Sim",Sim},
         {"UseTime",usetime},
         {"UseMemory",usememory},
+        {"SampleNumber",getSampleNumber()},
     };
 }
 
