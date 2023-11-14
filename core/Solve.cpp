@@ -173,7 +173,7 @@ long long Solve::getPassSample(){
 void Solve::incPassSample(){
     this->PassSample++;
 }
-void Solve::setSampleNmuber(size_t sampleNumber) {
+void Solve::setSampleNumber(size_t sampleNumber) {
     this->PassSample=sampleNumber;
 }
 long long Solve::getSampleNumber() {
