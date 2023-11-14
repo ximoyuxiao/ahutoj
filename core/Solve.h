@@ -71,7 +71,7 @@ public:
     long long getPassSample();
     void incPassSample();
     long long getSampleNumber();
-    void setSampleNumber(size_t SampleNumber);
+    void setSampleNumber(long long SampleNumber);
 };
 
 #endif
