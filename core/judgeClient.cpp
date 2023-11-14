@@ -474,12 +474,12 @@ bool judgeClient::judge()
                     judgeOutFile(res,resoutfile,outputFiles[i].c_str(), inputFiles[i].c_str());
                     if (res != OJ_AC)
                         break;
+                    this->solve->incPassSample();
                     char cmd[1024] ={0};
                     sprintf(cmd,"rm %s",resoutfile);
                     system(cmd);
                     solve->setUsetime(max(useTime,solve->getUsetime()));
                     solve->setUseMemory(max(useMemory,solve->getuseMemory()));
-                    this->solve->incPassSample();
                }
                 if(res != OJ_AC){
                     Jstat = J_FAILED;
