@@ -202,7 +202,7 @@ func GetSubmit(ctx *gin.Context, req *request.GetSubmitReq) (interface{}, error)
 		PID:          submit.PID,
 		Source:       submit.Source,
 		Lang:         submit.Lang,
-		Result:       submit.Result,
+		Result:       submit.Result, //
 		PassSample:   submit.PassSample,
 		SampleNumber: submit.SampleNmuber,
 		UseTime:      submit.Usetime,
