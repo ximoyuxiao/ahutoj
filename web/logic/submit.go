@@ -89,7 +89,6 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 			return response.CreateResponse(constanct.SUBMIT_ADD_FAILEDCode), err
 		}
 	} else {
-		logger.Debug("Submit", submit)
 		err := produce.SendMessage(constanct.INNERJUDGE, submit)
 		if err != nil {
 			logger.Errorf("call SendMessage(%s) failed, submit=%v, err=%s", constanct.INNERJUDGE, submit, err.Error())
@@ -194,7 +193,7 @@ func GetSubmit(ctx *gin.Context, req *request.GetSubmitReq) (interface{}, error)
 	var ceInfo *string = nil
 	if submit.Result == constanct.OJ_CE {
 		ceInfo = new(string)
-		*ceInfo = models.FindSubmitCeInfo(ctx, req.SID)
+		*ceInfo = models.FindSubmitCeInfo(ctx, req.SID) //
 	}
 	return response.GetSubmitResp{
 		Response:     response.CreateResponse(constanct.SuccessCode),
@@ -203,7 +202,7 @@ func GetSubmit(ctx *gin.Context, req *request.GetSubmitReq) (interface{}, error)
 		PID:          submit.PID,
 		Source:       submit.Source,
 		Lang:         submit.Lang,
-		Result:       submit.Result,
+		Result:       submit.Result, //
 		PassSample:   submit.PassSample,
 		SampleNumber: submit.SampleNmuber,
 		UseTime:      submit.Usetime,

@@ -151,7 +151,7 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
                 ptrace(PTRACE_SETOPTIONS, pid, NULL, PTRACE_O_TRACESYSGOOD | PTRACE_O_TRACEEXIT
                         |PTRACE_O_EXITKILL|PTRACE_O_TRACECLONE|PTRACE_O_TRACEFORK|PTRACE_O_TRACEVFORK);
             }
-//
+
             // 获取程序运行内存
             tempmemory = get_proc_status(pid,"VmPeak:") << 10; // B
             if (tempmemory > useMemory)
@@ -480,7 +480,7 @@ bool judgeClient::judge()
                     solve->setUsetime(max(useTime,solve->getUsetime()));
                     solve->setUseMemory(max(useMemory,solve->getuseMemory()));
                     this->solve->incPassSample();
-                }
+               }
                 if(res != OJ_AC){
                     Jstat = J_FAILED;
                     solve->Sres(res);
