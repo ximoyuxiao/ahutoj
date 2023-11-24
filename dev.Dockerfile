@@ -21,6 +21,7 @@ WORKDIR /app
 COPY --link --from=build /build/gateway /usr/bin/gateway
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
+    touch ahutoj.log &&\
     chmod +x /usr/bin/gateway
 
 EXPOSE 4433
@@ -34,6 +35,7 @@ WORKDIR /app
 COPY --link --from=build /build/originproblem /usr/bin/originproblem
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
+    touch ahutoj.log &&\
     chmod +x /usr/bin/originproblem
 
 ENTRYPOINT ["/usr/bin/originproblem"]
@@ -45,6 +47,7 @@ WORKDIR /app
 COPY --link --from=build /build/persistence /usr/bin/persistence
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
+    touch ahutoj.log &&\
     chmod +x /usr/bin/persistence
 
 ENTRYPOINT ["/usr/bin/persistence"]
@@ -56,6 +59,7 @@ WORKDIR /app
 COPY --link --from=build /build/originJudge /usr/bin/originJudge
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
+    touch ahutoj.log &&\
     chmod +x /usr/bin/originJudge
 
 ENTRYPOINT ["/usr/bin/originJudge"]
@@ -67,6 +71,7 @@ WORKDIR /app
 COPY --link --from=build /build/oj /usr/bin/oj
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
+    touch ahutoj.log &&\
     chmod +x /usr/bin/oj
 
 EXPOSE 4212

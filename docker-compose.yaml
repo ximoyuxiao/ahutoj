@@ -27,8 +27,9 @@ services:
       dockerfile: ./dev.Dockerfile
       target: gateway
     volumes:
-      - ./config/config.yaml.bak:/app/config.yaml
+      - ${CONFIG:-./config.yaml/bak}:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
+      - ${DIR:-.}/origin/log/ahutoj.log:/app/ahutoj.log
     environment:
       TZ: Asia/Shanghai
       TEAM:
@@ -46,7 +47,7 @@ services:
       dockerfile: ./dev.Dockerfile
       target: origin
     volumes:
-      - ./config/config.yaml.bak:/app/config.yaml
+      - ${CONFIG:-./config.yaml/bak}:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
       - ${DIR:-.}/origin/log/ahutoj.log:/app/ahutoj.log
     environment:
@@ -66,7 +67,7 @@ services:
       dockerfile: ./dev.Dockerfile
       target: persistence
     volumes:
-      - ./config/config.yaml.bak:/app/config.yaml
+      - ${CONFIG:-./config.yaml/bak}:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
       - ${DIR:-.}/persistence/log/ahutoj.log:/app/ahutoj.log
     environment:
@@ -86,7 +87,7 @@ services:
       dockerfile: ./dev.Dockerfile
       target: oj
     volumes:
-      - ./config/config.yaml.bak:/app/config.yaml
+      - ${CONFIG:-./config.yaml/bak}:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
       - ${DIR:-.}/oj/log/ahutoj.log:/app/ahutoj.log
     environment:
@@ -164,7 +165,7 @@ services:
     privileged: true
     restart: always
     volumes:
-      - ./docs/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ${DIR:-.}/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       - ${DIR:-.}/nginx/html/dist:/usr/share/nginx/html
       - ${DIR:-.}/nginx/logs:/var/log/nginx
       - ${DIR:-.}/nginx/resource/:/home/ubuntu/ahutoj/resource/
