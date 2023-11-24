@@ -158,7 +158,7 @@ services:
       - oj
   nginx:
     container_name: oj-nginx
-    image: oj/nginx:local
+    image: nginx
     ports:
       - "8000:80"
     privileged: true

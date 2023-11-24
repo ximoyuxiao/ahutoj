@@ -4,11 +4,11 @@ FROM golang:alpine as build
 
 WORKDIR /build
 
+COPY --link ./go.* .
+
 COPY --link . .
 
-#COPY --link ./go.* .
-
-RUN go env -w GOPROXY=goproxy.cn && go mod tidy && \
+RUN  go env -w GO111MODULE=on && go env -w GOPROXY=goproxy.cn,direct && go mod tidy && \
     go build -o ./gateway web/service/gateway/gateway.go && \
     go build -o ./oj web/service/ahutoj/ahutoj.go && \
     go build -o ./persistence web/service/persistence/persistence.go && \
