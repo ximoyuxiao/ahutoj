@@ -92,44 +92,8 @@ services:
     environment:
       TZ: Asia/Shanghai
       TEAM:
-    #depend_on: mysql 
     networks:
       - oj
-        #  problem:
-        #    image: oj/oj-problem:local
-        #    restart: always
-        #    depends_on:
-        #      - gateway
-        #    build:
-        #      context: .
-        #      dockerfile: ./problem.Dockerfile
-        #    volumes:
-        #      - ./config/config.yaml.bak:/app/config.yaml
-        #      - ${DIR:-.}/resource:/app/resource
-        #      - ${DIR:-.}/problem/log/ahutoj.log:/app/ahutoj.log
-        #    environment:
-        #      TZ: Asia/Shanghai
-        #      TEAM:
-        #    networks:
-        #      - oj
-        #user:
-        #image: oj/user:local
-        #restart: always
-        #depends_on:
-        #- gateway
-        #build:
-        #context: .
-        #dockerfile: ./user.Dockerfile
-        #volumes:
-        # - ./config/config.yaml.bak:/app/config.yaml
-        # - ${DIR:-.}/resource:/app/resource
-        #- ${DIR:-.}/user/log:/app/log
-        #environment:
-        # TZ: Asia/Shanghai
-        #TERM:
-        #networks:
-        # - oj
-
   mysql:
     image: mysql:8.0.28
     container_name: mysql
@@ -172,7 +136,7 @@ services:
       TEAM:
     volumes:
       # 数据文件 - data files
-      - ${DIR:-.}/redis-data:/data:rw
+      - ${DIR:-.}/redis:/data:rw
     command: "redis-server --requirepass 2019ahut --appendonly yes"
     privileged: true
     restart: always
@@ -182,8 +146,8 @@ services:
     container_name: rabbitmq
     restart: always
     volumes:
-      - ${DIR:-.}/rabbitmq-data/log:/var/log/rabbitmq/log
-      - ${DIR:-.}/rabbitmq-data:/var/lib/rabbitmq
+      - ${DIR:-.}/rabbitmq/log:/var/log/rabbitmq/log
+      - ${DIR:-.}/rabbitmq:/var/lib/rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=ahutoj
       - RABBITMQ_DEFAULT_PASS=123456
@@ -195,14 +159,12 @@ services:
   nginx:
     container_name: oj-nginx
     image: oj/nginx:local
-    build:
-      context: .
-      dockerfile: ./nginx.Dockerfile
     ports:
       - "8000:80"
     privileged: true
     restart: always
     volumes:
+      - ./docs/nginx.conf:/etc/nginx/conf.d/default.conf
       - ${DIR:-.}/nginx/html/dist:/usr/share/nginx/html
       - ${DIR:-.}/nginx/logs:/var/log/nginx
       - ${DIR:-.}/nginx/resource/:/home/ubuntu/ahutoj/resource/
