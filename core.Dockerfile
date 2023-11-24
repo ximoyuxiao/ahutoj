@@ -2,8 +2,7 @@
 
 FROM alpine:3.16 as build
 
-RUN --mount=type=cache,target=/var/cache/apk && \
-  sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories &&  \
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories &&  \
     apk update && \
     apk add gcompat gcc g++ make musl && \
     apk add hiredis-dev rabbitmq-c-dev  mysql-dev && \
@@ -20,11 +19,10 @@ FROM alpine:3.16 as image
 WORKDIR /app
 
 COPY --from=build /build/judged /app/judged
+
 COPY --link ./core/config.conf /app/config.conf
-#COPY --link ./config/config.conf /app/config.conf
 
 RUN chmod +x /app/judged
-# ENTRYPOINT ["tail", "-f", "/dev/null"]
 
 ENTRYPOINT ["/app/judged"]
 

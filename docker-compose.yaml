@@ -171,8 +171,8 @@ services:
     networks:
       - oj
   minio:
-    image: quay.io/minio/minio
-    container_name: halo-minio
+    image: quay.io/minio/minio # 如果不支持x86-64-v2，使用quay.io/minio/minio:RELEASE.2024-11-01T01-57-10Z-cpuv1
+    container_name: minio
     hostname: "minio"
     ports:
       - "9000:9000" # api 端口
