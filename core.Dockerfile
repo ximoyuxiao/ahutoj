@@ -18,6 +18,11 @@ FROM alpine:3.16 as image
 
 WORKDIR /app
 
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk update \
+    && apk add hiredis rabbitmq-c  mysql-dev \
+    && apk add --no-cache nlohmann-json \
+
 COPY --from=build /build/judged /app/judged
 
 COPY --link ./core/config.conf /app/config.conf
