@@ -11,7 +11,8 @@ services:
       context: .
       dockerfile: ./core.Dockerfile
     volumes:
-      - ${DIR:-.}/judged/log/:/app/log
+      - ${DIR:-.}/judged/log:/app/log
+      - ${DIR:-.}/resource:/app/resource
     environment:
       TZ: Asia/Shanghai
       TEAM:
@@ -28,7 +29,6 @@ services:
       target: gateway
     volumes:
       - ${CONFIG:-./config.yaml/bak}:/app/config.yaml
-      - ${DIR:-.}/resource:/app/resource
       - ${DIR:-.}/origin/log/ahutoj.log:/app/ahutoj.log
     environment:
       TZ: Asia/Shanghai
@@ -48,7 +48,6 @@ services:
       target: origin
     volumes:
       - ${CONFIG:-./config.yaml/bak}:/app/config.yaml
-      - ${DIR:-.}/resource:/app/resource
       - ${DIR:-.}/origin/log/ahutoj.log:/app/ahutoj.log
     environment:
       TZ: Asia/Shanghai
