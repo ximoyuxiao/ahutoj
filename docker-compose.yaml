@@ -190,5 +190,5 @@ services:
 networks:
   oj:
     driver: bridge
-    name: local
+    #name: local 不知道为什么不行，删了
     #external: true
