@@ -28,7 +28,7 @@ services:
       dockerfile: ./dev.Dockerfile
       target: gateway
     volumes:
-      - ${CONFIG:-./config.yaml/bak}:/app/config.yaml
+      - ${CONFIG:-./}:/app/config.yaml
       - ${DIR:-.}/origin/log/ahutoj.log:/app/ahutoj.log
     environment:
       TZ: Asia/Shanghai
@@ -47,7 +47,7 @@ services:
       dockerfile: ./dev.Dockerfile
       target: origin
     volumes:
-      - ${CONFIG:-./config.yaml/bak}:/app/config.yaml
+      - ${CONFIG:-./}:/app/config.yaml
       - ${DIR:-.}/origin/log/ahutoj.log:/app/ahutoj.log
     environment:
       TZ: Asia/Shanghai
@@ -66,7 +66,7 @@ services:
       dockerfile: ./dev.Dockerfile
       target: persistence
     volumes:
-      - ${CONFIG:-./config.yaml/bak}:/app/config.yaml
+      - ${CONFIG:-./}:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
       - ${DIR:-.}/persistence/log/ahutoj.log:/app/ahutoj.log
     environment:
@@ -86,7 +86,7 @@ services:
       dockerfile: ./dev.Dockerfile
       target: oj
     volumes:
-      - ${CONFIG:-./config.yaml/bak}:/app/config.yaml
+      - ${CONFIG:-./}:/app/config.yaml
       - ${DIR:-.}/resource:/app/resource
       - ${DIR:-.}/oj/log/ahutoj.log:/app/ahutoj.log
     environment:
