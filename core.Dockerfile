@@ -3,7 +3,7 @@
 FROM alpine:3.16 as build
 
 # 如果有问题把上下的这句都给去掉，--mount
-RUN --mount=type=cache,target=/var/cache/apk 
+#RUN --mount=type=cache,target=/var/cache/apk
 RUN  sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories &&  \
     apk update && \
     apk add gcompat gcc g++ make musl && \
@@ -20,7 +20,7 @@ FROM alpine:3.16 as image
 
 WORKDIR /app
 
-RUN --mount=type=cache,target=/var/cache/apk 
+#RUN --mount=type=cache,target=/var/cache/apk
 RUN   apk update && \
     apk add hiredis rabbitmq-c  mysql-dev && \
     apk add --no-cache nlohmann-json 
