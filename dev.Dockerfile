@@ -85,6 +85,7 @@ WORKDIR /app
 COPY --link --from=build /build/useranalytics /usr/bin/useranalytics
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
+    touch ahutoj.log &&\
     chmod +x /usr/bin/useranalytics
 
 ENTRYPOINT ["/usr/bin/useranalytics"]
@@ -96,6 +97,7 @@ WORKDIR /app
 COPY --link --from=build /build/oss /usr/bin/oss
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
+    touch ahutoj.log &&\
     hmod +x /usr/bin/oss
 
 EXPOSE 4466

@@ -1,3 +1,9 @@
+#防止端口冲突，把映射全改了
+#mysql 33069
+#redis 36379
+#rabbitmq 35672
+#minio 9000 9001
+#nginx 8000
 version: '3.5'
 services:
   judged:
@@ -153,7 +159,7 @@ services:
       - RABBITMQ_DEFAULT_PASS=123456
     image: rabbitmq
     ports:
-      - "15672:15672"
+      - "35672:15672"
     networks:
       - oj
   nginx:
