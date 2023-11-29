@@ -1,0 +1,200 @@
+#防止端口冲突，把映射全改了
+#mysql 33069
+#redis 36379
+#rabbitmq 35672
+#minio 9000 9001
+#nginx 8000
+version: '3.5'
+services:
+  judged:
+    image: oj/judged:local
+    restart: always
+    privileged: true
+    depends_on:
+      - gateway
+      - mysql
+    build:
+      context: .
+      dockerfile: ./core.Dockerfile
+    volumes:
+      - ${DIR:-.}/judged/log:/app/log
+      - ${DIR:-.}/resource:/app/resource
+    environment:
+      TZ: Asia/Shanghai
+      TEAM:
+    networks:
+      - oj
+  gateway:
+    image: oj/gateway:local
+    container_name: oj-gateway
+    restart: always
+    privileged: true
+    build:
+      context: .
+      dockerfile: ./dev.Dockerfile
+      target: gateway
+    volumes:
+      - ${CONFIG:-./}:/app/config.yaml
+      - ${DIR:-.}/origin/log/ahutoj.log:/app/ahutoj.log
+    environment:
+      TZ: Asia/Shanghai
+      TEAM:
+    networks:
+      - oj
+  origin:
+    image: oj/origin:local
+    restart: always
+    privileged: true
+    depends_on:
+      - gateway
+      - mysql
+    build:
+      context: .
+      dockerfile: ./dev.Dockerfile
+      target: origin
+    volumes:
+      - ${CONFIG:-./}:/app/config.yaml
+      - ${DIR:-.}/origin/log/ahutoj.log:/app/ahutoj.log
+    environment:
+      TZ: Asia/Shanghai
+      TEAM:
+    networks:
+      - oj
+  persistence:
+    image: oj/persistence:local
+    restart: always
+    privileged: true
+    depends_on:
+      - gateway
+      - mysql
+    build:
+      context: .
+      dockerfile: ./dev.Dockerfile
+      target: persistence
+    volumes:
+      - ${CONFIG:-./}:/app/config.yaml
+      - ${DIR:-.}/resource:/app/resource
+      - ${DIR:-.}/persistence/log/ahutoj.log:/app/ahutoj.log
+    environment:
+      TZ: Asia/Shanghai
+      TEAM:
+    networks:
+      - oj
+  oj:
+    image: oj/oj:local
+    restart: always
+    privileged: true
+    depends_on:
+      - gateway
+      - mysql
+    build:
+      context: .
+      dockerfile: ./dev.Dockerfile
+      target: oj
+    volumes:
+      - ${CONFIG:-./}:/app/config.yaml
+      - ${DIR:-.}/resource:/app/resource
+      - ${DIR:-.}/oj/log/ahutoj.log:/app/ahutoj.log
+    environment:
+      TZ: Asia/Shanghai
+      TEAM:
+    networks:
+      - oj
+  mysql:
+    image: mysql:8.0.28
+    container_name: mysql
+    environment:
+      # 时区上海 - Time zone Shanghai (Change if needed)
+     TZ: Asia/Shanghai
+      # root 密码 - root password
+     MYSQL_ROOT_PASSWORD: 123456
+     MYSQL_DATABASE: ahutoj
+     MYSQL_PASSWORD: 123456
+    ports:
+     - "33069:3306"
+    volumes:
+       #数据挂载 - Data mounting
+      - ${DIR:-.}/mysql-data:/var/lib/mysql
+      - ${DIR:-.}/mysql-init:/docker-entrypoint-initdb.d
+      # 日志
+    command:
+      # 将mysql8.0默认密码策略 修改为 原先 策略 (mysql8.0对其默认策略做了更改 会导致密码无法匹配) 
+      # Modify the Mysql 8.0 default password strategy to the original strategy (MySQL8.0 to change its default strategy will cause the password to be unable to match)
+     --default-authentication-plugin=mysql_native_password
+     --character-set-server=utf8mb4
+     --collation-server=utf8mb4_general_ci
+     --explicit_defaults_for_timestamp=true
+     --lower_case_table_names=1
+    privileged: true
+    restart: always
+    networks:
+      - oj
+
+  #redis容器 - Redis container
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "36379:6379"
+    environment:
+      # 时区上海 - Time zone Shanghai (Change if needed)
+      TZ: Asia/Shanghai
+      TEAM:
+    volumes:
+      # 数据文件 - data files
+      - ${DIR:-.}/redis:/data:rw
+    command: "redis-server --requirepass 2019ahut --appendonly yes"
+    privileged: true
+    restart: always
+    networks:
+      - oj
+  rabbitmq:  
+    container_name: rabbitmq
+    restart: always
+    volumes:
+      - ${DIR:-.}/rabbitmq/log:/var/log/rabbitmq/log
+      - ${DIR:-.}/rabbitmq:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=ahutoj
+      - RABBITMQ_DEFAULT_PASS=123456
+    image: rabbitmq
+    ports:
+      - "35672:15672"
+    networks:
+      - oj
+  nginx:
+    container_name: oj-nginx
+    image: nginx
+    ports:
+      - "8000:80"
+    privileged: true
+    restart: always
+    volumes:
+      - ${DIR:-.}/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ${DIR:-.}/nginx/html/dist:/usr/share/nginx/html
+      - ${DIR:-.}/nginx/logs:/var/log/nginx
+      - ${DIR:-.}/nginx/resource/:/home/ubuntu/ahutoj/resource/
+    networks:
+      - oj
+  minio:
+    image: quay.io/minio/minio # 如果不支持x86-64-v2，使用quay.io/minio/minio:RELEASE.2024-11-01T01-57-10Z-cpuv1
+    container_name: minio
+    hostname: "minio"
+    ports:
+      - "9000:9000" # api 端口
+      - "9001:9001" # 控制台端口
+    environment:
+      MINIO_ROOT_USER: admin    #管理后台用户名
+      MINIO_ROOT_PASSWORD: admin123456 #管理后台密码，最小8个字符
+    volumes:
+      - ${DIR:-.}/oss:/data               #映射当前目录下的data目录至容器内/data目录
+      - ./config:/root/.minio/     #映射配置目录
+    command: server --console-address ':9001' /data  #指定容器中的目录 /data
+    privileged: true
+    restart: always
+
+networks:
+  oj:
+    driver: bridge
+    #name: local 不知道为什么不行，删了
+    #external: true

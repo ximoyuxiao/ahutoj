@@ -27,7 +27,7 @@ typedef enum
     JAVA,
     PYTHON3
 } lanuage;
-#define DATAPATH "/root/ahutoj/resource/Data/" /*测试样例目录*/
+#define DATAPATH "/app/resource/Data" /*测试样例目录*/
 #define DEC ".des"
 #define LOGPATH "./log"
 #define CONF "./config.conf" /*配置文件目录*/
@@ -36,8 +36,8 @@ typedef enum
 #define INNERJUDGE "InnerJudge"
 #define JUDGERESULT  "JudgeResult"
 #define JUDGECE     "JudgeCE"
-#define RMQ_HOST  "127.0.0.1"
+#define RMQ_HOST  "rabbitmq"
 #define RMQ_PORT  "5672"
 #define RMQ_USER "ahutoj"
-#define RMQ_PASS "2019ahut"
+#define RMQ_PASS "123456"
 #endif

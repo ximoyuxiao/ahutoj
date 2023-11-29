@@ -1,8 +1,7 @@
 .vscode
-*.yaml
+config.yaml
 *.log
 log
-tmp
 .idea
 *.out
 *.o
@@ -12,7 +11,11 @@ test
 *.rdb
 push.sh
 test.go
-*.log
 image
 spj
 main
+tmp/*
+!tmp/mysql-init
+#数据库初始化
+!tmp/nginx/html
+#前端代码

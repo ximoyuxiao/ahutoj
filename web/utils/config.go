@@ -102,7 +102,6 @@ func ConfigInit(configPath string) error {
 	}
 	fmt.Println(Sdump(config))
 	return nil
-
 }
 func InitAppConfig(configPath string, Myconfig interface{}) error {
 	viper.SetConfigFile(configPath)

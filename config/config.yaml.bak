@@ -1,6 +1,6 @@
 # 端口号
-host: "127.0.0.1"
-gatWayHost: "http://127.0.0.1:4433/"
+host: "oj"
+gatWayHost: "http://gateway:4433/"
 port: ":4212"
 mode: "debug"
 # 签名
@@ -14,30 +14,34 @@ dataPath: "./resource/Data/"
 #封榜时间
 terminal: 0.8  
 # 图片存放路径
-imagePath: "http://127.0.01:4379/image"
-headPath:  "http://127.0.01:4379/image/head/"
-spjPath:   "http://127.0.01:4379/spj/"
+imagePath: "http://minio:9000/image"
+#headPath:  "http://127.0.01:4379/image/head/"
+#spjPath:   "http://127.0.01:4379/spj/"
 # 是否开放注册
 openRegisiters: true
 # 外部判题相关配置
 oss:
-    host: "127.0.0.1"
-    port: 4379
+    host: "minio"
+    port: 9000
     basepath: "./resource/"
+    AccessKeyID: "Ej0Od1drI9V5F2PaT5DR"
+    SecretAccessKey: "AzXkyd80IDakkKObiUNCQiPdvqVnhVmnCoH6XLka"#记得改
+    UseSSL: true
 forum:
     host: "127.0.0.1"
     port: 4498
+    
 mysql:  
     driver: "mysql"
-    host: "127.0.0.1"
+    host: "mysql"
     port: 3306
-    username: "AHUTOnlinejudge"
+    username: "root"
     dbname: "ahutoj"
     password: "123456"
 
 redis:
-    host: "localhost"
-    port: ":6379"
+    host: "redis"
+    port: "6379"
     db: 0
     pool_size: 100
     keepalive: 30
@@ -76,13 +80,13 @@ useranalytics:
     port: ":4435"
     mysql:  
         driver: "mysql"
-        host: "127.0.0.1"
+        host: "mysql"
         port: 3306
-        username: "AHUTOnlinejudge"
+        username: "root"
         dbname: "ahutoj"
         password: "123456"
 rabbitmq:
-    host: "127.0.0.1"
+    host: "rabbitmq"
     port: 5672
     username: "ahutoj"
     password: "123456"

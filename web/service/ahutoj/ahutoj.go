@@ -18,7 +18,6 @@ func main() {
 	initAPP(ConfigPath)
 	fmt.Println("error server down!")
 }
-
 func initAPP(ConfigPath string) error {
 	//初始化配置文件
 	err := utils.ConfigInit(ConfigPath)

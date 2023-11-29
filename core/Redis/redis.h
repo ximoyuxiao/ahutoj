@@ -9,7 +9,7 @@ public:
  
     MyRedis();
     ~MyRedis();
-    bool connect(std::string host = "127.0.0.1", int port=6379,const char* password ="");
+    bool connect(std::string host = "redis", int port=6379,const char* password ="");
     //字符串
     std::string getString(std::string key);
     void setString(std::string key, std::string value);

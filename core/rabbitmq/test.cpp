@@ -7,7 +7,7 @@ void callback(amqp_envelope_t event){
     return ;
 }
 int main(){
-    RabbitMQ mq("127.0.0.1",5672,"ahutoj","2019ahut");
+    RabbitMQ mq("rabbitmq",5672,"ahutoj","123456");
     auto send = mq.createProducer();
     auto read = mq.createConsumer("hello");
     send.sendMessage("hello",(void*)"hello wrold",sizeof("hello world"));

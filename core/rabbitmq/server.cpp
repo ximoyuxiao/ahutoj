@@ -6,7 +6,7 @@ using namespace std;
 int main(){
     int i = 0;
     for(;;){
-        RabbitMQ mq("127.0.0.1",5672,"ahutoj","2019ahut");
+        RabbitMQ mq("rabbitmq",5672,"ahutoj","123456");
         auto send = mq.createProducer();
         send.sendMessage("hello",(void*)&i,sizeof(int));
         usleep(1e3);

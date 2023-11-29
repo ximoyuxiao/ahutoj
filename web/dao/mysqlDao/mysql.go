@@ -26,6 +26,7 @@ func InitMysql(cfg *utils.MySQLConfig) error {
 	)
 	globalDB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
+		fmt.Println("connect mysql failed")
 		return err
 	}
 

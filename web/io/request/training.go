@@ -5,11 +5,11 @@ type DelListReq struct {
 }
 
 type ListProblem struct {
-	LID int64  `json:"LID"`
+	LID int64  `json:"LID" binding:"string"`
 	PID string `json:"PID"`
 }
 type ListUserReq struct {
-	LID int64 `query:"LID"`
+	LID int64 `query:"LID" binding:"string"`
 }
 type ListAll struct {
 	Problems    string `json:"Problems"`
@@ -17,13 +17,13 @@ type ListAll struct {
 	Description string `json:"Description"`
 }
 type EditListReq struct {
-	LID         int64  `json:"LID"`
+	LID         int64  `json:"LID" binding:"string"`
 	Description string `json:"Description"`
 	Title       string `json:"Title"`
 	Problems    string `json:"Problems"`
 }
 type RegisterTrainingReq struct {
-	LID int64  `json:"LID"`
+	LID int64  `json:"LID" binding:"string"`
 	UID string `json:"UID"`
 }
 

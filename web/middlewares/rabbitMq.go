@@ -1,8 +1,10 @@
 package middlewares
 
 import (
+	"ahutoj/web/utils"
 	"encoding/json"
 	"fmt"
+	"github.com/bytedance/gopkg/util/logger"
 
 	"github.com/streadway/amqp"
 )
@@ -46,6 +48,9 @@ func newRabbitMQ(uri string, poolSize int) (*RabbitMQ, error) {
 		}
 		pool <- connection
 	}
+	test := &RabbitMQ{ConnectionPool: pool}
+	logger := utils.GetLogInstance()
+	logger.Debug("rabbitmq:", test)
 	return &RabbitMQ{ConnectionPool: pool}, nil
 }
 
@@ -54,9 +59,12 @@ func (r *RabbitMQ) GetConnection() (*amqp.Connection, error) {
 	case conn := <-r.ConnectionPool:
 		return conn, nil
 	default:
-		uri := fmt.Sprintf("amqp://%v:%v@%v:%v", r.User, r.Password, r.Host, r.Port)
+		uri := fmt.Sprintf("amqp://%v:%v@%v:%v/", r.User, r.Password, r.Host, r.Port)
 		conn, err := amqp.Dial(uri)
+		logger := utils.GetLogInstance()
+		logger.Debug("URI", uri)
 		if err != nil {
+			logger.Errorf("call Dial failed, conn=%v, err=%s", conn, err.Error())
 			return nil, err
 		}
 		return conn, nil
@@ -78,6 +86,7 @@ func NewProducer(rmq *RabbitMQ) *Producer {
 func (p *Producer) SendMessage(queueName string, messageBody interface{}) error {
 	conn, err := p.RabbitMQ.GetConnection()
 	if err != nil {
+		logger.Errorf("call SendGetConnection failed, submit=%v, err=%s", conn, err.Error())
 		return err
 	}
 	defer p.RabbitMQ.ReleaseConnection(conn)
@@ -97,6 +106,7 @@ func (p *Producer) SendMessage(queueName string, messageBody interface{}) error 
 		nil,       // arguments
 	)
 	if err != nil {
+		logger.Errorf("call SendQueueDeclare failed, queue=%v, err=%s", q, err.Error())
 		return err
 	}
 	data, _ := json.Marshal(messageBody)
@@ -111,6 +121,7 @@ func (p *Producer) SendMessage(queueName string, messageBody interface{}) error 
 		},
 	)
 	if err != nil {
+		logger.Errorf("call DoPublish failed, data=%v, err=%s", data, err.Error())
 		return err
 	}
 
@@ -129,11 +140,13 @@ func NewConsumer(rmq *RabbitMQ, queueName string) *Consumer {
 func (c *Consumer) ConsumeMessage() (<-chan amqp.Delivery, error) {
 	conn, err := c.RabbitMQ.GetConnection()
 	if err != nil {
+		logger.Errorf("call ConsumeGetConnection failed, conn=%v, err=%s", conn, err.Error())
 		return nil, err
 	}
 
 	ch, err := conn.Channel()
 	if err != nil {
+
 		return nil, err
 	}
 
@@ -146,6 +159,7 @@ func (c *Consumer) ConsumeMessage() (<-chan amqp.Delivery, error) {
 		nil,         // arguments
 	)
 	if err != nil {
+		logger.Errorf("call ConsumeQueueDeclare failed, queue=%v, err=%s", q, err.Error())
 		return nil, err
 	}
 
@@ -159,6 +173,7 @@ func (c *Consumer) ConsumeMessage() (<-chan amqp.Delivery, error) {
 		nil,    // args
 	)
 	if err != nil {
+		logger.Errorf("call DoConsume failed, consume=%v, err=%s", msgs, err.Error())
 		return nil, err
 	}
 
