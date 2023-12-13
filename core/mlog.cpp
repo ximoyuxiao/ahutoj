@@ -90,11 +90,11 @@ void logfile::openfile()
     else
         filename =path +  date + ".log";
     todate = date;
-    this->fd = open(filename.c_str(),O_WRONLY|O_CREAT,0666);
+    // 判断 是否存在 文件 不存在 则创建 存在则保存.old
+    this->fd = open(filename.c_str(),O_WRONLY|O_CREAT|O_APPEND,0666);
     buff = "";
-    this->offset = 0;
+   this->offset = 0;
 }
-
 void logfile::buff_fflush()
 {
     // cout<<buff<<endl;

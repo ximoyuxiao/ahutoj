@@ -34,6 +34,7 @@ Solve::Solve(Solve &solve)
     this->ceinfo = solve.ceinfo;
     this->res  =  res;
     this->PassSample = solve.PassSample;
+    this->SampleNumber=solve.SampleNumber;
 }
 Solve::~Solve()
 {
@@ -55,6 +56,7 @@ Solve& Solve::operator=(const Solve &solve)
     this->usetime = solve.usetime;
     this->ceinfo = solve.ceinfo;
     this->res  =  res;
+    this->PassSample = solve.PassSample;
     this->PassSample = solve.PassSample;
     return *this;
 }
@@ -191,6 +193,7 @@ void Solve::to_json(nlohmann::json& j){
         {"Lang",Lang()},
         {"ResultACM",runningres[Sres()]},
         {"PassSample",getPassSample()},
+        {"SampleNumber",getSampleNumber()},
         {"Sim",Sim},
         {"UseTime",usetime},
         {"UseMemory",usememory},
