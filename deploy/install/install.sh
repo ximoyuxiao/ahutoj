@@ -5,25 +5,26 @@ sudo apt update
 for pkg in net-tools make flex g++ clang libmysqlclient-dev libmysql++-dev nginx mysql-server pkg-config redis libhiredis-dev cmake erlang-nox
 do
     echo "正在为您安装$pkg..."
-	if ! apt-get install -y $pkg
+    if ! apt-get install -y $pkg
     then
-		echo "Network fail, retry... you might want to change another apt source for install"
+        echo "Network fail, retry... you might want to change another apt source for install"
         exit 1
-	fi
+    fi
 done
 which rabbitmq-server
-if [$? -eq 1]
+if [ $? -eq 1 ]
     then
         echo "正在为您安装rabbitMQ"
         wget -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | sudo apt-key add -
         sudo apt-get update
-        sudo apt-get install -y rabbitmq-server  #安装成功自动启动    
+        sudo apt-get install -y rabbitmq-server  #安装成功自动启动
         rabbitmq-plugins enable rabbitmq_management   # 启用插件
         service rabbitmq-server restart    # 重启
         rabbitmqctl add_user ahutoj 2019ahut   # 增加普通用户
         rabbitmqctl set_user_tags ahutoj administrator    # 给普通用户分配管理员角色
     else
         echo "rabbitMQ已经安装"
+fi
 # 安装go环境
 which go
 if [ $? -eq 1 ]
@@ -44,11 +45,11 @@ fi
 # 安装air
 which air
 if [ $? -eq 0 ]
-then
-    echo "air 已经安装"
-else
-    echo "给您安装go air..."
-    go install github.com/cosmtrek/air@latest
+    then
+        echo "air 已经安装"
+    else
+        echo "给您安装go air..."
+        go install github.com/cosmtrek/air@latest
 fi
 
 echo "正在安装nlohmannjson-dev"
@@ -67,8 +68,8 @@ wget https://github.com/alanxz/rabbitmq-c/archive/refs/tags/v0.9.0.tar.gz
 tar -zxvf v0.9.0.tar.gz
 cd rabbitmq-c-0.9.0
 mkdir build && cd build
-cmkae ..
-make 
+cmake ..
+make
 make install
 
 cd ..
@@ -81,13 +82,13 @@ make install
 USER=`sudo cat /etc/mysql/debian.cnf |grep user|head -1|awk  '{print $3}'`
 PASSWORD=`sudo cat /etc/mysql/debian.cnf |grep password|head -1|awk  '{print $3}'`
 CPU=`grep "cpu cores" /proc/cpuinfo |head -1|awk '{print $4}'`
-mysql -h localhost -u$USER -p$PASSWORD < ./doc/oj.sql
+mysql -h localhost -u$USER -p$PASSWORD < ../../docs/oj.sql
 # echo "insert into ahutoj.Perrmission values('admin','administrator','true','N');"|mysql -h localhost -u$USER -p$PASSWORD
 sed -i 's/skip-external-locking/# skip-external-locking/g' /etc/mysql/mysql.conf.d/mysqld.cnf
 sed -i 's/bind-address            = 127.0.0.1/bind-address            = 0.0.0.0/g' /etc/mysql/mysql.conf.d/mysqld.cnf
 systemctl restart mysql
 cp ./config.yaml.bak ./config.yaml
-redis-cli < ./doc/redis.in
+redis-cli < ../../doc/redis.in
 make build
 cd core
 make all

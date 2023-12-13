@@ -34,7 +34,10 @@ Solve::Solve(Solve &solve)
     this->ceinfo = solve.ceinfo;
     this->res  =  res;
     this->PassSample = solve.PassSample;
-    this->SampleNumber=solve.SampleNumber;
+<<<<<<< HEAD
+=======
+    this->SampleNumber = solve.SampleNumber;
+>>>>>>> 5b1d1d980100ce5b01a536e42d607eb683b1657d
 }
 Solve::~Solve()
 {
@@ -57,7 +60,10 @@ Solve& Solve::operator=(const Solve &solve)
     this->ceinfo = solve.ceinfo;
     this->res  =  res;
     this->PassSample = solve.PassSample;
-    this->PassSample = solve.PassSample;
+<<<<<<< HEAD
+=======
+    this->SampleNumber = solve.SampleNumber;
+>>>>>>> 5b1d1d980100ce5b01a536e42d607eb683b1657d
     return *this;
 }
 void Solve::getargs(char* args[8])
@@ -197,6 +203,7 @@ void Solve::to_json(nlohmann::json& j){
         {"Sim",Sim},
         {"UseTime",usetime},
         {"UseMemory",usememory},
+        {"SampleNumber",getSampleNumber()},
     };
 }
 
