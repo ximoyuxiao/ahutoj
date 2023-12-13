@@ -67,11 +67,11 @@ func AddPermission(ctx *gin.Context, req *request.AddPermissionReq) (interface{}
 func GetPermissionList(ctx *gin.Context, req *request.PermissionListReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	var ret response.PermissionListResp
-	var size int = 20
+	var size = 20
 	if req.Limit > 20 {
 		size = req.Limit
 	}
-	var offset int = 0
+	var offset = 0
 	if req.Page > 0 {
 		offset = size * req.Page
 	}

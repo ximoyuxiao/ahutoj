@@ -7,12 +7,12 @@ import (
 	"ahutoj/web/io/response"
 	"ahutoj/web/middlewares"
 	"ahutoj/web/utils"
+	"encoding/json"
 	"net/http"
 	"time"
 
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
-	"github.com/goccy/go-json"
 )
 
 func InitServer() {

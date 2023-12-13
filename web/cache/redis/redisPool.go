@@ -12,7 +12,7 @@ import (
 type RedisStat int
 
 var (
-	Nil string = "redis: nil"
+	Nil = "redis: nil"
 )
 
 const (

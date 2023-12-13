@@ -86,9 +86,8 @@ code 1001 msg:"参数错误"
 }
 ```
 
-
-
 #### git提交前缀及其意义
+
 ```
 feat: 新功能（feature）
 fix: 修补bug

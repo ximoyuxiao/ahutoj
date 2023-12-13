@@ -215,7 +215,7 @@ func buildFileName(file *multipart.FileHeader) string {
 	strs := strings.Split(file.Filename, ".")
 	src, _ := file.Open()
 	defer src.Close()
-	var bytes []byte = make([]byte, file.Size)
+	var bytes = make([]byte, file.Size)
 	src.Read(bytes)
 	md5str, _ := utils.MD5EnCodeStr(string(bytes))
 	suffix := strs[len(strs)-1]

@@ -32,4 +32,5 @@ type DeleteProblemReq struct {
 type ProblemListReq struct {
 	GetListReq
 	PType *constanct.ProblemType `json:"PType"`
+	Label string                 `json:"Label"`
 }

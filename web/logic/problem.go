@@ -31,7 +31,7 @@ var ParseProblemFuncMap = map[string]ParseProblemHandlerFunc{
 var AddProblemLock sync.Mutex
 
 func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
-	var nextPID string = ""
+	var nextPID = ""
 	var err error
 	AddProblemLock.Lock()
 	defer AddProblemLock.Unlock()
@@ -122,7 +122,13 @@ func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{},
 	} else {
 		problem.PType = *req.PType
 	}
-	problems, err := models.GetProblemList(ctx, offset, size, problem)
+	var problems []dao.Problem
+	var err error
+	if req.Label == "" {
+		problems, err = models.GetProblemList(ctx, offset, size, problem)
+	} else {
+		problems, err = models.GetProblemListByLabel(ctx, offset, size, problem, req.Label)
+	}
 	if err != nil {
 		return response.CreateResponse(constanct.PROBLEM_LIST_FAILED), err
 	}

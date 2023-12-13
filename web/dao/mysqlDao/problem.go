@@ -30,6 +30,12 @@ func SelectListProblem(ctx context.Context, offset, size int, problem dao.Proble
 	err := db.Table("Problem").Where(problem).Offset(offset).Limit(size).Find(&ret).Error
 	return ret, err
 }
+func SelectListProblemByLabel(ctx context.Context, offset, size int, problem dao.Problem, label string) ([]dao.Problem, error) {
+	db := GetDB(ctx)
+	ret := make([]dao.Problem, 0, size)
+	err := db.Table("Problem").Where(problem).Where("Label LIKE ?", "%"+label+"%").Offset(offset).Limit(size).Find(&ret).Error
+	return ret, err
+}
 func InsertProblemTable(ctx context.Context, problem dao.Problem) error {
 	db := GetDB(ctx)
 	err := db.Table("Problem").Create(&problem).Error

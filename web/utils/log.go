@@ -13,7 +13,7 @@ func LogInit() {
 	config := GetConfInstance()
 	level, err := logrus.ParseLevel(config.LogConfig.Level)
 	if err != nil {
-		fmt.Printf("log level(%s) error, err = %s\n", (config.LogConfig.Level), err.Error())
+		fmt.Printf("log level(%s) error, err = %s\n", config.LogConfig.Level, err.Error())
 	}
 	logger.SetLevel(level)
 	logger.SetOutput(os.Stdout)
