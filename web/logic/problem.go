@@ -17,7 +17,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/bytedance/gopkg/util/logger"
 	"github.com/gin-gonic/gin"
 )
 
@@ -126,14 +125,15 @@ func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{},
 	var err error
 	if req.Label == "" {
 		problems, err = models.GetProblemList(ctx, offset, size, problem)
+		ret.Count, _ = models.GetProblemCount(ctx, problem)
 	} else {
 		problems, err = models.GetProblemListByLabel(ctx, offset, size, problem, req.Label)
+		ret.Count, _ = models.GetProblemCountByLabel(ctx, problem, req.Label)
 	}
 	if err != nil {
 		return response.CreateResponse(constanct.PROBLEM_LIST_FAILED), err
 	}
 	ret.Response = response.CreateResponse(constanct.SuccessCode)
-	ret.Count, _ = models.GetProblemCount(ctx, problem)
 	ret.Data = make([]response.ProblemItemResp, 0, len(problems))
 	for _, problem := range problems {
 		ret.Data = append(ret.Data, response.ProblemItemResp{
@@ -191,6 +191,7 @@ func DownloadProblemFromJson(ctx *gin.Context, PIDs string) (interface{}, error)
 }
 
 func UpProblemFile(ctx *gin.Context, file *multipart.FileHeader) (interface{}, error) {
+	logger := utils.GetLogInstance()
 	suffix := strings.ToUpper(utils.GetFileSuffix(file.Filename))
 	fd, _ := file.Open()
 	reader, _ := ioutil.ReadAll(fd)

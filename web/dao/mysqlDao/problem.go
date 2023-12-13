@@ -23,6 +23,11 @@ func SelectProblemCount(ctx context.Context, problem dao.Problem) (count int64, 
 	err = db.Table("Problem").Where(problem).Count(&count).Error
 	return count, err
 }
+func SelectProblemCountByLabel(ctx context.Context, problem dao.Problem, label string) (count int64, err error) {
+	db := GetDB(ctx)
+	err = db.Table("Problem").Where(problem).Where("Label LIKE ?", "%"+label+"%").Count(&count).Error
+	return count, err
+}
 
 func SelectListProblem(ctx context.Context, offset, size int, problem dao.Problem) ([]dao.Problem, error) {
 	db := GetDB(ctx)

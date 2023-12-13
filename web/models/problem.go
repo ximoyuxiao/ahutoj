@@ -74,6 +74,9 @@ func GetProblemByPID(ctx context.Context, PID string) (dao.Problem, error) {
 func GetProblemCount(ctx context.Context, problem dao.Problem) (int64, error) {
 	return mysqldao.SelectProblemCount(ctx, problem)
 }
+func GetProblemCountByLabel(ctx context.Context, problem dao.Problem, label string) (int64, error) {
+	return mysqldao.SelectProblemCountByLabel(ctx, problem, label)
+}
 
 func GetProblems(ctx context.Context, PIDs []string) ([]dao.Problem, error) {
 	problems := make([]dao.Problem, len(PIDs))
