@@ -42,6 +42,9 @@ func GetPermissionList(ctx *gin.Context, offset, size int) ([]dao.Permission, er
 	return mysqldao.SelectPermissionList(ctx, offset, size)
 
 }
+func GetPermissionCount(ctx *gin.Context) (int64, error) {
+	return mysqldao.SelectPermissionCount(ctx)
+}
 func PermisionReqToDao(req request.PermissionReq) dao.Permission {
 	Permission := dao.Permission{}
 	Permission.UID = req.UID

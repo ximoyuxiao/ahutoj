@@ -7,4 +7,5 @@ drop table IF EXISTS List;
 drop table IF EXISTS Problem;
 drop table IF EXISTS Permission;
 drop table IF EXISTS User;
-drop database IF EXISTS ahutoj;
+drop
+database IF EXISTS ahutoj;

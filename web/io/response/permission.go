@@ -12,6 +12,6 @@ type PermissionResp struct {
 
 type PermissionListResp struct {
 	Response
-	Conut int          `json:"Count"`
+	Conut int64        `json:"Count"`
 	Data  []Permission `json:"Data"`
 }

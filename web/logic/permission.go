@@ -80,7 +80,11 @@ func GetPermissionList(ctx *gin.Context, req *request.PermissionListReq) (interf
 		logger.Errorf("call GetPermissionList Failed,err=%s", err.Error())
 		return response.CreateResponse(constanct.ADMIN_LIST_FAILED), err
 	}
-	ret.Conut = len(permissions)
+	ret.Conut, err = models.GetPermissionCount(ctx)
+	if err != nil {
+		logger.Errorf("call GetPermissionCount Failed,err=%s", err.Error())
+		return response.CreateResponse(constanct.ADMIN_LIST_FAILED), err
+	}
 	ret.Data = make([]response.Permission, 0, len(permissions))
 	for _, permission := range permissions {
 		ret.Data = append(ret.Data, models.PermissionDaoToResp(permission))

@@ -41,3 +41,10 @@ func SavePermission(ctx context.Context, permission *dao.Permission) error {
 	err := db.Table(dao.Permission{}.TableName()).Where("UID=?", permission.UID).Save(permission).Error
 	return err
 }
+
+func SelectPermissionCount(ctx context.Context) (int64, error) {
+	db := GetDB(ctx)
+	var count int64
+	err := db.Table(dao.Permission{}.TableName()).Count(&count).Error
+	return count, err
+}
