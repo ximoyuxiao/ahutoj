@@ -18,7 +18,6 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/sirupsen/logrus"
 )
 
 type CFJudgeUser struct {
@@ -26,7 +25,7 @@ type CFJudgeUser struct {
 	CsrfToken string
 }
 
-var logger *logrus.Logger = utils.GetLogInstance()
+var logger = utils.GetLogInstance()
 var cfLock sync.Mutex
 
 type CFJudgeUsers []CFJudgeUser

@@ -295,7 +295,7 @@ var codeMsgMap = map[ResCode]string{
 	SOLUTION_ADD_FAILED:                     "添加题解失败",
 	SOLUTION_EDIT_FAILED:                    "编辑题解失败",
 	SOLUTION_DELETE_FAILED:                  "删除题解失败",
-	SOLUTION_LIST_FAILED:		 "获取题解列表失败",
+	SOLUTION_LIST_FAILED:                    "获取题解列表失败",
 	NOTICE_ADD_DUPLICATECODE:                "发送重复公告",
 }
 var HttpCodeMap = map[ResCode]int{

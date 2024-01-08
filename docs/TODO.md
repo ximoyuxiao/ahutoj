@@ -1,6 +1,7 @@
 # AHUTOJ TODO LIST
 
 ## Version 1.0
+
 - [x] 支持OJ的基本功能（题目、用户、管理员、竞赛）
 - [x] 支持OJ内部判题功能
 

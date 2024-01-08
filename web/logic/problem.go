@@ -31,7 +31,7 @@ var ParseProblemFuncMap = map[string]ParseProblemHandlerFunc{
 var AddProblemLock sync.Mutex
 
 func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
-	var nextPID string = ""
+	var nextPID = ""
 	var err error
 	AddProblemLock.Lock()
 	defer AddProblemLock.Unlock()

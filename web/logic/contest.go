@@ -87,11 +87,11 @@ func DeleteContest(ctx *gin.Context, req *request.DeleteContestReq) (interface{}
 
 func GetListContest(ctx *gin.Context, req *request.ContestListReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
-	var size int = 20
+	var size = 20
 	if req.Limit > 20 {
 		size = req.Limit
 	}
-	var offset int = 0
+	var offset = 0
 	if req.Page > 0 {
 		offset = size * req.Page
 	}
