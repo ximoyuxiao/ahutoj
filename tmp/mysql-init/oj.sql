@@ -1,6 +1,4 @@
-#1
-.
-创建表空间
+#1.创建表空间
 drop
 database ahutoj if EXISTS ahutoj;
 create
@@ -246,6 +244,6 @@ insert into Permission values('admin','Y','Y','Y','Y','Y');
 use mysql;
 update user
 set host='%'
-where user = 'AHUTOnlinejudge';
+where user = 'root';
 flush
 privileges;
