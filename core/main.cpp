@@ -26,7 +26,7 @@ using std::cin;
 using std::endl;
 using namespace my;
 
-static int init_daemon();
+//static int init_daemon();
 static bool init_db(readConfig *rcf);
 static bool init_Solve_pool(readConfig *rcf,threadpool **tp);/*此处实际上是创建一个解决*/
 int main(int argc, char **argv)
@@ -102,27 +102,27 @@ int main(int argc, char **argv)
     return 0;
 }
 
-int init_daemon(void)
-{
-    pid_t pid = fork();
-    if (pid < 0)
-        return -1;
-    if(pid)
-        exit(0);
-    
-    close(0);
-    close(1);
-    close(2);
-    
-    int fd = open("/dev/null",O_RDWR);
-    dup2( fd, 0 );
-	dup2( fd, 1 );
-	dup2( fd, 2 );
-	if ( fd > 2 )
-		close( fd );
-    setsid();
-    return 0;
-}
+//int init_daemon(void)
+//{
+//    pid_t pid = fork();
+//    if (pid < 0)
+//        return -1;
+//    if(pid)
+//        exit(0);
+//
+//    close(0);
+//    close(1);
+//    close(2);
+//
+//    int fd = open("/dev/null",O_RDWR);
+//    dup2( fd, 0 );
+//	dup2( fd, 1 );
+//	dup2( fd, 2 );
+//	if ( fd > 2 )
+//		close( fd );
+//    setsid();
+//    return 0;
+//}
 
 bool init_db(readConfig *rcf)
 {

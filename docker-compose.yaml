@@ -2,12 +2,13 @@
 #mysql 33069
 #redis 36379
 #rabbitmq 35672
-#minio 9000 9001
-#nginx 8000
-version: '3.5'
+#minio 39000 39001
+#nginx 38000
+version: '3.8'
 services:
   judged:
     image: oj/judged:local
+    container_name: oj-judged
     restart: always
     privileged: true
     depends_on:
@@ -35,7 +36,7 @@ services:
       target: gateway
     volumes:
       - ${CONFIG:-./}:/app/config.yaml
-      - ${DIR:-.}/origin/log/ahutoj.log:/app/ahutoj.log
+      - ${DIR:-.}/gateway/log/ahutoj.log:/app/ahutoj.log
     environment:
       TZ: Asia/Shanghai
       TEAM:
@@ -43,6 +44,7 @@ services:
       - oj
   origin:
     image: oj/origin:local
+    container_name: oj-origin
     restart: always
     privileged: true
     depends_on:
@@ -62,6 +64,7 @@ services:
       - oj
   persistence:
     image: oj/persistence:local
+    container_name: oj-persistence
     restart: always
     privileged: true
     depends_on:
@@ -82,6 +85,7 @@ services:
       - oj
   oj:
     image: oj/oj:local
+    container_name: oj-oj
     restart: always
     privileged: true
     depends_on:
@@ -118,7 +122,7 @@ services:
       - ${DIR:-.}/mysql-init:/docker-entrypoint-initdb.d
       # 日志
     command:
-      # 将mysql8.0默认密码策略 修改为 原先 策略 (mysql8.0对其默认策略做了更改 会导致密码无法匹配) 
+      # 将mysql8.0默认密码策略 修改为 原先 策略 (mysql8.0对其默认策略做了更改 会导致密码无法匹配)
       # Modify the Mysql 8.0 default password strategy to the original strategy (MySQL8.0 to change its default strategy will cause the password to be unable to match)
       --default-authentication-plugin=mysql_native_password
       --character-set-server=utf8mb4
@@ -149,6 +153,7 @@ services:
     networks:
       - oj
   rabbitmq:
+    image: rabbitmq
     container_name: rabbitmq
     restart: always
     volumes:
@@ -157,16 +162,15 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=ahutoj
       - RABBITMQ_DEFAULT_PASS=123456
-    image: rabbitmq
     ports:
       - "35672:15672"
     networks:
       - oj
   nginx:
-    container_name: oj-nginx
     image: nginx
+    container_name: oj-nginx
     ports:
-      - "8000:80"
+      - "38000:80"
     privileged: true
     restart: always
     volumes:
@@ -181,8 +185,8 @@ services:
     container_name: minio
     hostname: "minio"
     ports:
-      - "9000:9000" # api 端口
-      - "9001:9001" # 控制台端口
+      - "39000:9000" # api 端口
+      - "39001:9001" # 控制台端口
     environment:
       MINIO_ROOT_USER: admin    #管理后台用户名
       MINIO_ROOT_PASSWORD: admin123456 #管理后台密码，最小8个字符

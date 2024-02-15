@@ -42,14 +42,14 @@ void judgeClient::init_syscalls_limits(lanuage lang){
     language->init_syscalls_limits(call_counter);
 }
 
-static void setfreeTimer(){
-    struct itimerval time;
-    time.it_interval.tv_usec =0;
-    time.it_interval.tv_sec = 0;
-    time.it_value.tv_sec = 0;
-    time.it_value.tv_usec = 0;
-    setitimer(ITIMER_REAL,&time,NULL);
-}
+//static void setfreeTimer(){
+//    struct itimerval time;
+//    time.it_interval.tv_usec =0;
+//    time.it_interval.tv_sec = 0;
+//    time.it_value.tv_sec = 0;
+//    time.it_value.tv_usec = 0;
+//    setitimer(ITIMER_REAL,&time,NULL);
+//}
 
 bool judgeClient::checkSource(){
     return true;
@@ -262,7 +262,6 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
     }
     else
     {
-        lanuage lang = this->solve->Lang();
         // 默认使用UTF-8编码
         char * const envp[]={(char * const )"PYTHONIOENCODING=utf-8",
                     (char * const )"LANG=zh_CN.UTF-8",
@@ -379,7 +378,7 @@ bool judgeClient::judgeOutFile(SubRes &result,const char *myfile,const char* sou
     }
 
     
-    char diffFile[128];
+    char diffFile[140];
     sprintf(diffFile,"%s/diff",dir);
     char cmd[128];
     sprintf(cmd,"diff -w %s %s > %s",myfile,sourceFile,diffFile);
