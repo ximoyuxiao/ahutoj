@@ -155,6 +155,7 @@ services:
     image: rabbitmq
     container_name: rabbitmq
     restart: always
+    command: rabbitmq-plugins enable rabbitmq_management
     volumes:
       - ${DIR:-.}/rabbitmq/log:/var/log/rabbitmq/log
       - ${DIR:-.}/rabbitmq:/var/lib/rabbitmq
