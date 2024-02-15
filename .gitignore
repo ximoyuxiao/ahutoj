@@ -18,4 +18,5 @@ tmp/*
 !tmp/mysql-init
 #数据库初始化
 !tmp/nginx/html
+!tmp/nginx/nginx.conf
 #前端代码
