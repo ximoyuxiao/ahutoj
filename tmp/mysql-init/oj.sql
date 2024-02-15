@@ -5,11 +5,12 @@ drop
 database ahutoj if EXISTS ahutoj;
 create
 database ahutoj;
-#2.创建用户
-CREATE
-USER 'AHUTOnlinejudge'@'localhost' IDENTIFIED BY '2019ahut';
-#3.授予用户表空间的权限
-grant all privileges on ahutoj.* to 'AHUTOnlinejudge'@'%';
+-- #2.创建用户
+-- CREATE
+-- USER 'root'@'localhost' IDENTIFIED BY '123456';
+-- #3.授予用户表空间的权限
+-- grant all privileges on ahutoj.* to 'AHUTOnlinejudge'@'%';
+--     docker 步骤省略，如果是单体则创建新用户（选做
 #4.创建表
 use ahutoj
 

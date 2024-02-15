@@ -112,7 +112,6 @@ services:
       TZ: Asia/Shanghai
       # root 密码 - root password
       MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_DATABASE: ahutoj
       MYSQL_PASSWORD: 123456
     ports:
       - "33069:3306"
