@@ -155,7 +155,6 @@ services:
     image: rabbitmq
     container_name: rabbitmq
     restart: always
-    command: rabbitmq-plugins enable rabbitmq_management
     volumes:
       - ${DIR:-.}/rabbitmq/log:/var/log/rabbitmq/log
       - ${DIR:-.}/rabbitmq:/var/lib/rabbitmq
@@ -163,7 +162,7 @@ services:
       - RABBITMQ_DEFAULT_USER=ahutoj
       - RABBITMQ_DEFAULT_PASS=123456
     ports:
-      - "35672:15672"
+      - "35672:15672"v
     networks:
       - oj
   nginx:
