@@ -142,7 +142,7 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
         int status, sig, exitcode;
         struct user_regs_struct reg;
 	    struct rusage ruse;
-        int first = true;   
+        int first = true;
         while(1){
             wait4(pid,&status,__WNOTHREAD,&ruse); //等待子进程切换内核态（调用系统API或者运行状态变化）
             // DLOG("Watch pid:%d run:%s/main",pid,dir);
@@ -164,7 +164,7 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
             }
 
             // 子进程已经退出 ，返回值不为0则判RE
-            if (WIFEXITED(status)) { 
+            if (WIFEXITED(status)) {
                 exitcode = WEXITSTATUS(status);
                 if(exitcode){
                     DLOG("dir:%s/main res:RE exitcode:%d",dir,exitcode);
@@ -205,7 +205,7 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
             {
                 /*  WIFSIGNALED: if the process is terminated by signal
                     *  由外部信号触发的进程终止
-                    *  psignal(int sig, char *s)，like perror(char *s)，print out s, with error msg from system of sig  
+                    *  psignal(int sig, char *s)，like perror(char *s)，print out s, with error msg from system of sig
                     * sig = 5 means Trace/breakpoint trap
                     * sig = 11 means Segmentation fault
                     * sig = 25 means File size limit exceeded
@@ -278,7 +278,7 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
         itimerval time;
         time.it_interval.tv_usec =0;
         time.it_interval.tv_sec = 0;
-        time.it_value.tv_sec = this->solve->LimitTime() / 1000;  
+        time.it_value.tv_sec = this->solve->LimitTime() / 1000;
         time.it_value.tv_usec = 1000  + (this->solve->LimitTime() % 1000) *1e3;
         setitimer(ITIMER_REAL,&time,NULL);
         ptrace(PTRACE_TRACEME, 0, NULL, NULL);
@@ -300,8 +300,8 @@ bool judgeClient::getFiles()
     dirent *dirp;
     if(dir ==NULL)
     {
-        ELOG("inputFiles:%s",strerror(errno));     
-        return false;    
+        ELOG("inputFiles:%s",strerror(errno));
+        return false;
     }
     else
     {
@@ -319,7 +319,7 @@ bool judgeClient::getFiles()
                 outputFiles.push_back(path + outfile);
             }
         }
-        closedir(dir);   
+        closedir(dir);
     }
     return true;
 }
@@ -353,7 +353,7 @@ bool judgeClient::judgePE(FILE*source,FILE *res)
                 break;
             }
             break;
-        } 
+        }
         if(tail)
         {
             if(resch != sourcech)
@@ -377,7 +377,7 @@ bool judgeClient::judgeOutFile(SubRes &result,const char *myfile,const char* sou
         return false;
     }
 
-    
+
     char diffFile[140];
     sprintf(diffFile,"%s/diff",dir);
     char cmd[128];
@@ -434,7 +434,7 @@ bool judgeClient::judge()
                 }
                 solve->Sres(OJ_RE);
                 Jstat = J_FAILED;
-            }          
+            }
             case J_GETFILE:{
                 ILOG("J_GETFILE");
                 if (!getFiles()) {
@@ -473,12 +473,12 @@ bool judgeClient::judge()
                     judgeOutFile(res,resoutfile,outputFiles[i].c_str(), inputFiles[i].c_str());
                     if (res != OJ_AC)
                         break;
+                    this->solve->incPassSample();
                     char cmd[1024] ={0};
                     sprintf(cmd,"rm %s",resoutfile);
                     system(cmd);
                     solve->setUsetime(max(useTime,solve->getUsetime()));
                     solve->setUseMemory(max(useMemory,solve->getuseMemory()));
-                    this->solve->incPassSample();
                }
                 if(res != OJ_AC){
                     Jstat = J_FAILED;

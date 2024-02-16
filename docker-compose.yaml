@@ -162,7 +162,7 @@ services:
       - RABBITMQ_DEFAULT_USER=ahutoj
       - RABBITMQ_DEFAULT_PASS=123456
     ports:
-      - "35672:15672"v
+      - "35672:15672"
     networks:
       - oj
   nginx:
