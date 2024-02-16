@@ -156,7 +156,7 @@ services:
     container_name: rabbitmq
     restart: always
     volumes:
-      - ${DIR:-.}/rabbitmq/log:/var/log/rabbitmq/log
+      - ${DIR:-.}/rabbitmq/log:/var/log/rabbitmq
       - ${DIR:-.}/rabbitmq:/var/lib/rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=ahutoj
