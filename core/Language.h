@@ -18,7 +18,7 @@ public:
     virtual void init_syscalls_limits(int call_counter[]) = 0;
     virtual void compile(char *dir, string pid, const char *src) = 0;
     virtual void run(char *dir, char * const envp[5]) = 0;
-    virtual ~Language();
+    virtual ~Language(){};
 };
 
 class C_Language : public Language{
