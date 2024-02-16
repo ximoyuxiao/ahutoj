@@ -1,4 +1,3 @@
-#1.创建表空间
 drop
 database ahutoj if EXISTS ahutoj;
 create
@@ -9,10 +8,9 @@ database ahutoj;
 -- #3.授予用户表空间的权限
 -- grant all privileges on ahutoj.* to 'AHUTOnlinejudge'@'%';
 --     docker 步骤省略，如果是单体则创建新用户（选做
-#4.创建表
 use ahutoj
 
-# 此处存储用户的基本信息
+-- 此处存储用户的基本信息
 create table User
 (
     UID           varchar(20) primary key comment '用户ID',
@@ -216,7 +214,7 @@ create table Solution
     UID           varchar(20) comment '提交用户ID',
     Text          TEXT NOT NULL comment '评论内容',
     Title         TEXT NOT NULL comment '题目标题',
-    FavoriteCount INT comment `点赞个数`,
+    FavoriteCount INT comment '点赞个数',
     CreateTime    long NOT NULL comment '创建时间',
     UpdateTime    long NOT NULL comment '更新时间',
     IsDelete      int(1) comment '删除标志'
@@ -234,16 +232,6 @@ create table Favorite
         references User (UID) ON UPDATE CASCADE ON DELETE CASCADE
 )DEFAULT CHARSET=utf8mb4;
 
-#5
-.
-添加数据
+#5.添加数据
 insert into User values('199094212','admin','',)
 insert into Permission values('admin','Y','Y','Y','Y','Y');
-
-#6.注册账户
-use mysql;
-update user
-set host='%'
-where user = 'root';
-flush
-privileges;
