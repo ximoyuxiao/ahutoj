@@ -5,7 +5,7 @@
 #include<stdarg.h>
 #include"Tpool/threadpool.h"
 #define FILESIZE 4 * 1024 * 1024
-#define LOG_DEBUG 0
+#define LOG_DEBUG 1
 using std::string;
 namespace my
 {

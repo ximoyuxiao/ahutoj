@@ -55,7 +55,7 @@ bool Solution::init(readConfig* rcf)
 static vector<string> splite(string key,char sp){
     vector<string> ret;
     string s = "";
-    for(int i = 0;i<static_cast<int>(key.size())key.size();i++){
+    for(int i = 0;i< static_cast<int>(key.size());i++){
         if(key[i] != sp){
             s+= key[i];
         }else{
