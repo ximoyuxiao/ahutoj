@@ -12,7 +12,7 @@ RUN  sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositori
 
 WORKDIR /build
 
-COPY  --link ./core .
+COPY   ./core .
 
 RUN make judged
 
@@ -28,7 +28,7 @@ RUN   sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositor
 
 COPY --from=build /build/judged /app/judged
 
-COPY --link ./core/config.conf /app/config.conf
+COPY  ./core/config.conf /app/config.conf
 
 RUN chmod +x /app/judged
 

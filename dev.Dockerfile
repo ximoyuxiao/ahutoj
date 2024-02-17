@@ -32,7 +32,7 @@ FROM alpine:3.16 as problem
 
 WORKDIR /app
 
-COPY --link --from=build /build/originproblem /usr/bin/originproblem
+COPY  --from=build /build/originproblem /usr/bin/originproblem
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
     touch ahutoj.log &&\
@@ -44,7 +44,7 @@ FROM alpine:3.16 as persistence
 
 WORKDIR /app
 
-COPY --link --from=build /build/persistence /usr/bin/persistence
+COPY  --from=build /build/persistence /usr/bin/persistence
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
     touch ahutoj.log &&\
@@ -56,7 +56,7 @@ FROM alpine:3.16 as origin
 
 WORKDIR /app
 
-COPY --link --from=build /build/originJudge /usr/bin/originJudge
+COPY  --from=build /build/originJudge /usr/bin/originJudge
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
     touch ahutoj.log &&\
@@ -68,7 +68,7 @@ FROM alpine:3.16 as oj
 
 WORKDIR /app
 
-COPY --link --from=build /build/oj /usr/bin/oj
+COPY  --from=build /build/oj /usr/bin/oj
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
     touch ahutoj.log &&\
@@ -82,7 +82,7 @@ FROM alpine:3.16 as user
 
 WORKDIR /app
 
-COPY --link --from=build /build/useranalytics /usr/bin/useranalytics
+COPY  --from=build /build/useranalytics /usr/bin/useranalytics
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
     touch ahutoj.log &&\
@@ -94,7 +94,7 @@ FROM alpine:3.16 as oss
 
 WORKDIR /app
 
-COPY --link --from=build /build/oss /usr/bin/oss
+COPY  --from=build /build/oss /usr/bin/oss
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
     touch ahutoj.log &&\
