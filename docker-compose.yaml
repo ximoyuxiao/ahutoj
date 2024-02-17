@@ -152,7 +152,7 @@ services:
     networks:
       - oj
   rabbitmq:
-    image: rabbitmq
+    image: rabbitmq:management
     container_name: rabbitmq
     restart: always
     volumes:
