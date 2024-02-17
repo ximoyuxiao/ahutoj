@@ -24,7 +24,7 @@ func NewRabbitMQ(Host string, Port int, User string, Password string, poolSize i
 	if rabbitmq != nil {
 		return rabbitmq, nil
 	}
-	uri := fmt.Sprintf("amqp://%v:%v@%v:%v/", User, Password, Host, Port)
+	uri := fmt.Sprintf("amqp://%v:%v@%v", User, Password, Host)
 	rabbitmq, err = newRabbitMQ(uri, poolSize)
 	if err != nil {
 		return nil, err
@@ -59,7 +59,7 @@ func (r *RabbitMQ) GetConnection() (*amqp.Connection, error) {
 	case conn := <-r.ConnectionPool:
 		return conn, nil
 	default:
-		uri := fmt.Sprintf("amqp://%v:%v@%v:%v/", r.User, r.Password, r.Host, r.Port)
+		uri := fmt.Sprintf("amqp://%v:%v@%v", r.User, r.Password, r.Host)
 		conn, err := amqp.Dial(uri)
 		logger := utils.GetLogInstance()
 		logger.Debug("URI", uri)

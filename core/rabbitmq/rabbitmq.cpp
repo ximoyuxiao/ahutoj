@@ -47,7 +47,7 @@ amqp_connection_state_t RabbitMQ::getConnection() {
     poolLocker.unlock();
     if (conn == nullptr) {
         char uri[1024];
-        sprintf(uri, "amqp://%s:%s@%s:%d", m_user.c_str(), m_password.c_str(), m_host.c_str(), m_port);
+        sprintf(uri, "amqp://%s:%s@%s", m_user.c_str(), m_password.c_str(), m_host.c_str());
         conn = amqp_new_connection();
         if(!conn){
             return nullptr;
