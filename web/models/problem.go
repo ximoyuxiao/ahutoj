@@ -16,8 +16,6 @@ import (
 	"os"
 	"regexp"
 	"strings"
-
-	"github.com/bytedance/gopkg/util/logger"
 )
 
 // 判断题目是否存在
@@ -128,6 +126,7 @@ func GetNextProblemPID(ctx context.Context) (string, error) {
 
 // 解析json
 func ParseJsonToProblem(ctx context.Context, fileText string) (mapping.JsonProblems, error) {
+	logger := utils.GetLogInstance()
 	jsonData := []byte(fileText)
 	var jproblem mapping.JsonProblems
 	err := json.Unmarshal(jsonData, &jproblem)
@@ -155,6 +154,7 @@ func ParseXmlToproblem(ctx context.Context, fileText string) (mapping.JsonProble
 
 // 下载json数据
 func ParseProblemToJsonProblem(ctx context.Context, PID string) (mapping.JsonProblem, error) {
+	logger := utils.GetLogInstance()
 	var result mapping.JsonProblem
 	problem, err := GetProblemByPID(ctx, PID)
 	if err != nil {
@@ -169,6 +169,7 @@ func ParseProblemToJsonProblem(ctx context.Context, PID string) (mapping.JsonPro
 
 // 获取样例文件
 func getProblemSampleFile(ctx context.Context, problem *mapping.JsonProblem, PID string) error {
+	logger := utils.GetLogInstance()
 	filepath := utils.GetConfInstance().DataPath + "/" + PID
 	ok, err := utils.CheckPathExists(filepath)
 	if err != nil {
@@ -205,6 +206,7 @@ func getProblemSampleFile(ctx context.Context, problem *mapping.JsonProblem, PID
 
 // 生成json代码
 func ParseJsonProblemToJson(ctx context.Context, problems mapping.JsonProblems) (string, error) {
+	logger := utils.GetLogInstance()
 	buf, err := json.Marshal(problems) //结构体对象生成json字符串
 	if err != nil {
 		logger.Errorf("call ParseDBToJson failed, err:%v", err.Error())

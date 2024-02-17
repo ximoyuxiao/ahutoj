@@ -4,8 +4,6 @@ import (
 	"ahutoj/web/utils"
 	"encoding/json"
 	"fmt"
-	"github.com/bytedance/gopkg/util/logger"
-
 	"github.com/streadway/amqp"
 )
 
@@ -84,6 +82,7 @@ func NewProducer(rmq *RabbitMQ) *Producer {
 }
 
 func (p *Producer) SendMessage(queueName string, messageBody interface{}) error {
+	logger := utils.GetLogInstance()
 	conn, err := p.RabbitMQ.GetConnection()
 	if err != nil {
 		logger.Errorf("call SendGetConnection failed, submit=%v, err=%s", conn, err.Error())
@@ -138,6 +137,7 @@ func NewConsumer(rmq *RabbitMQ, queueName string) *Consumer {
 }
 
 func (c *Consumer) ConsumeMessage() (<-chan amqp.Delivery, error) {
+	logger := utils.GetLogInstance()
 	conn, err := c.RabbitMQ.GetConnection()
 	if err != nil {
 		logger.Errorf("call ConsumeGetConnection failed, conn=%v, err=%s", conn, err.Error())

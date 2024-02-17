@@ -15,7 +15,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bytedance/gopkg/util/logger"
 	"github.com/gin-gonic/gin"
 )
 
@@ -125,6 +124,7 @@ func UnzipFile(ctx *gin.Context) {
 }
 
 func CheckAndCreatDir(ctx *gin.Context, filepath string) error {
+	logger := utils.GetLogInstance()
 	ok, err := pathExists(filepath)
 	if err != nil {
 		logger.Errorf("call pathExists failed,filepath:%s, err=%v", filepath, err.Error())
@@ -287,6 +287,7 @@ func DownloadProblemFromJson(ctx *gin.Context) {
 }
 
 func UpProblemFile(ctx *gin.Context) {
+	logger := utils.GetLogInstance()
 	file, err := ctx.FormFile("file")
 	if err != nil {
 		logger.Errorf("call FormFile filed, err=%s", err.Error())

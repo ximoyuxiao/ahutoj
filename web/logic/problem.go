@@ -17,7 +17,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/bytedance/gopkg/util/logger"
 	"github.com/gin-gonic/gin"
 )
 
@@ -31,11 +30,11 @@ var ParseProblemFuncMap = map[string]ParseProblemHandlerFunc{
 var AddProblemLock sync.Mutex
 
 func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
+	logger := utils.GetLogInstance()
 	var nextPID = ""
 	var err error
 	AddProblemLock.Lock()
 	defer AddProblemLock.Unlock()
-	logger := utils.GetLogInstance()
 	if req.PType == "" {
 		req.PType = constanct.LOCALTYPE
 	}
@@ -110,6 +109,7 @@ func DeleteProblem(ctx *gin.Context, req *request.DeleteProblemReq) (interface{}
 }
 
 func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{}, error) {
+
 	var ret response.ProblemListResp
 	offset, size := utils.GetPageInfo(req.Page, req.Limit)
 	admin := middlewares.CheckUserHasPermission(ctx, constanct.ProblemAdmin)
@@ -140,6 +140,7 @@ func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{},
 }
 
 func GetProblemInfo(ctx *gin.Context, PID string) (interface{}, error) {
+
 	if !models.IsProblemExistByPID(ctx, &dao.Problem{PID: PID}) {
 		return response.CreateResponse(constanct.PROBLEM_GET_PIDNotExistCode), nil
 	}
@@ -185,6 +186,7 @@ func DownloadProblemFromJson(ctx *gin.Context, PIDs string) (interface{}, error)
 }
 
 func UpProblemFile(ctx *gin.Context, file *multipart.FileHeader) (interface{}, error) {
+	logger := utils.GetLogInstance()
 	suffix := strings.ToUpper(utils.GetFileSuffix(file.Filename))
 	fd, _ := file.Open()
 	reader, _ := ioutil.ReadAll(fd)

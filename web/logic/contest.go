@@ -12,7 +12,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bytedance/gopkg/util/logger"
 	"github.com/gin-gonic/gin"
 )
 
@@ -248,6 +247,7 @@ func GetRankContest(ctx *gin.Context, req *request.GetContestRankReq) (interface
 }
 
 func GetRankContestWithACM(ctx *gin.Context, contest dao.Contest, current int64) (interface{}, error) {
+	logger := utils.GetLogInstance()
 	problems, err := models.GetConProblemFromDB(ctx, contest) //获得竞赛的题目
 	if err != nil {
 		logger.Errorf("call GetConProblemFromDB Failed, CID=%d, err=%s", contest.CID, err.Error())
@@ -322,6 +322,7 @@ func GetRankContestWithACM(ctx *gin.Context, contest dao.Contest, current int64)
 }
 
 func GetRankContestWithOI(ctx *gin.Context, contest dao.Contest, current int64) (interface{}, error) {
+	logger := utils.GetLogInstance()
 	if contest.End_time > current {
 		return response.CreateResponseStr(constanct.CONTEST_RANK_NOSHOW, "竞赛未结束不可查看排名信息", response.INFO), nil
 	}

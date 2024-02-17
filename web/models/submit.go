@@ -8,8 +8,6 @@ import (
 	"ahutoj/web/middlewares"
 	"ahutoj/web/utils"
 	"context"
-
-	"github.com/bytedance/gopkg/util/logger"
 )
 
 func GetSubmitByCIDFromDB(ctx context.Context, CID, fb int64) ([]dao.Submit, error) {
@@ -50,6 +48,7 @@ func FindLastSIDByUID(ctx context.Context, UID string) (dao.Submit, error) {
 }
 
 func EqualLastSource(ctx context.Context, UID string, PID string, Source string) bool {
+	logger := utils.GetLogInstance()
 	SourceMD5, err := utils.MD5EnCodeStr(Source)
 	if err != nil {
 		logger.Errorf("call MD5EnCodeStr failed. Source:%s", Source)
@@ -64,6 +63,7 @@ func EqualLastSource(ctx context.Context, UID string, PID string, Source string)
 }
 
 func CommitRabitMQ(ctx context.Context, submit dao.Submit) error {
+	logger := utils.GetLogInstance()
 	if submit.SID == 0 {
 		return nil
 	}

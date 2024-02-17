@@ -7,7 +7,6 @@ import (
 	"ahutoj/web/utils"
 	"context"
 
-	"github.com/bytedance/gopkg/util/logger"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,6 +19,7 @@ func DeleteNoticeByNID(ctx context.Context, NID int) error {
 	return mysqldao.DeleteNoticeByNID(ctx, NID)
 }
 func NoticeEqualLastSource(ctx *gin.Context, title string, content string) bool {
+	logger := utils.GetLogInstance()
 	SourceMD5, err := utils.MD5EnCodeStr(title + content)
 	if err != nil {
 		logger.Errorf("call MD5EnCodeStr failed. Source:%s", title+content)
