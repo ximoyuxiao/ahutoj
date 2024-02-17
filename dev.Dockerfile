@@ -4,7 +4,7 @@ FROM golang:alpine as build
 
 WORKDIR /build
 
-COPY --link ./ ./
+COPY  ./ ./
 
 RUN  go env -w GO111MODULE=on && go env -w GOPROXY=goproxy.cn,direct && go mod tidy && \
     go build -o ./gateway web/service/gateway/gateway.go && \
@@ -18,7 +18,7 @@ FROM alpine:3.16 as gateway
 
 WORKDIR /app
 
-COPY --link --from=build /build/gateway /usr/bin/gateway
+COPY  --from=build /build/gateway /usr/bin/gateway
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
     touch ahutoj.log &&\
