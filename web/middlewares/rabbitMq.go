@@ -3,6 +3,7 @@ package middlewares
 import (
 	"ahutoj/web/utils"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/streadway/amqp"
 )
@@ -25,6 +26,7 @@ func NewRabbitMQ(Host string, Port int, User string, Password string, poolSize i
 	uri := fmt.Sprintf("amqp://%v:%v@rabbitmq", User, Password)
 	rabbitmq, err = newRabbitMQ(uri, poolSize)
 	if err != nil {
+		utils.GetLogInstance().Errorf("call newRabbitMQ failed,  err=%s", err.Error())
 		return nil, err
 	}
 	rabbitmq.Host = Host
@@ -38,23 +40,29 @@ func GetRabbitMq() *RabbitMQ {
 	return rabbitmq
 }
 func newRabbitMQ(uri string, poolSize int) (*RabbitMQ, error) {
+	logger := utils.GetLogInstance()
 	pool := make(chan *amqp.Connection, poolSize)
 	for i := 0; i < poolSize; i++ {
 		connection, err := amqp.Dial(uri)
 		if err != nil {
+			logger.Errorf("call Dial failed, conn=%v, err=%s", connection, err.Error())
 			return nil, err
 		}
 		pool <- connection
 	}
 	test := &RabbitMQ{ConnectionPool: pool}
-	logger := utils.GetLogInstance()
-	logger.Debug("rabbitmq:", test)
+	logger.Debug("rabbitmq:", utils.Sdump(test))
 	return &RabbitMQ{ConnectionPool: pool}, nil
 }
 
 func (r *RabbitMQ) GetConnection() (*amqp.Connection, error) {
 	select {
 	case conn := <-r.ConnectionPool:
+		if conn == nil {
+			err := errors.New("received nil connection from ConnectionPool")
+			utils.GetLogInstance().Errorf("call conn:=<-r.ConnectionPoll failed,error =%v", err.Error())
+			return nil, err
+		}
 		return conn, nil
 	default:
 		uri := fmt.Sprintf("amqp://%v:%v@rabbitmq", r.User, r.Password)
@@ -92,6 +100,7 @@ func (p *Producer) SendMessage(queueName string, messageBody interface{}) error 
 
 	ch, err := conn.Channel()
 	if err != nil {
+		logger.Errorf("call Channel failed, err=%s", err.Error())
 		return err
 	}
 	defer ch.Close()
@@ -146,7 +155,7 @@ func (c *Consumer) ConsumeMessage() (<-chan amqp.Delivery, error) {
 
 	ch, err := conn.Channel()
 	if err != nil {
-
+		logger.Errorf("call ConsumeQueueDeclare failed, channel=%v, err=%s", ch, err.Error())
 		return nil, err
 	}
 
