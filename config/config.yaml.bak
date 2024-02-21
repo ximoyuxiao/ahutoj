@@ -41,7 +41,7 @@ mysql:
 
 redis:
     host: "redis"
-    port: "6379"
+    port: ":6379"
     db: 0
     pool_size: 100
     keepalive: 30

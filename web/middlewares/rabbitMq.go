@@ -51,7 +51,7 @@ func newRabbitMQ(uri string, poolSize int) (*RabbitMQ, error) {
 		pool <- connection
 	}
 	test := &RabbitMQ{ConnectionPool: pool}
-	logger.Debug("rabbitmq:", utils.Sdump(test))
+	logger.Debugf("RabbitMQ:%+v:", utils.Sdump(test))
 	return &RabbitMQ{ConnectionPool: pool}, nil
 }
 

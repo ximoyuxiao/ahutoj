@@ -37,6 +37,7 @@ services:
     volumes:
       - ${CONFIG:-./}:/app/config.yaml
       - ${DIR:-.}/gateway/log/ahutoj.log:/app/ahutoj.log
+      - ${DIR:-.}/resource:/app/resource
     environment:
       TZ: Asia/Shanghai
       TEAM:
@@ -57,6 +58,7 @@ services:
     volumes:
       - ${CONFIG:-./}:/app/config.yaml
       - ${DIR:-.}/origin/log/ahutoj.log:/app/ahutoj.log
+      - ${DIR:-.}/resource:/app/resource
     environment:
       TZ: Asia/Shanghai
       TEAM:
