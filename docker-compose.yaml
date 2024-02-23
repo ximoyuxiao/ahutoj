@@ -37,7 +37,6 @@ services:
     volumes:
       - ${CONFIG:-./}:/app/config.yaml
       - ${DIR:-.}/gateway/log/ahutoj.log:/app/ahutoj.log
-      - ${DIR:-.}/resource:/app/resource
     environment:
       TZ: Asia/Shanghai
       TEAM:
@@ -58,7 +57,6 @@ services:
     volumes:
       - ${CONFIG:-./}:/app/config.yaml
       - ${DIR:-.}/origin/log/ahutoj.log:/app/ahutoj.log
-      - ${DIR:-.}/resource:/app/resource
     environment:
       TZ: Asia/Shanghai
       TEAM:
@@ -108,13 +106,12 @@ services:
       - oj
   mysql:
     image: mysql:8.0.28
-    container_name: mysql
+    container_name: oj-mysql
     environment:
       # 时区上海 - Time zone Shanghai (Change if needed)
       TZ: Asia/Shanghai
       # root 密码 - root password
       MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_PASSWORD: 123456
     ports:
       - "33069:3306"
     volumes:
@@ -134,11 +131,10 @@ services:
     restart: always
     networks:
       - oj
-
   #redis容器 - Redis container
   redis:
     image: redis
-    container_name: redis
+    container_name: oj-redis
     ports:
       - "36379:6379"
     environment:
@@ -155,11 +151,12 @@ services:
       - oj
   rabbitmq:
     image: rabbitmq:management
-    container_name: rabbitmq
+    container_name: oj-rabbitmq
     restart: always
     volumes:
       - ${DIR:-.}/rabbitmq/log:/var/log/rabbitmq
       - ${DIR:-.}/rabbitmq:/var/lib/rabbitmq
+    command: rabbitmqctl set_user_tags ahutoj administrator && rabbitmqctl set_permissions -p / ahutoj ".*" ".*" ".*"
     environment:
       - RABBITMQ_DEFAULT_USER=ahutoj
       - RABBITMQ_DEFAULT_PASS=123456
@@ -167,23 +164,21 @@ services:
       - "35672:15672"
     networks:
       - oj
-  nginx:
-    image: nginx
-    container_name: oj-nginx
-    ports:
-      - "38000:80"
-    privileged: true
-    restart: always
-    volumes:
-      - ${DIR:-.}/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-      - ${DIR:-.}/nginx/html/dist:/usr/share/nginx/html
-      - ${DIR:-.}/nginx/logs:/var/log/nginx
-      - ${DIR:-.}/nginx/resource/:/home/ubuntu/ahutoj/resource/
-    networks:
-      - oj
+#  nginx:
+#    image: nginx
+#    container_name: oj-nginx
+#    privileged: true
+#    restart: always
+#    volumes:
+#      - ${DIR:-.}/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+#      - ${DIR:-.}/nginx/html/dist:/usr/share/nginx/html
+#      - ${DIR:-.}/nginx/logs:/var/log/nginx
+#      - ${DIR:-.}/nginx/resource/:/home/ubuntu/ahutoj/resource/
+#    networks:
+#      - oj
   minio:
     image: quay.io/minio/minio # 如果不支持x86-64-v2，使用quay.io/minio/minio:RELEASE.2024-11-01T01-57-10Z-cpuv1
-    container_name: minio
+    container_name: oj-minio
     hostname: "minio"
     ports:
       - "39000:9000" # api 端口
@@ -197,9 +192,26 @@ services:
     command: server --console-address ':9001' /data  #指定容器中的目录 /data
     privileged: true
     restart: always
-
+    networks:
+      - oj
+  nginx-proxy-manager-zh:
+    image: chishin/nginx-proxy-manager-zh:release
+    container_name: chishin/nginx-proxy-manager-zh:release
+    ports:
+      - "443:443"
+      - "80:80"
+      - "81:81"
+    privileged: true
+    restart: always
+    volumes:
+      - ${DIR:-.}/npm/data:/data
+      - ${DIR:-.}/npm/letsencrypt:/etc/letsencrypt
+      #- ${DIR:-.}/npm/dist:/usr/share/nginx/html
+      - ${DIR:-.}/resource:/resource
+    networks:
+      - oj
 networks:
-  oj:
+  oj_network:
     driver: bridge
     #name: local 不知道为什么不行，删了
     #external: true

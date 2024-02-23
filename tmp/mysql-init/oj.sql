@@ -8,7 +8,8 @@ database ahutoj;
 -- #3.授予用户表空间的权限
 -- grant all privileges on ahutoj.* to 'AHUTOnlinejudge'@'%';
 --     docker 步骤省略，如果是单体则创建新用户（选做
-use ahutoj
+use
+ahutoj
 
 -- 此处存储用户的基本信息
 create table User
@@ -72,12 +73,12 @@ create table List
 (
     LID         int primary key AUTO_INCREMENT comment '题单ID',
     FromLID     int comment '若是克隆题单,则需要一个来源的克隆题单ID',
-    UID varchar (20) comment '创建用户',
+    UID         varchar(20) comment '创建用户',
     Description Text comment '题单描述',
     Title       Text comment '题单标题',
     StartTime   long comment '开始时间',
     Submited    int comment '提交次数',
-   Problems Text comment '题单题目序列',
+    Problems    Text comment '题单题目序列',
     constraint fk_lst_UID FOREIGN KEY (UID)
         references User (UID) ON UPDATE CASCADE ON DELETE CASCADE
 )DEFAULT CHARSET=utf8mb4;
@@ -122,7 +123,7 @@ create table Contest
     BeginTime   long comment '开始时间',
     EndTime     long comment '结束时间',
     -- 1 acm 2 oi
-    Type int comment '竞赛类型',
+    Type        int comment '竞赛类型',
     IsPublic    int comment '是否公开',
     Problems    Text comment '题目 + 顺序',
     Pass        varchar(128) comment '竞赛密码',
@@ -232,6 +233,8 @@ create table Favorite
         references User (UID) ON UPDATE CASCADE ON DELETE CASCADE
 )DEFAULT CHARSET=utf8mb4;
 
-#5.添加数据
+#5
+.
+添加数据
 insert into User values('199094212','admin','',)
 insert into Permission values('admin','Y','Y','Y','Y','Y');

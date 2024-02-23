@@ -103,7 +103,11 @@ func (p *Producer) SendMessage(queueName string, messageBody interface{}) error 
 		logger.Errorf("call Channel failed, err=%s", err.Error())
 		return err
 	}
-	defer ch.Close()
+	defer func() {
+		if err := ch.Close(); err != nil {
+			logger.Errorf("call Channel Close failed, err=%s", err.Error())
+		}
+	}()
 
 	q, err := ch.QueueDeclare(
 		queueName, // queue name
@@ -158,7 +162,11 @@ func (c *Consumer) ConsumeMessage() (<-chan amqp.Delivery, error) {
 		logger.Errorf("call ConsumeQueueDeclare failed, channel=%v, err=%s", ch, err.Error())
 		return nil, err
 	}
-
+	defer func() {
+		if err := ch.Close(); err != nil {
+			logger.Errorf("call Channel Close failed, err=%s", err.Error())
+		}
+	}()
 	q, err := ch.QueueDeclare(
 		c.QueueName, // queue name
 		false,       // durable
