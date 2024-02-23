@@ -206,8 +206,8 @@ services:
     volumes:
       - ${DIR:-.}/npm/data:/data
       - ${DIR:-.}/npm/letsencrypt:/etc/letsencrypt
-      #- ${DIR:-.}/npm/dist:/usr/share/nginx/html
       - ${DIR:-.}/resource:/resource
+      - ${DIR:-.}/dist:/usr/share/nginx/html
     networks:
       - oj_network
 networks:
