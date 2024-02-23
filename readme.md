@@ -6,11 +6,9 @@ typora-root-url: img
 
 ### 环境:
 
-在安装有docker，docker-compose的本地环境\
-*ps*:这是两个东西\
-不会安装的看这里：[docker安装](https://blog.csdn.net/aaahuahua/article/details/122403354)
+在安装有docker，docker-compose的本地环境
 
-### 在本机中跑起这个项目
+### 部署
 
 在ahutoj文件夹加下运行`docker-compose up -d`
 

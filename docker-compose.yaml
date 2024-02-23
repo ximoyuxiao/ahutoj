@@ -156,7 +156,6 @@ services:
     volumes:
       - ${DIR:-.}/rabbitmq/log:/var/log/rabbitmq
       - ${DIR:-.}/rabbitmq:/var/lib/rabbitmq
-    command: rabbitmqctl set_user_tags ahutoj administrator && rabbitmqctl set_permissions -p / ahutoj ".*" ".*" ".*"
     environment:
       - RABBITMQ_DEFAULT_USER=ahutoj
       - RABBITMQ_DEFAULT_PASS=123456
@@ -164,18 +163,6 @@ services:
       - "35672:15672"
     networks:
       - oj_network
-#  nginx:
-#    image: nginx
-#    container_name: oj-nginx
-#    privileged: true
-#    restart: always
-#    volumes:
-#      - ${DIR:-.}/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-#      - ${DIR:-.}/nginx/html/dist:/usr/share/nginx/html
-#      - ${DIR:-.}/nginx/logs:/var/log/nginx
-#      - ${DIR:-.}/nginx/resource/:/home/ubuntu/ahutoj/resource/
-#    networks:
-#      - oj
   minio:
     image: quay.io/minio/minio # 如果不支持x86-64-v2，使用quay.io/minio/minio:RELEASE.2024-11-01T01-57-10Z-cpuv1
     container_name: oj-minio
@@ -195,7 +182,7 @@ services:
     networks:
       - oj_network
   npm:
-    image: chishin/nginx-proxy-manager-zh:release
+    image: jlesage/nginx-proxy-manager:latest
     container_name: oj-npm
     ports:
       - "443:443"
