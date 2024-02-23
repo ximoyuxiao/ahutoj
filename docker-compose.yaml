@@ -24,7 +24,7 @@ services:
       TZ: Asia/Shanghai
       TEAM:
     networks:
-      - oj
+      - oj_network
   gateway:
     image: oj/gateway:local
     container_name: oj-gateway
@@ -41,7 +41,7 @@ services:
       TZ: Asia/Shanghai
       TEAM:
     networks:
-      - oj
+      - oj_network
   origin:
     image: oj/origin:local
     container_name: oj-origin
@@ -61,7 +61,7 @@ services:
       TZ: Asia/Shanghai
       TEAM:
     networks:
-      - oj
+      - oj_network
   persistence:
     image: oj/persistence:local
     container_name: oj-persistence
@@ -82,7 +82,7 @@ services:
       TZ: Asia/Shanghai
       TEAM:
     networks:
-      - oj
+      - oj_network
   oj:
     image: oj/oj:local
     container_name: oj-oj
@@ -103,7 +103,7 @@ services:
       TZ: Asia/Shanghai
       TEAM:
     networks:
-      - oj
+      - oj_network
   mysql:
     image: mysql:8.0.28
     container_name: oj-mysql
@@ -130,7 +130,7 @@ services:
     privileged: true
     restart: always
     networks:
-      - oj
+      - oj_network
   #redis容器 - Redis container
   redis:
     image: redis
@@ -148,7 +148,7 @@ services:
     privileged: true
     restart: always
     networks:
-      - oj
+      - oj_network
   rabbitmq:
     image: rabbitmq:management
     container_name: oj-rabbitmq
@@ -163,7 +163,7 @@ services:
     ports:
       - "35672:15672"
     networks:
-      - oj
+      - oj_network
 #  nginx:
 #    image: nginx
 #    container_name: oj-nginx
@@ -193,7 +193,7 @@ services:
     privileged: true
     restart: always
     networks:
-      - oj
+      - oj_network
   npm:
     image: chishin/nginx-proxy-manager-zh:release
     container_name: oj-npm
@@ -209,7 +209,7 @@ services:
       #- ${DIR:-.}/npm/dist:/usr/share/nginx/html
       - ${DIR:-.}/resource:/resource
     networks:
-      - oj
+      - oj_network
 networks:
   oj_network:
     driver: bridge
