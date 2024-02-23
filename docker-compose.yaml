@@ -194,9 +194,9 @@ services:
     restart: always
     networks:
       - oj
-  nginx-proxy-manager-zh:
+  npm:
     image: chishin/nginx-proxy-manager-zh:release
-    container_name: chishin/nginx-proxy-manager-zh:release
+    container_name: oj-npm
     ports:
       - "443:443"
       - "80:80"
