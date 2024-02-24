@@ -1,7 +1,4 @@
-drop
-database ahutoj if EXISTS ahutoj;
-create
-database ahutoj;
+create database if not EXISTS ahutoj;
 use ahutoj
 
 create table User
