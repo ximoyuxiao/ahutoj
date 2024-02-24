@@ -2,16 +2,8 @@ drop
 database ahutoj if EXISTS ahutoj;
 create
 database ahutoj;
--- #2.创建用户
--- CREATE
--- USER 'root'@'localhost' IDENTIFIED BY '123456';
--- #3.授予用户表空间的权限
--- grant all privileges on ahutoj.* to 'AHUTOnlinejudge'@'%';
---     docker 步骤省略，如果是单体则创建新用户（选做
-use
-ahutoj
+use ahutoj
 
--- 此处存储用户的基本信息
 create table User
 (
     UID           varchar(20) primary key comment '用户ID',
@@ -233,8 +225,5 @@ create table Favorite
         references User (UID) ON UPDATE CASCADE ON DELETE CASCADE
 )DEFAULT CHARSET=utf8mb4;
 
-#5
-.
-添加数据
-insert into User values('199094212','admin','',)
+insert into User (UID, UserName, Pass) values('199094212','admin','');
 insert into Permission values('admin','Y','Y','Y','Y','Y');

@@ -185,9 +185,9 @@ services:
     image: jlesage/nginx-proxy-manager:latest
     container_name: oj-npm
     ports:
-      - "443:443"
-      - "80:80"
-      - "8181:81"
+      - "443:4443"
+      - "80:8080"
+      - "8181:8181"
     privileged: true
     restart: always
     volumes:
