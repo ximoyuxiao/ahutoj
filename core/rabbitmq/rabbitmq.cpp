@@ -52,9 +52,16 @@ amqp_connection_state_t RabbitMQ::getConnection() {
         if(!conn){
             return nullptr;
         }
-        amqp_socket_t* socket = amqp_tcp_socket_new(conn);
-        amqp_socket_open(socket, m_host.c_str(), m_port);
-        amqp_login(conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN, m_user.c_str(), m_password.c_str());
+        auto ret = amqp_socket_open(socket, m_host.c_str(), m_port);
+        if ret !=0{
+           DLOG( "amqp_socket_open failed,err:%v",amqp_error_string(rep.library_error));
+           return nullptr;
+        }
+        auto rep = amqp_login(conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN, m_user.c_str(), m_password.c_str());
+        if (rep.reply_type != AMQP_RESPONSE_NORMAL) {
+            DLOG( "amqp_login failed,err:%v",amqp_error_string(rep.library_error));
+            return nullptr;
+        }
     }
     return conn;
 }

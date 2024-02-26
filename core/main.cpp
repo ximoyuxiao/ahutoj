@@ -32,9 +32,9 @@ static bool init_Solve_pool(readConfig *rcf,threadpool **tp);/*此处实际上�
 int main(int argc, char **argv)
 {
     /*挂起守护进程*/
-    // if(!DEV_DEBUG)
-    //     init_daemon();
-   
+     if(!DEV_DEBUG)
+         init_daemon();
+
     /*读配置项目*/
     readConfig *rcf = new readConfig(CONF);
     threadpool *pool = nullptr; 
