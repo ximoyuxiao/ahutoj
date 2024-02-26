@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  nginx:
+    image: nginx
+    container_name: oj-nginx
+    privileged: true
+    restart: always
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ${DIR:-.}/dist:/usr/share/nginx/html
+      - ${DIR:-.}/nginx/logs:/var/log/nginx
+      - ${DIR:-.}/nginx/resource/:/home/ubuntu/ahutoj/resource/
+    networks:
+      - oj
