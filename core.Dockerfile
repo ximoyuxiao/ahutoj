@@ -24,7 +24,10 @@ WORKDIR /app
 RUN   sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories &&  \
     apk update && \
     apk add hiredis rabbitmq-c  mysql-dev && \
-    apk add --no-cache nlohmann-json 
+    apk add --no-cache nlohmann-json \
+
+#RUN apk add gdb ncurses-libs python3 expat
+#GDB调试所需环境
 
 COPY --from=build /build/judged /app/judged
 
@@ -32,5 +35,6 @@ COPY  ./core/config.conf /app/config.conf
 
 RUN chmod +x /app/judged
 
-ENTRYPOINT ["/app/judged"]
+ENTRYPOINT  /app/judged && tail -f /dev/null
+# 避免容器退出
 

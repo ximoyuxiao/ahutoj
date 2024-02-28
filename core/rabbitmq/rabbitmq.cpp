@@ -5,6 +5,8 @@
 #include <amqp_framing.h>
 #include <cstring>
 #include <rabbitmq.h>
+#include<../mlog.h>
+using namespace my;
 RabbitMQ::RabbitMQ(std::string host, int port, std::string user, std::string password) :
     m_host(host), m_port(port), m_user(user), m_password(password), m_poolSize(10)
 {
@@ -96,7 +98,12 @@ bool Producer::sendMessage(std::string queueName, void* messageBody, size_t mess
     amqp_bytes_t messageBytes = amqp_bytes_malloc(messageSize);
     memcpy(messageBytes.bytes, messageBody, messageSize);
 
-//    auto ok = amqp_channel_open(conn,channel);
+    amqp_channel_open_ok_t *channel_open = amqp_channel_open(conn, channel);
+     if (channel_open == nullptr) {
+            fprintf(stderr, "Error opening channel\n");
+            m_rmq->releaseConnection(conn);
+            return 1;
+        }
     amqp_queue_declare_ok_t* queue = amqp_queue_declare(conn, channel, amqp_cstring_bytes(queueName.c_str()), false, false, false, false, amqp_empty_table);
     if(queue == nullptr){
         amqp_bytes_free(messageBytes);
@@ -138,7 +145,13 @@ int Consumer::consumeMessage(void (*callback)(amqp_envelope_t)) {
     amqp_channel_t channel = 1; // initialize channel to a non-zero value
     int ret = 0;
 
-//    auto ok = amqp_channel_open(conn, channel);
+   amqp_channel_open_ok_t *channel_open = amqp_channel_open(conn, channel);
+       if (channel_open == nullptr) {
+           fprintf(stderr, "Error opening channel\n");
+           m_rmq->releaseConnection(conn);
+           return 1;
+       }
+
     amqp_queue_declare_ok_t* queue = amqp_queue_declare(conn, channel, amqp_cstring_bytes(m_queueName.c_str()), false, false, false, false, amqp_empty_table);
     if (queue == nullptr) {
         amqp_channel_close(conn, channel, AMQP_REPLY_SUCCESS);
