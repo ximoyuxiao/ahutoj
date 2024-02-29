@@ -242,6 +242,11 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
             if (call_counter[call_id])
             {
                 call_counter[call_id]--;
+                this->call_id=0;
+                // 等待下一次陷入中断
+                ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
+                //DLOG("run:%s/main leave ptrace pid:%d",dir,pid);
+                first = false;
             }
             else
             {
@@ -250,11 +255,6 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
                 ptrace(PTRACE_KILL, pid, NULL, NULL);
                 continue;
             }
-            this->call_id=0;
-            // 等待下一次陷入中断
-            ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
-            // DLOG("run:%s/main leave ptrace pid:%d",dir,pid);
-            first = false;
         }
         useTime += (ruse.ru_utime.tv_sec * 1000 + ruse.ru_utime.tv_usec / 1000) * cpu_compensation; // 统计用户态耗时，在更快速的CPU上加以cpu_compensation倍数放大
         useTime += (ruse.ru_stime.tv_sec * 1000 + ruse.ru_stime.tv_usec / 1000) * cpu_compensation; // 统计内核态耗时，在更快速的CPU上加以cpu_compensation倍数放大
