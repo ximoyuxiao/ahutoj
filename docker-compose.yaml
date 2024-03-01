@@ -121,7 +121,7 @@ services:
     volumes:
       #数据挂载 - Data mounting
       - ${DIR:-.}/mysql-data:/var/lib/mysql
-      - ${DIR:-.}/mysql-init:/docker-entrypoint-initdb.d
+      - ./config/mysql-init:/docker-entrypoint-initdb.d
       # 日志
     command:
       # 将mysql8.0默认密码策略 修改为 原先 策略 (mysql8.0对其默认策略做了更改 会导致密码无法匹配)
@@ -174,7 +174,7 @@ services:
 #    restart: always
 #    volumes:
 #      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf
-#      - ${DIR:-.}/dist:/usr/share/nginx/html
+#      - ./config/dist:/usr/share/nginx/html
 #      - ${DIR:-.}/nginx/logs:/var/log/nginx
 #      - ${DIR:-.}/nginx/resource/:/home/ubuntu/ahutoj/resource/
 #    networks:
@@ -209,8 +209,7 @@ services:
     volumes:
       - ${DIR:-.}/npm/data:/data
       - ${DIR:-.}/npm/letsencrypt:/etc/letsencrypt
-      - ${DIR:-.}/resource:/resource
-      - ${DIR:-.}/dist:/usr/share/nginx/html
+      - ./config/dist:/usr/share/nginx/html
     networks:
       - oj_network
 networks:
