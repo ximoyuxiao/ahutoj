@@ -223,5 +223,6 @@ create table Favorite
         references User (UID) ON UPDATE CASCADE ON DELETE CASCADE
 )DEFAULT CHARSET=utf8mb4;
 
-insert into User (UID, UserName, Pass) values('199094212','admin','');
-insert into Permission values('admin','Y','Y','Y','Y','Y');
+INSERT INTO `ahutoj`.`user`(`UID`, `UserName`, `Pass`, `School`, `Classes`, `Major`, `Adept`, `Vjid`, `Vjpwd`, `CodeForceUser`, `Email`, `HeadUrl`, `Rating`, `LoginIP`, `RegisterTime`, `Submited`, `Solved`, `Defaulted`) VALUES ('admin', 'admin', '8d2b0ccf8e35ff3d072595d06f604260', '', '', '', '', '', '', '', '', '', 0, '', '0', 0, 0, '');
+INSERT INTO `ahutoj`.`permission`(`UID`, `SuperAdmin`, `ProblemAdmin`, `ListAdmin`, `SourceAdmin`, `ContestAdmin`) VALUES ('admin', 'Y', 'Y', 'Y', 'Y', 'Y');
+INSERT INTO `ahutoj`.`problem`(`PID`, `PType`, `Title`, `Description`, `Input`, `Output`, `SampleInput`, `SampleOutput`, `LimitTime`, `LimitMemory`, `Hit`, `Label`, `Origin`, `OriginPID`, `ContentType`, `Accepted`, `Submited`, `Visible`, `SpjJudge`, `Source`) VALUES ('P1000', 'LOCAL', 'Hello World!', 'Hello World', '', '', '', '', 1000, 128, '', 'Test', -1, NULL, 1, 0, 0, 1, 'N', '');
