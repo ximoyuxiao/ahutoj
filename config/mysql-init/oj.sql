@@ -1,4 +1,5 @@
 create database if not EXISTS ahutoj;
+
 use ahutoj
 
 create table User

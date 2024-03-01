@@ -4,7 +4,9 @@ FROM golang:alpine as build
 
 WORKDIR /build
 
-COPY  ./ ./
+COPY  ./web ./web
+
+COPY ./go.* ./
 
 RUN  go env -w GO111MODULE=on && go env -w GOPROXY=goproxy.cn,direct && go mod tidy && \
     go build -o ./gateway web/service/gateway/gateway.go && \
@@ -18,88 +20,88 @@ FROM alpine:3.16 as gateway
 
 WORKDIR /app
 
-COPY  --from=build /build/gateway /usr/bin/gateway
+COPY  --from=build /build/gateway ./gateway
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
     touch ahutoj.log &&\
-    chmod +x /usr/bin/gateway
+    chmod +x ./gateway
 
 EXPOSE 4433
 
-ENTRYPOINT ["/usr/bin/gateway"]
+ENTRYPOINT ["/app/gateway"]
 
 FROM alpine:3.16 as problem
 
 WORKDIR /app
 
-COPY  --from=build /build/originproblem /usr/bin/originproblem
+COPY  --from=build /build/originproblem ./originproblem
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
-    touch ahutoj.log &&\
-    chmod +x /usr/bin/originproblem
+# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
+RUN touch ahutoj.log &&\
+    chmod +x ./originproblem
 
-ENTRYPOINT ["/usr/bin/originproblem"]
+ENTRYPOINT ["/app/originproblem"]
 
 FROM alpine:3.16 as persistence
 
 WORKDIR /app
 
-COPY  --from=build /build/persistence /usr/bin/persistence
+COPY  --from=build /build/persistence ./persistence
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
-    touch ahutoj.log &&\
-    chmod +x /usr/bin/persistence
+# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
+RUN   touch ahutoj.log &&\
+    chmod +x ./persistence
 
-ENTRYPOINT ["/usr/bin/persistence"]
+ENTRYPOINT ["/app/persistence"]
 
 FROM alpine:3.16 as origin
 
 WORKDIR /app
 
-COPY  --from=build /build/originJudge /usr/bin/originJudge
+COPY  --from=build /build/originJudge ./originJudge
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
-    touch ahutoj.log &&\
-    chmod +x /usr/bin/originJudge
+# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
+RUN touch ahutoj.log &&\
+    chmod +x ./originJudge
 
-ENTRYPOINT ["/usr/bin/originJudge"]
+ENTRYPOINT ["/app/originJudge"]
 
 FROM alpine:3.16 as oj
 
 WORKDIR /app
 
-COPY  --from=build /build/oj /usr/bin/oj
+COPY  --from=build /build/oj ./oj
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
-    touch ahutoj.log &&\
-    chmod +x /usr/bin/oj
+# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
+RUN touch ahutoj.log &&\
+    chmod +x ./oj
 
 EXPOSE 4212
 
-ENTRYPOINT ["/usr/bin/oj"]
+ENTRYPOINT ["/app/oj"]
 
 FROM alpine:3.16 as user
 
 WORKDIR /app
 
-COPY  --from=build /build/useranalytics /usr/bin/useranalytics
+COPY  --from=build /build/useranalytics ./useranalytics
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
     touch ahutoj.log &&\
-    chmod +x /usr/bin/useranalytics
+    chmod +x ./useranalytics
 
-ENTRYPOINT ["/usr/bin/useranalytics"]
+ENTRYPOINT ["/app/useranalytics"]
 
 FROM alpine:3.16 as oss
 
 WORKDIR /app
 
-COPY  --from=build /build/oss /usr/bin/oss
+COPY  --from=build /build/oss ./oss
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
     touch ahutoj.log &&\
-    hmod +x /usr/bin/oss
+    hmod +x ./oss
 
 EXPOSE 4466
 
-ENTRYPOINT ["/usr/bin/oss"]
+ENTRYPOINT ["/app/oss"]
