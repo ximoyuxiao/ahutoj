@@ -20,7 +20,7 @@ services:
       dockerfile: ./core.Dockerfile
     volumes:
       - ${DIR:-.}/judged/log:/app/log
-      - ${DIR:-.}/resource:/app/resource
+      - ${RESOURCE:-.}:/app/resource
     environment:
       TZ: Asia/Shanghai
       TEAM:
@@ -36,8 +36,8 @@ services:
       dockerfile: ./dev.Dockerfile
       target: gateway
     volumes:
-      - ${CONFIG:-./}:/app/config.yaml
-      - ${DIR:-.}/gateway/log/ahutoj.log:/app/ahutoj.log
+      - ${CONFIG:-.}/config.yaml:/app/config.yaml
+      - ${DIR:-.}/gateway/ahutoj.log:/app/ahutoj.log
     environment:
       TZ: Asia/Shanghai
       TEAM:
@@ -57,8 +57,8 @@ services:
       dockerfile: ./dev.Dockerfile
       target: origin
     volumes:
-      - ${CONFIG:-./}:/app/config.yaml
-      - ${DIR:-.}/origin/log/ahutoj.log:/app/ahutoj.log
+      - ${CONFIG:-.}/config.yaml:/app/config.yaml
+      - ${DIR:-.}/origin/ahutoj.log:/app/ahutoj.log
     environment:
       TZ: Asia/Shanghai
       TEAM:
@@ -78,9 +78,9 @@ services:
       dockerfile: ./dev.Dockerfile
       target: persistence
     volumes:
-      - ${CONFIG:-./}:/app/config.yaml
-      - ${DIR:-.}/resource:/app/resource
-      - ${DIR:-.}/persistence/log/ahutoj.log:/app/ahutoj.log
+      - ${CONFIG:-.}/config.yaml:/app/config.yaml
+#      - ${DIR:-.}/resource:/app/resource
+      - ${DIR:-.}/persistence/ahutoj.log:/app/ahutoj.log
     environment:
       TZ: Asia/Shanghai
       TEAM:
@@ -100,9 +100,9 @@ services:
       dockerfile: ./dev.Dockerfile
       target: oj
     volumes:
-      - ${CONFIG:-./}:/app/config.yaml
-      - ${DIR:-.}/resource:/app/resource
-      - ${DIR:-.}/oj/log/ahutoj.log:/app/ahutoj.log
+      - ${CONFIG:-.}/config.yaml:/app/config.yaml
+      - ${RESOURCE:-.}:/app/resource
+      - ${DIR:-.}/oj/ahutoj.log:/app/ahutoj.log
     environment:
       TZ: Asia/Shanghai
       TEAM:
@@ -120,8 +120,8 @@ services:
       - "33069:3306"
     volumes:
       #数据挂载 - Data mounting
-      - ${DIR:-.}/mysql-data:/var/lib/mysql
-      - ${CONFIG:-./}/mysql-init:/docker-entrypoint-initdb.d
+      - ${RESOURCE:-.}/mysql:/var/lib/mysql
+      - ${CONFIG:-./}/oj.sql:/docker-entrypoint-initdb.d/oj.sql
       # 日志
     command:
       # 将mysql8.0默认密码策略 修改为 原先 策略 (mysql8.0对其默认策略做了更改 会导致密码无法匹配)
@@ -147,7 +147,7 @@ services:
       TEAM:
     volumes:
       # 数据文件 - data files
-      - ${DIR:-.}/redis:/data:rw
+      - ${RESOURCE:-.}/redis:/data:rw
     command: "redis-server --requirepass 2019ahut --appendonly yes"
     privileged: true
     restart: always
@@ -159,7 +159,7 @@ services:
     restart: always
     volumes:
       - ${DIR:-.}/rabbitmq/log:/var/log/rabbitmq
-      - ${DIR:-.}/rabbitmq:/var/lib/rabbitmq
+      - ${RESOURCE:-.}/rabbitmq:/var/lib/rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=ahutoj
       - RABBITMQ_DEFAULT_PASS=123456
@@ -177,6 +177,8 @@ services:
 #      - ./config/dist:/usr/share/nginx/html
 #      - ${DIR:-.}/nginx/logs:/var/log/nginx
 #      - ${DIR:-.}/nginx/resource/:/home/ubuntu/ahutoj/resource/
+#    ports:
+#      - "38000:80"
 #    networks:
 #      - oj_network
   minio:
@@ -190,7 +192,7 @@ services:
       MINIO_ROOT_USER: admin    #管理后台用户名
       MINIO_ROOT_PASSWORD: admin123456 #管理后台密码，最小8个字符
     volumes:
-      - ${DIR:-.}/oss:/data               #映射当前目录下的data目录至容器内/data目录
+      - ${RESOURCE:-.}/oss:/data               #映射当前目录下的data目录至容器内/data目录
       - ${CONFIG:-./}:/root/.minio/     #映射配置目录
     command: server --console-address ':9001' /data  #指定容器中的目录 /data
     privileged: true
@@ -207,11 +209,37 @@ services:
     privileged: true
     restart: always
     volumes:
-      - ${DIR:-.}/npm/data:/data
-      - ${DIR:-.}/npm/letsencrypt:/etc/letsencrypt
+      - ${RESOURCE:-.}/npm/data:/data
+      - ${RESOURCE:-.}/npm/letsencrypt:/etc/letsencrypt
       - ${CONFIG:-./}/dist:/usr/share/nginx/html
     networks:
       - oj_network
+  elasticsearch:
+    image: elasticsearch/elasticsearch:7.15.0
+    container_name: oj-elasticsearch
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - ${RESOURCE:-.}/elasticsearch/data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - oj_network
+  kibana:
+    image: kibana/kibana:7.15.0
+    container_name: oj-kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    networks:
+      - oj_network
+  filebeat:
+    image: beats/filebeat:7.15.0
+    container_name: oj-filebeat
+    volumes:
+      - ${CONFIG:-.}/filebeat.yaml:/usr/share/filebeat/filebeat.yml
+      - ${DIR:-.}/filebeat/log:/var/log/filebeat
 networks:
   oj_network:
     driver: bridge

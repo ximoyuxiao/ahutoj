@@ -1,6 +1,6 @@
-*.vscode
+.vscode
 .vs
 /config/certs
 resource/*
-tmp/*
+logs/*
 
