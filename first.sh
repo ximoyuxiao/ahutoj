@@ -15,6 +15,7 @@ sudo mkdir -p "${DIR:-./tmp}"/origin/log && sudo touch "${DIR:-./tmp}"/origin/lo
 sudo mkdir -p "${DIR:-./tmp}"/gateway/log&& sudo touch "${DIR:-./tmp}"/gateway/log/ahutoj.log
 sudo mkdir -p "${DIR:-./tmp}"/persistence/log &&sudo  touch "${DIR:-./tmp}"/persistence/log/ahutoj.log
 sudo mkdir -p "${DIR:-./tmp}"/oj/log && sudo touch "${DIR:-./tmp}"/oj/log/ahutoj.log
+sudo chmod -R 777 "${DIR:-./tmp}"/
 
 #运行容器和删除构建中间镜像
 sudo docker compose up -d

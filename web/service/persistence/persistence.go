@@ -7,10 +7,13 @@ import (
 	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"os"
+	"runtime"
+	"strconv"
 	"time"
 )
 
@@ -66,7 +69,7 @@ func DealSubmit() {
 			if err != nil {
 				fmt.Println(err.Error())
 			}
-			fmt.Println(utils.Sdump(submit))
+			logger.Infof("submit:%v", utils.Sdump(submit))
 			SubmitToDataBase(context.Background(), &submit)
 		}
 	}
@@ -84,15 +87,15 @@ func CEinfoToDataBase(ctx context.Context, ceinfo *dao.CeInfo) error {
 
 func SubmitToDataBase(ctx context.Context, submit *dao.Submit) error {
 	logger := utils.GetLogInstance()
-	err := models.UpdateSubmit(context.Background(), *submit)
+	err := models.UpdateSubmit(ctx, *submit)
 	if err != nil {
 		logger.Errorf("call UpdateSubmit failed,submit=%v, err=%v", utils.Sdump(submit), err.Error())
 		return err
 	}
 	if submit.Result == constanct.OJ_AC {
-		mysqldao.IncUserSolved(context.Background(), submit.UID)
+		mysqldao.IncUserSolved(ctx, submit.UID)
 		if submit.CID > 0 {
-			mysqldao.IncConProSolved(context.Background(), submit.CID, submit.PID)
+			mysqldao.IncConProSolved(ctx, submit.CID, submit.PID)
 		}
 	}
 	if err != nil {
@@ -119,6 +122,14 @@ func initPersistence(ConfigPath string) error {
 		os.Exit(1)
 	}
 	rbtcfg := utils.GetConfInstance().RabbitMQ
-	middlewares.NewRabbitMQ(rbtcfg.Host, rbtcfg.Port, rbtcfg.Username, rbtcfg.Password, 1)
+	middlewares.NewRabbitMQ(rbtcfg.Host, rbtcfg.Port, rbtcfg.Username, rbtcfg.Password, 2)
 	return nil
+}
+func GoID() uint64 {
+	b := make([]byte, 64)
+	b = b[:runtime.Stack(b, false)]
+	b = bytes.TrimPrefix(b, []byte("goroutine "))
+	b = b[:bytes.IndexByte(b, ' ')]
+	n, _ := strconv.ParseUint(string(b), 10, 64)
+	return n
 }

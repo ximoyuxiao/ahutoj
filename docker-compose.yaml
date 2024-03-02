@@ -121,7 +121,7 @@ services:
     volumes:
       #数据挂载 - Data mounting
       - ${DIR:-.}/mysql-data:/var/lib/mysql
-      - ./config/mysql-init:/docker-entrypoint-initdb.d
+      - ${CONFIG:-./}/mysql-init:/docker-entrypoint-initdb.d
       # 日志
     command:
       # 将mysql8.0默认密码策略 修改为 原先 策略 (mysql8.0对其默认策略做了更改 会导致密码无法匹配)
@@ -191,7 +191,7 @@ services:
       MINIO_ROOT_PASSWORD: admin123456 #管理后台密码，最小8个字符
     volumes:
       - ${DIR:-.}/oss:/data               #映射当前目录下的data目录至容器内/data目录
-      - ./config:/root/.minio/     #映射配置目录
+      - ${CONFIG:-./}:/root/.minio/     #映射配置目录
     command: server --console-address ':9001' /data  #指定容器中的目录 /data
     privileged: true
     restart: always
@@ -209,7 +209,7 @@ services:
     volumes:
       - ${DIR:-.}/npm/data:/data
       - ${DIR:-.}/npm/letsencrypt:/etc/letsencrypt
-      - ./config/dist:/usr/share/nginx/html
+      - ${CONFIG:-./}/dist:/usr/share/nginx/html
     networks:
       - oj_network
 networks:

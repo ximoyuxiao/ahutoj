@@ -22,8 +22,8 @@ WORKDIR /app
 
 COPY  --from=build /build/gateway ./gateway
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
-    touch ahutoj.log &&\
+#RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
+RUN touch ahutoj.log &&\
     chmod +x ./gateway
 
 EXPOSE 4433

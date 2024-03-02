@@ -17,10 +17,9 @@ RabbitMQ::RabbitMQ(std::string host, int port, std::string user, std::string pas
 }
 
 RabbitMQ::~RabbitMQ() {
-    for (auto conn : m_connectionPool) {
+    for (auto &conn : m_connectionPool) {
         if (conn != nullptr) {
             amqp_destroy_connection(conn);
-            conn = nullptr;
             conn = nullptr;
         }
     }
@@ -28,18 +27,16 @@ RabbitMQ::~RabbitMQ() {
 
 Producer RabbitMQ::createProducer() {
     return Producer(this);
-    return Producer(this);
 }
 
 Consumer RabbitMQ::createConsumer(std::string queueName) {
-    return Consumer(this, queueName);
     return Consumer(this, queueName);
 }
 
 amqp_connection_state_t RabbitMQ::getConnection() {
     amqp_connection_state_t conn = nullptr;
     poolLocker.lock();
-    for (int i = 0; i < m_poolSize; i++) {         
+    for (int i = 0; i < m_poolSize; i++) {
         if (m_connectionPool[i] != nullptr) {
             conn = m_connectionPool[i];
             m_connectionPool[i] = nullptr;
@@ -72,13 +69,13 @@ amqp_connection_state_t RabbitMQ::getConnection() {
 void RabbitMQ::releaseConnection(amqp_connection_state_t conn) {
     bool ret = false;
     poolLocker.lock();
-    // for (int i = 0; i < m_poolSize; i++) {
-    //     if (m_connectionPool[i] == nullptr) {
-    //         m_connectionPool[i] = conn;
-    //         ret  = true;
-    //         break;
-    //     }
-    // }
+    for (int i = 0; i < m_poolSize; i++) {
+        if (m_connectionPool[i] == nullptr) {
+            m_connectionPool[i] = conn;
+            ret  = true;
+            break;
+        }
+    }
     poolLocker.unlock();
     if(!ret){
         amqp_destroy_connection(conn);
@@ -185,7 +182,7 @@ int Consumer::consumeMessage(void (*callback)(amqp_envelope_t)) {
         amqp_envelope_t envelope = { 0 };
         amqp_maybe_release_buffers(conn);
 
-        auto error = amqp_consume_message(conn,&envelope,NULL,0);     
+        auto error = amqp_consume_message(conn,&envelope,NULL,0);
         if (error.library_error < 0) {
             if (error.library_error != AMQP_STATUS_TIMEOUT) {
                 fprintf(stderr, "Error consuming message: %s\n", amqp_error_string2(error.library_error));

@@ -8,7 +8,6 @@ import (
 	"ahutoj/web/utils"
 	"context"
 	"encoding/json"
-	"fmt"
 	"math/rand"
 	"time"
 )
@@ -71,14 +70,12 @@ func InitOriginThread() {
 	comm := middlewares.NewConsumer(rabbit, constanct.ORIGINJUDGE)
 	for {
 		/*1、从数据库 当中 提取外部判题*/
-
 		msgs, err := comm.ConsumeMessage()
 		if err != nil {
 			logger.Errorf("call ConsumeMessage failed, err=%v", err.Error())
 			return
 		}
 		/*2、得到后批量更新状态*/
-		logger.Info("submit size:%d", len(msgs))
 		for msg := range msgs {
 			submit := dao.Submit{}
 			json.Unmarshal(msg.Body, &submit)
@@ -89,7 +86,7 @@ func InitOriginThread() {
 				logger.Errorf("not existe plateform,OJPlatform:%d", submit.OJPlatform)
 				continue
 			}
-			fmt.Println(submit)
+			logger.Infof("submit:%v", utils.Sdump(submit))
 			// 执行一个协程。
 			go originJudge.Judge(context.Background(), submit, submit.OriginPID)
 		}

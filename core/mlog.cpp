@@ -90,7 +90,7 @@ void logfile::openfile()
     else
         filename =path +  date + ".log";
     todate = date;
-    this->fd = open(filename.c_str(),O_WRONLY|O_CREAT,0666);
+    this->fd = open(filename.c_str(),O_WRONLY|O_CREAT|O_APPEND,0666);
     buff = "";
     this->offset = 0;
 }
