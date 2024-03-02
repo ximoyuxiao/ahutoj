@@ -23,6 +23,7 @@
  #RUN --mount=type=cache,target=/var/cache/apk
  RUN   sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories &&  \
      apk update && \
+     apk add g++ gcc python3 openjdk17-jre-headless &&\
      apk add hiredis rabbitmq-c  mysql-dev && \
      apk add --no-cache nlohmann-json
 
