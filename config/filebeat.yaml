@@ -2,7 +2,13 @@ filebeat.inputs:
   - type: log
     enabled: true
     paths:
-      - '/logs/**/*.log'
+      - /logs/**/*.log
+      - /var/lib/docker/containers/*/*-json.log
+
+filebeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
 
 output.elasticsearch:
   hosts: ["elasticsearch:9200"]
