@@ -147,12 +147,12 @@ int Consumer::consumeMessage(void (*callback)(amqp_envelope_t)) {
     amqp_channel_t channel = 1; // initialize channel to a non-zero value
     int ret = 0;
 
-   amqp_channel_open_ok_t *channel_open = amqp_channel_open(conn, channel);
-       if (channel_open == nullptr) {
-           DLOG( "Error opening channel\n");
-           m_rmq->releaseConnection(conn);
-           return 1;
-       }
+    amqp_channel_open_ok_t *channel_open = amqp_channel_open(conn, channel);
+    if (channel_open == nullptr) {
+        DLOG( "Error opening channel\n");
+        m_rmq->releaseConnection(conn);
+        return 1;
+    }
 
     amqp_queue_declare_ok_t* queue = amqp_queue_declare(conn, channel, amqp_cstring_bytes(m_queueName.c_str()), false, false, false, false, amqp_empty_table);
     if (queue == nullptr) {
@@ -190,20 +190,25 @@ int Consumer::consumeMessage(void (*callback)(amqp_envelope_t)) {
         amqp_envelope_t envelope = { 0 };
         amqp_maybe_release_buffers(conn);
 
-        auto error = amqp_consume_message(conn,&envelope,NULL,0);
-        if (error.library_error < 0) {
-            if (error.library_error != AMQP_STATUS_TIMEOUT) {
-                fprintf(stderr, "Error consuming message: %s\n", amqp_error_string2(error.library_error));
-                ret = 1;
+        auto reply = amqp_consume_message(conn, &envelope, NULL, 0);
+        if (reply.reply_type == AMQP_RESPONSE_NORMAL) {
+            if (m_callback != nullptr) {
+                m_callback(envelope);
             }
-            break;
+            amqp_basic_ack(conn, channel, envelope.delivery_tag, false);
+            amqp_destroy_envelope(&envelope);
+        } else {
+            if (reply.library_error < 0) {
+                // if (reply.library_error != AMQP_STATUS_TIMEOUT) {
+                //     fprintf(stderr, "Error consuming message: %s\n", amqp_error_string2(reply.library_error));
+                // }else {
+                //     fprintf(stderr, "Timeout consuming message\n");//没有设置超时
+                // }
+                fprintf(stderr, "Error consuming message: %s\n", amqp_error_string2(reply.library_error));
+                ret = 1;
+                break;
+            }
         }
-
-        if (m_callback != nullptr) {
-            m_callback(envelope);
-        }
-        amqp_basic_ack(conn, channel, envelope.delivery_tag, /*multiple=*/false);
-        amqp_destroy_envelope(&envelope);
     }
 
     amqp_bytes_free(queueBytes);
