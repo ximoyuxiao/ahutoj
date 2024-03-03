@@ -79,7 +79,7 @@ services:
       target: persistence
     volumes:
       - ./config/config.yaml:/app/config.yaml
-#      - ${DIR:-.}/resource:/app/resource
+      #      - ${DIR:-.}/resource:/app/resource
       - ./logs/persistence/ahutoj.log:/app/ahutoj.log
     environment:
       TZ: Asia/Shanghai
@@ -167,20 +167,20 @@ services:
       - "35672:15672"
     networks:
       - oj_network
-#  nginx:
-#    image: nginx
-#    container_name: oj-nginx
-#    privileged: true
-#    restart: always
-#    volumes:
-#      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf
-#      - ./config/dist:/usr/share/nginx/html
-#      - ${DIR:-.}/nginx/logs:/var/log/nginx
-#      - ${DIR:-.}/nginx/resource/:/home/ubuntu/ahutoj/resource/
-#    ports:
-#      - "38000:80"
-#    networks:
-#      - oj_network
+  #  nginx:
+  #    image: nginx
+  #    container_name: oj-nginx
+  #    privileged: true
+  #    restart: always
+  #    volumes:
+  #      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf
+  #      - ./config/dist:/usr/share/nginx/html
+  #      - ${DIR:-.}/nginx/logs:/var/log/nginx
+  #      - ${DIR:-.}/nginx/resource/:/home/ubuntu/ahutoj/resource/
+  #    ports:
+  #      - "38000:80"
+  #    networks:
+  #      - oj_network
   minio:
     image: quay.io/minio/minio # 如果不支持x86-64-v2，使用quay.io/minio/minio:RELEASE.2024-11-01T01-57-10Z-cpuv1
     container_name: oj-minio
@@ -219,10 +219,17 @@ services:
     container_name: oj-elasticsearch
     environment:
       - discovery.type=single-node
+      - TZ=Asia/Shanghai
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - cluster.name="docker-cluster"
+      - network.host=0.0.0.0
+      - http.cors.enabled=true
+      - http.cors.allow-origin= "*"
+      - http.cors.allow-headers=Authorization
+      - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=true
     volumes:
       - ./resource/elasticsearch/data:/usr/share/elasticsearch/data
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - TZ=Asia/Shanghai
     restart: always
     ports:
       - "9200:9200"
@@ -234,6 +241,9 @@ services:
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - TZ=Asia/Shanghai
+      - ELASTICSEARCH_USERNAME="elastic"
+      - ELASTICSEARCH_PASSWORD="123456"
+      - I18N_LOCALE=zh-CN
     ports:
       - "5601:5601"
     depends_on:
@@ -250,9 +260,11 @@ services:
     restart: always
     volumes:
       - ./config/filebeat.yaml:/usr/share/filebeat/filebeat.yml
-      - ./logs/filebeat/log:/var/log/filebeat
+       - ./logs/filebeat/log:/var/log/filebeat
       - ./logs:/logs
       - /var/lib/docker/containers:/var/lib/docker/containers
+    depends_on:
+      - elasticsearch
     networks:
       - oj_network
 networks:

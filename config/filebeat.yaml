@@ -12,9 +12,15 @@ filebeat.config:
 
 output.elasticsearch:
   hosts: ["elasticsearch:9200"]
+  username: "elastic"
+  password: "123456"
 
 setup.kibana:
   host: "kibana:5601"
+  username: "elastic"
+  password: "123456"
+
+setup.dashboards.enabled: true
 
 logging.level: info
 logging.to_files: true

@@ -2,5 +2,5 @@
 .vs
 /config/certs
 resource/*
-logs/*
+logs/**/*.log
 
