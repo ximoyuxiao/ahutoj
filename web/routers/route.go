@@ -187,7 +187,8 @@ func InitRouters(router *gin.Engine, host string) {
 		data := string(dataByte)
 		resp, _ := utils.DoRequest(utils.POST, conf.GatWayHost+"inner/addrouter", Header, nil, &data, true)
 		if resp.StatusCode != http.StatusOK {
-			logger.Error("add router error")
+			logger.Errorf("add router error, status: %s", resp.Status)
+			return
 		}
 		logger.Info("add router success")
 	}
