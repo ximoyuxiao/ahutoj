@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/streadway/amqp"
+	"time"
 )
 
 type RabbitMQ struct {
@@ -19,17 +20,12 @@ type RabbitMQ struct {
 var rabbitmq *RabbitMQ = nil
 
 func NewRabbitMQ(Host string, Port int, User string, Password string, poolSize int) (*RabbitMQ, error) {
-	var err error
 	if rabbitmq != nil {
 		return rabbitmq, nil
 	}
 	// utils.GetLogInstance().Debug("NewRabbitMQ")
 	uri := fmt.Sprintf("amqp://%v:%v@rabbitmq", User, Password)
-	rabbitmq, err = newRabbitMQ(uri, poolSize)
-	if err != nil {
-		utils.GetLogInstance().Errorf("call newRabbitMQ failed,  err=%s", err.Error())
-		return nil, err
-	}
+	rabbitmq, _ = newRabbitMQ(uri, poolSize) //强制重新连接
 	rabbitmq.Host = Host
 	rabbitmq.Password = Password
 	rabbitmq.User = User
@@ -44,14 +40,16 @@ func GetRabbitMq() *RabbitMQ {
 func newRabbitMQ(uri string, poolSize int) (*RabbitMQ, error) {
 	logger := utils.GetLogInstance()
 	pool := make(chan *amqp.Connection, poolSize)
-	for i := 0; i < poolSize; i++ {
+	for len(pool) < poolSize {
 		connection, err := amqp.Dial(uri)
 		if err != nil {
-			logger.Errorf("call Dial failed, conn=%v, err=%s", connection, err.Error())
-			return nil, err
+			logger.Errorf("call Dial failed,now Redialing, len(pool)=%v, err=%s", len(pool), err.Error())
+			time.Sleep(5 * time.Second)
+			continue
 		}
 		pool <- connection
 	}
+	logger.Info("RabbitMQ connection pool create success")
 	return &RabbitMQ{ConnectionPool: pool}, nil
 }
 
@@ -67,13 +65,12 @@ func (r *RabbitMQ) GetConnection() (*amqp.Connection, error) {
 		// time.Sleep(100 * time.Second)
 		return conn, nil
 	default:
+		var conn *amqp.Connection
+		var err error
 		uri := fmt.Sprintf("amqp://%v:%v@rabbitmq", r.User, r.Password)
-		conn, err := amqp.Dial(uri)
-		logger := utils.GetLogInstance()
-		logger.Debug("URI", uri)
-		if err != nil {
-			logger.Errorf("call Dial failed, conn=%v, err=%s", conn, err.Error())
-			return nil, err
+		for conn, err = amqp.Dial(uri); err != nil; {
+			utils.GetLogInstance().Errorf("call Dial failed, err=%s", err.Error())
+			time.Sleep(5 * time.Second)
 		}
 		// utils.GetLogInstance().Debugf("now len(r.ConnectionPool):%v", len(r.ConnectionPool))
 		return conn, nil

@@ -36,10 +36,6 @@ func InitOriginJudged(ConfigPath string) error {
 	}
 	rbtcfg := utils.GetConfInstance().RabbitMQ
 	_, err = middlewares.NewRabbitMQ(rbtcfg.Host, rbtcfg.Port, rbtcfg.Username, rbtcfg.Password, 1)
-	if err != nil {
-		logger.Errorf("init RabbitMQ error mysqlConf:%+v, err=%s", utils.Sdump(utils.GetConfInstance().RabbitMQ), err.Error())
-		os.Exit(1)
-	}
 	if utils.GetConfInstance().UseOriginJudge {
 		originJudged.InitOriginThread()
 	}

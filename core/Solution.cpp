@@ -170,6 +170,9 @@ void Solution::LoopSolve(){
     while(true){
         Consumer consumer = mq->createConsumer(INNERJUDGE);
         consumer.consumeMessage(Process);
+        if(ret){
+            sleep(5*time.second);//延时重连，避免浪费资源
+        }
     }
 }
 

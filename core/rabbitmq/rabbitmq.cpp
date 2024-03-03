@@ -88,6 +88,7 @@ Producer::Producer(RabbitMQ* rmq) : m_rmq(rmq) {}
 bool Producer::sendMessage(std::string queueName, void* messageBody, size_t messageSize) {
     amqp_connection_state_t conn = m_rmq->getConnection();
     if (conn == nullptr) {
+        DLOG( "Error get connection\n");
         return false;
     }
 
@@ -98,12 +99,13 @@ bool Producer::sendMessage(std::string queueName, void* messageBody, size_t mess
 
     amqp_channel_open_ok_t *channel_open = amqp_channel_open(conn, channel);
      if (channel_open == nullptr) {
-            fprintf(stderr, "Error opening channel\n");
+            DLOG( "Error opening channel\n");
             m_rmq->releaseConnection(conn);
             return 1;
         }
     amqp_queue_declare_ok_t* queue = amqp_queue_declare(conn, channel, amqp_cstring_bytes(queueName.c_str()), false, false, false, false, amqp_empty_table);
     if(queue == nullptr){
+        DLOG( "Error declare amqp_queue\n");
         amqp_bytes_free(messageBytes);
         amqp_channel_close(conn, channel, AMQP_REPLY_SUCCESS);
         m_rmq->releaseConnection(conn);
@@ -111,6 +113,7 @@ bool Producer::sendMessage(std::string queueName, void* messageBody, size_t mess
     }
     amqp_bytes_t queueBytes = amqp_bytes_malloc_dup(queue->queue);
     if (queueBytes.bytes == nullptr) {
+        DLOG( "Error malloc amqp_bytes\n");
         amqp_bytes_free(messageBytes);
         amqp_channel_close(conn, channel, AMQP_REPLY_SUCCESS);
         m_rmq->releaseConnection(conn);
@@ -138,6 +141,7 @@ int Consumer::consumeMessage(void (*callback)(amqp_envelope_t)) {
     m_callback = callback;
     amqp_connection_state_t conn = m_rmq->getConnection();
     if (conn == nullptr) {
+        DLOG( "Error get Connection\n");
         return 1;
     }
     amqp_channel_t channel = 1; // initialize channel to a non-zero value
@@ -145,13 +149,14 @@ int Consumer::consumeMessage(void (*callback)(amqp_envelope_t)) {
 
    amqp_channel_open_ok_t *channel_open = amqp_channel_open(conn, channel);
        if (channel_open == nullptr) {
-           fprintf(stderr, "Error opening channel\n");
+           DLOG( "Error opening channel\n");
            m_rmq->releaseConnection(conn);
            return 1;
        }
 
     amqp_queue_declare_ok_t* queue = amqp_queue_declare(conn, channel, amqp_cstring_bytes(m_queueName.c_str()), false, false, false, false, amqp_empty_table);
     if (queue == nullptr) {
+        DLOG( "Error declare amqp_queue\n");
         amqp_channel_close(conn, channel, AMQP_REPLY_SUCCESS);
         m_rmq->releaseConnection(conn);
         return 1;
@@ -159,6 +164,7 @@ int Consumer::consumeMessage(void (*callback)(amqp_envelope_t)) {
 
     amqp_bytes_t queueBytes = amqp_bytes_malloc_dup(queue->queue);
     if (queueBytes.bytes == nullptr) {
+        DLOG( "Error malloc amqp_bytes\n");
         amqp_channel_close(conn, channel, AMQP_REPLY_SUCCESS);
         m_rmq->releaseConnection(conn);
         return 1;
@@ -166,6 +172,7 @@ int Consumer::consumeMessage(void (*callback)(amqp_envelope_t)) {
 
     amqp_basic_consume_ok_t *consume_ok = amqp_basic_consume(conn, channel, queueBytes, amqp_empty_bytes, 0, true, false, amqp_empty_table);
     if (consume_ok == nullptr) {
+        DLOG( "Error consuming message\n");
         amqp_channel_close(conn, channel, AMQP_REPLY_SUCCESS);
         m_rmq->releaseConnection(conn);
         return 1;
@@ -173,6 +180,7 @@ int Consumer::consumeMessage(void (*callback)(amqp_envelope_t)) {
 
     amqp_bytes_t consumerTag = amqp_bytes_malloc_dup(consume_ok->consumer_tag);
     if (consumerTag.bytes == nullptr) {
+        DLOG( "Error malloc amqp_bytes\n");
         amqp_channel_close(conn, channel, AMQP_REPLY_SUCCESS);
         m_rmq->releaseConnection(conn);
         return 1;

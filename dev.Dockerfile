@@ -100,7 +100,7 @@ COPY  --from=build /build/oss ./oss
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
     touch ahutoj.log &&\
-    hmod +x ./oss
+    chmod +x ./oss
 
 EXPOSE 4466
 
