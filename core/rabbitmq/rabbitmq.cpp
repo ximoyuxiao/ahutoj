@@ -206,8 +206,8 @@ int Consumer::consumeMessage(void (*callback)(amqp_envelope_t)) {
                 // }
                 fprintf(stderr, "Error consuming message: %s\n", amqp_error_string2(reply.library_error));
                 ret = 1;
-                break;
             }
+            break;
         }
     }
 
