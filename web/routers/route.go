@@ -170,6 +170,7 @@ func serverTime(ctx *gin.Context) {
 
 func InitRouters(router *gin.Engine, host string) {
 	conf := utils.GetConfInstance()
+	logger := utils.GetLogInstance()
 	for _, router := range router.Routes() {
 		url := router.Path
 		Method := router.Method
@@ -184,6 +185,10 @@ func InitRouters(router *gin.Engine, host string) {
 		Header["Content-Type"] = "application/json"
 		dataByte, _ := json.Marshal(req)
 		data := string(dataByte)
-		utils.DoRequest(utils.POST, conf.GatWayHost+"inner/addrouter", Header, nil, &data, true)
+		resp, _ := utils.DoRequest(utils.POST, conf.GatWayHost+"inner/addrouter", Header, nil, &data, true)
+		if resp.StatusCode != http.StatusOK {
+			logger.Error("add router error")
+		}
+		logger.Info("add router success")
 	}
 }
