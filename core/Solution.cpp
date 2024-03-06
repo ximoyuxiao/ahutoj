@@ -169,9 +169,9 @@ void Solution::Process(amqp_envelope_t amqp){
 void Solution::LoopSolve(){
     while(true){
         Consumer consumer = mq->createConsumer(INNERJUDGE);
-        consumer.consumeMessage(Process);
+        auto ret=consumer.consumeMessage(Process);
         if(ret){
-            sleep(5);//延时重连，避免浪费资源
+            sleep(5);
         }
     }
 }
@@ -212,7 +212,10 @@ void Solution::commitSolveToQueue(Solve* solve){
     solve->to_json(j);
     Producer pro = mq->createProducer();
     auto data = j.dump();
-    pro.sendMessage(JUDGERESULT,(void*)data.c_str(),data.size());
+    auto ret=pro.sendMessage(JUDGERESULT,(void*)data.c_str(),data.size());
+    if(!ret){
+        ELOG("send message failed!data:%s",data.c_str());
+    }
     j.clear();
     data.clear();
     if(solve->Sres() == OJ_CE){

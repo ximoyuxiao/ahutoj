@@ -82,7 +82,7 @@ func initGatWay(config string) error {
 	router.Handle("DELETE", "/inner/delrouter", DelRouter)
 	router.NoRoute(HandleRouter)
 	err = router.Run(GatWay.Port)
-	return fmt.Errorf("gat way use error:%v", err.Error())
+	return fmt.Errorf("gateway use error:%v", err.Error())
 }
 
 func HandleRouter(ctx *gin.Context) {

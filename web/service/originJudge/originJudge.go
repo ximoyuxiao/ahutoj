@@ -35,7 +35,7 @@ func InitOriginJudged(ConfigPath string) error {
 		os.Exit(1)
 	}
 	rbtcfg := utils.GetConfInstance().RabbitMQ
-	_, err = middlewares.NewRabbitMQ(rbtcfg.Host, rbtcfg.Port, rbtcfg.Username, rbtcfg.Password, 1)
+	middlewares.NewRabbitMQ(rbtcfg.Host, rbtcfg.Port, rbtcfg.Username, rbtcfg.Password, 1)
 	if utils.GetConfInstance().UseOriginJudge {
 		originJudged.InitOriginThread()
 	}

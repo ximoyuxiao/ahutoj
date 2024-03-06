@@ -211,6 +211,7 @@ services:
     volumes:
       - ./resource/npm/data:/data
       - ./resource/npm/letsencrypt:/etc/letsencrypt
+      - ./resource/npm/config:/config
       - ./config/dist:/usr/share/nginx/html
     networks:
       - oj_network
@@ -260,7 +261,7 @@ services:
     restart: always
     volumes:
       - ./config/filebeat.yaml:/usr/share/filebeat/filebeat.yml
-       - ./logs/filebeat/log:/var/log/filebeat
+      - ./logs/filebeat/log:/var/log/filebeat
       - ./logs:/logs
       - /var/lib/docker/containers:/var/lib/docker/containers
     depends_on:

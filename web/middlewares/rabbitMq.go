@@ -3,7 +3,6 @@ package middlewares
 import (
 	"ahutoj/web/utils"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/streadway/amqp"
 	"time"
@@ -53,27 +52,35 @@ func newRabbitMQ(uri string, poolSize int) (*RabbitMQ, error) {
 	return &RabbitMQ{ConnectionPool: pool}, nil
 }
 
+func isConnectionOpen(conn *amqp.Connection) bool {
+	ch, err := conn.Channel()
+	if err != nil || ch == nil {
+		return false
+	}
+	defer ch.Close()
+	return true
+}
+
 func (r *RabbitMQ) GetConnection() (*amqp.Connection, error) {
-	select {
-	case conn := <-r.ConnectionPool:
-		if conn == nil {
-			err := errors.New("received nil connection from ConnectionPool")
-			utils.GetLogInstance().Errorf("call conn:=<-r.ConnectionPoll failed,error =%v", err.Error())
-			return nil, err
+	for {
+		select {
+		case conn := <-r.ConnectionPool:
+			if !isConnectionOpen(conn) {
+				utils.GetLogInstance().Infof("Connection failure,now RegetConnection, len(r.ConnectionPool)=%v", len(r.ConnectionPool))
+				continue
+			}
+			return conn, nil
+		default:
+			uri := fmt.Sprintf("amqp://%v:%v@rabbitmq", r.User, r.Password)
+			// conn,err:=Re(func()(*amqp.Connection,error){return amqp.Dial(uri)}, 3, 5)
+			conn, err := amqp.Dial(uri)
+			if err != nil {
+				utils.GetLogInstance().Errorf("call Dial failed, err=%s", err.Error())
+				time.Sleep(5 * time.Second)
+				continue
+			}
+			return conn, nil
 		}
-		// utils.GetLogInstance().Debugf("now len(r.ConnectionPool):%v", len(r.ConnectionPool))
-		// time.Sleep(100 * time.Second)
-		return conn, nil
-	default:
-		var conn *amqp.Connection
-		var err error
-		uri := fmt.Sprintf("amqp://%v:%v@rabbitmq", r.User, r.Password)
-		for conn, err = amqp.Dial(uri); err != nil; {
-			utils.GetLogInstance().Errorf("call Dial failed, err=%s", err.Error())
-			time.Sleep(5 * time.Second)
-		}
-		// utils.GetLogInstance().Debugf("now len(r.ConnectionPool):%v", len(r.ConnectionPool))
-		return conn, nil
 	}
 }
 
@@ -104,11 +111,7 @@ func (p *Producer) SendMessage(queueName string, messageBody interface{}) error 
 	}
 	defer p.RabbitMQ.ReleaseConnection(conn)
 
-	ch, err := conn.Channel()
-	if err != nil {
-		logger.Errorf("call Channel failed, err=%s", err.Error())
-		return err
-	}
+	ch, _ := conn.Channel()
 	defer func() {
 		if err := ch.Close(); err != nil {
 			logger.Errorf("call Channel Close failed, err=%s", err.Error())
@@ -162,16 +165,12 @@ func (c *Consumer) ConsumeMessage() (<-chan amqp.Delivery, error) {
 		return nil, err
 	}
 	defer c.RabbitMQ.ReleaseConnection(conn)
-	ch, err := conn.Channel()
-	if err != nil {
-		logger.Errorf("call ConsumeQueueDeclare failed, channel=%v, err=%s", ch, err.Error())
-		return nil, err
-	}
-	defer func() {
-		if err := ch.Close(); err != nil {
-			logger.Errorf("call Channel Close failed, err=%s", err.Error())
-		}
-	}()
+	ch, _ := conn.Channel()
+	// defer func() {
+	// 	if err := ch.Close(); err != nil {
+	// 		logger.Errorf("call Channel Close failed, err=%s", err.Error())
+	// 	}
+	// }()我超，不能关
 	q, err := ch.QueueDeclare(
 		c.QueueName, // queue name
 		false,       // durable

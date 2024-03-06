@@ -33,11 +33,21 @@ Consumer RabbitMQ::createConsumer(std::string queueName) {
     return Consumer(this, queueName);
 }
 
+bool isConnectionOpen(amqp_connection_state_t conn) {
+    amqp_channel_t channel = 1;
+    amqp_channel_open_ok_t* res = amqp_channel_open(conn, channel);
+    if (res == nullptr) {
+        return false;
+    }
+    amqp_channel_close(conn, channel, AMQP_REPLY_SUCCESS);
+    return true;
+}
+
 amqp_connection_state_t RabbitMQ::getConnection() {
     amqp_connection_state_t conn = nullptr;
     poolLocker.lock();
     for (int i = 0; i < m_poolSize; i++) {
-        if (m_connectionPool[i] != nullptr) {
+        if (m_connectionPool[i] != nullptr && isConnectionOpen(m_connectionPool[i])) {
             conn = m_connectionPool[i];
             m_connectionPool[i] = nullptr;
             break;
@@ -45,21 +55,21 @@ amqp_connection_state_t RabbitMQ::getConnection() {
     }
     poolLocker.unlock();
     if (conn == nullptr) {
-        char uri[1024];
-        sprintf(uri, "amqp://%s:%s@rabbitmq", m_user.c_str(), m_password.c_str());
+        printf("amqp://%s:%s@rabbitmq", m_user.c_str(), m_password.c_str());
         conn = amqp_new_connection();
         if(!conn){
+            DLOG( "amqp_socket_open failed");
             return nullptr;
         }
         amqp_socket_t* socket = amqp_tcp_socket_new(conn);
         auto ret = amqp_socket_open(socket, m_host.c_str(), m_port);
         if (ret !=0){
-           DLOG( "amqp_socket_open failed,err:%v",amqp_error_string(ret));
+           DLOG( "amqp_socket_open failed,err:%s",amqp_error_string(ret));
            return nullptr;
         }
         auto rep = amqp_login(conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN, m_user.c_str(), m_password.c_str());
         if (rep.reply_type != AMQP_RESPONSE_NORMAL) {
-            DLOG( "amqp_login failed,err:%v",amqp_error_string(rep.library_error));
+            DLOG( "amqp_login failed,err:%s",amqp_error_string2(rep.library_error));
             return nullptr;
         }
     }
@@ -78,7 +88,9 @@ void RabbitMQ::releaseConnection(amqp_connection_state_t conn) {
     }
     poolLocker.unlock();
     if(!ret){
+        amqp_connection_close(conn, AMQP_REPLY_SUCCESS);
         amqp_destroy_connection(conn);
+        DLOG( "releaseConnetion\n");
     }
     return ;
 }
@@ -96,13 +108,19 @@ bool Producer::sendMessage(std::string queueName, void* messageBody, size_t mess
     amqp_basic_properties_t props;
     amqp_bytes_t messageBytes = amqp_bytes_malloc(messageSize);
     memcpy(messageBytes.bytes, messageBody, messageSize);
+    if (messageBytes.bytes == nullptr) {
+        DLOG( "Error malloc amqp_bytes\n");
+        m_rmq->releaseConnection(conn);
+        return false;
+    }
 
     amqp_channel_open_ok_t *channel_open = amqp_channel_open(conn, channel);
-     if (channel_open == nullptr) {
-            DLOG( "Error opening channel\n");
-            m_rmq->releaseConnection(conn);
-            return 1;
-        }
+    if (channel_open == nullptr) {
+        DLOG( "Error opening channel\n");
+        amqp_channel_close(conn, channel, AMQP_REPLY_SUCCESS);
+        m_rmq->releaseConnection(conn);
+        return false;
+    }
     amqp_queue_declare_ok_t* queue = amqp_queue_declare(conn, channel, amqp_cstring_bytes(queueName.c_str()), false, false, false, false, amqp_empty_table);
     if(queue == nullptr){
         DLOG( "Error declare amqp_queue\n");
@@ -150,10 +168,10 @@ int Consumer::consumeMessage(void (*callback)(amqp_envelope_t)) {
     amqp_channel_open_ok_t *channel_open = amqp_channel_open(conn, channel);
     if (channel_open == nullptr) {
         DLOG( "Error opening channel\n");
+        amqp_channel_close(conn, channel, AMQP_REPLY_SUCCESS);
         m_rmq->releaseConnection(conn);
         return 1;
     }
-
     amqp_queue_declare_ok_t* queue = amqp_queue_declare(conn, channel, amqp_cstring_bytes(m_queueName.c_str()), false, false, false, false, amqp_empty_table);
     if (queue == nullptr) {
         DLOG( "Error declare amqp_queue\n");
