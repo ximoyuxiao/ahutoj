@@ -191,6 +191,7 @@ services:
     environment:
       MINIO_ROOT_USER: admin    #管理后台用户名
       MINIO_ROOT_PASSWORD: admin123456 #管理后台密码，最小8个字符
+      MINIO_BROWER_DEFAULT_LOCALE: "zh-CN"
     volumes:
       - ./resource/oss:/data               #映射当前目录下的data目录至容器内/data目录
       - ./config:/root/.minio/     #映射配置目录

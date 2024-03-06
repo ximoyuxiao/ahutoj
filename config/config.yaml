@@ -26,7 +26,8 @@ oss:
     basepath: "./resource/"
     AccessKeyID: "Ej0Od1drI9V5F2PaT5DR"
     SecretAccessKey: "AzXkyd80IDakkKObiUNCQiPdvqVnhVmnCoH6XLka"#记得改
-    UseSSL: true
+    UseSSL: false
+
 forum:
     host: "127.0.0.1"
     port: 4498

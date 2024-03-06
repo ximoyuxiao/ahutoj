@@ -165,7 +165,11 @@ func (c *Consumer) ConsumeMessage() (<-chan amqp.Delivery, error) {
 		return nil, err
 	}
 	defer c.RabbitMQ.ReleaseConnection(conn)
-	ch, _ := conn.Channel()
+	ch, err := conn.Channel()
+	if err != nil {
+		logger.Errorf("call Channel failed, err=%s", err.Error())
+		return nil, err
+	}
 	// defer func() {
 	// 	if err := ch.Close(); err != nil {
 	// 		logger.Errorf("call Channel Close failed, err=%s", err.Error())

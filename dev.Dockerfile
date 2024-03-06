@@ -92,16 +92,3 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositorie
 
 ENTRYPOINT ["/app/useranalytics"]
 
-FROM alpine:3.16 as oss
-
-WORKDIR /app
-
-COPY  --from=build /build/oss ./oss
-
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositories && apk update && \
-    touch ahutoj.log &&\
-    chmod +x ./oss
-
-EXPOSE 4466
-
-ENTRYPOINT ["/app/oss"]
