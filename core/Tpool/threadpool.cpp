@@ -89,7 +89,7 @@ bool threadpool::cancleThread(threadInfo_ptr thread)
 }
 bool threadpool::excute(shared_ptr<worker> work)
 {
-    cout<<workersQueue.size()<<endl;
+    // cout<<"workersQueue.size()"<<workersQueue.size()<<endl;
     if(!islive) return false;
     if(thread_num < core_thread)
     {

@@ -9,7 +9,9 @@ import (
 	"math/rand"
 	"os/exec"
 	"time"
-
+	"runtime"
+	"bytes"
+	"strconv"
 	"github.com/sanity-io/litter"
 )
 
@@ -88,4 +90,33 @@ func GenVeriey(size int) string {
 		res += string(data[number])
 	}
 	return res
+}
+
+func Re[T comparable](test func() (T, error), retries int, Time int) (T, error) {
+	var (
+		err error
+		ret any
+	)
+	for i := 1; i <= retries || retries == -1; i++ {
+		ret, err = test()
+		if err != nil {
+			fmt.Printf("retry %d times, errMsg:%s\n", i, err.Error())
+			if retries == -1 {
+				time.Sleep(time.Second * time.Duration(Time))
+			}
+			continue
+		}
+		fmt.Println("success")
+		return ret.(T), nil
+	}
+	return ret.(T), err
+}
+
+func GoID() uint64 {
+	b := make([]byte, 64)
+	b = b[:runtime.Stack(b, false)]
+	b = bytes.TrimPrefix(b, []byte("goroutine "))
+	b = b[:bytes.IndexByte(b, ' ')]
+	n, _ := strconv.ParseUint(string(b), 10, 64)
+	return n
 }

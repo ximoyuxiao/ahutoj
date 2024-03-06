@@ -31,6 +31,8 @@ services:
     container_name: oj-gateway
     restart: always
     privileged: true
+    ports:
+      - "4212:4212"
     build:
       context: .
       dockerfile: ./dev.Dockerfile
@@ -203,14 +205,15 @@ services:
     image: jlesage/nginx-proxy-manager:latest
     container_name: oj-npm
     ports:
-      - "443:4443"
-      - "80:8080"
+      - "4444:4443"
+      - "8081:8080"
       - "8181:8181"
     privileged: true
     restart: always
     volumes:
       - ./resource/npm/data:/data
       - ./resource/npm/letsencrypt:/etc/letsencrypt
+      - ./resource/npm/config:/config
       - ./config/dist:/usr/share/nginx/html
     networks:
       - oj_network
@@ -219,10 +222,17 @@ services:
     container_name: oj-elasticsearch
     environment:
       - discovery.type=single-node
+      - TZ=Asia/Shanghai
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - cluster.name="docker-cluster"
+      - network.host=0.0.0.0
+      - http.cors.enabled=true 
+      - http.cors.allow-origin= "*" 
+      - http.cors.allow-headers=Authorization 
+      - xpack.security.enabled=true 
+      - xpack.security.transport.ssl.enabled=true
     volumes:
       - ./resource/elasticsearch/data:/usr/share/elasticsearch/data
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - TZ=Asia/Shanghai
     restart: always
     ports:
       - "9200:9200"
@@ -234,6 +244,9 @@ services:
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - TZ=Asia/Shanghai
+      - ELASTICSEARCH_USERNAME="elastic"
+      - ELASTICSEARCH_PASSWORD="123456"
+      - I18N_LOCALE=zh-CN
     ports:
       - "5601:5601"
     depends_on:
@@ -253,6 +266,8 @@ services:
       - ./logs/filebeat/log:/var/log/filebeat
       - ./logs:/logs
       - /var/lib/docker/containers:/var/lib/docker/containers
+    depends_on:
+      - elasticsearch
     networks:
       - oj_network
 networks:

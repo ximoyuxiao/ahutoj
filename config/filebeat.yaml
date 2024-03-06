@@ -1,9 +1,15 @@
 filebeat.inputs:
   - type: log
-    enabled: true
     paths:
       - /logs/**/*.log
+      - /var/log/filebeat/*.log
       - /var/lib/docker/containers/*/*-json.log
+    enabled: true
+    scan_frequency: 10s #如果使用symlinks并且希望切换的时候也要快速发现,调低这个参数,不推荐小于1s
+    backoff: 0.1s #如果频繁写入文件则读取延迟最长100ms
+    max_backoff: 0.5s #如果不频繁写入文件则读取延迟最长500ms
+    backoff_factor: 2 #如果设置为1,则max_backoff=backoff,否则读取完毕后backoff*backoff_factor
+    symlinks: true #允许软连接
 
 filebeat.config:
   modules:
@@ -12,9 +18,15 @@ filebeat.config:
 
 output.elasticsearch:
   hosts: ["elasticsearch:9200"]
+  username: "elastic"
+  password: "123456"
 
 setup.kibana:
   host: "kibana:5601"
+  username: "elastic"
+  password: "123456"
+
+setup.dashboards.enabled: true
 
 logging.level: info
 logging.to_files: true

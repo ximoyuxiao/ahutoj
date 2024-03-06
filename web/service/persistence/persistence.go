@@ -7,14 +7,10 @@ import (
 	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"os"
-	"runtime"
-	"strconv"
-	"time"
 )
 
 func main() {
@@ -26,9 +22,8 @@ func main() {
 
 	go DealCeInfo()
 	go DealSubmit()
-	for {
-		time.Sleep(time.Hour)
-	}
+	
+	<-make(chan struct{})
 }
 
 func GetConsumer(queueName string) *middlewares.Consumer {
@@ -47,8 +42,14 @@ func DealCeInfo() {
 		}
 		for msg := range msgs {
 			ceinfo := dao.CeInfo{}
-			json.Unmarshal(msg.Body, &ceinfo)
-			CEinfoToDataBase(context.Background(), &ceinfo)
+			err := json.Unmarshal(msg.Body, &ceinfo)
+			if err != nil {
+				logger.Errorf("json.Unmarshal failed,err:%v", err.Error())
+				continue
+			}
+			if err := CEinfoToDataBase(context.Background(), &ceinfo); err != nil {
+				logger.Errorf("CEinfoToDataBase failed,err:%v", err.Error())
+			}
 		}
 	}
 }
@@ -64,13 +65,14 @@ func DealSubmit() {
 		}
 		for msg := range msgs {
 			submit := dao.Submit{}
-			body := string(msg.Body)
-			err = json.Unmarshal([]byte(body), &submit)
+			err = json.Unmarshal(msg.Body, &submit)
 			if err != nil {
-				fmt.Println(err.Error())
+				logger.Errorf("json.Unmarshal failed,err:%v", err.Error())
 			}
-			logger.Infof("submit:%v", utils.Sdump(submit))
-			SubmitToDataBase(context.Background(), &submit)
+			logger.Debugf("submit:%v", utils.Sdump(submit))
+			if err := SubmitToDataBase(context.Background(), &submit); err != nil {
+				logger.Errorf("SubmitToDataBase failed,err:%v", err.Error())
+			}
 		}
 	}
 }
@@ -81,8 +83,9 @@ func CEinfoToDataBase(ctx context.Context, ceinfo *dao.CeInfo) error {
 	logger.Infof(utils.Sdump(ceinfo))
 	if err != nil {
 		logger.Errorf("call InsertCEinfo failed,ceinfo=%v, err=%v", utils.Sdump(ceinfo), err.Error())
+		return err
 	}
-	return err
+	return nil
 }
 
 func SubmitToDataBase(ctx context.Context, submit *dao.Submit) error {
@@ -125,11 +128,4 @@ func initPersistence(ConfigPath string) error {
 	middlewares.NewRabbitMQ(rbtcfg.Host, rbtcfg.Port, rbtcfg.Username, rbtcfg.Password, 2)
 	return nil
 }
-func GoID() uint64 {
-	b := make([]byte, 64)
-	b = b[:runtime.Stack(b, false)]
-	b = bytes.TrimPrefix(b, []byte("goroutine "))
-	b = b[:bytes.IndexByte(b, ' ')]
-	n, _ := strconv.ParseUint(string(b), 10, 64)
-	return n
-}
+

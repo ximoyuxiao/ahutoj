@@ -4,6 +4,7 @@
 #include "mlog.h"
 #include"judgeClient.h"
 #include<iostream>
+#include<functional>
 using namespace my;
 Solution* Solution::solution = nullptr;
 Solution::Solution()
@@ -169,7 +170,10 @@ void Solution::Process(amqp_envelope_t amqp){
 void Solution::LoopSolve(){
     while(true){
         Consumer consumer = mq->createConsumer(INNERJUDGE);
-        consumer.consumeMessage(Process);
+        auto ret=consumer.consumeMessage(Process);
+        if(ret){
+            sleep(5);
+        } 
     }
 }
 
@@ -209,13 +213,14 @@ void Solution::commitSolveToQueue(Solve* solve){
     solve->to_json(j);
     Producer pro = mq->createProducer();
     auto data = j.dump();
-    pro.sendMessage(JUDGERESULT,(void*)data.c_str(),data.size());
+    retry("send JudgeResult error",mem_fn(&Producer::sendMessage),&pro,JUDGERESULT,(void*)data.c_str(),data.size());
+    // DLOG("send message success!data:%s",data.c_str());
     j.clear();
     data.clear();
     if(solve->Sres() == OJ_CE){
         solve->to_ceJson(j);
         data = j.dump();
-        pro.sendMessage(JUDGECE,(void*)data.c_str(),data.size());
+        retry("send JudgeCe error",mem_fn(&Producer::sendMessage),&pro,JUDGECE,(void*)data.c_str(),data.size());
     }
 }
 
