@@ -8,7 +8,7 @@ import (
 
 var oss *minio.Client
 
-func NewOss(Host string, Port int, AccessKeyID string, SecretAccessKey string, UseSSL bool) (*minio.Client, error) {
+func NewOss(Host string, Port uint16, AccessKeyID string, SecretAccessKey string, UseSSL bool) (*minio.Client, error) {
 	if oss != nil {
 		return oss, nil
 	}

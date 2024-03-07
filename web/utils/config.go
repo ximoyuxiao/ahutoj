@@ -37,9 +37,11 @@ type AppConfig struct {
 	*ForumConfig    `mapstructure:"forum"`
 }
 type OssConfig struct {
-	Host     string `mapstructure:"host"`
-	Port     uint16 `mapstructure:"port"`
-	BasePath string `mapstructure:"basepath"`
+	Host            string `mapstructure:"host"`
+	Port            uint16 `mapstructure:"port"`
+	AccessKeyID     string `mapstructure:"AccessKeyID"`
+	SecretAccessKey string `mapstructure:"SecretAccessKey"`
+	UseSSL          bool   `mapstructure:"UseSSL"`
 }
 type ForumConfig struct {
 	Host string `mapstructure:"host"`

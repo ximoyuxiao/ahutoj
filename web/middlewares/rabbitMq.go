@@ -36,6 +36,10 @@ func GetRabbitMq() *RabbitMQ {
 	return rabbitmq
 }
 
+func GetConsumer(queueName string) *Consumer {
+	return NewConsumer(GetRabbitMq(), queueName)
+}
+
 func newRabbitMQ(uri string, poolSize int) (*RabbitMQ, error) {
 	logger := utils.GetLogInstance()
 	pool := make(chan *amqp.Connection, poolSize)

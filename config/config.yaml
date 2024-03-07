@@ -23,13 +23,12 @@ openRegisiters: true
 oss:
     host: "minio"
     port: 9000
-    basepath: "./resource/"
-    AccessKeyID: "Ej0Od1drI9V5F2PaT5DR"
-    SecretAccessKey: "AzXkyd80IDakkKObiUNCQiPdvqVnhVmnCoH6XLka"#记得改
+    AccessKeyID: "SryIePXDyOp2g5FVFEgc"
+    SecretAccessKey: "9El9CZZA3Ydca66IH05lyVprC8I4XoWJFyEmMrzf"
     UseSSL: false
-
+#记得改
 forum:
-    host: "127.0.0.1"
+    host: "forum"
     port: 4498
     
 mysql:  
@@ -57,6 +56,7 @@ originLog:
     level: "debug"
     filename: "originjudge.log"
     max_size: 4194304
+    
 useOriginJudge: true
 # 注册一个AtCoder判题机，首先配置ID前缀，配置公共密码 ID:prefix + 数字(最多支持 1-100) 
 atCoderJudges:
