@@ -73,9 +73,9 @@ func (r *RabbitMQ) GetConnection() (*amqp.Connection, error) {
 		default:
 			uri := fmt.Sprintf("amqp://%v:%v@rabbitmq", r.User, r.Password)
 			// conn,err:=Re(func()(*amqp.Connection,error){return amqp.Dial(uri)}, 3, 5)
-			conn,err:=amqp.Dial(uri)
+			conn, err := amqp.Dial(uri)
 			if err != nil {
-				utils.GetLogInstance().Errorf("call Dial failed, err=%s",  err.Error())
+				utils.GetLogInstance().Errorf("call Dial failed, err=%s", err.Error())
 				time.Sleep(5 * time.Second)
 				continue
 			}
@@ -165,7 +165,11 @@ func (c *Consumer) ConsumeMessage() (<-chan amqp.Delivery, error) {
 		return nil, err
 	}
 	defer c.RabbitMQ.ReleaseConnection(conn)
-	ch, _ := conn.Channel()
+	ch, err := conn.Channel()
+	if err != nil {
+		logger.Errorf("call Channel failed, err=%s", err.Error())
+		return nil, err
+	}
 	// defer func() {
 	// 	if err := ch.Close(); err != nil {
 	// 		logger.Errorf("call Channel Close failed, err=%s", err.Error())

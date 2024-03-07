@@ -19,12 +19,12 @@ namespace my
         string log_info;
         int level;
     };
-    
-    void createlogBlock(int tags,string fmt,int line,const char* file,const char* func,...);    
-    #define ILOG(fmt,...) createlogBlock(INFO,fmt,__LINE__,__FILE__,__FUNCTION__,##__VA_ARGS__) 
-    #define DLOG(fmt,...) createlogBlock(DEBUG,fmt,__LINE__,__FILE__,__FUNCTION__,##__VA_ARGS__) 
-    #define WLOG(fmt,...) createlogBlock(WARMMING,fmt,__LINE__,__FILE__,__FUNCTION__,##__VA_ARGS__) 
-    #define ELOG(fmt,...) createlogBlock(ERROR,fmt,__LINE__,__FILE__,__FUNCTION__,##__VA_ARGS__) 
+
+    void createlogBlock(int tags,string fmt,int line,const char* file,const char* func,...);
+    #define ILOG(fmt,...) createlogBlock(INFO,fmt,__LINE__,__FILE__,__FUNCTION__,##__VA_ARGS__)
+    #define DLOG(fmt,...) createlogBlock(DEBUG,fmt,__LINE__,__FILE__,__FUNCTION__,##__VA_ARGS__)
+    #define WLOG(fmt,...) createlogBlock(WARMMING,fmt,__LINE__,__FILE__,__FUNCTION__,##__VA_ARGS__)
+    #define ELOG(fmt,...) createlogBlock(ERROR,fmt,__LINE__,__FILE__,__FUNCTION__,##__VA_ARGS__)
 
     //日志文件
     struct logfile{
@@ -58,7 +58,7 @@ namespace my
         pthread_t tid,fftid;
     private:
         mlog(string path,int filesize);
-        
+
         string gettimeString();
         logBlock get_block_log();
         static void* write_log_thread(void* args);
@@ -78,7 +78,6 @@ namespace my
     {   
         using RetType = decltype(std::forward<F>(f)(std::forward<Args>(args)...));
         static_assert(std::is_same<RetType, bool>::value, "Return type of f must be bool");
-
         while (true) {
             bool ret = f(args...);
             if (ret!=flag) {

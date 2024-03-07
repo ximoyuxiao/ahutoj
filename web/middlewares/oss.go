@@ -22,6 +22,7 @@ func NewOss(Host string, Port int, AccessKeyID string, SecretAccessKey string, U
 		return nil, err
 	}
 	return oss, err
+
 }
 func GetOss() *minio.Client {
 	return oss

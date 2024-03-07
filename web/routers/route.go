@@ -140,12 +140,36 @@ func regeisterRouters(router *gin.Engine) {
 			// 上传题目
 			fileRouter.POST("/problem/upfile/", controller.UpProblemFile)
 		}
-		apiRouter.Use(middlewares.JwtVerify)
-		apiRouter.GET("/notice/:id", controller.GetNotice)
-		apiRouter.POST("/notice/", controller.CreateNotice)
-		apiRouter.DELETE("/notice/:id", controller.DeleteNotice)
-		apiRouter.PUT("/notice/:id", controller.UpdateNotice)
-		apiRouter.GET("/notices", controller.GetNoticeList)
+		ossRouter := apiRouter.Group("/oss").Use(middlewares.JwtVerify)
+		{
+			//-----------对象操作--------------
+			ossRouter.POST("/object/", controller.GetObject) //获取base64
+			// 获取某个桶下面的所有文件
+			ossRouter.GET("/object/:bucket", controller.GetObjects)
+			//获取还未上传完成的列表
+			//apiRouter.GET("/object/files", controller.GetUpingObjects)
+			//从本地上传，暂时不需要上传其他来源数据，以后做(
+			//apiRouter.POST("/object/", controller.CreateObject)
+			ossRouter.POST("/object/delete/", controller.DeleteObject)
+			ossRouter.POST("/object/getfile/", controller.FGetObject) //下载本地
+			ossRouter.POST("/object/putfile/", controller.FPutObject) //本地上传
+			//apiRouter.PUT("/object/", controller.ModifyObject)
+			ossRouter.POST("/object/info/", controller.GetObjectInfo)
+			//apiRouter.POST("/object/unzip", controller.UnzipObject)
+			//-----------桶操作--------------
+			//获得所有桶的名称+创建日期
+			ossRouter.GET("/bucket", controller.GetBuckets)
+			ossRouter.POST("/bucket/add/", controller.CreateBucket)
+			ossRouter.POST("/bucket/delete/", controller.RemoveBucket)
+		}
+		{
+			apiRouter.Use(middlewares.JwtVerify)
+			apiRouter.GET("/notice/:id", controller.GetNotice)
+			apiRouter.POST("/notice/", controller.CreateNotice)
+			apiRouter.DELETE("/notice/:id", controller.DeleteNotice)
+			apiRouter.PUT("/notice/:id", controller.UpdateNotice)
+			apiRouter.GET("/notices", controller.GetNoticeList)
+		}
 	}
 }
 

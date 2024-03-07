@@ -22,7 +22,6 @@ func main() {
 
 	go DealCeInfo()
 	go DealSubmit()
-	
 	<-make(chan struct{})
 }
 
@@ -128,4 +127,3 @@ func initPersistence(ConfigPath string) error {
 	middlewares.NewRabbitMQ(rbtcfg.Host, rbtcfg.Port, rbtcfg.Username, rbtcfg.Password, 2)
 	return nil
 }
-

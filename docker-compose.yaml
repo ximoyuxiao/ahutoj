@@ -81,7 +81,7 @@ services:
       target: persistence
     volumes:
       - ./config/config.yaml:/app/config.yaml
-#      - ${DIR:-.}/resource:/app/resource
+      #      - ${DIR:-.}/resource:/app/resource
       - ./logs/persistence/ahutoj.log:/app/ahutoj.log
     environment:
       TZ: Asia/Shanghai
@@ -169,20 +169,20 @@ services:
       - "35672:15672"
     networks:
       - oj_network
-#  nginx:
-#    image: nginx
-#    container_name: oj-nginx
-#    privileged: true
-#    restart: always
-#    volumes:
-#      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf
-#      - ./config/dist:/usr/share/nginx/html
-#      - ${DIR:-.}/nginx/logs:/var/log/nginx
-#      - ${DIR:-.}/nginx/resource/:/home/ubuntu/ahutoj/resource/
-#    ports:
-#      - "38000:80"
-#    networks:
-#      - oj_network
+  #  nginx:
+  #    image: nginx
+  #    container_name: oj-nginx
+  #    privileged: true
+  #    restart: always
+  #    volumes:
+  #      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf
+  #      - ./config/dist:/usr/share/nginx/html
+  #      - ${DIR:-.}/nginx/logs:/var/log/nginx
+  #      - ${DIR:-.}/nginx/resource/:/home/ubuntu/ahutoj/resource/
+  #    ports:
+  #      - "38000:80"
+  #    networks:
+  #      - oj_network
   minio:
     image: quay.io/minio/minio # 如果不支持x86-64-v2，使用quay.io/minio/minio:RELEASE.2024-11-01T01-57-10Z-cpuv1
     container_name: oj-minio
@@ -214,6 +214,7 @@ services:
     volumes:
       - ./resource/npm/data:/data
       - ./resource/npm/letsencrypt:/etc/letsencrypt
+      - ./resource/npm/config:/config
       - ./resource/npm/config:/config
       - ./config/dist:/usr/share/nginx/html
     networks:
@@ -248,6 +249,9 @@ services:
       - ELASTICSEARCH_USERNAME="elastic"
       - ELASTICSEARCH_PASSWORD="123456"
       - I18N_LOCALE=zh-CN
+      - ELASTICSEARCH_USERNAME="elastic"
+      - ELASTICSEARCH_PASSWORD="123456"
+      - I18N_LOCALE=zh-CN
     ports:
       - "5601:5601"
     depends_on:
@@ -267,6 +271,8 @@ services:
       - ./logs/filebeat/log:/var/log/filebeat
       - ./logs:/logs
       - /var/lib/docker/containers:/var/lib/docker/containers
+    depends_on:
+      - elasticsearch
     depends_on:
       - elasticsearch
     networks:
