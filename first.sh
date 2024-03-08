@@ -8,11 +8,11 @@ fi
 
 #创建日志文件,挂载到容器中
 
-sudo mkdir -p .logs/origin && sudo touch "${DIR:-./tmp}"/origin/log/ahutoj.log
-sudo mkdir -p "${DIR:-./tmp}"/gateway/log&& sudo touch "${DIR:-./tmp}"/gateway/log/ahutoj.log
-sudo mkdir -p "${DIR:-./tmp}"/persistence/log &&sudo  touch "${DIR:-./tmp}"/persistence/log/ahutoj.log
-sudo mkdir -p "${DIR:-./tmp}"/oj/log && sudo touch "${DIR:-./tmp}"/oj/log/ahutoj.log
-sudo chmod -R 777 "${DIR:-./tmp}"/
+sudo mkdir -p .logs/origin && sudo touch .logs/origin/log/ahutoj.log
+sudo mkdir -p .logs/gateway/log&& sudo touch ".logs/gateway/log/ahutoj.log
+sudo mkdir -p .logs/persistence/log &&sudo  touch .logs/persistence/log/ahutoj.log
+sudo mkdir -p .logs/oj/log && sudo touch .logs/oj/log/ahutoj.log
+sudo chmod -R 777 .logs/
 
 #运行容器和删除构建中间镜像
 sudo docker compose up -d
@@ -26,5 +26,8 @@ apk add python3-dev &&
 pip install -i https://pypi.tuna.tsinghua.edu.cn/simple cffi certbot-dns-dnspod zope &&
 exit"
 
+docker exec -it oj-mysql bash -c "bash /backup.sh && exit"
+
 # shellcheck disable=SC2046
 sudo docker rmi $(sudo docker images --filter "dangling=true" -q)
+

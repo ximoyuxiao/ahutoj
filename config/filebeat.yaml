@@ -2,7 +2,6 @@ filebeat.inputs:
   - type: log
     paths:
       - /logs/**/*.log
-      - /var/log/filebeat/*.log
       - /var/lib/docker/containers/*/*-json.log
     enabled: true
     scan_frequency: 10s #如果使用symlinks并且希望切换的时候也要快速发现,调低这个参数,不推荐小于1s

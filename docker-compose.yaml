@@ -24,7 +24,6 @@ services:
       - ./resource:/app/resource
     environment:
       TZ: Asia/Shanghai
-      TEAM:
     networks:
       - oj_network
   gateway:
@@ -43,7 +42,6 @@ services:
       - ./logs/gateway/ahutoj.log:/app/ahutoj.log
     environment:
       TZ: Asia/Shanghai
-      TEAM:
     networks:
       - oj_network
   origin:
@@ -64,7 +62,6 @@ services:
       - ./logs/origin/ahutoj.log:/app/ahutoj.log
     environment:
       TZ: Asia/Shanghai
-      TEAM:
     networks:
       - oj_network
   forum:
@@ -85,30 +82,8 @@ services:
       - ./logs/forum/ahutoj.log:/app/ahutoj.log
     environment:
       TZ: Asia/Shanghai
-      TEAM:
     networks:
       - oj_network
-  # persistence:
-  #   image: oj/persistence:local
-  #   container_name: oj-persistence
-  #   restart: always
-  #   privileged: true
-  #   depends_on:
-  #     - gateway
-  #     - mysql
-  #     - rabbitmq
-  #   build:
-  #     context: .
-  #     dockerfile: ./dev.Dockerfile
-  #     target: persistence
-  #   volumes:
-  #     - ./config/config.yaml:/app/config.yaml
-  #     - ./logs/persistence/ahutoj.log:/app/ahutoj.log
-  #   environment:
-  #     TZ: Asia/Shanghai
-  #     TEAM:
-  #   networks:
-  #     - oj_network
   oj:
     image: oj/oj:local
     container_name: oj-oj
@@ -140,12 +115,19 @@ services:
       TZ: Asia/Shanghai
       # root 密码 - root password
       MYSQL_ROOT_PASSWORD: 123456
+      REMOTE_BACKUP_SERVER: 
+      REMOTE_BACKUP_PATH: 
+      REMOTE_BACKUP_USER: 
+      REMOTE_BACKUP_PASSWORD: 
+    # 防止远程备份时出现交互式提示
     ports:
       - "33069:3306"
     volumes:
       #数据挂载 - Data mounting
       - ./resource/mysql:/var/lib/mysql
       - ./config/oj.sql:/docker-entrypoint-initdb.d/oj.sql
+      - ./config/backup.sh:/backup.sh
+      - ./resource/backup:/backup
       # 日志
     command:
       # 将mysql8.0默认密码策略 修改为 原先 策略 (mysql8.0对其默认策略做了更改 会导致密码无法匹配)

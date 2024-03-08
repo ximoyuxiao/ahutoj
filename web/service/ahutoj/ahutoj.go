@@ -54,6 +54,8 @@ func initAPP(ConfigPath string) error {
 	middlewares.InitSnowflake(utils.GetConfInstance().StartTime, utils.GetConfInstance().MachineID)
 	rbtcfg := utils.GetConfInstance().RabbitMQ
 	middlewares.NewRabbitMQ(rbtcfg.Host, rbtcfg.Port, rbtcfg.Username, rbtcfg.Password, 12)
+	osscfg := utils.GetConfInstance().OssConfig
+	middlewares.NewOss(osscfg.Host,osscfg.Port, osscfg.AccessKeyID, osscfg.SecretAccessKey,osscfg.UseSSL)
 	//初始化持久化服务
 	go persistence()
 	routers.InitServer()

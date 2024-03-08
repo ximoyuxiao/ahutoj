@@ -92,7 +92,7 @@ func GenVeriey(size int) string {
 	return res
 }
 
-func Re[T comparable](test func() (T, error), retries int, Time int) (T, error) {
+func Re[T comparable](test func() (T, error), retries int, Time int,Name string) (T, error) {
 	var (
 		err error
 		ret any
@@ -100,13 +100,13 @@ func Re[T comparable](test func() (T, error), retries int, Time int) (T, error) 
 	for i := 1; i <= retries || retries == -1; i++ {
 		ret, err = test()
 		if err != nil {
-			fmt.Printf("retry %d times, errMsg:%s\n", i, err.Error())
+			fmt.Printf("call %v retry %d times, errMsg:%s\n",Name, i, err.Error())
 			if retries == -1 {
 				time.Sleep(time.Second * time.Duration(Time))
 			}
 			continue
 		}
-		fmt.Println("success")
+		fmt.Printf("call %v success",Name)
 		return ret.(T), nil
 	}
 	return ret.(T), err
