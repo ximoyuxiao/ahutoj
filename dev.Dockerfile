@@ -64,7 +64,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositorie
     chmod +x ./oj &&\
     apk add --no-cache curl
 
-HEALTHCHECK --interval=10s CMD curl --fail http://gateway:4433/api/ping/ || exit 1
+HEALTHCHECK --interval=10s CMD curl --fail http://oj-gateway:4433/api/ping/ || exit 1
 #配置探针用于注册路由
 
 EXPOSE 4212
@@ -84,7 +84,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tencent.com/g' /etc/apk/repositorie
 
 EXPOSE  4498
 
-HEALTHCHECK --interval=10s CMD curl --fail http://gateway:4433/api/solution/ping || exit 1
+HEALTHCHECK --interval=10s CMD curl --fail http://oj-gateway:4433/api/solution/ping || exit 1
 
 ENTRYPOINT ["/app/forum"]
 
