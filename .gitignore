@@ -3,7 +3,5 @@
 /config/certs
 /config/config.yaml
 resource/*
-logs/**/*.log
-.env 
-
+logs/**/*.log 
 # Ignore .env file containing credentials, API keys, tokens, passwords, etc.

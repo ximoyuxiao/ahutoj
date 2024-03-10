@@ -37,7 +37,7 @@ typedef enum
 #define INNERJUDGE "InnerJudge"
 #define JUDGERESULT  "JudgeResult"
 #define JUDGECE     "JudgeCE"
-#define RMQ_HOST  "rabbitmq"
+#define RMQ_HOST  "oj-rabbitmq"
 #define RMQ_PORT  "5672"
 #define RMQ_USER "ahutoj"
 #define RMQ_PASS "123456"

@@ -1,6 +1,6 @@
 # 端口号
 host: "oj"
-gatWayHost: "http://gateway:4433/"
+gatWayHost: "http://oj-gateway:4433/"
 port: ":4212"
 mode: "debug"
 # 签名
@@ -14,25 +14,23 @@ dataPath: "./resource/Data/"
 #封榜时间
 terminal: 0.8  
 # 图片存放路径
-imagePath: "http://minio:9000/image"
-#headPath:  "http://127.0.01:4379/image/head/"
-#spjPath:   "http://127.0.01:4379/spj/"
+imagePath: "./resource/image"
 # 是否开放注册
 openRegisiters: true
 # 外部判题相关配置
 oss:
-    host: "minio"
+    host: "oj-minio"
     port: 9000
     AccessKeyID: ""
     SecretAccessKey: ""
     UseSSL: false
 #记得改
 forum:
-    host: "forum"
+    host: "oj-forum"
     port: 4498
     
 mysql:  
-    driver: "mysql"
+    driver: "oj-mysql"
     host: "mysql"
     port: 3306
     username: "root"
@@ -40,12 +38,12 @@ mysql:
     password: "123456"
 
 redis:
-    host: "redis"
+    host: "oj-redis"
     port: ":6379"
     db: 0
     pool_size: 100
     keepalive: 30
-    password: ""
+    password: "2019ahut"
 
 log:
     level: "debug"
@@ -79,7 +77,7 @@ gatWay:
     blackReq: 
 
 rabbitmq:
-    host: "rabbitmq"
+    host: "oj-rabbitmq"
     port: 5672
     username: "ahutoj"
     password: "123456"

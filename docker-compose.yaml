@@ -5,7 +5,7 @@
 #minio 39000 39001
 #nginx 38000
 version: '3.8'
-project_name: ahutoj
+compose_project_name: ahutoj
 services:
 # 核心服务 - Core service
   judged:
@@ -103,5 +103,6 @@ services:
 networks:
   oj_network:
     driver: bridge
-    #name: local 不知道为什么不行，删了
-    #external: true
+    ipam:
+      config:
+        - subnet: 172.16.0.0/16
