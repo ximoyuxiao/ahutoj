@@ -5,6 +5,7 @@
 #minio 39000 39001
 #nginx 38000
 version: '3.8'
+project_name: ahutoj
 services:
 # 核心服务 - Core service
   judged:
