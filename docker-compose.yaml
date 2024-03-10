@@ -14,8 +14,6 @@ services:
     privileged: true
     depends_on:
       - gateway
-      - mysql
-      - rabbitmq
     volumes:
       - ./logs/judged/log:/app/log
       - ./resource:/app/resource
@@ -44,8 +42,6 @@ services:
     privileged: true
     depends_on:
       - gateway
-      - mysql
-      - rabbitmq
     volumes:
       - ./config/config.yaml:/app/config.yaml
       - ./logs/origin/ahutoj.log:/app/ahutoj.log
@@ -60,8 +56,6 @@ services:
     privileged: true
     depends_on:
       - gateway
-      - mysql
-      - rabbitmq
     volumes:
       - ./config/config.yaml:/app/config.yaml
       - ./logs/forum/ahutoj.log:/app/ahutoj.log
@@ -76,8 +70,6 @@ services:
     privileged: true
     depends_on:
       - gateway
-      - mysql
-      - rabbitmq
     volumes:
       - ./config/config.yaml:/app/config.yaml
       - ./resource:/app/resource
@@ -90,5 +82,6 @@ services:
 networks:
   oj_network:
     driver: bridge
-    #name: local 不知道为什么不行，删了
-    #external: true
+    ipam:
+      config:
+        - subnet: 172.16.0.0/16
