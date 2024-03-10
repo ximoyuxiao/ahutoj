@@ -8,7 +8,7 @@ version: '3.8'
 services:
 # 核心服务 - Core service
   judged:
-    image: oj/judged:local
+    image: rruijfang/oj-judged:latest
     container_name: oj-judged
     restart: always
     privileged: true
@@ -16,9 +16,6 @@ services:
       - gateway
       - mysql
       - rabbitmq
-    build:
-      context: .
-      dockerfile: ./core.Dockerfile
     volumes:
       - ./logs/judged/log:/app/log
       - ./resource:/app/resource
@@ -27,16 +24,12 @@ services:
     networks:
       - oj_network
   gateway:
-    image: oj/gateway:local
+    image: rruijfang/gateway:latest
     container_name: oj-gateway
     restart: always
     privileged: true
     ports:
       - "4433:4433"
-    build:
-      context: .
-      dockerfile: ./dev.Dockerfile
-      target: gateway
     volumes:
       - ./config/config.yaml:/app/config.yaml
       - ./logs/gateway/ahutoj.log:/app/ahutoj.log
@@ -45,7 +38,7 @@ services:
     networks:
       - oj_network
   origin:
-    image: oj/origin:local
+    image: rruijfang/oj-origin:latest
     container_name: oj-origin
     restart: always
     privileged: true
@@ -53,10 +46,6 @@ services:
       - gateway
       - mysql
       - rabbitmq
-    build:
-      context: .
-      dockerfile: ./dev.Dockerfile
-      target: origin
     volumes:
       - ./config/config.yaml:/app/config.yaml
       - ./logs/origin/ahutoj.log:/app/ahutoj.log
@@ -65,7 +54,7 @@ services:
     networks:
       - oj_network
   forum:
-    image: oj/forum:local
+    image: rruijfang/oj-forum:latest
     container_name: oj-forum
     restart: always
     privileged: true
@@ -73,10 +62,6 @@ services:
       - gateway
       - mysql
       - rabbitmq
-    build:
-      context: .
-      dockerfile: ./dev.Dockerfile
-      target: forum
     volumes:
       - ./config/config.yaml:/app/config.yaml
       - ./logs/forum/ahutoj.log:/app/ahutoj.log
@@ -85,7 +70,7 @@ services:
     networks:
       - oj_network
   oj:
-    image: oj/oj:local
+    image: rruijfang/oj-oj:latest
     container_name: oj-oj
     restart: always
     privileged: true
@@ -93,10 +78,6 @@ services:
       - gateway
       - mysql
       - rabbitmq
-    build:
-      context: .
-      dockerfile: ./dev.Dockerfile
-      target: oj
     volumes:
       - ./config/config.yaml:/app/config.yaml
       - ./resource:/app/resource
@@ -106,212 +87,6 @@ services:
       TEAM:
     networks:
       - oj_network
-# 数据库 - Database
-  mysql:
-    image: mysql:8.0.28
-    container_name: oj-mysql
-    environment:
-      # 时区上海 - Time zone Shanghai (Change if needed)
-      TZ: Asia/Shanghai
-      # root 密码 - root password
-      MYSQL_ROOT_PASSWORD: 123456
-      REMOTE_BACKUP_SERVER: 
-      REMOTE_BACKUP_PATH: 
-      REMOTE_BACKUP_USER: 
-      REMOTE_BACKUP_PASSWORD: 
-    # 防止远程备份时出现交互式提示
-    ports:
-      - "33069:3306"
-    volumes:
-      #数据挂载 - Data mounting
-      - ./resource/mysql:/var/lib/mysql
-      - ./config/oj.sql:/docker-entrypoint-initdb.d/oj.sql
-      - ./config/backup.sh:/backup.sh
-      - ./resource/backup:/backup
-      # 日志
-    command:
-      # 将mysql8.0默认密码策略 修改为 原先 策略 (mysql8.0对其默认策略做了更改 会导致密码无法匹配)
-      # Modify the Mysql 8.0 default password strategy to the original strategy (MySQL8.0 to change its default strategy will cause the password to be unable to match)
-      --default-authentication-plugin=mysql_native_password
-      --character-set-server=utf8mb4
-      --collation-server=utf8mb4_general_ci
-      --explicit_defaults_for_timestamp=true
-      --lower_case_table_names=1
-    privileged: true
-    restart: always
-    networks:
-      - oj_network
-# 缓存 - Cache
-  redis:
-    image: redis
-    container_name: oj-redis
-    ports:
-      - "36379:6379"
-    environment:
-      # 时区上海 - Time zone Shanghai (Change if needed)
-      TZ: Asia/Shanghai
-      TEAM:
-    volumes:
-      # 数据文件 - data files
-      - ./resource/redis:/data:rw
-    command: "redis-server --requirepass 2019ahut --appendonly yes"
-    privileged: true
-    restart: always
-    networks:
-      - oj_network
-# 消息队列 - Message queue
-  rabbitmq:
-    image: rabbitmq:management
-    container_name: oj-rabbitmq
-    restart: always
-    volumes:
-      - ./logs/rabbitmq/log:/var/log/rabbitmq
-      - ./resource/rabbitmq:/var/lib/rabbitmq
-    environment:
-      - RABBITMQ_DEFAULT_USER=ahutoj
-      - RABBITMQ_DEFAULT_PASS=123456
-    ports:
-      - "35672:15672"
-    networks:
-      - oj_network
-#仅供测试 - For testing only        
-    #  nginx:
-    #    image: nginx
-    #    container_name: oj-nginx
-    #    privileged: true
-    #    restart: always
-    #    volumes:
-    #      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf
-    #      - ./config/dist:/usr/share/nginx/html
-    #    ports:
-    #      - "38000:80"
-    #    networks:
-    #      - oj_network
-  
-# 分布式文件系统 - Distributed file system
-  minio:
-    image: quay.io/minio/minio # 如果不支持x86-64-v2，使用quay.io/minio/minio:RELEASE.2024-11-01T01-57-10Z-cpuv1
-    container_name: oj-minio
-    hostname: "minio"
-    ports:
-      - "39000:9000" # api 端口
-      - "39001:9001" # 控制台端口
-    environment:
-      MINIO_ROOT_USER: admin    #管理后台用户名
-      MINIO_ROOT_PASSWORD: admin123456 #管理后台密码，最小8个字符
-      MINIO_BROWER_DEFAULT_LOCALE: "zh_CN"
-    volumes:
-      - ./resource/oss:/data               #映射当前目录下的data目录至容器内/data目录
-      - ./config:/root/.minio/     #映射配置目录
-    command: server --console-address ':9001' /data  #指定容器中的目录 /data
-    privileged: true
-    restart: always
-    networks:
-      - oj_network
-#  反向代理+SSL - Reverse proxy
-  npm:
-    image: jlesage/nginx-proxy-manager:latest
-    container_name: oj-npm
-    ports:
-      - "4444:4443"
-      - "8081:8080"
-      - "8181:8181"
-    privileged: true
-    restart: always
-    volumes:
-      - ./resource/npm/data:/data
-      - ./resource/npm/letsencrypt:/etc/letsencrypt
-      - ./resource/npm/config:/config
-      - ./config/dist:/usr/share/nginx/html
-    networks:
-      - oj_network
-#  日志系统 - Log system
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
-    container_name: oj-elasticsearch
-    environment:
-      - discovery.type=single-node
-      - TZ=Asia/Shanghai
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - cluster.name="docker-cluster"
-      - network.host=0.0.0.0
-      - http.cors.enabled=true 
-      - http.cors.allow-origin= "*" 
-      - http.cors.allow-headers=Authorization 
-      - xpack.security.enabled=true 
-      - xpack.security.transport.ssl.enabled=true
-    volumes:
-      - ./resource/elasticsearch/data:/usr/share/elasticsearch/data
-    restart: always
-    ports:
-      - "9200:9200"
-    networks:
-      - oj_network
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.15.0
-    container_name: oj-kibana
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - TZ=Asia/Shanghai
-      - ELASTICSEARCH_USERNAME="elastic"
-      - ELASTICSEARCH_PASSWORD="123456"
-      - I18N_LOCALE=zh-CN
-    ports:
-      - "5601:5601"
-    depends_on:
-      - elasticsearch
-    networks:
-      - oj_network
-  filebeat:
-    image: docker.elastic.co/beats/filebeat:7.15.0
-    container_name: oj-filebeat
-    entrypoint: "filebeat -e -strict.perms=false"
-    environment:
-      TZ: Asia/Shanghai
-    user: root
-    restart: always
-    volumes:
-      - ./config/filebeat.yaml:/usr/share/filebeat/filebeat.yml
-      - ./logs/filebeat/log:/var/log/filebeat
-      - ./logs:/logs
-      - /var/lib/docker/containers:/var/lib/docker/containers
-    depends_on:
-      - elasticsearch
-    networks:
-      - oj_network
-# 监控系统 - Monitoring system
-  # prometheus:
-  #   image: prom/prometheus:v2.28.1
-  #   container_name: prometheus
-  #   environment:
-  #     TZ: Asia/Shanghai
-  #   volumes:
-  #     - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
-  #     - ./resource/prometheus:/prometheus
-  #   command:
-  #     - '--config.file=/etc/prometheus/prometheus.yml'
-  #     - '--storage.tsdb.path=/prometheus'
-  #   restart: always
-  #   user: root
-  #   ports:
-  #     - 9090:9090
-  #   networks:
-  #     - oj_network
-  # grafana:
-  #   image: grafana/grafana:8.0.6
-  #   container_name: grafana
-  #   hostname: grafana
-  #   user: root
-  #   environment:
-  #     TZ: Asia/Shanghai
-  #   restart: always
-  #   volumes:
-  #       - ./resource/grafana:/var/lib/grafana
-  #   ports:
-  #       - "3001:3000"
-  #   networks:
-  #       - oj_network
-
 networks:
   oj_network:
     driver: bridge
