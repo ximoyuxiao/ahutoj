@@ -55,7 +55,7 @@ amqp_connection_state_t RabbitMQ::getConnection() {
     }
     poolLocker.unlock();
     if (conn == nullptr) {
-        printf("amqp://%s:%s@rabbitmq", m_user.c_str(), m_password.c_str());
+        printf("amqp://%s:%s@oj-rabbitmq", m_user.c_str(), m_password.c_str());
         conn = amqp_new_connection();
         if(!conn){
             DLOG( "amqp_socket_open failed");

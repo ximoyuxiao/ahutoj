@@ -23,7 +23,7 @@ func NewRabbitMQ(Host string, Port int, User string, Password string, poolSize i
 		return rabbitmq, nil
 	}
 	// utils.GetLogInstance().Debug("NewRabbitMQ")
-	uri := fmt.Sprintf("amqp://%v:%v@rabbitmq", User, Password)
+	uri := fmt.Sprintf("amqp://%v:%v@oj-rabbitmq", User, Password)
 	rabbitmq, _ =  newRabbitMQ(uri,poolSize)//强制重新连接
 	rabbitmq.Host = Host
 	rabbitmq.Password = Password
@@ -75,7 +75,7 @@ func (r *RabbitMQ) GetConnection() (*amqp.Connection, error) {
 			}
 			return conn, nil
 		default:
-			uri := fmt.Sprintf("amqp://%v:%v@rabbitmq", r.User, r.Password)
+			uri := fmt.Sprintf("amqp://%v:%v@oj-rabbitmq", r.User, r.Password)
 			// conn,err:=Re(func()(*amqp.Connection,error){return amqp.Dial(uri)}, 3, 5)
 			conn, err := amqp.Dial(uri)
 			if err != nil {
