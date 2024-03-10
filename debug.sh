@@ -1,11 +1,10 @@
 #!/bin/bash
 
 # Array of Docker containers
-declare -a containers=( "oj-judged" "oj-origin" "oj-persistence" "oj-oj" "oj-gateway")
+declare -a containers=( "oj-judged" "oj-origin"  "oj-oj" "oj-gateway")
 
 # Array of Docker images
-declare -a images=( "oj/judged:local")
-#"oj/origin:local" "oj/persistence:local" "oj/oj:local"
+declare -a images=( "oj/judged:local" "oj/origin:local" "oj/oj:local:local" "oj-gateway:local")
 # Stop Docker containers
 for container in "${containers[@]}"
 do
