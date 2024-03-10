@@ -8,11 +8,11 @@ fi
 
 #创建日志文件,挂载到容器中
 
-sudo mkdir -p .logs/origin && sudo touch .logs/origin/log/ahutoj.log
-sudo mkdir -p .logs/gateway/log&& sudo touch ".logs/gateway/log/ahutoj.log
-sudo mkdir -p .logs/persistence/log &&sudo  touch .logs/persistence/log/ahutoj.log
-sudo mkdir -p .logs/oj/log && sudo touch .logs/oj/log/ahutoj.log
-sudo chmod -R 777 .logs/
+sudo mkdir -p ./logs/origin && sudo touch ./logs/origin/ahutoj.log
+sudo mkdir -p ./logs/gateway&& sudo touch ./logs/gateway/ahutoj.log
+sudo mkdir -p ./logs/persistence &&sudo  touch ./logs/persistence/ahutoj.log
+sudo mkdir -p ./logs/oj && sudo touch ./logs/oj/ahutoj.log
+sudo chmod -R 777 ./logs
 
 #运行容器和删除构建中间镜像
 sudo docker compose up -d
