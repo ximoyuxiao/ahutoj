@@ -22,7 +22,7 @@ services:
     networks:
       - oj_network
   gateway:
-    image: rruijfang/gateway:latest
+    image: rruijfang/oj-gateway:latest
     container_name: oj-gateway
     restart: always
     privileged: true
