@@ -311,6 +311,7 @@ func ResetPassword(ctx *gin.Context, req *request.PasswordResetReq) (interface{}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
 func VerifyEmail(ctx *gin.Context, req *request.VerifyEmailReq) (interface{}, error) {
+	emcfg:=utils.GetConfInstance().Email
 	logger := utils.GetLogInstance()
 	if req.UID == "" {
 		return response.CreateResponse(constanct.ADMIN_ADD_UIDEmpty), nil
@@ -321,13 +322,15 @@ func VerifyEmail(ctx *gin.Context, req *request.VerifyEmailReq) (interface{}, er
 		return response.CreateResponse(constanct.USER_INFO_UIDNotExistCode), nil
 	}
 	//获取请求域名
-	path:=ctx.Request.URL.RequestURI()
+	path:=emcfg.Serverhost+"/verifyEmail/"
+	logger.Debugf("1:%v2: %v3: %v4: %v5: %v6: %v7: %v8: %v",ctx.Request.Host,ctx.Request.URL.Host,ctx.Request.URL.Path,ctx.Request.URL.Hostname(),ctx.RemoteIP(),ctx.ClientIP(),ctx.Request.RequestURI,ctx.Request.URL.RequestURI())
+	logger.Debugf("path=%v",path)
 	token := ctx.GetHeader("Authorization")
 	if token == "" {
 		logger.Error("token is empty")
 		return response.CreateResponse(constanct.AUTH_Token_EmptyCode), nil
 	}
-	utils.EmailVerify(path,token,req.Uname,req.Email)
+	utils.EmailVerify(req.Uname,token,req.Email,path)
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
 

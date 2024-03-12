@@ -93,6 +93,7 @@ type RabbitMQ struct {
 }
 type Email struct{
 	Serveremail string `mapstructure:"serveremail"`
+	Serverhost string `mapstructure:"serverhost"`
 	Password string `mapstructure:"serverpass"`
 	Stmpaddr string `mapstructure:"stmpaddr"`
 }

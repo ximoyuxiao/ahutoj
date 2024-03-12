@@ -42,8 +42,6 @@ void* mlog::fflush_file(void* args)
 void* mlog::write_log_thread(void* args)
 {
     mlog* log = static_cast<mlog*>(args);
-    time_t current_time = time(NULL);
-    time_t last_time = time(NULL);
     string level[] ={"INFO","DEBUG","WARMMING","ERROR"};
     while(log->live() || log->blockqueue.size())
     {

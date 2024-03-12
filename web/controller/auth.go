@@ -6,8 +6,6 @@ import (
 	"ahutoj/web/io/response"
 	"ahutoj/web/logic"
 	"ahutoj/web/utils"
-	"go/token"
-
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 )
@@ -98,7 +96,7 @@ func VerifyEmailURL(ctx *gin.Context){
 	email:=ctx.Query("email")
 	resp, err := logic.VerifyEmailURL(ctx,token,email)
 	if err != nil {
-		logger.Errorf("call VerifyEmail failed,req=%+v,err=%s", utils.Sdump(req), err.Error())
+		logger.Errorf("call VerifyEmail failed,resp=%+v,err=%s", utils.Sdump(resp), err.Error())
 		response.ResponseError(ctx, constanct.ServerErrorCode)
 		return
 	}

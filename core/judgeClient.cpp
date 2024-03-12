@@ -253,7 +253,7 @@ bool judgeClient::running(SubRes &result,const char * runFile,const char *resFil
                 DLOG("run:%s/main call syscall forbiden! callid:%d",dir,call_id);
                 result = OJ_RE;
                 ptrace(PTRACE_KILL, pid, NULL, NULL);
-                continue;
+                break;
             }
         }
         useTime += (ruse.ru_utime.tv_sec * 1000 + ruse.ru_utime.tv_usec / 1000) * cpu_compensation; // 统计用户态耗时，在更快速的CPU上加以cpu_compensation倍数放大

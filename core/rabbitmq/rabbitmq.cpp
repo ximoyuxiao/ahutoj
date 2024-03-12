@@ -64,7 +64,7 @@ amqp_connection_state_t RabbitMQ::getConnection() {
         amqp_socket_t* socket = amqp_tcp_socket_new(conn);
         auto ret = amqp_socket_open(socket, m_host.c_str(), m_port);
         if (ret !=0){
-           DLOG( "amqp_socket_open failed,err:%s",amqp_error_string(ret));
+           DLOG( "amqp_socket_open failed,err:%s",amqp_error_string2(ret));
            return nullptr;
         }
         auto rep = amqp_login(conn, "/", 0, 131072, 0, AMQP_SASL_METHOD_PLAIN, m_user.c_str(), m_password.c_str());

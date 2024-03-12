@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"html/template"
+
 	"github.com/wneessen/go-mail"
 )
 const (
@@ -43,21 +44,25 @@ type Receiver struct {
 	Email string
 	Username string
 }
-var emcfg=GetConfInstance().Email
 
-func SendEmail(r *Receiver,data *TemplateData,htp *template.Template) {
+func SendEmail(r *Receiver,data *TemplateData,htp *template.Template)error {
 	//邮件格式
+	var emcfg=GetConfInstance().Email
+	// logger.Debugf("%+v",Sdump(emcfg))
 	Email := mail.NewMsg()
 	if err := Email.From(emcfg.Serveremail); err != nil {
 		logger.Errorf("failed to set formatted FROM address: %s", err)
+		return err
 	}
 	if err := Email.To(r.Email); err != nil {
 		logger.Errorf("failed to set To address: %s", err)
+		return err
 	}
 	//内容
 	Email.Subject(fmt.Sprintf("Hi %s ,Welcome to AhutOJ! Please confirm your email address", r.Username))
 	if err := Email.SetBodyHTMLTemplate(htp,data); err != nil {
 		logger.Errorf("failed to set HTML template as HTML body: %s", err)
+		return err
 	}
 	c, err := mail.NewClient(emcfg.Stmpaddr,
 		mail.WithSMTPAuth(mail.SMTPAuthPlain), mail.WithSSLPort(true),
@@ -65,13 +70,17 @@ func SendEmail(r *Receiver,data *TemplateData,htp *template.Template) {
 	)
 	if err != nil {
 		logger.Errorf("failed to create client: %s", err)
+		return err
 	}
 	defer c.Close()
-	if err := c.DialAndSend(Email); err != nil {
-		logger.Errorf("failed to deliver mail: %s", err)
-	}
+	// err = c.DialAndSend(Email)
+	// if err != nil {
+	// 	logger.Errorf("failed to deliver mail: %s", err)
+	// 	return err
+	// }
+	return nil
 }
-func EmailVerify(uname string,email string,token string,path string){
+func EmailVerify(uname string,token string,email string,path string)error{
 	data:=TemplateData{
 		Uname: uname,
 		Link: path+"?email="+email+"&token="+token,
@@ -84,6 +93,12 @@ func EmailVerify(uname string,email string,token string,path string){
 	htp, err := template.New("htp").Parse(htmlBodyTemplate)//使用template注入更加安全
 	if err != nil {
 		logger.Errorf("failed to parse text template: %s", err)
+		return err
 	}
-	SendEmail(&r,&data,htp)
+	err =SendEmail(&r,&data,htp)
+	if err!=nil{
+		logger.Errorf("failed to send email: %s", err)
+		return err
+	}
+	return nil
 }
