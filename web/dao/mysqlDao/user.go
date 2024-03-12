@@ -32,7 +32,11 @@ func UpdateUserByUID(ctx context.Context, user *dao.User) error {
 	err := db.Where("UID=?", user.UID).Updates(&user).Error
 	return err
 }
-
+func UpdateEmailByUID(ctx context.Context,UID string, email string) error {
+	db := GetDB(ctx)
+	err := db.Table(dao.User{}.TableName()).Where("UID=?", UID).Update("Email", email).Error
+	return err
+}
 func SelectUserList(ctx context.Context) ([]dao.User, error) {
 	db := GetDB(ctx)
 	users := make([]dao.User, 0)

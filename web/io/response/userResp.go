@@ -70,3 +70,7 @@ func CreateUserResp(user *dao.User) UserResp {
 		Rating:        user.Rating,
 	}
 }
+
+type VerifyEmailResp struct {
+	Response
+}

@@ -54,6 +54,8 @@ func regeisterRouters(router *gin.Engine) {
 			authRouter.POST("/login/", controller.Login)
 			authRouter.POST("/register/", controller.Register)
 			authRouter.POST("/logout/", controller.Logout)
+			authRouter.POST("/verifyemail/", controller.VerifyEmail)
+			authRouter.GET("/verifyemail", controller.VerifyEmailURL)
 		}
 		userRouter := apiRouter.Group("/user").Use(middlewares.JwtVerify)
 		{

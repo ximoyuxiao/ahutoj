@@ -430,19 +430,20 @@ bool judgeClient::judge()
                 }
                 if(checkSource()){
                     Jstat = J_GETFILE;
+                }else{
+                    solve->Sres(OJ_RE);
+                    Jstat = J_FAILED;
                     break;
                 }
-                solve->Sres(OJ_RE);
-                Jstat = J_FAILED;
             }
             case J_GETFILE:{
                 ILOG("J_GETFILE");
                 if (!getFiles()) {
                     Jstat = J_FAILED;
                     solve->Sres(OJ_FAILED);
+                    break;
                 }// 默认不会失败
                 Jstat = J_COMPILE;
-                break;
             }
 
             case J_COMPILE:{
@@ -453,8 +454,8 @@ bool judgeClient::judge()
                 else{
                     Jstat = J_CE;
                     solve->Sres(OJ_CE);
+                    break;
                 }
-                break;
             }
             case J_RUNNING:{
                 ILOG("J_RUNNING");
@@ -468,11 +469,9 @@ bool judgeClient::judge()
                     long long useTime = 0,useMemory = 0;
                     running(res,inputFiles[i].c_str(),resoutfile,useMemory,useTime);
                     DLOG("runned:%s",outputFiles[i].c_str());
-                    if (res != OJ_AC)
-                        break;
+                    if (res != OJ_AC) continue;
                     judgeOutFile(res,resoutfile,outputFiles[i].c_str(), inputFiles[i].c_str());
-                    if (res != OJ_AC)
-                        break;
+                    if (res != OJ_AC) continue;
                     this->solve->incPassSample();
                     char cmd[1024] ={0};
                     sprintf(cmd,"rm %s",resoutfile);

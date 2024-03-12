@@ -7,7 +7,7 @@ else
 fi
 
 #创建日志文件,挂载到容器中
-
+mv ./config/config.yaml.bak ./config/config.yaml
 sudo mkdir -p ./logs/origin && sudo touch ./logs/origin/ahutoj.log
 sudo mkdir -p ./logs/gateway&& sudo touch ./logs/gateway/ahutoj.log
 sudo mkdir -p ./logs/persistence &&sudo  touch ./logs/persistence/ahutoj.log

@@ -48,7 +48,7 @@ func GetSolution(ctx *gin.Context) {
 	response.ResponseOK(ctx, resp)
 }
 
-func GetSoulutions(ctx *gin.Context) {
+func GetSolutions(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := new(request.GetSolutionListReq)
 	if err := ctx.ShouldBindWith(req, binding.Query); err != nil {

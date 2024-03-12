@@ -1,7 +1,6 @@
-package flowcontrol_test
+package flowcontrol
 
 import (
-	flowcontrol "ahutoj/web/service/gateway/flowControl"
 	"context"
 	"fmt"
 	"math/rand"
@@ -19,7 +18,7 @@ func (mwork *Mwork) Run(ctx context.Context) {
 
 var i = 0
 
-func getTask(t *testing.T) {
+func getTask() {
 	rd := rand.Int31()%1000 + 1
 	time.Sleep(time.Duration(rd * int32(time.Millisecond)))
 }
@@ -31,11 +30,11 @@ func ExecuteTask(t *testing.T) {
 func TestTokenBucket(t *testing.T) {
 	MAXTOKEN := int64(1024)
 	TOKEN_SPEED := int64(10)
-	tb := flowcontrol.InitTokenBucket(MAXTOKEN, TOKEN_SPEED) //初始化一个漏桶
+	tb := InitTokenBucket(MAXTOKEN, TOKEN_SPEED) //初始化一个漏桶
 	var token int64 = 0
 	for i := 0; i < 50; i++ {
 		// 接受一个任务
-		getTask(t)
+		getTask()
 		var ti int64 = 1
 		if token <= 0 {
 			token = tb.FetchToken(ti)

@@ -1,4 +1,4 @@
-package rediscache_test
+package test
 
 import (
 	rediscache "ahutoj/web/cache/redis"

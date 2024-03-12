@@ -1,10 +1,9 @@
-package originJudged_test
+package originJudged
 
 import (
 	"ahutoj/web/dao"
 	mysqldao "ahutoj/web/dao/mysqlDao"
 	"ahutoj/web/io/constanct"
-	originJudged "ahutoj/web/service/originJudge/originjudged"
 	"ahutoj/web/utils"
 	"context"
 	"testing"
@@ -13,7 +12,7 @@ import (
 
 func TestSubmitAndGetResult(t *testing.T) {
 	utils.ConfigInit("../../config.yaml")
-	cfJudge := originJudged.CodeForceJudge{}
+	cfJudge := CodeForceJudge{}
 	cfJudge.Submit = dao.Submit{
 		Lang:       constanct.CPP11,
 		SubmitTime: time.Now().UnixMilli(),
@@ -41,7 +40,7 @@ func TestAtcoderLogin(t *testing.T) {
 	submit.Result = constanct.OJ_JUDGE
 	for {
 		for i := 0; i < 5; i++ {
-			originJudge := originJudged.GetOriginJudgeFunc(originJudged.OJPlatform(submit.OJPlatform))
+			originJudge := GetOriginJudgeFunc(OJPlatform(submit.OJPlatform))
 			originJudge.Judge(context.Background(), submit, "abc272_c")
 		}
 		time.Sleep(20 * time.Second)

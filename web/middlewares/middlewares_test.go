@@ -1,7 +1,6 @@
-package middlewares_test
+package middlewares
 
 import (
-	"ahutoj/web/middlewares"
 	"ahutoj/web/utils"
 	"fmt"
 	"log"
@@ -13,12 +12,12 @@ func TestRabitMQ(t *testing.T) {
 	utils.ConfigInit("/home/moyu/vscode/ahutoj/config.yaml")
 	var wg sync.WaitGroup
 	mqcfg := utils.GetConfInstance().RabbitMQ
-	rabbitmq, err := middlewares.NewRabbitMQ(mqcfg.Host, mqcfg.Port, mqcfg.Username, mqcfg.Password, 10)
+	rabbitmq, err := NewRabbitMQ(mqcfg.Host, mqcfg.Port, mqcfg.Username, mqcfg.Password, 10)
 	if err != nil {
 		log.Fatalf("failed to create rabbitmq object: %v", err)
 	}
 
-	producer := middlewares.NewProducer(rabbitmq)
+	producer := NewProducer(rabbitmq)
 
 	wg.Add(1)
 	go func() {
@@ -30,7 +29,7 @@ func TestRabitMQ(t *testing.T) {
 			log.Fatalf("failed to publish message: %v", err)
 		}
 	}()
-	consumer := middlewares.NewConsumer(rabbitmq, "hello")
+	consumer := NewConsumer(rabbitmq, "hello")
 
 	wg.Add(1)
 	go func() {

@@ -43,7 +43,7 @@ func regeisterForumRouters(router *gin.Engine) {
 		forumGroup := apiRouter.Group("/solution").Use(middlewares.JwtVerify)
 		forumGroup.GET("/ping", PingTest)
 		forumGroup.GET("/:id", controller.GetSolution)
-		forumGroup.GET("/solutions", controller.GetSoulutions)
+		forumGroup.GET("/solutions", controller.GetSolutions)
 		forumGroup.POST("/", controller.SolutionOperator)
 		forumGroup.PUT("/:id", controller.SolutionOperator)
 		forumGroup.DELETE("/:id", controller.SolutionOperator)

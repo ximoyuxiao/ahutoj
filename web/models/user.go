@@ -36,11 +36,15 @@ func CreateUser(ctx context.Context, user *dao.User) error {
 	user.Pass, _ = utils.MD5EnCode(user.UID, user.Pass)
 	err := mysqldao.InsertUserTable(ctx, *user)
 	if err != nil {
-		logger.Error("call InsertUserTable failed,user= %+v, err=%s", utils.Sdump(user), err.Error())
+		logger.Errorf("call InsertUserTable failed,user= %+v, err=%s", utils.Sdump(user), err.Error())
 	}
 	return err
 }
 
 func FindAllUser(ctx context.Context) ([]dao.User, error) {
 	return mysqldao.SelectUserList(ctx)
+}
+
+func UpdateUserEmail(ctx context.Context, UID string,email string) error {
+	return mysqldao.UpdateEmailByUID(ctx, UID, email)
 }

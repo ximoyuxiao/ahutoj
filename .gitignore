@@ -1,7 +1,9 @@
 .vscode
 .vs
+.idea
 /config/certs
 /config/config.yaml
 resource/*
 logs/**/*.log 
+
 # Ignore .env file containing credentials, API keys, tokens, passwords, etc.

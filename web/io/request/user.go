@@ -92,3 +92,9 @@ type PasswordResetReq struct {
 	UID      string `json:"UID"`
 	Password string `json:"Password"`
 }
+
+type VerifyEmailReq struct {
+	Email string `json:"Email"`
+	UID    string `json:"UID"`
+	Uname  string `json:"Uname"`
+}

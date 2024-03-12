@@ -60,6 +60,8 @@ const (
 	AUTH_REGISTER_FAILED         ResCode = 110201
 	AUTH_REGISTER_UIDExistCode   ResCode = 110202
 	AUTH_REGISTER_TokenBuildCode ResCode = 110203
+
+	AUTH_EMAIL_UPDATE_FAILED ResCode = 110301
 )
 
 /*user 12*/
@@ -225,6 +227,7 @@ var codeMsgMap = map[ResCode]string{
 	AUTH_REGISTER_FAILED:                    "注册失败",
 	AUTH_REGISTER_UIDExistCode:              "用户ID已存在",
 	AUTH_REGISTER_TokenBuildCode:            "注册失败",
+	AUTH_EMAIL_UPDATE_FAILED:                "邮箱更新失败",
 	USER_INFO_FAILED:                        "用户信息获取失败",
 	USER_INFO_UIDNotExistCode:               "用户ID不存在",
 	USER_EDITINFO_FAILED:                    "用户信息保存失败",

@@ -4,9 +4,7 @@ import (
 	"ahutoj/web/io/constanct"
 	"ahutoj/web/io/response"
 	"ahutoj/web/mapping"
-	"ahutoj/web/utils"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -94,12 +92,12 @@ func HasUrlVerify(ctx *gin.Context, url string, claims *MyClaims) bool {
 	/*此处需要大于普通用户的权限*/
 	UserPermission := mapping.UNLOGINBit
 	NeedPermission := GetVerifyUrl(url)
-	fmt.Println(utils.Sdump(claims))
+	// fmt.Println(utils.Sdump(claims))
 	if claims != nil {
 		mapping.AddPermissionBit(&UserPermission, mapping.CommomUserBit)
 		mapping.AddPermissionBit(&UserPermission, mapping.PermissionBit(claims.PermissionMap))
 	}
-	fmt.Printf("need permission:%v, UserPermission:%v\n", NeedPermission, UserPermission)
+	// fmt.Printf("need permission:%v, UserPermission:%v\n", NeedPermission, UserPermission)
 	return (NeedPermission & constanct.VerfiyLevel(UserPermission)) != 0
 }
 

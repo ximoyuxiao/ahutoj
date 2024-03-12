@@ -35,6 +35,7 @@ type AppConfig struct {
 	*RabbitMQ       `mapstructure:"rabbitmq"`
 	*OssConfig      `mapstructure:"oss"`
 	*ForumConfig    `mapstructure:"forum"`
+	*Email          `mapstructure:"email"`
 }
 type OssConfig struct {
 	Host            string `mapstructure:"host"`
@@ -90,7 +91,11 @@ type RabbitMQ struct {
 	Username string `mapstructure:"username"`
 	Password string `mapstructure:"password"`
 }
-
+type Email struct{
+	Serveremail string `mapstructure:"serveremail"`
+	Password string `mapstructure:"serverpass"`
+	Stmpaddr string `mapstructure:"stmpaddr"`
+}
 func ConfigInit(configPath string) error {
 	viper.SetConfigFile(configPath)
 	err := viper.ReadInConfig()

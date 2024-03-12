@@ -6,6 +6,7 @@ import (
 	"ahutoj/web/io/response"
 	"ahutoj/web/logic"
 	"ahutoj/web/utils"
+	"go/token"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -24,6 +25,7 @@ func Login(ctx *gin.Context) {
 	if err != nil {
 		logger.Errorf("call CheckLogin failed,req=%+v,err=%s", utils.Sdump(req), err.Error())
 		response.ResponseError(ctx, constanct.ServerErrorCode)
+		return
 	}
 	response.ResponseOK(ctx, resp)
 }
@@ -72,4 +74,33 @@ func PasswordForget(ctx *gin.Context) {
 }
 func Logout(ctx *gin.Context) {
 	response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
+}
+func VerifyEmail(ctx *gin.Context){
+	logger := utils.GetLogInstance()
+	req := new(request.VerifyEmailReq)
+	if err := ctx.ShouldBindWith(req, binding.JSON); err != nil {
+		// 请求参数有误，直接返回响应
+		logger.Errorf("call ShouldBindWith failed, err = %s", err.Error())
+		response.ResponseError(ctx, constanct.InvalidParamCode)
+		return
+	}
+	resp, err := logic.VerifyEmail(ctx,req)
+	if err != nil {
+		logger.Errorf("call VerifyEmail failed,req=%+v,err=%s", utils.Sdump(req), err.Error())
+		response.ResponseError(ctx, constanct.ServerErrorCode)
+		return
+	}
+	response.ResponseOK(ctx, resp)
+}
+func VerifyEmailURL(ctx *gin.Context){
+	logger := utils.GetLogInstance()
+	token:=ctx.Query("token")
+	email:=ctx.Query("email")
+	resp, err := logic.VerifyEmailURL(ctx,token,email)
+	if err != nil {
+		logger.Errorf("call VerifyEmail failed,req=%+v,err=%s", utils.Sdump(req), err.Error())
+		response.ResponseError(ctx, constanct.ServerErrorCode)
+		return
+	}
+	response.ResponseOK(ctx, resp)
 }
