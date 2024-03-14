@@ -10,7 +10,6 @@ import (
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
 	"time"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -71,7 +70,11 @@ func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error)
 		logger.Errorf("call IncUserSubmited failed, submit=%v, err=%s", submit, err.Error())
 		return response.CreateResponse(constanct.SUBMIT_ADD_FAILEDCode), err
 	}
-
+	err = mysqldao.IncProblemSubmited(ctx, submit.PID)
+	if err != nil {
+		logger.Errorf("call IncProblemSubmited failed, submit=%v, err=%s", submit, err.Error())
+		return response.CreateResponse(constanct.SUBMIT_ADD_FAILEDCode), err
+	}
 	// 更新题目提交代码
 	if req.CID > 0 {
 		err = mysqldao.IncConProSubmit(ctx, req.CID, submit.PID)

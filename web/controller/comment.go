@@ -164,14 +164,14 @@ func CommentOperator(ctx *gin.Context) {
 	} else if req.ActionType == constanct.DELETECODE {
 		// 检查id不为空
 		if req.CID == 0 {
-			logger.Errorf("user '%s' delete solution failed, because solutionIDStr is null.", req)
+			logger.Errorf("user '%v' delete solution failed, because solutionIDStr is null.", req)
 			response.ResponseError(ctx, constanct.InvalidParamCode)
 			return
 		}
 		// 执行删除题解操作
 		err = DeleteComment(ctx, req)
 		if err != nil {
-			logger.Errorf("user '%s' delete comment failed.beceuse %v", req, err)
+			logger.Errorf("user '%v' delete comment failed.beceuse %v", req, err)
 			response.ResponseError(ctx, constanct.InvalidParamCode)
 			return
 		}

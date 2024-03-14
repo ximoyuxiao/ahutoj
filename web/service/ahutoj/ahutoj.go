@@ -130,13 +130,23 @@ func SubmitToDataBase(ctx context.Context, submit *dao.Submit) error {
 		return err
 	}
 	if submit.Result == constanct.OJ_AC {
-		mysqldao.IncUserSolved(ctx, submit.UID)
-		if submit.CID > 0 {
-			mysqldao.IncConProSolved(ctx, submit.CID, submit.PID)
+		err:=mysqldao.IncUserSolved(ctx, submit.UID)
+		if err != nil {
+			logger.Errorf("call IncUserSolved failed,submit=%v, err=%v", utils.Sdump(submit), err.Error())
+			return err
 		}
-	}
-	if err != nil {
-		logger.Errorf("call InsertCEinfo failed,submit=%v, err=%v", utils.Sdump(submit), err.Error())
+		err =mysqldao.IncProblemSolved(ctx,submit.PID)
+		if err != nil {
+			logger.Errorf("call IncProblemSolved failed,submit=%v, err=%v", utils.Sdump(submit), err.Error())
+			return err
+		}
+		if submit.CID > 0 {
+			err =mysqldao.IncConProSolved(ctx, submit.CID, submit.PID)
+			if err != nil {
+				logger.Errorf("call IncConProSolved failed,submit=%v, err=%v", utils.Sdump(submit), err.Error())
+				return err
+			}
+		}
 	}
 	return err
 }

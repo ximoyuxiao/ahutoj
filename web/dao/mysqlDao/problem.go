@@ -4,6 +4,7 @@ import (
 	"ahutoj/web/dao"
 	"ahutoj/web/io/constanct"
 	"context"
+	"gorm.io/gorm"
 )
 
 func SelectProblemByPID(ctx context.Context, problem *dao.Problem) error {
@@ -60,4 +61,14 @@ func SelectProblemLastPID(ctx context.Context) (int64, error) {
 	db := GetDB(ctx)
 	err := db.Table("Problem").Where("PType=?", constanct.LOCALTYPE).Select("MAX(CONVERT(SUBSTR( PID, 2 ) ,UNSIGNED))").Find(&ans).Error
 	return ans, err
+}
+
+func IncProblemSubmited(ctx context.Context, PID string) error {
+	db := GetDB(ctx)
+	return db.Table("Problem").Where("PID=?", PID).Update("Submited", gorm.Expr("Submited + ?", 1)).Error
+}
+
+func IncProblemSolved(ctx context.Context, PID string) error {
+	db := GetDB(ctx)
+	return db.Table("Problem").Where("PID=?", PID).UpdateColumn("Accepted", gorm.Expr("Accepted+1")).Error
 }

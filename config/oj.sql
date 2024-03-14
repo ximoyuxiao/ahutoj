@@ -19,8 +19,8 @@ create table User
     Rating        int comment '用户分数',
     LoginIP       varchar(20) comment '最近登录IP',
     RegisterTime  long comment '注册时间',
-    Submited      int(11) comment '提交次数',
-    Solved        int(11) comment 'AC次数',
+    Submited      int(11) comment '提交次数'DEFAULT 0,
+    Solved        int(11) comment 'AC次数'DEFAULT 0,
     Defaulted     varchar(3) comment '删除用户标志'
 )DEFAULT CHARSET=utf8mb4;
 
@@ -51,8 +51,8 @@ create table Problem
     Origin       int comment '是否外部题目',
     OriginPID    Text comment '对应外部题目的ID',
     ContentType  int comment '表示类型',
-    Accepted     int comment '总AC数量',
-    Submited     int comment '总提交数量',
+    Accepted     int comment '总AC数量'DEFAULT 0,
+    Submited     int comment '总提交数量'DEFAULT 0,
     Visible      int comment '题目是否可见',
     SpjJudge     varchar(3) comment '是否开启特判(N:不开启|Y:开启)',
     Source       Text comment '题目信息'
@@ -67,7 +67,7 @@ create table List
     Description Text comment '题单描述',
     Title       Text comment '题单标题',
     StartTime   long comment '开始时间',
-    Submited    int comment '提交次数',
+    Submited    int comment '提交次数'DEFAULT 0,
     Problems    Text comment '题单题目序列',
     constraint fk_lst_UID FOREIGN KEY (UID)
         references User (UID) ON UPDATE CASCADE ON DELETE CASCADE
@@ -129,8 +129,8 @@ create table ConPro
     CID      int comment '竞赛ID',
     PID      varchar(40) comment '题目ID',
     Title    Text comment '题目标题',
-    Submited int comment '提交数',
-    Solved   int comment 'AC数',
+    Submited int comment '提交数'DEFAULT 0,
+    Solved   int comment 'AC数'DEFAULT 0,
     constraint pk_CPT primary key (CID, PID),
 
     constraint fk_cpt_CID FOREIGN KEY (CID)
@@ -157,7 +157,7 @@ CREATE table Submit
     UseMemory    long comment '使用内存',
     SubmitTime   long comment '提交时间',
     #            这一块主要用于做缓存
-        IsOriginJudge boolean comment '是否外部平台',
+    IsOriginJudge boolean comment '是否外部平台',
     OriginPID    Text comment '外部平台的PID',
     OJPlatform   int comment '属于哪个平台',
     constraint fk_st_PIDs FOREIGN KEY (PID)

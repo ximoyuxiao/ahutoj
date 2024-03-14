@@ -149,15 +149,15 @@ func regeisterRouters(router *gin.Engine) {
 			// 获取某个桶下面的所有文件
 			ossRouter.GET("/object/:bucket", controller.GetObjects)
 			//获取还未上传完成的列表
-			//apiRouter.GET("/object/files", controller.GetUpingObjects)
+			//ossRouter.GET("/object/files", controller.GetUpingObjects)
 			//从本地上传，暂时不需要上传其他来源数据，以后做(
-			//apiRouter.POST("/object/", controller.CreateObject)
+			// ossRouter.POST("/object/", controller.CreateObject)
 			ossRouter.POST("/object/delete/", controller.DeleteObject)
 			ossRouter.POST("/object/getfile/", controller.FGetObject) //下载本地
 			ossRouter.POST("/object/putfile/", controller.FPutObject) //本地上传
-			//apiRouter.PUT("/object/", controller.ModifyObject)
+			//ossRouter.PUT("/object/", controller.ModifyObject)
 			ossRouter.POST("/object/info/", controller.GetObjectInfo)
-			//apiRouter.POST("/object/unzip", controller.UnzipObject)
+			//ossRouter.POST("/object/unzip", controller.UnzipObject)
 			//-----------桶操作--------------
 			//获得所有桶的名称+创建日期
 			ossRouter.GET("/bucket", controller.GetBuckets)
