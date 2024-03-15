@@ -6,6 +6,8 @@ type ProblemItemResp struct {
 	PID   string `json:"PID"`
 	Title string `json:"Title"`
 	Label string `json:"Label"`
+	Accepted int64 `json:"Accepted"`
+	Submited int64  `json:"Submit"`
 }
 
 type ProblemListResp struct {

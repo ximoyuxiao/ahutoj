@@ -12,7 +12,9 @@ type User struct {
 	School  string `json:"School"`
 	Classes string `json:"Classes"`
 	Major   string `json:"Major"`
-	Adept   string `json:"Adept"`
+	QQ	    string `json:"QQ"`
+	Signature     string `json:"Signature"`
+	Year 		  string `json:"Year"`
 	Vjid    string `json:"Vjid"`
 	Vjpwd   string `json:"Vjpwd"`
 	Email   string `json:"Email"`
@@ -25,8 +27,12 @@ type UserEditReq struct {
 	School  string `json:"School"`
 	Classes string `json:"Classes"`
 	Major   string `json:"Major"`
+	QQ	    string `json:"QQ"`
+	Signature     string `json:"Signature"`
+	Year 		  string `json:"Year"`
+	Vjid    string `json:"Vjid"`
+	Vjpwd   string `json:"Vjpwd"`
 	Email   string `json:"Email"`
-	Adept   string `json:"Adept"`
 }
 
 type UserEditPassReq struct {
@@ -38,6 +44,7 @@ type UserEditVjudgeReq struct {
 	Vjid  string `json:"Vjid"`
 	Vjpwd string `json:"Vjpwd"`
 }
+
 type AddUsersRangeReq struct {
 	Number   int     `json:"Number"`
 	Prefix   string  `json:"Prefix"`
@@ -66,7 +73,6 @@ func (u UserEditReq) ToUser(uid string) *dao.User {
 		Classes: u.Classes,
 		Major:   u.Major,
 		Email:   u.Email,
-		Adept:   u.Adept,
 	}
 }
 
@@ -81,6 +87,16 @@ func (u UserEditVjudgeReq) ToUser(UID string) *dao.User {
 type CodeForceBindReq struct {
 	CodeForceUser string `json:"CodeForceUser"`
 	CodeForcePass string `json:"CodeForcePass"`
+}
+
+type AtcoderBindReq struct {
+	AtcoderUser   string `json:"AtcoderUser"`
+	AtcoderPass   string `json:"AtcoderPass"`    
+}
+
+type NowcoderBindReq struct {
+	NowcoderUser  string `json:"NowcoderUser"`
+	NowcoderPass string `json:"NowcoderPass"`
 }
 
 type PasswordForgetReq struct {

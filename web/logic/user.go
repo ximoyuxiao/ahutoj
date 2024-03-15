@@ -67,7 +67,7 @@ func DoResiger(c *gin.Context, req *request.User) (interface{}, error) {
 		Pass:    req.Pass,
 		School:  req.School,
 		Classes: req.Classes,
-		Adept:   req.Adept,
+		QQ:	     req.QQ,
 		Major:   req.Major,
 		Vjid:    req.Vjid,
 		Vjpwd:   req.Vjpwd,

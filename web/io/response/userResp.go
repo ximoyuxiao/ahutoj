@@ -59,8 +59,8 @@ func CreateUserResp(user *dao.User) UserResp {
 		Uname:         user.Uname,
 		School:        user.School,
 		Classes:       user.Classes,
+		
 		Major:         user.Major,
-		Adept:         user.Adept,
 		Vjid:          user.Vjid,
 		Email:         user.Email,
 		CodeForceUser: user.CodeForceUser,

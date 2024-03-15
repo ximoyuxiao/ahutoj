@@ -74,7 +74,6 @@ create table List
     Description Text comment '题单描述',
     Title       Text comment '题单标题',
     StartTime   long comment '开始时间',
-    Submited    int comment '提交次数' DEFAULT 0,
     Problems    Text comment '题单题目序列',
     constraint fk_lst_UID FOREIGN KEY (UID)
         references User (UID) ON UPDATE CASCADE ON DELETE CASCADE

@@ -9,20 +9,26 @@ type User struct {
 	Uname         string `gorm:"column:UserName"`
 	Pass          string `gorm:"column:Pass"`
 	School        string `gorm:"column:School"`
+	Year 		  string `gorm:"column:Year"`
 	Classes       string `gorm:"column:Classes"`
 	Major         string `gorm:"column:Major"`
-	Adept         string `gorm:"column:Adept"`
+	Signature     string `gorm:"column:Signature"`
 	Vjid          string `gorm:"column:Vjid"`
+	QQ			  string `gorm:"column:QQ"`
 	Vjpwd         string `gorm:"column:Vjpwd"`
 	Email         string `gorm:"column:Email"`
 	CodeForceUser string `gorm:"column:CodeForceUser"`
+	CodeForceScore int    `gorm:"column:CodeForceScore"`
+	AtcoderUser   string `gorm:"column:AtcoderUser"`
+	AtcoderScore  int    `gorm:"column:AtcoderScore"`
+	NowcoderUser  string `gorm:"column:NowcoderUser"`
+	NowcoderScore int    `gorm:"column:NowcoderScore"`
 	HeadURL       string `gorm:"column:HeadUrl"`
 	Rating        int    `gorm:"column:Rating"`
 	LoginIP       string `gorm:"column:LoginIP"`
 	RegisterTime  int64  `gorm:"column:RegisterTime"`
 	Submited      int64  `gorm:"column:Submited"`
 	Solved        uint32 `gorm:"column:Solved"`
-	Defaulted     string `gorm:"column:Defaulted"`
 }
 
 func (u User) TableName() string {
@@ -84,8 +90,6 @@ type ListProblem struct {
 	LID      int64  `gorm:"column:LID"`
 	PID      string `gorm:"column:PID"`
 	Title    string `gorm:"column:Title"`
-	Submited uint32 `gorm:"column:Submited"`
-	Solved   uint32 `gorm:"column:Solved"`
 }
 
 func (p ListProblem) TableName() string {

@@ -139,6 +139,8 @@ func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{},
 			PID:   problem.PID,
 			Title: problem.Title,
 			Label: problem.Label,
+			Accepted: int64(problem.Accepted),
+			Submited: int64(problem.Submited),
 		})
 	}
 	return ret, nil
