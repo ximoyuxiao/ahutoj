@@ -43,6 +43,8 @@ void* mlog::write_log_thread(void* args)
 {
     mlog* log = static_cast<mlog*>(args);
     string level[] ={"INFO","DEBUG","WARMMING","ERROR"};
+    time_t current_time = time(NULL);
+    time_t last_time = time(NULL);
     while(log->live() || log->blockqueue.size())
     {
         logBlock str = log->get_block_log();

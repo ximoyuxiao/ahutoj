@@ -22,7 +22,7 @@ rabbitmq/rabbitmq.o
 all:${TARGET}
 
 ${TARGET}:${SOURCE}
-	g++ $^ -o $@ ${LDFLAGS} ${LIBS}
+	g++ -Wno-unused-variable $^ -o $@ ${LDFLAGS} ${LIBS}
 
 clean:
 	rm ${TARGET} ${SOURCE}

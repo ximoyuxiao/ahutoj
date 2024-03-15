@@ -52,7 +52,7 @@ func DeleteProblem(ctx context.Context, PID string) error {
 	logger := utils.GetLogInstance()
 	err := mysqldao.DeleteProblem(ctx, PID)
 	if err != nil {
-		logger.Errorf("call DeleteProblem failed,problem= %d, err=%s", PID, err.Error())
+		logger.Errorf("call DeleteProblem failed,problem= %s, err=%s", PID, err.Error())
 	}
 	rediscache.DelProblem(ctx, PID)
 	return err
@@ -65,7 +65,7 @@ func GetProblemByPID(ctx context.Context, PID string) (dao.Problem, error) {
 	problem.PID = PID
 	err := mysqldao.SelectProblemByPID(ctx, &problem)
 	if err != nil {
-		logger.Errorf("call SelectProblemByPID failed,PID=%d,err=%s", PID, err.Error())
+		logger.Errorf("call SelectProblemByPID failed,PID=%s,err=%s", PID, err.Error())
 		return problem, err
 	}
 	return problem, err
@@ -75,13 +75,50 @@ func GetSolutionNumberByPID(ctx context.Context, PID string) (int64, error) {
 	logger := utils.GetLogInstance()
 	number, err := mysqldao.SelectSolutionCountByPID(ctx, PID)
 	if err != nil {
-		logger.Errorf("call SelectSolutionCountByPID failed,PID=%d,err=%s", PID, err.Error())
+		logger.Errorf("call SelectSolutionCountByPID failed,PID=%s,err=%s", PID, err.Error())
 	}
 	return number, err
 }
 
-func GetProblemCount(ctx context.Context, problem dao.Problem) (int64, error) {
+func GetProblemCountKey() string {
+	return "problem_count"
+}
+
+func ProblemCountGetByRedis(ctx context.Context) int64 {
+	rdfd := rediscache.GetRedis()
+	var count int64
+	rediscache.GetKey(ctx, rdfd, GetProblemCountKey() , &count)
+	return count
+}
+
+func ProblemCountAddToRedis(ctx context.Context) {
+	count := ProblemCountGetByRedis(ctx)
+	rdfd := rediscache.GetRedis()
+	rediscache.SetKey(ctx, rdfd, GetProblemCountKey() , count+1)
+}
+
+func ProblemCountSubToRedis(ctx context.Context) {
+	count := ProblemCountGetByRedis(ctx)
+	rdfd := rediscache.GetRedis()
+	rediscache.SetKey(ctx, rdfd, GetProblemCountKey() , count-1)
+}
+
+func ProblemCountSetToRedis(ctx context.Context, count int64) {
+	rdfd := rediscache.GetRedis()
+	rediscache.SetKey(ctx, rdfd, GetProblemCountKey() , count)
+}
+
+func GetProblemCountByDb(ctx context.Context, problem dao.Problem) (int64, error) {
 	return mysqldao.SelectProblemCount(ctx, problem)
+}
+
+func GetProblemCount(ctx context.Context,problem dao.Problem) int64 {
+	count := ProblemCountGetByRedis(ctx)
+	if count == 0 {
+		count,_=GetProblemCountByDb(ctx, problem)
+		ProblemCountSetToRedis(ctx, count)
+	}
+	return count
 }
 
 func GetProblems(ctx context.Context, PIDs []string) ([]dao.Problem, error) {

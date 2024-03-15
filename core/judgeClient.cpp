@@ -35,8 +35,6 @@ using namespace my;
 static SubRes status = OJ_JUDGE;
 static double cpu_compensation = 1.0;
 
-
-
 void judgeClient::init_syscalls_limits(lanuage lang){
     memset(call_counter, 0, sizeof(call_counter));
     language->init_syscalls_limits(call_counter);
@@ -463,11 +461,18 @@ bool judgeClient::judge()
                 char resoutfile[128];
                 sprintf(resoutfile,"%s/ans",dir);
                 this->solve->setSampleNumber(inputFiles.size());
+                if (inputFiles.size() == 0){
+                    Jstat = J_FAILED;
+                    solve->Sres(OJ_FAILED);
+                    break;
+                }
                 for(std::size_t i = 0;i<inputFiles.size();i++){
                     init_syscalls_limits(this->solve->Lang());
                     DLOG("runnning:%s",inputFiles[i].c_str());
                     long long useTime = 0,useMemory = 0;
                     running(res,inputFiles[i].c_str(),resoutfile,useMemory,useTime);
+                    solve->setUsetime(max(useTime,solve->getUsetime()));
+                    solve->setUseMemory(max(useMemory,solve->getuseMemory()));
                     DLOG("runned:%s",outputFiles[i].c_str());
                     if (res != OJ_AC) continue;
                     judgeOutFile(res,resoutfile,outputFiles[i].c_str(), inputFiles[i].c_str());
@@ -476,8 +481,6 @@ bool judgeClient::judge()
                     char cmd[1024] ={0};
                     sprintf(cmd,"rm %s",resoutfile);
                     system(cmd);
-                    solve->setUsetime(max(useTime,solve->getUsetime()));
-                    solve->setUseMemory(max(useMemory,solve->getuseMemory()));
                }
                 if(res != OJ_AC){
                     Jstat = J_FAILED;

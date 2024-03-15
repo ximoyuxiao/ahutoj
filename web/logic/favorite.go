@@ -7,7 +7,7 @@ import (
 	"ahutoj/web/io/request"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/pkg/errors"
+	"errors"
 	"gorm.io/gorm"
 )
 
@@ -63,16 +63,6 @@ func UnFavorite(ctx *gin.Context, req *request.FavoriteReq) error {
 
 }
 
-func FavoriteToRedis(ctx *gin.Context, SID int64) {
-	db := mysqldao.GetDB(ctx)
-	var count int64
-	err := db.Model(dao.Favorite{}).Where("SID=?", SID).Count(&count).Error
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-	rdfd := rediscache.GetRedis()
-	rediscache.SetKey(ctx, rdfd, fmt.Sprintf("Solution_favorite_%v", SID), count)
-}
 func GetFavoriteKey(SID int64) string {
 	return fmt.Sprintf("Solution_favorite_%v", SID)
 }
@@ -105,12 +95,16 @@ func GetFavoriteCountByDb(ctx *gin.Context, SID int64) int64 {
 	}
 	return count
 }
-
+func FavoriteToRedis(ctx *gin.Context, SID int64)int64{
+	var count =GetFavoriteCountByDb(ctx,SID)
+	rdfd := rediscache.GetRedis()
+	rediscache.SetKey(ctx, rdfd, GetFavoriteKey(SID), count)
+	return count
+}
 func GetFavoriteCount(ctx *gin.Context, SID int64) int64 {
 	count := FavoriteGetByRedis(ctx, SID)
 	if count == 0 {
-		count = GetFavoriteCountByDb(ctx, SID)
-		FavoriteToRedis(ctx, SID)
+		count = FavoriteToRedis(ctx, SID)
 	}
 	return count
 }

@@ -52,6 +52,9 @@ func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
 
 	}
 	//题目不存在 添加题目
+	if(models.ProblemCountGetByRedis(c)!=0){
+		models.ProblemCountAddToRedis(c)
+	}
 	err = models.CreateProblem(c, &problem)
 	if err != nil {
 		//日志报错
@@ -99,6 +102,9 @@ func EditProblem(req *request.EditProblemReq, c *gin.Context) (interface{}, erro
 func DeleteProblem(ctx *gin.Context, req *request.DeleteProblemReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	for _, PID := range req.PIDs {
+		if(models.ProblemCountGetByRedis(ctx)!=0){
+			models.ProblemCountSubToRedis(ctx)
+		}
 		err := models.DeleteProblem(ctx, PID)
 		if err != nil {
 			logger.Errorf("call DeleteProblem failed,err=%s", err.Error())
@@ -109,7 +115,6 @@ func DeleteProblem(ctx *gin.Context, req *request.DeleteProblemReq) (interface{}
 }
 
 func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{}, error) {
-
 	var ret response.ProblemListResp
 	offset, size := utils.GetPageInfo(req.Page, req.Limit)
 	admin := middlewares.CheckUserHasPermission(ctx, constanct.ProblemAdmin)
@@ -127,7 +132,7 @@ func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{},
 		return response.CreateResponse(constanct.PROBLEM_LIST_FAILED), err
 	}
 	ret.Response = response.CreateResponse(constanct.SuccessCode)
-	ret.Count, _ = models.GetProblemCount(ctx, problem)
+	ret.Count = models.GetProblemCount(ctx, problem)
 	ret.Data = make([]response.ProblemItemResp, 0, len(problems))
 	for _, problem := range problems {
 		ret.Data = append(ret.Data, response.ProblemItemResp{
