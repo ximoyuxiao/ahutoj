@@ -73,7 +73,7 @@ func PasswordForget(ctx *gin.Context) {
 func Logout(ctx *gin.Context) {
 	response.ResponseOK(ctx, response.CreateResponse(constanct.SuccessCode))
 }
-func VerifyEmail(ctx *gin.Context){
+func VerifyEmail(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
 	req := new(request.VerifyEmailReq)
 	if err := ctx.ShouldBindWith(req, binding.JSON); err != nil {
@@ -82,7 +82,7 @@ func VerifyEmail(ctx *gin.Context){
 		response.ResponseError(ctx, constanct.InvalidParamCode)
 		return
 	}
-	resp, err := logic.VerifyEmail(ctx,req)
+	resp, err := logic.VerifyEmail(ctx, req)
 	if err != nil {
 		logger.Errorf("call VerifyEmail failed,req=%+v,err=%s", utils.Sdump(req), err.Error())
 		response.ResponseError(ctx, constanct.ServerErrorCode)
@@ -90,11 +90,11 @@ func VerifyEmail(ctx *gin.Context){
 	}
 	response.ResponseOK(ctx, resp)
 }
-func VerifyEmailURL(ctx *gin.Context){
+func VerifyEmailURL(ctx *gin.Context) {
 	logger := utils.GetLogInstance()
-	token:=ctx.Query("token")
-	email:=ctx.Query("email")
-	resp, err := logic.VerifyEmailURL(ctx,token,email)
+	token := ctx.Query("token")
+	email := ctx.Query("email")
+	resp, err := logic.VerifyEmailURL(ctx, token, email)
 	if err != nil {
 		logger.Errorf("call VerifyEmail failed,resp=%+v,err=%s", utils.Sdump(resp), err.Error())
 		response.ResponseError(ctx, constanct.ServerErrorCode)

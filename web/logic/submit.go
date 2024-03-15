@@ -9,8 +9,8 @@ import (
 	"ahutoj/web/middlewares"
 	"ahutoj/web/models"
 	"ahutoj/web/utils"
-	"time"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
 func AddSubmit(ctx *gin.Context, req *request.AddSubmitReq) (interface{}, error) {

@@ -19,9 +19,11 @@ Linux,Mac,或安装有linux虚拟机的Windows
 
 第一次部署：<p>
 1、运行
+
 ```shell  
 sudo bash -x first.sh  
 ```  
+
 2、删除 config.yaml.bak 文件.bak后缀，根据自己情况修改对应配置
 
 3、运行localhost:8181访问nginx-proxy-manager，添加域名，配置ssl证书,和代理配置
@@ -38,6 +40,7 @@ sudo bash -x first.sh
 ![Proxy Host](./docs/img/反向代理演示_2.png)
 
 默认配置:
+
 ```
 listen 8081;
 listen [::]:8081;
@@ -59,12 +62,14 @@ location /image{
         root /resource;
 }
 ```
+
 4、运行localhost:5601访问kibana，配置logstash索引
 默认账号:elastic
 
 默认密码:123456(初始密码大部分都是这个)
 5、环境变量配置
 新建.env文件(跟远程备份有关)
+
 ```
 REMOTE_BACKUP_SERVER= 
 REMOTE_BACKUP_PATH= 
@@ -73,18 +78,22 @@ REMOTE_BACKUP_PASSWORD=
 ```
 
 ### 注意事项
+
 项目核心配置文件:
+
 - config/config.yaml
 - docker-compose.yaml
   如果需要添加服务/负载均衡请在 config.yaml 下添加，并修改 web/utils/config.go 下对应结构体
 
 常用命令:
+
 ```
 sudo docker-compose up -d 启动项目
 sudo docker rmi $(sudo docker images --filter "dangling=true" -q) 删除构建镜像，减小无用镜像占用
 sudo docker ps|grep <container name>|awk '{print $1}'|sudo docker rm/rmi
 删除对应的容器及其镜像
 ```
+
 ### 相关依赖:
 
 C/C++: rabbitMQ\libamqp-dev,hiredis,libmysql
@@ -137,23 +146,36 @@ Go: gorm、gin
 ### 项目分层
 
 - 网关层/路由层
+
 > 作为微服务的入口，负责请求的转发
+
 - 控制层
+
 > 负责接收请求，解析参数，调用逻辑层
+
 - 服务层
+
 > 部分复杂业务逻辑的处理
+
 - 逻辑层
+
 > 负责业务逻辑的处理
+
 - 模型层
+
 > 数据模型的定义
+
 - 数据库层
+
 > 数据库的操作
 
-
 ### 系统架构图
+
 ![系统架构图](./docs/img/系统架构图.png)
 最新版本移除persistence服务，合并在OJ服务中
+
 ### 判题流程
+
 ![线程池](./docs/img/线程池工作.png)
 
 ![内部判题](./docs/img/判题主进程.png)

@@ -4,8 +4,8 @@ import (
 	"ahutoj/web/utils"
 	"encoding/json"
 	"fmt"
-	"time"
 	"github.com/streadway/amqp"
+	"time"
 )
 
 type RabbitMQ struct {
@@ -24,7 +24,7 @@ func NewRabbitMQ(Host string, Port int, User string, Password string, poolSize i
 	}
 	// utils.GetLogInstance().Debug("NewRabbitMQ")
 	uri := fmt.Sprintf("amqp://%v:%v@oj-rabbitmq", User, Password)
-	rabbitmq, _ =  newRabbitMQ(uri,poolSize)//强制重新连接
+	rabbitmq, _ = newRabbitMQ(uri, poolSize) //强制重新连接
 	rabbitmq.Host = Host
 	rabbitmq.Password = Password
 	rabbitmq.User = User
@@ -57,16 +57,16 @@ func newRabbitMQ(uri string, poolSize int) (*RabbitMQ, error) {
 }
 
 func isConnectionOpen(conn *amqp.Connection) bool {
-    ch, err := conn.Channel()
-    if err != nil || ch == nil {
-        return false
-    }
-    defer ch.Close()
-    return true
+	ch, err := conn.Channel()
+	if err != nil || ch == nil {
+		return false
+	}
+	defer ch.Close()
+	return true
 }
 
 func (r *RabbitMQ) GetConnection() (*amqp.Connection, error) {
-	for{
+	for {
 		select {
 		case conn := <-r.ConnectionPool:
 			if !isConnectionOpen(conn) {

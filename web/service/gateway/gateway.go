@@ -26,9 +26,8 @@ var conf struct {
 	Sign    string `mapstructure:"sign"`
 	Version string `mapstructure:"version"`
 	GatWay  struct {
-		Port   string `mapstructure:"port"`
-		MaxQPS int    `mapstructure:"maxQPS"`
-
+		Port      string   `mapstructure:"port"`
+		MaxQPS    int      `mapstructure:"maxQPS"`
 		BlackHost []string `mapstructure:"blackReq"`
 	} `mapstructure:"GatWay"`
 }
@@ -115,9 +114,7 @@ func HandleRouter(ctx *gin.Context) {
 	}
 	var fetchToken int64 = 0
 	if tb != nil {
-		if fetchToken <= 0 {
-			fetchToken = tb.FetchToken(1)
-		}
+		fetchToken = tb.FetchToken(1)
 		if fetchToken <= 0 {
 			response.ResponseError(ctx, constanct.ServerBusyCode)
 			return
@@ -207,7 +204,7 @@ func AddRouter(ctx *gin.Context) {
 		}
 	}
 	PrefixAndRouter[key].To = append(PrefixAndRouter[key].To, Target{
-		Host: req.ToHost,
+		Host:       req.ToHost,
 		Weight:     req.Weight,
 		Use:        0,
 		Connection: true,

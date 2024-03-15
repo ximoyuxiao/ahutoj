@@ -3,12 +3,10 @@ package utils
 import (
 	"fmt"
 	"html/template"
-
-	"github.com/wneessen/go-mail"
 )
+
 const (
-	htmlBodyTemplate = 
-`<p>Hi {{.Uname}},</p>
+	htmlBodyTemplate = `<p>Hi {{.Uname}},</p>
 <p>Welcome to AhutOJ!</p>
 <p>Please confirm your email address by clicking on the button below.</p>
 <a href="{{.Link}}" style="
@@ -36,18 +34,19 @@ border-radius: 4px;
 <p>Happy coding!</p>
 <p>By AhutACM.</p>`
 )
+
 type TemplateData struct {
 	Uname string
-	Link string
+	Link  string
 }
 type Receiver struct {
-	Email string
+	Email    string
 	Username string
 }
 
-func SendEmail(r *Receiver,data *TemplateData,htp *template.Template)error {
+func SendEmail(r *Receiver, data *TemplateData, htp *template.Template) error {
 	//邮件格式
-	var emcfg=GetConfInstance().Email
+	var emcfg = GetConfInstance().Email
 	// logger.Debugf("%+v",Sdump(emcfg))
 	Email := mail.NewMsg()
 	if err := Email.From(emcfg.Serveremail); err != nil {
@@ -60,7 +59,7 @@ func SendEmail(r *Receiver,data *TemplateData,htp *template.Template)error {
 	}
 	//内容
 	Email.Subject(fmt.Sprintf("Hi %s ,Welcome to AhutOJ! Please confirm your email address", r.Username))
-	if err := Email.SetBodyHTMLTemplate(htp,data); err != nil {
+	if err := Email.SetBodyHTMLTemplate(htp, data); err != nil {
 		logger.Errorf("failed to set HTML template as HTML body: %s", err)
 		return err
 	}
@@ -80,23 +79,23 @@ func SendEmail(r *Receiver,data *TemplateData,htp *template.Template)error {
 	// }
 	return nil
 }
-func EmailVerify(uname string,token string,email string,path string)error{
-	data:=TemplateData{
+func EmailVerify(uname string, token string, email string, path string) error {
+	data := TemplateData{
 		Uname: uname,
-		Link: path+"?email="+email+"&token="+token,
+		Link:  path + "?email=" + email + "&token=" + token,
 	}
-	r:=Receiver{
-		Email: email,
+	r := Receiver{
+		Email:    email,
 		Username: uname,
 	}
 	//邮件模板
-	htp, err := template.New("htp").Parse(htmlBodyTemplate)//使用template注入更加安全
+	htp, err := template.New("htp").Parse(htmlBodyTemplate) //使用template注入更加安全
 	if err != nil {
 		logger.Errorf("failed to parse text template: %s", err)
 		return err
 	}
-	err =SendEmail(&r,&data,htp)
-	if err!=nil{
+	err = SendEmail(&r, &data, htp)
+	if err != nil {
 		logger.Errorf("failed to send email: %s", err)
 		return err
 	}

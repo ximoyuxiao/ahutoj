@@ -71,6 +71,15 @@ func GetProblemByPID(ctx context.Context, PID string) (dao.Problem, error) {
 	return problem, err
 }
 
+func GetSolutionNumberByPID(ctx context.Context, PID string) (int64, error) {
+	logger := utils.GetLogInstance()
+	number, err := mysqldao.SelectSolutionCountByPID(ctx, PID)
+	if err != nil {
+		logger.Errorf("call SelectSolutionCountByPID failed,PID=%d,err=%s", PID, err.Error())
+	}
+	return number, err
+}
+
 func GetProblemCount(ctx context.Context, problem dao.Problem) (int64, error) {
 	return mysqldao.SelectProblemCount(ctx, problem)
 }
@@ -262,7 +271,7 @@ func GetProblemImgByProblemByHTML(ctx context.Context, problem dao.Problem) []ma
 
 // 获得题目的图片MarkDown
 func GetProblemImgByProblemByMarkDown(ctx context.Context, problem dao.Problem) []mapping.ImgItem {
-	re := regexp.MustCompile(`!\[\]\((.*?)\)`)
+	re := regexp.MustCompile(`!\[]\((.*?)\)`)
 	descprtionImg := re.FindAllStringSubmatch(problem.Description, -1)
 	inputImg := re.FindAllStringSubmatch(problem.Input, -1)
 	outputImg := re.FindAllStringSubmatch(problem.Output, -1)

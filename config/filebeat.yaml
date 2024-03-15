@@ -16,7 +16,7 @@ filebeat.config:
     reload.enabled: false
 
 output.elasticsearch:
-  hosts: ["elasticsearch:9200"]
+  hosts: [ "elasticsearch:9200" ]
   username: "elastic"
   password: "123456"
 

@@ -55,34 +55,34 @@ func initAPP(ConfigPath string) error {
 	rbtcfg := utils.GetConfInstance().RabbitMQ
 	middlewares.NewRabbitMQ(rbtcfg.Host, rbtcfg.Port, rbtcfg.Username, rbtcfg.Password, 12)
 	osscfg := utils.GetConfInstance().OssConfig
-	middlewares.NewOss(osscfg.Host,osscfg.Port, osscfg.AccessKeyID, osscfg.SecretAccessKey,osscfg.UseSSL)
+	middlewares.NewOss(osscfg.Host, osscfg.Port, osscfg.AccessKeyID, osscfg.SecretAccessKey, osscfg.UseSSL)
 	//初始化持久化服务
 	go persistence()
 	routers.InitServer()
 	return nil
 }
-func persistence(){
+func persistence() {
 	logger := utils.GetLogInstance()
-	
-	Ce:=middlewares.GetConsumer(constanct.JUDGECE)
-	Result:=middlewares.GetConsumer(constanct.JUDGERESULT)
+
+	Ce := middlewares.GetConsumer(constanct.JUDGECE)
+	Result := middlewares.GetConsumer(constanct.JUDGERESULT)
 	for {
-		ces, err := Ce.ConsumeMessage()//发生其他错误时，可以重新尝试获取
+		ces, err := Ce.ConsumeMessage() //发生其他错误时，可以重新尝试获取
 		if err != nil {
-			logger.Errorf("call ConsumeMessage failed,queue:%v,err:%v",constanct.JUDGECE, err.Error())
-			time.Sleep(20*time.Second)
+			logger.Errorf("call ConsumeMessage failed,queue:%v,err:%v", constanct.JUDGECE, err.Error())
+			time.Sleep(20 * time.Second)
 			continue
 		}
 		results, err := Result.ConsumeMessage()
 		if err != nil {
-			logger.Errorf("call ConsumeMessage failed,queue:%v,err:%v",constanct.JUDGERESULT, err.Error())
-			time.Sleep(20*time.Second)//防止日志被顶上去了~
+			logger.Errorf("call ConsumeMessage failed,queue:%v,err:%v", constanct.JUDGERESULT, err.Error())
+			time.Sleep(20 * time.Second) //防止日志被顶上去了~
 			continue
 		}
 		//必须消费成功,否则直接退出协程(应等待排查错误)
-		for{
-			select{
-			case msg:=<-ces:
+		for {
+			select {
+			case msg := <-ces:
 				ceinfo := dao.CeInfo{}
 				err := json.Unmarshal(msg.Body, &ceinfo)
 				if err != nil {
@@ -93,7 +93,7 @@ func persistence(){
 					logger.Errorf("call CEinfoToDataBase failed,err:%v", err.Error())
 					return
 				}
-			case msg:=<-results:
+			case msg := <-results:
 				submit := dao.Submit{}
 				err = json.Unmarshal(msg.Body, &submit)
 				if err != nil {
@@ -109,7 +109,6 @@ func persistence(){
 		}
 	}
 }
-
 
 func CEinfoToDataBase(ctx context.Context, ceinfo *dao.CeInfo) error {
 	logger := utils.GetLogInstance()
@@ -130,18 +129,18 @@ func SubmitToDataBase(ctx context.Context, submit *dao.Submit) error {
 		return err
 	}
 	if submit.Result == constanct.OJ_AC {
-		err:=mysqldao.IncUserSolved(ctx, submit.UID)
+		err := mysqldao.IncUserSolved(ctx, submit.UID)
 		if err != nil {
 			logger.Errorf("call IncUserSolved failed,submit=%v, err=%v", utils.Sdump(submit), err.Error())
 			return err
 		}
-		err =mysqldao.IncProblemSolved(ctx,submit.PID)
+		err = mysqldao.IncProblemSolved(ctx, submit.PID)
 		if err != nil {
 			logger.Errorf("call IncProblemSolved failed,submit=%v, err=%v", utils.Sdump(submit), err.Error())
 			return err
 		}
 		if submit.CID > 0 {
-			err =mysqldao.IncConProSolved(ctx, submit.CID, submit.PID)
+			err = mysqldao.IncConProSolved(ctx, submit.CID, submit.PID)
 			if err != nil {
 				logger.Errorf("call IncConProSolved failed,submit=%v, err=%v", utils.Sdump(submit), err.Error())
 				return err

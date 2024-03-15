@@ -91,12 +91,13 @@ type RabbitMQ struct {
 	Username string `mapstructure:"username"`
 	Password string `mapstructure:"password"`
 }
-type Email struct{
+type Email struct {
 	Serveremail string `mapstructure:"serveremail"`
-	Serverhost string `mapstructure:"serverhost"`
-	Password string `mapstructure:"serverpass"`
-	Stmpaddr string `mapstructure:"stmpaddr"`
+	Serverhost  string `mapstructure:"serverhost"`
+	Password    string `mapstructure:"serverpass"`
+	Stmpaddr    string `mapstructure:"stmpaddr"`
 }
+
 func ConfigInit(configPath string) error {
 	viper.SetConfigFile(configPath)
 	err := viper.ReadInConfig()

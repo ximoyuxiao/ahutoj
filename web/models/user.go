@@ -45,6 +45,6 @@ func FindAllUser(ctx context.Context) ([]dao.User, error) {
 	return mysqldao.SelectUserList(ctx)
 }
 
-func UpdateUserEmail(ctx context.Context, UID string,email string) error {
+func UpdateUserEmail(ctx context.Context, UID string, email string) error {
 	return mysqldao.UpdateEmailByUID(ctx, UID, email)
 }

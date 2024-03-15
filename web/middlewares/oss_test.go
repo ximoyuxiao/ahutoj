@@ -37,11 +37,10 @@ func TestOss(t *testing.T) {
 		return
 	}
 	for _, bucket := range buckets {
-		objects:= oss.ListObjects(ctx, bucket.Name, minio.ListObjectsOptions{})
+		objects := oss.ListObjects(ctx, bucket.Name, minio.ListObjectsOptions{})
 		for object := range objects {
 			fmt.Println(object.Key)
 		}
 	}
-	
-}
 
+}

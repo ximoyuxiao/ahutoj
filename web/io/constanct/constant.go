@@ -206,6 +206,8 @@ const (
 	SOLUTION_EDIT_FAILED   ResCode = 200201
 	SOLUTION_DELETE_FAILED ResCode = 200301
 	SOLUTION_LIST_FAILED   ResCode = 200401
+	COMMENT_ADD_FAILED     ResCode = 200501
+	COMMENT_DELETE_FAILED  ResCode = 200502
 )
 
 var codeMsgMap = map[ResCode]string{
@@ -300,6 +302,8 @@ var codeMsgMap = map[ResCode]string{
 	SOLUTION_DELETE_FAILED:                  "删除题解失败",
 	SOLUTION_LIST_FAILED:                    "获取题解列表失败",
 	NOTICE_ADD_DUPLICATECODE:                "发送重复公告",
+	COMMENT_ADD_FAILED:                      "添加评论失败",
+	COMMENT_DELETE_FAILED:                   "删除评论失败",
 }
 var HttpCodeMap = map[ResCode]int{
 	SuccessCode:        http.StatusOK,

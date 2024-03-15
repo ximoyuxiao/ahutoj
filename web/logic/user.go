@@ -11,10 +11,10 @@ import (
 	"ahutoj/web/models"
 	originJudged "ahutoj/web/service/originJudge/originjudged"
 	"ahutoj/web/utils"
-	"strings"
-	"time"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"strings"
+	"time"
 )
 
 func CheckLogin(req *request.LoginReq, c *gin.Context) (interface{}, error) {
@@ -311,7 +311,7 @@ func ResetPassword(ctx *gin.Context, req *request.PasswordResetReq) (interface{}
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
 func VerifyEmail(ctx *gin.Context, req *request.VerifyEmailReq) (interface{}, error) {
-	emcfg:=utils.GetConfInstance().Email
+	emcfg := utils.GetConfInstance().Email
 	logger := utils.GetLogInstance()
 	if req.UID == "" {
 		return response.CreateResponse(constanct.ADMIN_ADD_UIDEmpty), nil
@@ -322,26 +322,28 @@ func VerifyEmail(ctx *gin.Context, req *request.VerifyEmailReq) (interface{}, er
 		return response.CreateResponse(constanct.USER_INFO_UIDNotExistCode), nil
 	}
 	//获取请求域名
-	path:=emcfg.Serverhost+"/verifyEmail/"
-	logger.Debugf("1:%v2: %v3: %v4: %v5: %v6: %v7: %v8: %v",ctx.Request.Host,ctx.Request.URL.Host,ctx.Request.URL.Path,ctx.Request.URL.Hostname(),ctx.RemoteIP(),ctx.ClientIP(),ctx.Request.RequestURI,ctx.Request.URL.RequestURI())
-	logger.Debugf("path=%v",path)
+	path := emcfg.Serverhost + "/verifyEmail/"
+	logger.Debugf("1:%v2: %v3: %v4: %v5: %v6: %v7: %v8: %v", ctx.Request.Host, ctx.Request.URL.Host, ctx.Request.URL.Path, ctx.Request.URL.Hostname(), ctx.RemoteIP(), ctx.ClientIP(), ctx.Request.RequestURI, ctx.Request.URL.RequestURI())
+	logger.Debugf("path=%v", path)
 	token := ctx.GetHeader("Authorization")
 	if token == "" {
 		logger.Error("token is empty")
 		return response.CreateResponse(constanct.AUTH_Token_EmptyCode), nil
 	}
-	utils.EmailVerify(req.Uname,token,req.Email,path)
+	utils.EmailVerify(req.Uname, token, req.Email, path)
 	return response.CreateResponse(constanct.SuccessCode), nil
 }
 
-func VerifyEmailURL(ctx *gin.Context, token string,email string) (interface{}, error) {
+func VerifyEmailURL(ctx *gin.Context, token string, email string) (interface{}, error) {
 	logger := utils.GetLogInstance()
-	claims,err:=middlewares.ParseToken(token);if err!=nil{
-		logger.Errorf("call ParseToken failed,token=%v,err=%v",token,err.Error())
+	claims, err := middlewares.ParseToken(token)
+	if err != nil {
+		logger.Errorf("call ParseToken failed,token=%v,err=%v", token, err.Error())
 		return response.CreateResponse(constanct.AUTH_Token_InvalidCode), nil
 	}
-	ok:=models.UpdateUserEmail(ctx,claims.UserID,email);if ok!=nil{
-		logger.Errorf("call UpdateUserEmail failed,token=%v,err=%v",token,ok.Error())
+	ok := models.UpdateUserEmail(ctx, claims.UserID, email)
+	if ok != nil {
+		logger.Errorf("call UpdateUserEmail failed,token=%v,err=%v", token, ok.Error())
 		return response.CreateResponse(constanct.AUTH_EMAIL_UPDATE_FAILED), nil
 	}
 	return response.CreateResponse(constanct.SuccessCode), nil

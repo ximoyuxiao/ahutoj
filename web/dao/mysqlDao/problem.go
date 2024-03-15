@@ -72,3 +72,10 @@ func IncProblemSolved(ctx context.Context, PID string) error {
 	db := GetDB(ctx)
 	return db.Table("Problem").Where("PID=?", PID).UpdateColumn("Accepted", gorm.Expr("Accepted+1")).Error
 }
+
+func SelectSolutionCountByPID(ctx context.Context, PID string) (int64, error) {
+	db := GetDB(ctx)
+	var count int64
+	err := db.Table("Solution").Where("PID=?", PID).Count(&count).Error
+	return count, err
+}

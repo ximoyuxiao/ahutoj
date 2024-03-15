@@ -6,7 +6,7 @@
 #nginx 38000
 version: '3.8'
 services:
-# 核心服务 - Core service
+  # 核心服务 - Core service
   judged:
     image: oj/judged:local
     container_name: oj-judged

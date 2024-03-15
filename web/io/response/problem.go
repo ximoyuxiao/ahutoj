@@ -19,6 +19,7 @@ type ProblemResp dao.Problem
 type ProblemInfoResp struct {
 	Response
 	ProblemResp
+	SolutionNumber int64 `json:"SolutionNumber"`
 }
 type AddProblemResp struct {
 	Response

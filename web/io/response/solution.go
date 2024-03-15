@@ -1,16 +1,13 @@
 package response
 
 type SolutionPublishResp struct {
-	Response
 	SID int64 `json:"SID"`
 }
 type SoultionResp struct {
-	Response
 	Count        int `json:"Count"`
 	SolutionList SolutionResponseElement
 }
 type SoultionsResp struct {
-	Response
 	Count        int `json:"Count"`
 	SolutionList []SolutionResponseElement
 }
@@ -43,7 +40,6 @@ type SubComment struct {
 }
 
 type CommentListResp struct {
-	Response
-	Count int          `json:"Count"`
+	Count int64        `json:"Count"`
 	Data  []SubComment `json:"Data"`
 }

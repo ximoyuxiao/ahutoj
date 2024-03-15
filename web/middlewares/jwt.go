@@ -51,7 +51,6 @@ var VerifyMap = map[string]constanct.VerfiyLevel{
 	"/api/user/editHead/":            constanct.CommomUser,
 	"/api/file/image/":               constanct.ProblemAdmin,
 	"/api/admin/user/edit/password/": constanct.Administrator,
-	
 }
 
 const JwtTokenCtxKey = "user"
