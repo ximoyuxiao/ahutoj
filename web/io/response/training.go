@@ -10,8 +10,8 @@ type TrainingListItem struct {
 }
 type TrainingListResp struct {
 	Response
-	Size int64              `json:"size"`
-	Data []TrainingListItem `json:"data"`
+	Size int64              `json:"Size"`
+	Data []TrainingListItem `json:"Data"`
 }
 type GetTrainResp struct {
 	Response

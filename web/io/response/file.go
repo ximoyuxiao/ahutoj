@@ -1,7 +1,7 @@
 package response
 
 type FileItem struct {
-	Filename string `json:"Filename"`
+	Filename string `json:"FileName"`
 	FileSize int64  `json:"FileSize"`
 	FileType string `josn:"FileType"`
 }

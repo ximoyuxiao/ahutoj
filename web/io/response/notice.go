@@ -16,5 +16,5 @@ type GetNoticeResp struct {
 type GetListNoticeResp struct {
 	Response
 	Count int             `json:"Count"`
-	Data  []GetNOticeItem `json:"data"`
+	Data  []GetNOticeItem `json:"Data"`
 }

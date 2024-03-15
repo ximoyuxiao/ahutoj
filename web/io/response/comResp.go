@@ -9,8 +9,8 @@ import (
 )
 
 type Response struct {
-	StatusCode constanct.ResCode `json:"code"`
-	StatusMsg  string            `json:"msg"`
+	StatusCode constanct.ResCode `json:"Code"`
+	StatusMsg  string            `json:"Msg"`
 }
 type RetType string
 

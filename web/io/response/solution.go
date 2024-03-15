@@ -6,29 +6,30 @@ type SolutionPublishResp struct {
 }
 type SoultionResp struct {
 	Response
-	Count        int `json:"count"`
+	Count        int `json:"Count"`
 	SolutionList SolutionResponseElement
 }
 type SoultionsResp struct {
 	Response
-	Count        int `json:"count"`
+	Count        int `json:"Count"`
 	SolutionList []SolutionResponseElement
 }
 
 type SolutionResponseElement struct {
-	Data          []SubComment `json:"data,omitempty"`
+	Data          []SubComment `json:"Data,omitempty"`
 	Sid           *int64       `json:"SID,omitempty"`
-	Text          *string      `json:"text,omitempty"`
+	Text          *string      `json:"Text,omitempty"`
 	Title         *string      `json:"Title,omitempty"`
 	Uid           *string      `json:"UID,omitempty"`
 	FavoriteCount *int64       `json:"FavoriteCount,omitempty"`
-	IsFavorite    bool         `json:"isFavorite"`
+	IsFavorite    bool         `json:"IsFavorite"`
 	UpdateTime    int64        `json:"UpdateTime"`
 	CreateTime    int64        `json:"CreateTime"`
 }
+
 type SolutionEditResp struct {
-	Title string `gorm:"column:Title"`
-	Text  string `gorm:"column:Text"` //内容
+	Title string `json:"Title"`
+	Text  string `json:"Text"` //内容
 }
 
 // 题解下的评论
