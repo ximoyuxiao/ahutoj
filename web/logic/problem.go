@@ -52,7 +52,7 @@ func AddProblem(req *request.Problem, c *gin.Context) (interface{}, error) {
 
 	}
 	//题目不存在 添加题目
-	if(models.ProblemCountGetByRedis(c)!=0){
+	if models.ProblemCountGetByRedis(c) != 0 {
 		models.ProblemCountAddToRedis(c)
 	}
 	err = models.CreateProblem(c, &problem)
@@ -102,7 +102,7 @@ func EditProblem(req *request.EditProblemReq, c *gin.Context) (interface{}, erro
 func DeleteProblem(ctx *gin.Context, req *request.DeleteProblemReq) (interface{}, error) {
 	logger := utils.GetLogInstance()
 	for _, PID := range req.PIDs {
-		if(models.ProblemCountGetByRedis(ctx)!=0){
+		if models.ProblemCountGetByRedis(ctx) != 0 {
 			models.ProblemCountSubToRedis(ctx)
 		}
 		err := models.DeleteProblem(ctx, PID)
@@ -136,9 +136,9 @@ func GetProblemList(ctx *gin.Context, req *request.ProblemListReq) (interface{},
 	ret.Data = make([]response.ProblemItemResp, 0, len(problems))
 	for _, problem := range problems {
 		ret.Data = append(ret.Data, response.ProblemItemResp{
-			PID:   problem.PID,
-			Title: problem.Title,
-			Label: problem.Label,
+			PID:      problem.PID,
+			Title:    problem.Title,
+			Label:    problem.Label,
 			Accepted: int64(problem.Accepted),
 			Submited: int64(problem.Submited),
 		})
