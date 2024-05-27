@@ -1,0 +1,87 @@
+#防止端口冲突，把映射全改了
+#mysql 33069
+#redis 36379
+#rabbitmq 35672
+#minio 39000 39001
+#nginx 38000
+version: '3.8'
+services:
+# 核心服务 - Core service
+  judged:
+    image: rruijfang/oj-judged:latest
+    container_name: oj-judged
+    restart: always
+    privileged: true
+    depends_on:
+      - gateway
+    volumes:
+      - ./logs/judged/log:/app/log
+      - ./resource:/app/resource
+    environment:
+      TZ: Asia/Shanghai
+    networks:
+      - oj_network
+  gateway:
+    image: rruijfang/oj-gateway:latest
+    container_name: oj-gateway
+    restart: always
+    privileged: true
+    ports:
+      - "4433:4433"
+    volumes:
+      - ./config/config.yaml:/app/config.yaml
+      - ./logs/gateway/ahutoj.log:/app/ahutoj.log
+    environment:
+      TZ: Asia/Shanghai
+    networks:
+      - oj_network
+  origin:
+    image: rruijfang/oj-origin:latest
+    container_name: oj-origin
+    restart: always
+    privileged: true
+    depends_on:
+      - gateway
+    volumes:
+      - ./config/config.yaml:/app/config.yaml
+      - ./logs/origin/ahutoj.log:/app/ahutoj.log
+    environment:
+      TZ: Asia/Shanghai
+    networks:
+      - oj_network
+  forum:
+    image: rruijfang/oj-forum:latest
+    container_name: oj-forum
+    restart: always
+    privileged: true
+    depends_on:
+      - gateway
+    volumes:
+      - ./config/config.yaml:/app/config.yaml
+      - ./logs/forum/ahutoj.log:/app/ahutoj.log
+    environment:
+      TZ: Asia/Shanghai
+    networks:
+      - oj_network
+  oj:
+    image: rruijfang/oj-oj:latest
+    container_name: oj-oj
+    restart: always
+    privileged: true
+    depends_on:
+      - gateway
+    volumes:
+      - ./config/config.yaml:/app/config.yaml
+      - ./resource:/app/resource
+      - ./logs/oj/ahutoj.log:/app/ahutoj.log
+    environment:
+      TZ: Asia/Shanghai
+      TEAM:
+    networks:
+      - oj_network
+networks:
+  oj_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.0.0/16

@@ -1,5 +1,0 @@
-package origininfo
-
-func GetCodeForecesInfo() {
-
-}

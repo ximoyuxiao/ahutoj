@@ -1,18 +1,8 @@
 .vscode
-*.yaml
-*.log
-log
-tmp
-.idea
-*.out
-*.o
-Data
-judged
-test
-*.rdb
-push.sh
-test.go
-*.log
-image
-spj
-main
+.vs
+/config/certs
+/config/config.yaml
+resource/*
+logs/**/*.log
+
+# Ignore .env file containing credentials, API keys, tokens, passwords, etc.
